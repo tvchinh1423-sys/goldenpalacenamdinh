@@ -10,11 +10,10 @@ export default async function AdminDashboard() {
     redirect('/admin/login');
   }
 
-  const [totalLeads, newLeads, totalPosts] = await Promise.all([
-    prisma.lead.count(),
-    prisma.lead.count({ where: { leadStatus: 'NEW' } }),
-    prisma.post.count(),
-  ]);
+  // Mock data tạm thời để bỏ qua lỗi SQLite trên Vercel Serverless
+  const totalLeads = 0;
+  const newLeads = 0;
+  const totalPosts = 0;
 
   return (
     <div>

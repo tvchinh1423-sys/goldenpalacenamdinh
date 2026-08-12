@@ -7,9 +7,8 @@ export default async function LeadsPage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 
-  const leads = await prisma.lead.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
+  // Mock data tạm thời
+  const leads = [];
 
   return (
     <div>

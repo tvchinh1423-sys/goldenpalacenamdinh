@@ -7,9 +7,8 @@ export default async function PostsPage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 
-  const posts = await prisma.post.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
+  // Mock data tạm thời
+  const posts = [];
 
   return (
     <div>
