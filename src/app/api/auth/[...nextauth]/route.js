@@ -14,21 +14,19 @@ export const authOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        // Bỏ qua SQLite trên Vercel do bị lỗi môi trường Serverless (chỉ hỗ trợ file tĩnh), 
+        // sử dụng hard-coded account tạm thời để Chinh có thể xem UI
+        if (credentials.email === 'admin@goldenpalace.vn' && credentials.password === 'admin123') {
+          return {
+            id: 'mock-admin-id',
+            name: 'Admin',
+            email: 'admin@goldenpalace.vn',
+            role: 'ADMIN',
+          };
+        }
 
-        if (!user || !user.isActive) return null;
+        return null;
 
-        const isValid = await compare(credentials.password, user.passwordHash);
-        if (!isValid) return null;
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        };
       },
     }),
   ],
