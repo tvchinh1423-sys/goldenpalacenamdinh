@@ -139,7 +139,7 @@ export default function Home() {
                 </div>
 
                 <div className="pt-6 flex justify-center">
-                  <Link href="/venues">
+                  <Link href="/du-toan-chi-phi/venues">
                     <button type="button" className="bg-gradient-to-r from-gold-gradient-start to-gold-gradient-end text-on-primary font-label-md text-label-md py-4 px-10 rounded-full gold-glow transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
                       Khám phá không gian
                       <span className="material-symbols-outlined">arrow_forward</span>

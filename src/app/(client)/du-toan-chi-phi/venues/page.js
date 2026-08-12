@@ -79,7 +79,7 @@ export default function Venues() {
               <span>4.0M/mâm</span>
             </div>
           </div>
-          <Link href="/">
+          <Link href="/du-toan-chi-phi">
             <button className="text-primary font-label-md hover:underline flex items-center gap-1 transition-colors duration-200">
               <span className="material-symbols-outlined text-sm">edit</span>
               Sửa yêu cầu
@@ -181,7 +181,7 @@ export default function Venues() {
                   </div>
                 )}
               </div>
-              <Link href="/services">
+              <Link href="/du-toan-chi-phi/services">
                 <button className={`text-white font-label-md px-6 py-3 rounded-lg flex justify-center items-center gap-2 transition-all shadow-md ${selectedVenues.length > 0 ? 'bg-gradient-to-r from-[#D4AF37] to-[#C5A028]' : 'bg-surface-variant text-on-surface-variant opacity-80 cursor-not-allowed'}`}>
                   Tiếp tục chọn dịch vụ
                 </button>

@@ -171,10 +171,10 @@ export default function Services() {
             <div className="font-price-display text-price-display text-primary">35.000.000đ</div>
           </div>
           <div className="flex gap-4 w-full md:w-auto">
-            <Link href="/venues">
+            <Link href="/du-toan-chi-phi/venues">
               <button className="flex-1 md:flex-none px-6 py-3 rounded-lg border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-colors">Quay Lại</button>
             </Link>
-            <Link href="/estimate">
+            <Link href="/du-toan-chi-phi/estimate">
               <button className="flex-1 md:flex-none px-8 py-3 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white font-label-md text-label-md shadow-lg shadow-gold-gradient-start/30 hover:opacity-90 transition-opacity">Tiếp Tục</button>
             </Link>
           </div>
