@@ -5,9 +5,26 @@ import { useState } from 'react';
 export default function Estimate() {
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [notes, setNotes] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsLoading(true);
+    try {
+      await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, notes }),
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -79,18 +96,18 @@ export default function Estimate() {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                       <label className="block font-label-md text-slate-text mb-2">Họ và tên *</label>
-                      <input type="text" required className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 font-body-lg text-on-surface py-2 px-0" placeholder="Nhập tên của bạn" />
+                      <input type="text" required value={name} onChange={e => setName(e.target.value)} className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 font-body-lg text-on-surface py-2 px-0" placeholder="Nhập tên của bạn" />
                     </div>
                     <div>
                       <label className="block font-label-md text-slate-text mb-2">Số điện thoại *</label>
-                      <input type="tel" required className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 font-body-lg text-on-surface py-2 px-0" placeholder="Nhập số điện thoại" />
+                      <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)} className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 font-body-lg text-on-surface py-2 px-0" placeholder="Nhập số điện thoại" />
                     </div>
                     <div>
                       <label className="block font-label-md text-slate-text mb-2">Ghi chú thêm (Tùy chọn)</label>
-                      <input type="text" className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 font-body-lg text-on-surface py-2 px-0" placeholder="Yêu cầu đặc biệt..." />
+                      <input type="text" value={notes} onChange={e => setNotes(e.target.value)} className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 font-body-lg text-on-surface py-2 px-0" placeholder="Yêu cầu đặc biệt..." />
                     </div>
-                    <button type="submit" className="w-full py-4 mt-4 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white font-label-md shadow-lg shadow-gold-gradient-start/30 hover:opacity-90 transition-all flex items-center justify-center gap-2">
-                      <span className="material-symbols-outlined">send</span> Gửi Nhận Báo Giá
+                    <button type="submit" disabled={isLoading} className="w-full py-4 mt-4 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white font-label-md shadow-lg shadow-gold-gradient-start/30 hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                      <span className="material-symbols-outlined">{isLoading ? 'hourglass_empty' : 'send'}</span> {isLoading ? 'Đang gửi...' : 'Gửi Nhận Báo Giá'}
                     </button>
                   </form>
                 </>
