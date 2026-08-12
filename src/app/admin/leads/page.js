@@ -7,8 +7,23 @@ export default async function LeadsPage() {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 
-  // Mock data tạm thời
-  const leads = [];
+  // Mock data tạm thời để hiển thị Demo UI do chưa có Supabase
+  const leads = [
+    {
+      id: '1',
+      name: 'Trần Vân Chinh',
+      phone: '0987654321',
+      createdAt: new Date().toISOString(),
+      leadStatus: 'NEW'
+    },
+    {
+      id: '2',
+      name: 'Nguyễn Văn A (Demo)',
+      phone: '0912345678',
+      createdAt: new Date(Date.now() - 86400000).toISOString(),
+      leadStatus: 'CONTACTED'
+    }
+  ];
 
   return (
     <div>

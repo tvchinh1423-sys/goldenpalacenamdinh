@@ -11,8 +11,8 @@ export default async function AdminDashboard() {
   }
 
   // Mock data tạm thời để bỏ qua lỗi SQLite trên Vercel Serverless
-  const totalLeads = 0;
-  const newLeads = 0;
+  const totalLeads = 2;
+  const newLeads = 1;
   const totalPosts = 0;
 
   return (
