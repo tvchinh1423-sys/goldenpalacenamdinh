@@ -19,7 +19,9 @@ build/
 .env.production.local
 
 # Prisma
-prisma/migrations/migration_lock.toml
+# migrations/ phải được commit — chỉ bỏ qua file DB local
+prisma/dev.db
+prisma/dev.db-journal
 
 # Debug
 npm-debug.log*
@@ -39,3 +41,4 @@ Thumbs.db
 # Vercel
 .vercel
 .env*
+!.env.example

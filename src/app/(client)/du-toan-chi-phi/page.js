@@ -1,12 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useEstimate } from '@/components/guest/EstimateContext';
 
 export default function Home() {
-  const [guestCount, setGuestCount] = useState(350);
-  const [budget, setBudget] = useState(3500000);
-  const [session, setSession] = useState('Trưa');
-  const [date, setDate] = useState('');
+  const { estimateData, updateEstimate } = useEstimate();
+  const { guestCount, budgetPerTable, session, date } = estimateData;
 
   const tableCount = Math.ceil(guestCount / 10);
   const formatCurrency = (val) => val.toLocaleString('vi-VN');
@@ -64,7 +63,7 @@ export default function Home() {
                       type="range" 
                       min="100" max="800" step="10" 
                       value={guestCount}
-                      onChange={(e) => setGuestCount(Number(e.target.value))}
+                      onChange={(e) => updateEstimate({ guestCount: Number(e.target.value) })}
                     />
                   </div>
                   <div className="flex justify-between text-on-surface-variant font-label-md text-label-md">
@@ -84,9 +83,9 @@ export default function Home() {
                       <button 
                         key={amt}
                         type="button"
-                        onClick={() => setBudget(amt)}
+                        onClick={() => updateEstimate({ budgetPerTable: amt })}
                         className={`chip font-label-md text-label-md py-2 px-6 rounded-full border transition-all ${
-                          budget === amt 
+                          budgetPerTable === amt 
                             ? 'bg-primary-container text-on-primary-container border-primary-container active' 
                             : 'bg-transparent text-primary border-gold-gradient-start/50 hover:border-gold-gradient-start'
                         }`}
@@ -98,8 +97,8 @@ export default function Home() {
                   <div className="relative">
                     <input 
                       type="text" 
-                      value={formatCurrency(budget)}
-                      onChange={(e) => setBudget(Number(e.target.value.replace(/\D/g, '')))}
+                      value={formatCurrency(budgetPerTable)}
+                      onChange={(e) => updateEstimate({ budgetPerTable: Number(e.target.value.replace(/\D/g, '')) })}
                       className="w-full bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 font-body-lg text-body-lg text-on-surface py-2 pl-2 pr-10 transition-colors"
                       placeholder="Nhập số tiền khác..." 
                     />
@@ -113,7 +112,7 @@ export default function Home() {
                     <input 
                       type="date" 
                       value={date}
-                      onChange={(e) => setDate(e.target.value)}
+                      onChange={(e) => updateEstimate({ date: e.target.value })}
                       className="w-full bg-surface-container-low border border-outline-variant rounded-lg p-3 font-body-md text-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none" 
                     />
                   </div>
@@ -124,7 +123,7 @@ export default function Home() {
                         <button 
                           key={s}
                           type="button"
-                          onClick={() => setSession(s)}
+                          onClick={() => updateEstimate({ session: s })}
                           className={`flex-1 py-2 text-center rounded-md font-label-md text-label-md transition-all ${
                             session === s 
                               ? 'bg-surface shadow-sm text-primary' 

@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider, signOut } from 'next-auth/react';
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
@@ -10,53 +10,74 @@ export default function AdminLayout({ children }) {
     return <SessionProvider>{children}</SessionProvider>;
   }
 
+  const navItems = [
+    { name: 'Bảng điều khiển', href: '/admin', icon: 'dashboard' },
+    { name: 'Quản lý Khách hàng', href: '/admin/leads', icon: 'group' },
+    { name: 'Quản lý Hội trường', href: '/admin/venues', icon: 'apartment' },
+    { name: 'Gói Dịch vụ', href: '/admin/packages', icon: 'card_giftcard' },
+    { name: 'Dịch vụ Bổ sung', href: '/admin/addons', icon: 'extension' },
+    { name: 'Thực đơn', href: '/admin/menus', icon: 'restaurant_menu' },
+    { name: 'Đồ uống', href: '/admin/beverages', icon: 'local_bar' },
+    { name: 'Bài viết & Ưu đãi', href: '/admin/posts', icon: 'article' },
+  ];
+
   return (
     <SessionProvider>
-      <div className="min-h-screen bg-[#f4f6f8] flex font-inter text-gray-800">
+      <div className="min-h-screen bg-surface flex font-inter text-on-surface">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
-          <div className="h-16 flex items-center justify-center border-b border-gray-200">
-            <span className="font-playfair font-bold text-xl text-[#d4af37]">GP ADMIN</span>
+        <aside className="w-64 bg-surface-bright border-r border-outline-variant/30 flex flex-col shadow-sm">
+          <div className="h-16 flex items-center justify-center border-b border-outline-variant/30">
+            <span className="font-display-lg font-bold text-xl text-primary bg-clip-text bg-gradient-to-r from-gold-gradient-start to-gold-gradient-end text-transparent">GP ADMIN</span>
           </div>
-          <nav className="flex-1 p-4 space-y-2 text-sm font-medium">
-            <Link 
-              href="/admin" 
-              className={`block px-4 py-2 rounded-md transition-colors ${pathname === '/admin' ? 'bg-[#d4af37]/10 text-[#d4af37]' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Tổng quan
-            </Link>
-            <Link 
-              href="/admin/leads" 
-              className={`block px-4 py-2 rounded-md transition-colors ${pathname.includes('/admin/leads') ? 'bg-[#d4af37]/10 text-[#d4af37]' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Khách hàng (Leads)
-            </Link>
-            <Link 
-              href="/admin/posts" 
-              className={`block px-4 py-2 rounded-md transition-colors ${pathname.includes('/admin/posts') ? 'bg-[#d4af37]/10 text-[#d4af37]' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Bài viết & Ưu đãi
-            </Link>
-            <Link 
-              href="/admin/venues" 
-              className={`block px-4 py-2 rounded-md transition-colors ${pathname.includes('/admin/venues') ? 'bg-[#d4af37]/10 text-[#d4af37]' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Hội trường
-            </Link>
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+            {navItems.map(item => {
+              const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+              return (
+                <Link 
+                  key={item.name}
+                  href={item.href} 
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-label-md ${
+                    isActive 
+                      ? 'bg-primary-container/20 text-primary border border-primary/20 shadow-sm' 
+                      : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                  {item.name}
+                </Link>
+              );
+            })}
           </nav>
+          <div className="p-4 border-t border-outline-variant/30">
+            <button 
+              onClick={() => signOut({ callbackUrl: '/admin/login' })}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-error-rose hover:bg-error-rose/10 transition-colors font-label-md"
+            >
+              <span className="material-symbols-outlined text-[20px]">logout</span>
+              Đăng xuất
+            </button>
+          </div>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col h-screen overflow-hidden">
+        <main className="flex-1 flex flex-col h-screen overflow-hidden bg-background">
           {/* Topbar */}
-          <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-            <h1 className="text-lg font-semibold text-gray-800">Bảng điều khiển</h1>
+          <header className="h-16 bg-surface-bright border-b border-outline-variant/30 flex items-center justify-between px-8 shadow-sm">
+            <h1 className="text-xl font-headline-sm text-on-surface">
+              {navItems.find(item => pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href)))?.name || 'Golden Palace Admin'}
+            </h1>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-500">Xin chào, Admin</span>
+              <div className="flex flex-col text-right">
+                <span className="text-sm font-bold text-on-surface">Admin</span>
+                <span className="text-xs text-on-surface-variant">admin@goldenpalace.vn</span>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gold-gradient-start to-gold-gradient-end flex items-center justify-center text-white font-bold">
+                A
+              </div>
             </div>
           </header>
           {/* Content Area */}
-          <div className="flex-1 overflow-auto p-6">
+          <div className="flex-1 overflow-auto p-8">
             {children}
           </div>
         </main>

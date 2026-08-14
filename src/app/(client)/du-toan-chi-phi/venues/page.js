@@ -1,52 +1,41 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useEstimate } from '@/components/guest/EstimateContext';
 
 export default function Venues() {
-  const [selectedVenues, setSelectedVenues] = useState([2]); // IDs of selected venues
+  const { estimateData, updateEstimate } = useEstimate();
+  const { guestCount, budgetPerTable, selectedVenues } = estimateData;
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const venues = [
-    {
-      id: 1,
-      name: 'Sảnh Kim Cương',
-      area: '800 m²',
-      capacity: 'Max 500 khách',
-      fee: 'Phí sảnh: ~25.000.000đ',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuANov3vCtm8CBeoQSC1Rq-SswYWeDoZ5AJZ_0fO2V8IjQR50seZ0V1DpffmMdmGmNr__uleL1hLZRbT76xgiJ0g8eJsPaxzVC1rQv94eeUvoDscTBWprUtjjm-nqNMkaBg3hbu139QhQBHtqFtJjd2YRBfl9-uN_N9ylw8yT3lJLvlUReHy9w8PAHvgPK7UBxblR-zgc5xg6NQ9-OeFQ5OCRm8lnovMP-pCAY5eiZeOWeib__aYTSj2',
-      status: 'Phù hợp quy mô',
-      statusColor: 'text-primary'
-    },
-    {
-      id: 2,
-      name: 'Sảnh Pha Lê',
-      area: '600 m²',
-      capacity: 'Max 350 khách',
-      fee: 'Phí sảnh: ~18.000.000đ',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA7J0LFeNxUZvx5djbSkY_UI13YC3XSmt7iM1QCg672OC_auhT2UB7JJnMt0fgdB6zrbVJXhzLnPZRUaI8pK3OHs1sm4vhcOiJs5iCvUsMdee_0bcksAenFLsM-aXg8bUCtZdokd-a9lOTLEqtos7xIKlPIJkTOA_82fWTm2QgQpEnzbxehZH_7LYO6f7-2kpYqlgEwmspkF-As0mdk1L0LsXBs0fiDFugvNLVypLxoB256vocdGhyW',
-      status: 'Phù hợp quy mô',
-      statusColor: 'text-primary'
-    },
-    {
-      id: 3,
-      name: 'Sảnh Ruby',
-      area: '400 m²',
-      capacity: 'Max 250 khách',
-      capacityColor: 'text-error-rose',
-      fee: 'Phí sảnh: ~12.000.000đ',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDF6hz99jTnd-V4x3PpT9xQYy8JUn3EMbLYR2ozYT02zIi4AiqQFa5ATbLAXSEnGQ1LcAK9b-JpmfgakIuyL3MC3DfGVAygKnApSFVRsnA8bBuXpjV95vy3M_Q0yi8Ly1Dd-IHjlZ0aMw7eOV_yJTetr_CF5jCzu2nxtoU-cE0t_0FYLRDFoaRSB-P7EuMbV8zuG8j_NvR-awiLLZpiqTsOmMe9fdww-YkJd5WY-AwA3_zRN1gVj5cX',
-      status: 'Có thể chật',
-      statusColor: 'text-error-rose'
+  useEffect(() => {
+    async function fetchVenues() {
+      try {
+        const res = await fetch(`/api/guest/venues?guests=${guestCount}`);
+        const data = await res.json();
+        setVenues(data);
+      } catch (error) {
+        console.error('Failed to fetch venues:', error);
+      } finally {
+        setLoading(false);
+      }
     }
-  ];
+    fetchVenues();
+  }, [guestCount]);
 
   const toggleSelect = (id) => {
     if (selectedVenues.includes(id)) {
-      setSelectedVenues(selectedVenues.filter(v => v !== id));
+      updateEstimate({ selectedVenues: selectedVenues.filter(v => v !== id) });
     } else {
       if (selectedVenues.length < 2) {
-        setSelectedVenues([...selectedVenues, id]);
+        updateEstimate({ selectedVenues: [...selectedVenues, id] });
       }
     }
+  };
+
+  const selectPreferred = (id) => {
+    updateEstimate({ selectedVenues: [id] }); // For simplicity, if they click 'Chọn Sảnh', clear comparison and just pick this one
   };
 
   return (
@@ -71,12 +60,12 @@ export default function Venues() {
           <div className="flex items-center gap-6 text-on-surface-variant font-body-md">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
-              <span>350 khách</span>
+              <span>{guestCount} khách</span>
             </div>
             <div className="hidden sm:block w-1 h-1 rounded-full bg-outline-variant"></div>
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>restaurant_menu</span>
-              <span>4.0M/mâm</span>
+              <span>{(budgetPerTable / 1000000).toFixed(1)}M/mâm</span>
             </div>
           </div>
           <Link href="/du-toan-chi-phi">
@@ -96,70 +85,83 @@ export default function Venues() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-          {venues.map(v => {
-            const isSelected = selectedVenues.includes(v.id);
-            return (
-              <div key={v.id} className={`glass-panel rounded-xl overflow-hidden transition-all duration-300 relative group flex flex-col h-full ${isSelected ? 'border-primary/60 shadow-[0_4px_20px_rgba(212,175,55,0.15)] ring-1 ring-primary/20' : 'border border-outline-variant/30 hover:border-primary/40'}`}>
-                {isSelected && (
-                  <div className="absolute -top-3 right-6 z-10 bg-primary-container text-on-primary-container font-label-md px-4 py-1.5 rounded-full shadow-md flex items-center gap-1 animate-pulse">
-                    <span className="material-symbols-outlined text-[16px]">check</span>
-                    Đã chọn so sánh
-                  </div>
-                )}
-                
-                <div className={`relative h-64 overflow-hidden ${v.status === 'Có thể chật' ? 'grayscale-[30%]' : ''}`}>
-                  <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url('${v.image}')` }}></div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                  <div className={`absolute top-4 left-4 bg-surface/90 backdrop-blur-sm ${v.statusColor} font-label-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm`}>
-                    <span className="material-symbols-outlined text-[16px]">
-                      {v.status === 'Có thể chật' ? 'warning' : 'check_circle'}
-                    </span>
-                    {v.status}
-                  </div>
-                </div>
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+            {venues.map(v => {
+              const isSelected = selectedVenues.includes(v.id);
+              const images = JSON.parse(v.images || '[]');
+              const image = images[0] || 'https://via.placeholder.com/600x400';
+              const price = v.pricings[0]?.price || 0;
+              const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+              
+              const isTight = guestCount > v.maxGuests * 0.9; // 90% capacity
+              const statusText = isTight ? 'Có thể chật' : 'Phù hợp quy mô';
+              const statusColor = isTight ? 'text-error-rose' : 'text-primary';
 
-                <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="font-headline-sm text-headline-sm text-on-surface mb-2 font-display-lg">{v.name}</h3>
-                  <div className="grid grid-cols-2 gap-4 mb-6 text-on-surface-variant font-body-md">
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-primary opacity-80">aspect_ratio</span>
-                      <span>{v.area}</span>
+              return (
+                <div key={v.id} className={`glass-panel rounded-xl overflow-hidden transition-all duration-300 relative group flex flex-col h-full ${isSelected ? 'border-primary/60 shadow-[0_4px_20px_rgba(212,175,55,0.15)] ring-1 ring-primary/20' : 'border border-outline-variant/30 hover:border-primary/40'}`}>
+                  {isSelected && (
+                    <div className="absolute -top-3 right-6 z-10 bg-primary-container text-on-primary-container font-label-md px-4 py-1.5 rounded-full shadow-md flex items-center gap-1 animate-pulse">
+                      <span className="material-symbols-outlined text-[16px]">check</span>
+                      Đã chọn so sánh
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-primary opacity-80">groups</span>
-                      <span className={v.capacityColor || ''}>{v.capacity}</span>
-                    </div>
-                    <div className="flex items-center gap-2 col-span-2">
-                      <span className="material-symbols-outlined text-primary opacity-80">payments</span>
-                      <span>{v.fee}</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-auto flex gap-3">
-                    <button className="flex-1 bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white font-label-md py-3 rounded-lg flex justify-center items-center gap-2 transition-all shadow-md">
-                      <span className="material-symbols-outlined text-[20px]">add</span>
-                      Chọn Sảnh
-                    </button>
-                    <button 
-                      onClick={() => toggleSelect(v.id)}
-                      className={`flex-1 font-label-md py-3 rounded-lg flex justify-center items-center gap-2 transition-colors ${
-                        isSelected 
-                          ? 'bg-primary-container/20 border border-primary text-primary' 
-                          : 'bg-transparent border border-outline text-outline hover:border-primary hover:text-primary'
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-[20px]">
-                        {isSelected ? 'remove' : 'compare_arrows'}
+                  )}
+                  
+                  <div className={`relative h-64 overflow-hidden ${isTight ? 'grayscale-[30%]' : ''}`}>
+                    <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: \`url('\${image}')\` }}></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    <div className={`absolute top-4 left-4 bg-surface/90 backdrop-blur-sm ${statusColor} font-label-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm`}>
+                      <span className="material-symbols-outlined text-[16px]">
+                        {isTight ? 'warning' : 'check_circle'}
                       </span>
-                      {isSelected ? 'Bỏ so sánh' : 'So sánh'}
-                    </button>
+                      {statusText}
+                    </div>
+                  </div>
+
+                  <div className="p-6 flex flex-col flex-grow">
+                    <h3 className="font-headline-sm text-headline-sm text-on-surface mb-2 font-display-lg">{v.name}</h3>
+                    <div className="grid grid-cols-2 gap-4 mb-6 text-on-surface-variant font-body-md">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-primary opacity-80">groups</span>
+                        <span className={statusColor}>Max {v.maxGuests} khách</span>
+                      </div>
+                      <div className="flex items-center gap-2 col-span-2">
+                        <span className="material-symbols-outlined text-primary opacity-80">payments</span>
+                        <span>Phí sảnh: ~{formattedPrice}</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-auto flex gap-3">
+                      <Link href="/du-toan-chi-phi/services" className="flex-1">
+                        <button onClick={() => selectPreferred(v.id)} className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white font-label-md py-3 rounded-lg flex justify-center items-center gap-2 transition-all shadow-md">
+                          <span className="material-symbols-outlined text-[20px]">check</span>
+                          Chọn Sảnh
+                        </button>
+                      </Link>
+                      <button 
+                        onClick={() => toggleSelect(v.id)}
+                        className={`flex-1 font-label-md py-3 rounded-lg flex justify-center items-center gap-2 transition-colors ${
+                          isSelected 
+                            ? 'bg-primary-container/20 border border-primary text-primary' 
+                            : 'bg-transparent border border-outline text-outline hover:border-primary hover:text-primary'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[20px]">
+                          {isSelected ? 'remove' : 'compare_arrows'}
+                        </span>
+                        {isSelected ? 'Bỏ so sánh' : 'So sánh'}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </main>
 
       {selectedVenues.length > 0 && (
@@ -170,17 +172,6 @@ export default function Venues() {
               <span className="text-primary font-headline-sm font-display-lg">Đã chọn {selectedVenues.length}/2 hội trường</span>
             </div>
             <div className="flex items-center gap-4">
-              <div className="hidden sm:flex items-center gap-2">
-                {selectedVenues.map(id => {
-                  const v = venues.find(x => x.id === id);
-                  return <img key={id} className="w-10 h-10 rounded-md object-cover border border-primary/30" src={v.image} alt={v.name} />;
-                })}
-                {selectedVenues.length < 2 && (
-                  <div className="w-10 h-10 rounded-md border border-dashed border-outline-variant flex items-center justify-center text-outline-variant bg-surface-container">
-                    <span className="material-symbols-outlined text-[20px]">add</span>
-                  </div>
-                )}
-              </div>
               <Link href="/du-toan-chi-phi/services">
                 <button className={`text-white font-label-md px-6 py-3 rounded-lg flex justify-center items-center gap-2 transition-all shadow-md ${selectedVenues.length > 0 ? 'bg-gradient-to-r from-[#D4AF37] to-[#C5A028]' : 'bg-surface-variant text-on-surface-variant opacity-80 cursor-not-allowed'}`}>
                   Tiếp tục chọn dịch vụ

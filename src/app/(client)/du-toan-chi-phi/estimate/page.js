@@ -1,31 +1,59 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useEstimate } from '@/components/guest/EstimateContext';
+import { format } from 'date-fns';
 
 export default function Estimate() {
+  const { estimateData } = useEstimate();
+  const { guestCount, budgetPerTable, session, date, selectedVenues, selectedPackage, selectedAddOns } = estimateData;
+
   const [submitted, setSubmitted] = useState(false);
+  const [linkToken, setLinkToken] = useState('');
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [notes, setNotes] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const [pricing, setPricing] = useState(null);
+
+  useEffect(() => {
+    // Basic recalculation for display
+    const tableCount = Math.ceil(guestCount / 10);
+    const menuBase = tableCount * budgetPerTable;
+    setPricing({ menuBase, tableCount });
+  }, [guestCount, budgetPerTable]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await fetch('/api/leads', {
+      const res = await fetch('/api/guest/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, notes }),
+        body: JSON.stringify({ 
+          name, phone, notes,
+          guestCount, budgetPerTable, session, date,
+          selectedVenues, selectedPackage, selectedAddOns
+        }),
       });
-      setSubmitted(true);
+      const data = await res.json();
+      if (data.success) {
+        setLinkToken(data.linkToken);
+        setSubmitted(true);
+      } else {
+        alert(data.error || 'Có lỗi xảy ra');
+      }
     } catch (error) {
       console.error(error);
+      alert('Không thể kết nối đến máy chủ');
     } finally {
       setIsLoading(false);
     }
   };
+
+  const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
 
   return (
     <div className="bg-background text-on-surface font-body-md antialiased pt-32 pb-40 min-h-screen">
@@ -55,35 +83,40 @@ export default function Estimate() {
           <div className="lg:col-span-7">
             <div className="bg-surface-bright/85 backdrop-blur-md border border-gold-gradient-start/30 rounded-xl p-8 shadow-lg">
               <div className="border-b border-outline-variant/50 pb-6 mb-6">
-                <h3 className="font-headline-sm text-primary mb-2">Sảnh Kim Cương</h3>
-                <div className="text-on-surface-variant font-body-md">Ngày: 15/10/2026 • 350 Khách (35 mâm)</div>
+                <h3 className="font-headline-sm text-primary mb-2">Thông tin tiệc</h3>
+                <div className="text-on-surface-variant font-body-md">
+                  Ngày: {date ? format(new Date(date), 'dd/MM/yyyy') : 'Chưa xác định'} ({session}) • {guestCount} Khách ({pricing?.tableCount} mâm)
+                </div>
               </div>
 
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <span className="font-body-lg text-slate-text">Thực đơn (Dự kiến 4.000.000đ/mâm)</span>
-                  <span className="font-label-md text-primary">140.000.000đ</span>
+                  <span className="font-body-lg text-slate-text">Thực đơn dự kiến ({formatCurrency(budgetPerTable)}/mâm)</span>
+                  <span className="font-label-md text-primary">{formatCurrency(pricing?.menuBase || 0)}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-body-lg text-slate-text">Phí thuê sảnh</span>
-                  <span className="font-label-md text-primary">25.000.000đ</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-body-lg text-slate-text">Gói Dịch Vụ Hoàng Gia</span>
-                  <span className="font-label-md text-primary">35.000.000đ</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-body-lg text-slate-text">Dịch vụ bổ sung (2 mục)</span>
-                  <span className="font-label-md text-primary">5.500.000đ</span>
-                </div>
+                {selectedVenues.length > 0 && (
+                  <div className="flex justify-between items-center">
+                    <span className="font-body-lg text-slate-text">Hội trường (Đã chọn {selectedVenues.length})</span>
+                    <span className="font-label-md text-primary">Theo báo giá</span>
+                  </div>
+                )}
+                {selectedPackage && (
+                  <div className="flex justify-between items-center">
+                    <span className="font-body-lg text-slate-text">Gói Dịch Vụ</span>
+                    <span className="font-label-md text-primary">Theo báo giá</span>
+                  </div>
+                )}
+                {selectedAddOns.length > 0 && (
+                  <div className="flex justify-between items-center">
+                    <span className="font-body-lg text-slate-text">Dịch vụ bổ sung ({selectedAddOns.length} mục)</span>
+                    <span className="font-label-md text-primary">Theo báo giá</span>
+                  </div>
+                )}
               </div>
 
-              <div className="border-t border-gold-gradient-start/30 mt-8 pt-8 flex justify-between items-end">
-                <span className="font-headline-sm text-on-surface">Tổng Dự Trù</span>
-                <div className="text-right">
-                  <span className="font-display-lg text-primary block">205.500.000đ</span>
-                  <span className="text-on-surface-variant text-sm mt-1 block">* Chưa bao gồm 8% VAT và đồ uống tiêu thụ</span>
-                </div>
+              <div className="border-t border-gold-gradient-start/30 mt-8 pt-8 flex flex-col items-end">
+                <span className="font-headline-sm text-on-surface mb-2">Để nhận báo giá chi tiết cho từng hạng mục...</span>
+                <span className="text-on-surface-variant text-sm text-right">Vui lòng điền form bên cạnh để chuyên viên tính toán chính xác nhất cho bạn.</span>
               </div>
             </div>
           </div>
@@ -92,7 +125,7 @@ export default function Estimate() {
             <div className="bg-surface-bright/85 backdrop-blur-md border border-outline-variant/30 rounded-xl p-8 sticky top-32">
               {!submitted ? (
                 <>
-                  <h3 className="font-headline-sm text-on-surface mb-6">Lưu Phương Án & Nhận Báo Giá Chi Tiết</h3>
+                  <h3 className="font-headline-sm text-on-surface mb-6">Lưu Phương Án & Nhận Báo Giá</h3>
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                       <label className="block font-label-md text-slate-text mb-2">Họ và tên *</label>
@@ -121,11 +154,8 @@ export default function Estimate() {
                     Chuyên viên của Golden Palace sẽ liên hệ với bạn trong thời gian sớm nhất.
                   </p>
                   <div className="flex gap-4 flex-col">
-                    <button className="w-full py-3 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white font-label-md flex items-center justify-center gap-2">
-                      <span className="material-symbols-outlined">picture_as_pdf</span> Tải file PDF
-                    </button>
                     <button className="w-full py-3 rounded-lg border border-primary text-primary font-label-md flex items-center justify-center gap-2 hover:bg-primary-container/10">
-                      <span className="material-symbols-outlined">link</span> Copy Link Báo Giá
+                      <span className="material-symbols-outlined">link</span> Copy Link Báo Giá ({linkToken.substring(0,8)}...)
                     </button>
                   </div>
                 </div>

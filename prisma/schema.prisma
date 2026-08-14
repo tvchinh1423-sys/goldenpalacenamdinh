@@ -1,4 +1,8 @@
 // Prisma Schema for Golden Palace Wedding Planner MVP
+// Database: PostgreSQL (Supabase)
+//
+// DATABASE_URL -> Connection pooler (port 6543, ?pgbouncer=true) — dùng cho runtime
+// DIRECT_URL   -> Direct connection (port 5432) — dùng cho `prisma migrate`
 
 generator client {
   provider = "prisma-client-js"
@@ -7,18 +11,26 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
+  
 }
 
 // ==========================================
 // ENUMS
 // ==========================================
 
+/// Vai trò tài khoản quản trị
 
 
+/// Trạng thái nháp / đã xuất bản (khách chỉ thấy PUBLISHED)
 
 
+/// Vòng đời lead: Mới -> Đã tiếp nhận -> Đã đặt cọc -> Đã chốt BEO, Huỷ từ bất kỳ đâu
 
 
+/// Buổi tổ chức tiệc
+
+
+/// Phân loại bài viết
 
 
 // ==========================================
@@ -27,11 +39,11 @@ datasource db {
 
 /// 1. Người dùng (Admin, Staff)
 model User {
-  id           String   @id @default(uuid()) 
+  id           String   @id @default(uuid())
   name         String
   email        String   @unique
   passwordHash String   @map("password_hash")
-  role         String @default("STAFF")
+  role         String     @default("STAFF")
   isActive     Boolean  @default(true) @map("is_active")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
@@ -43,9 +55,9 @@ model User {
 
 /// 2. Sảnh tiệc
 model Venue {
-  id           String        @id @default(uuid()) 
+  id           String        @id @default(uuid())
   name         String
-  description  String        
+  description  String
   images       String          @default("[]")
   minGuests    Int           @map("min_guests")
   maxGuests    Int           @map("max_guests")
@@ -59,13 +71,14 @@ model Venue {
   packagePricings ServicePackagePricing[]
   addOnPricings   AddOnServicePricing[]
 
+  @@index([status, minGuests, maxGuests])
   @@map("venues")
 }
 
 /// 3. Bảng giá sảnh tiệc theo khoảng khách
 model VenuePricing {
-  id            String        @id @default(uuid()) 
-  venueId       String        @map("venue_id") 
+  id            String        @id @default(uuid())
+  venueId       String        @map("venue_id")
   guestRangeMin Int           @map("guest_range_min")
   guestRangeMax Int           @map("guest_range_max")
   price         Decimal       
@@ -77,14 +90,15 @@ model VenuePricing {
 
   venue Venue @relation(fields: [venueId], references: [id], onDelete: Cascade)
 
+  @@index([venueId, status, guestRangeMin, guestRangeMax])
   @@map("venue_pricings")
 }
 
 /// 4. Gói dịch vụ
 model ServicePackage {
-  id           String        @id @default(uuid()) 
+  id           String        @id @default(uuid())
   name         String
-  description  String        
+  description  String
   images       String          @default("[]")
   videos       String          @default("[]")
   displayOrder Int           @default(0) @map("display_order")
@@ -97,26 +111,28 @@ model ServicePackage {
   pricings  ServicePackagePricing[]
   proposals Proposal[]
 
+  @@index([status, isAvailable])
   @@map("service_packages")
 }
 
 /// 5. Chi tiết hạng mục trong gói dịch vụ
 model ServicePackageItem {
-  id          String  @id @default(uuid()) 
-  packageId   String  @map("package_id") 
+  id          String  @id @default(uuid())
+  packageId   String  @map("package_id")
   name        String
-  description String? 
+  description String?
 
   package ServicePackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
 
+  @@index([packageId])
   @@map("service_package_items")
 }
 
 /// 6. Bảng giá gói dịch vụ theo sảnh & khoảng khách
 model ServicePackagePricing {
-  id            String        @id @default(uuid()) 
-  packageId     String        @map("package_id") 
-  venueId       String        @map("venue_id") 
+  id            String        @id @default(uuid())
+  packageId     String        @map("package_id")
+  venueId       String        @map("venue_id")
   guestRangeMin Int           @map("guest_range_min")
   guestRangeMax Int           @map("guest_range_max")
   price         Decimal       
@@ -129,18 +145,21 @@ model ServicePackagePricing {
   package ServicePackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
   venue   Venue          @relation(fields: [venueId], references: [id], onDelete: Cascade)
 
+  @@index([venueId, status, guestRangeMin, guestRangeMax])
+  @@index([packageId])
   @@map("service_package_pricings")
 }
 
 /// 7. Dịch vụ bổ sung (Add-on)
 model AddOnService {
-  id                   String        @id @default(uuid()) 
+  id                   String        @id @default(uuid())
   name                 String
-  description          String        
+  description          String
   images               String          @default("[]")
   videos               String          @default("[]")
   displayOrder         Int           @default(0) @map("display_order")
   isAvailable          Boolean       @default(true) @map("is_available")
+  /// Mảng id gói dịch vụ đã bao gồm add-on này -> tránh tính trùng
   excludedFromPackages String          @default("[]") @map("excluded_from_packages")
   status               String @default("DRAFT")
   createdAt            DateTime      @default(now()) @map("created_at")
@@ -149,14 +168,15 @@ model AddOnService {
   pricings       AddOnServicePricing[]
   proposalAddOns ProposalAddOn[]
 
+  @@index([status, isAvailable])
   @@map("add_on_services")
 }
 
 /// 8. Bảng giá dịch vụ bổ sung theo sảnh & khoảng khách
 model AddOnServicePricing {
-  id            String        @id @default(uuid()) 
-  addOnId       String        @map("add_on_id") 
-  venueId       String        @map("venue_id") 
+  id            String        @id @default(uuid())
+  addOnId       String        @map("add_on_id")
+  venueId       String        @map("venue_id")
   guestRangeMin Int           @map("guest_range_min")
   guestRangeMax Int           @map("guest_range_max")
   price         Decimal       
@@ -169,12 +189,14 @@ model AddOnServicePricing {
   addOn AddOnService @relation(fields: [addOnId], references: [id], onDelete: Cascade)
   venue Venue        @relation(fields: [venueId], references: [id], onDelete: Cascade)
 
+  @@index([venueId, status, guestRangeMin, guestRangeMax])
+  @@index([addOnId])
   @@map("add_on_service_pricings")
 }
 
-/// 9. Combo thực đơn mẫu
+/// 9. Combo thực đơn mẫu — CHỈ THAM KHẢO, không tham gia phép tính tổng dự trù
 model MenuCombo {
-  id             String        @id @default(uuid()) 
+  id             String        @id @default(uuid())
   name           String
   dishes         String          @default("[]")
   estimatedPrice Decimal       @map("estimated_price") 
@@ -186,12 +208,13 @@ model MenuCombo {
 
   proposalFavorites ProposalFavoriteMenu[]
 
+  @@index([status])
   @@map("menu_combos")
 }
 
-/// 10. Danh mục đồ uống
+/// 10. Danh mục đồ uống — CHỈ THAM KHẢO, tính theo thực tế sử dụng
 model BeverageItem {
-  id           String        @id @default(uuid()) 
+  id           String        @id @default(uuid())
   name         String
   category     String
   price        Decimal       
@@ -200,21 +223,23 @@ model BeverageItem {
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt @map("updated_at")
 
+  @@index([status, category])
   @@map("beverage_items")
 }
 
 /// 11. Khách hàng tiềm năng (Lead)
 model Lead {
-  id              String     @id @default(uuid()) 
+  id              String     @id @default(uuid())
   code            String     @unique
+  /// Token UUID cho link phương án riêng của khách
   linkToken       String     @unique @map("link_token")
   name            String
   phone           String
   brideGroomNames String?    @map("bride_groom_names")
-  notes           String?    
+  notes           String?
   leadStatus      String @default("NEW") @map("lead_status")
-  assignedTo      String?    @map("assigned_to") 
-  internalNotes   String?    @map("internal_notes") 
+  assignedTo      String?    @map("assigned_to")
+  internalNotes   String?    @map("internal_notes")
   nextContactDate DateTime?  @map("next_contact_date")
   createdAt       DateTime   @default(now()) @map("created_at")
   updatedAt       DateTime   @updatedAt @map("updated_at")
@@ -222,13 +247,15 @@ model Lead {
   assignedUser User?      @relation(fields: [assignedTo], references: [id], onDelete: SetNull)
   proposals    Proposal[]
 
+  @@index([leadStatus, createdAt])
+  @@index([assignedTo])
   @@map("leads")
 }
 
-/// 12. Báo giá dự trù tiệc cưới
+/// 12. Phương án dự trù — mỗi lần khách sửa tạo version mới, KHÔNG ghi đè
 model Proposal {
-  id                 String       @id @default(uuid()) 
-  leadId             String       @map("lead_id") 
+  id                 String       @id @default(uuid())
+  leadId             String       @map("lead_id")
   version            Int
   guestCount         Int          @map("guest_count")
   budgetPerTable     Decimal      @map("budget_per_table") 
@@ -236,27 +263,30 @@ model Proposal {
   eventSession       String @map("event_session")
   mainTables         Int          @map("main_tables")
   reserveTables      Int          @map("reserve_tables")
-  packageId          String?      @map("package_id") 
+  packageId          String?      @map("package_id")
   packagePrice       Decimal?     @map("package_price") 
   totalBase          Decimal      @map("total_base") 
   totalMax           Decimal      @map("total_max") 
+  /// Mốc đóng băng giá — giá giữ nguyên tại thời điểm tạo phương án
   priceEffectiveDate DateTime     @map("price_effective_date")
   createdAt          DateTime     @default(now()) @map("created_at")
 
-  lead          Lead                  @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  package       ServicePackage?       @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  lead          Lead                   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  package       ServicePackage?        @relation(fields: [packageId], references: [id], onDelete: SetNull)
   venues        ProposalVenue[]
   addOns        ProposalAddOn[]
   favoriteMenus ProposalFavoriteMenu[]
 
+  @@unique([leadId, version])
+  @@index([leadId])
   @@map("proposals")
 }
 
-/// 13. Sảnh tiệc được chọn trong báo giá
+/// 13. Sảnh tiệc được chọn trong phương án (tên & giá đã đóng băng)
 model ProposalVenue {
-  id          String  @id @default(uuid()) 
-  proposalId  String  @map("proposal_id") 
-  venueId     String  @map("venue_id") 
+  id          String  @id @default(uuid())
+  proposalId  String  @map("proposal_id")
+  venueId     String  @map("venue_id")
   venueName   String  @map("venue_name")
   venueFee    Decimal @map("venue_fee") 
   isPreferred Boolean @default(false) @map("is_preferred")
@@ -264,58 +294,64 @@ model ProposalVenue {
   proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
   venue    Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
 
+  @@index([proposalId])
   @@map("proposal_venues")
 }
 
-/// 14. Dịch vụ bổ sung được lựa chọn trong báo giá
+/// 14. Dịch vụ bổ sung được lựa chọn trong phương án (tên & giá đã đóng băng)
 model ProposalAddOn {
-  id         String  @id @default(uuid()) 
-  proposalId String  @map("proposal_id") 
-  addOnId    String  @map("add_on_id") 
+  id         String  @id @default(uuid())
+  proposalId String  @map("proposal_id")
+  addOnId    String  @map("add_on_id")
   addOnName  String  @map("add_on_name")
   price      Decimal 
 
   proposal Proposal     @relation(fields: [proposalId], references: [id], onDelete: Cascade)
   addOn    AddOnService @relation(fields: [addOnId], references: [id], onDelete: Cascade)
 
+  @@index([proposalId])
   @@map("proposal_add_ons")
 }
 
-/// 15. Combo thực đơn yêu thích trong báo giá
+/// 15. Combo thực đơn yêu thích trong phương án (tên đã đóng băng)
 model ProposalFavoriteMenu {
-  id          String @id @default(uuid()) 
-  proposalId  String @map("proposal_id") 
-  menuComboId String @map("menu_combo_id") 
+  id          String @id @default(uuid())
+  proposalId  String @map("proposal_id")
+  menuComboId String @map("menu_combo_id")
   comboName   String @map("combo_name")
 
   proposal  Proposal  @relation(fields: [proposalId], references: [id], onDelete: Cascade)
   menuCombo MenuCombo @relation(fields: [menuComboId], references: [id], onDelete: Cascade)
 
+  @@index([proposalId])
   @@map("proposal_favorite_menus")
 }
 
-/// 16. Theo dõi phiên truy cập
+/// 16. Theo dõi phiên truy cập — phục vụ KPI tỷ lệ truy cập -> lead
 model SessionTracking {
-  id              String   @id @default(uuid()) 
+  id              String   @id @default(uuid())
   sessionId       String   @map("session_id")
   page            String
   convertedToLead Boolean  @default(false) @map("converted_to_lead")
   createdAt       DateTime @default(now()) @map("created_at")
 
+  @@index([sessionId])
+  @@index([createdAt])
   @@map("session_trackings")
 }
 
 /// 17. Tin tức và Ưu đãi (Blog / Promotions)
 model Post {
-  id        String   @id @default(uuid()) 
+  id        String   @id @default(uuid())
   title     String
   slug      String   @unique
-  content   String   
+  content   String
   image     String?
-  type      String   // NEWS, PROMOTION
+  type      String @default("NEWS")
   published Boolean  @default(true)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([published, createdAt])
   @@map("posts")
 }

@@ -78,18 +78,18 @@ module.exports = {
         "component-gap": "24px"
       }, 
       fontFamily: {
-        "body-lg": ["var(--font-inter)", "sans-serif"], 
-        "body-md": ["var(--font-inter)", "sans-serif"], 
+        "body-lg": ["var(--font-montserrat)", "sans-serif"], 
+        "body-md": ["var(--font-montserrat)", "sans-serif"], 
         "display-lg": ["var(--font-playfair)", "serif"], 
         "headline-md": ["var(--font-playfair)", "serif"], 
         "price-display": ["var(--font-playfair)", "serif"], 
         "display-lg-mobile": ["var(--font-playfair)", "serif"], 
         "headline-sm": ["var(--font-playfair)", "serif"], 
-        "label-md": ["var(--font-inter)", "sans-serif"], 
+        "label-md": ["var(--font-montserrat)", "sans-serif"], 
         "headline": ["var(--font-playfair)", "serif"], 
         "display": ["var(--font-playfair)", "serif"], 
-        "body": ["var(--font-inter)", "sans-serif"], 
-        "label": ["var(--font-inter)", "sans-serif"]
+        "body": ["var(--font-montserrat)", "sans-serif"], 
+        "label": ["var(--font-montserrat)", "sans-serif"]
       }
     }
   },
