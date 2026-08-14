@@ -37,16 +37,21 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Links */}
+        {/* Map */}
         <div className="col-span-1 md:col-span-1">
-          <h4 className="text-white font-semibold mb-6 uppercase tracking-wider text-sm">Liên Kết</h4>
-          <ul className="space-y-3 text-sm font-light">
-            <li><Link href="/he-thong" className="hover:text-[#e3a638] transition-colors">Hệ thống trung tâm</Link></li>
-            <li><Link href="/dich-vu" className="hover:text-[#e3a638] transition-colors">Dịch vụ sự kiện</Link></li>
-            <li><Link href="/thuc-don" className="hover:text-[#e3a638] transition-colors">Thực đơn tham khảo</Link></li>
-            <li><Link href="/khuyen-mai" className="hover:text-[#e3a638] transition-colors">Chương trình ưu đãi</Link></li>
-            <li><Link href="/du-toan-chi-phi" className="hover:text-[#e3a638] transition-colors">Công cụ dự toán chi phí</Link></li>
-          </ul>
+          <h4 className="text-white font-semibold mb-6 uppercase tracking-wider text-sm">Bản Đồ</h4>
+          <div className="w-full h-[150px] bg-white/5 rounded-sm overflow-hidden border border-white/10">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3736.657685608757!2d106.16278857416391!3d20.43813631055745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135e0aa06c11b15%3A0xc3b832b85e0bf712!2zOTggxJDDtG5nIEEsIEzhu5ljIEjDsmEsIFRQLiBOYW0gxJDhu4tuaCwgTmFtIMSQ4buLbmgsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1714901234567!5m2!1sen!2s" 
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen="" 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Google Map Golden Palace"
+            ></iframe>
+          </div>
         </div>
 
         {/* Newsletter / Contact form */}
@@ -68,11 +73,9 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between text-xs font-light">
-        <p>© 2026 Golden Palace Nam Định. All rights reserved.</p>
-        <div className="flex gap-6 mt-4 md:mt-0">
-          <Link href="#" className="hover:text-[#e3a638] transition-colors">Facebook</Link>
-          <Link href="#" className="hover:text-[#e3a638] transition-colors">Instagram</Link>
-          <Link href="#" className="hover:text-[#e3a638] transition-colors">Zalo</Link>
+        <p>© 2026 Toàn bộ bản quyền thuộc GoldenPalace</p>
+        <div className="mt-4 md:mt-0 text-gray-500">
+          Design by Trần Vân Chinh
         </div>
       </div>
     </footer>
