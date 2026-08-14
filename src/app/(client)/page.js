@@ -20,7 +20,7 @@ export default function Home() {
           </h2>
           <h1 className="text-5xl md:text-7xl font-semibold mb-6 leading-tight drop-shadow-2xl font-playfair text-white">
             Golden Palace<br/>
-            <span className="italic font-light text-4xl md:text-6xl text-[#e3a638]">
+            <span className="font-slogan font-normal text-6xl md:text-8xl text-[#e3a638] mt-4 block">
               Nơi khởi đầu hạnh phúc trọn vẹn
             </span>
           </h1>
