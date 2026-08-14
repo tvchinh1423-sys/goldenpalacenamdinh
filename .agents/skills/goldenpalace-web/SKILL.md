@@ -99,6 +99,7 @@ total_max  = max_food_cost  + venue_fee + main_package + sum(add_on_services)
 - **[Tech Architecture](./references/tech-architecture.md)** — Database schema 17 models, API endpoints, project structure, design system, env vars, known issues
 - **[UI/UX Specs](./references/ui-ux-specs.md)** — Chi tiết 17 màn hình (MH1–MH17), components, interactions, design tokens
 - **[Current Status](./references/current-status.md)** — Tiến độ hiện tại, những gì đã làm/chưa làm, file tree, git history, known issues
+- **[Lessons Learned](./references/lessons-learned.md)** — Tổng hợp bài học và kinh nghiệm kỹ thuật thực tế (fix bugs, xử lý DB Vercel/Supabase, Next.js App Router, UI/UX Guidelines).
 
 ## Tài liệu gốc (trong project root)
 
