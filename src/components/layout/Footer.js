@@ -2,16 +2,17 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#050505] border-t border-white/5 pt-20 pb-10 text-gray-400 font-montserrat">
+    <footer className="bg-[#fcf9f2] border-t border-[#e3a638]/20 pt-20 pb-10 text-gray-600 font-montserrat">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
         
         {/* Brand */}
         <div className="col-span-1 md:col-span-1">
           <Link href="/" className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-[#e3a638] rounded flex items-center justify-center text-black font-bold font-playfair text-lg">
-              G
+            <div className="relative w-10 h-10 flex items-center justify-center">
+              <span className="absolute text-[#a66a3a] font-bold font-playfair text-2xl -ml-1">M</span>
+              <span className="absolute text-[#e3a638] font-bold font-playfair text-2xl ml-2">H</span>
             </div>
-            <span className="text-[#e3a638] font-playfair text-lg tracking-widest uppercase">Golden Palace</span>
+            <span className="text-[#a66a3a] font-playfair text-lg tracking-widest uppercase">Golden Palace</span>
           </Link>
           <p className="text-sm font-light leading-relaxed mb-6">
             Nơi tôn vinh những khoảnh khắc trọn vẹn. Không gian hoàng gia, dịch vụ đẳng cấp 5 sao tại trung tâm thành phố Nam Định.
@@ -20,18 +21,18 @@ export default function Footer() {
 
         {/* Contact */}
         <div className="col-span-1 md:col-span-1">
-          <h4 className="text-white font-semibold mb-6 uppercase tracking-wider text-sm">Liên Hệ</h4>
+          <h4 className="text-gray-900 font-semibold mb-6 uppercase tracking-wider text-sm">Liên Hệ</h4>
           <ul className="space-y-4 text-sm font-light">
             <li>
-              <span className="block text-[#e3a638] text-xs mb-1 uppercase tracking-widest">Địa chỉ</span>
+              <span className="block text-[#a66a3a] text-xs mb-1 uppercase tracking-widest font-medium">Địa chỉ</span>
               98 Đông A, KĐT Hòa Vượng, TP Nam Định
             </li>
             <li>
-              <span className="block text-[#e3a638] text-xs mb-1 uppercase tracking-widest">Hotline</span>
+              <span className="block text-[#a66a3a] text-xs mb-1 uppercase tracking-widest font-medium">Hotline</span>
               0228 659 5959
             </li>
             <li>
-              <span className="block text-[#e3a638] text-xs mb-1 uppercase tracking-widest">Email</span>
+              <span className="block text-[#a66a3a] text-xs mb-1 uppercase tracking-widest font-medium">Email</span>
               booking@goldenpalace.vn
             </li>
           </ul>
@@ -39,8 +40,8 @@ export default function Footer() {
 
         {/* Map */}
         <div className="col-span-1 md:col-span-1">
-          <h4 className="text-white font-semibold mb-6 uppercase tracking-wider text-sm">Bản Đồ</h4>
-          <div className="w-full h-[150px] bg-white/5 rounded-sm overflow-hidden border border-white/10">
+          <h4 className="text-gray-900 font-semibold mb-6 uppercase tracking-wider text-sm">Bản Đồ</h4>
+          <div className="w-full h-[150px] bg-gray-100 rounded-sm overflow-hidden border border-gray-200">
             <iframe 
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3736.657685608757!2d106.16278857416391!3d20.43813631055745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135e0aa06c11b15%3A0xc3b832b85e0bf712!2zOTggxJDDtG5nIEEsIEzhu5ljIEjDsmEsIFRQLiBOYW0gxJDhu4tuaCwgTmFtIMSQ4buLbmgsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1714901234567!5m2!1sen!2s" 
               width="100%" 
@@ -56,15 +57,15 @@ export default function Footer() {
 
         {/* Newsletter / Contact form */}
         <div className="col-span-1 md:col-span-1">
-          <h4 className="text-white font-semibold mb-6 uppercase tracking-wider text-sm">Nhận Tư Vấn</h4>
+          <h4 className="text-gray-900 font-semibold mb-6 uppercase tracking-wider text-sm">Nhận Tư Vấn</h4>
           <p className="text-sm font-light mb-4">Để lại số điện thoại để nhận tư vấn và báo giá chi tiết nhất từ chúng tôi.</p>
           <div className="flex">
             <input 
               type="tel" 
               placeholder="Số điện thoại của bạn" 
-              className="bg-white/5 border border-white/10 px-4 py-2 w-full text-sm focus:outline-none focus:border-[#e3a638] transition-colors text-white"
+              className="bg-white border border-gray-300 px-4 py-2 w-full text-sm focus:outline-none focus:border-[#e3a638] transition-colors text-gray-900"
             />
-            <button className="bg-[#e3a638] text-black px-4 py-2 text-sm font-semibold hover:bg-[#a66a3a] transition-colors">
+            <button className="bg-[#e3a638] text-white px-4 py-2 text-sm font-semibold hover:bg-[#a66a3a] transition-colors">
               GỬI
             </button>
           </div>
@@ -72,7 +73,7 @@ export default function Footer() {
 
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between text-xs font-light">
+      <div className="max-w-7xl mx-auto px-6 border-t border-[#e3a638]/20 pt-8 flex flex-col md:flex-row items-center justify-between text-xs font-light">
         <p>© 2026 Toàn bộ bản quyền thuộc GoldenPalace</p>
         <div className="mt-4 md:mt-0 text-gray-500">
           Design by Trần Vân Chinh
