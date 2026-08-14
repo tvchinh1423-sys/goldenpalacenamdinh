@@ -89,7 +89,8 @@ module.exports = {
         "headline": ["var(--font-playfair)", "serif"], 
         "display": ["var(--font-playfair)", "serif"], 
         "body": ["var(--font-montserrat)", "sans-serif"], 
-        "label": ["var(--font-montserrat)", "sans-serif"]
+        "label": ["var(--font-montserrat)", "sans-serif"],
+        "slogan": ["var(--font-greatvibes)", "cursive"]
       }
     }
   },

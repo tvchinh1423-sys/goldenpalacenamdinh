@@ -1,8 +1,9 @@
 import './globals.css';
-import { Montserrat, Playfair_Display } from 'next/font/google';
+import { Montserrat, Playfair_Display, Great_Vibes } from 'next/font/google';
 
 const montserrat = Montserrat({ subsets: ['latin', 'vietnamese'], variable: '--font-montserrat' });
 const playfair = Playfair_Display({ subsets: ['latin', 'vietnamese'], variable: '--font-playfair' });
+const greatVibes = Great_Vibes({ weight: '400', subsets: ['latin', 'vietnamese'], variable: '--font-greatvibes' });
 
 export const metadata = {
   title: 'Golden Palace - Nơi khởi đầu hạnh phúc trọn vẹn',
@@ -11,7 +12,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="vi" className={`${montserrat.variable} ${playfair.variable}`}>
+    <html lang="vi" className={`${montserrat.variable} ${playfair.variable} ${greatVibes.variable}`}>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
