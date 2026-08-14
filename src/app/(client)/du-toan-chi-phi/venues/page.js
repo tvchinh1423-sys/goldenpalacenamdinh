@@ -112,7 +112,7 @@ export default function Venues() {
                   )}
                   
                   <div className={`relative h-64 overflow-hidden ${isTight ? 'grayscale-[30%]' : ''}`}>
-                    <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: \`url('\${image}')\` }}></div>
+                    <div className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style={{ backgroundImage: `url('${image}')` }}></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                     <div className={`absolute top-4 left-4 bg-surface/90 backdrop-blur-sm ${statusColor} font-label-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm`}>
                       <span className="material-symbols-outlined text-[16px]">
