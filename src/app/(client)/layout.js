@@ -1,5 +1,6 @@
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import FloatingCTA from '@/components/layout/FloatingCTA';
 import { EstimateProvider } from '@/components/guest/EstimateContext';
 
 export default function ClientLayout({ children }) {
@@ -12,6 +13,7 @@ export default function ClientLayout({ children }) {
         </EstimateProvider>
       </main>
       <Footer />
+      <FloatingCTA />
     </div>
   );
 }

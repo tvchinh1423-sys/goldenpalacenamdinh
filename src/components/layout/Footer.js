@@ -45,12 +45,9 @@ export default function Footer() {
         
         {/* Brand */}
         <div className="col-span-1 md:col-span-1">
-          <Link href="/" className="flex items-center gap-2 mb-6">
-            <div className="relative w-10 h-10 flex items-center justify-center">
-              <span className="absolute text-[#a66a3a] font-bold font-playfair text-2xl -ml-1">M</span>
-              <span className="absolute text-[#e3a638] font-bold font-playfair text-2xl ml-2">H</span>
-            </div>
-            <span className="text-[#a66a3a] font-playfair text-lg tracking-widest uppercase">Golden Palace</span>
+          <Link href="/" className="flex items-center gap-3 mb-6 group">
+            <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+            <span className="text-[#a66a3a] font-playfair text-lg tracking-widest uppercase font-semibold">Golden Palace</span>
           </Link>
           <p className="text-sm font-light leading-relaxed mb-6">
             Nơi tôn vinh những khoảnh khắc trọn vẹn. Không gian hoàng gia, dịch vụ đẳng cấp 5 sao tại trung tâm thành phố Nam Định.

@@ -5,16 +5,9 @@ export default function Navbar() {
     <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          {/* Logo Hình ảnh thực tế (khách hàng upload file logo.png vào thư mục public) */}
-          {/* <img src="/logo.png" alt="Golden Palace Logo" className="h-12 w-auto" /> */}
-          
-          {/* Logo Chữ lồng tạm thời */}
-          <div className="relative w-10 h-10 flex items-center justify-center">
-             <span className="absolute text-[#a66a3a] font-bold font-playfair text-2xl -ml-1">M</span>
-             <span className="absolute text-[#e3a638] font-bold font-playfair text-2xl ml-2">H</span>
-          </div>
-          <span className="text-[#a66a3a] font-playfair text-xl tracking-widest uppercase ml-1">Golden Palace</span>
+        <Link href="/" className="flex items-center gap-3 group">
+          <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+          <span className="text-[#a66a3a] font-playfair text-xl tracking-widest uppercase font-semibold">Golden Palace</span>
         </Link>
 
         {/* Links */}
