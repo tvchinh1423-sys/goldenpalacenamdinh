@@ -1,23 +1,51 @@
 import { NextResponse } from 'next/server';
 
-// Golden Palace Knowledge Base
+// Golden Palace Real Knowledge Base
 const SYSTEM_KNOWLEDGE = `
 Bạn là Trợ lý AI Tư vấn Tiệc cưới & Sự kiện của Nhà hàng Golden Palace Nam Định.
-Thông tin chính thức về Golden Palace:
+Thông tin thực tế 100% chính thức về Golden Palace:
 1. Địa chỉ: 98 Đông A, KĐT Hòa Vượng, TP Nam Định.
 2. Hotline liên hệ / Zalo: 0228 659 5959
 3. Email: cungdienvang98donga@gmail.com
 4. Facebook Fanpage: https://www.facebook.com/goldenpalaceweddingnamdinh (Messenger: m.me/goldenpalaceweddingnamdinh)
-5. Mức giá mâm cỗ: Từ 3.500.000 VNĐ / mâm đến 5.000.000+ VNĐ / mâm (mâm 10 người).
-6. Quy mô sảnh tiệc: Phù hợp từ 100 khách đến 800 khách. Hệ thống hội trường sang trọng, không cột chắn tầm nhìn, trang bị màn hình LED 30m2 tiêu chuẩn, âm thanh ánh sáng hiện đại.
-7. Các dịch vụ chính: Tiệc cưới trọn gói, Sự kiện doanh nghiệp, Tiệc sinh nhật, Kỷ niệm, Thượng thọ, Tất niên...
-8. Giá trị cốt lõi:
-   - Sự An Tâm: Kiểm soát rủi ro vận hành bằng 0.
-   - Sự Chỉn Chu & Thể Diện: Tiêu chuẩn ẩm thực truyền thống cao cấp, tôn vinh vị thế gia chủ.
-   - Minh Bạch Giá Trị Thực: Tuyệt đối không ép sale, không chi phí ẩn.
-9. Công cụ Dự toán Chi phí: Khách hàng có thể tự do chọn sảnh, chọn gói dịch vụ, tính ngân sách tức thì tại đường dẫn: /du-toan-chi-phi
 
-Phong cách trả lời: Lịch sự, ân cần, xưng "Em", gọi "Quý khách", dùng Tiếng Việt chuẩn. Trả lời súc tích, rõ ràng, luôn kèm lời mời trải nghiệm công cụ Dự toán hoặc gọi Hotline 0228 659 5959.
+5. THÔNG TIN SẢN VÀ PHÍ DỊCH VỤ HỘI TRƯỜNG:
+   - Hội trường Tầng 2: Sức chứa 350 - 750 khách (Từ chối phục vụ nếu dưới 250 khách).
+     * Phí dịch vụ: 10.000.000 VNĐ (Tiệc trên 350 khách) | 12.000.000 VNĐ (Tiệc dưới 350 khách).
+     * Đã bao gồm: Màn hình LED 30m², giàn đèn bướm, phông 2 bên sân khấu (6tr), phông chụp ảnh (1tr), hoa lụa & đèn 2 bên đường dẫn, cổng hoa (3tr), bàn trang trí & hộp tiền mừng (3tr), bánh cưới, rượu champagne, đá khói, pháo điện, chữ lồng tên.
+
+   - Hội trường Tầng 3: Sức chứa 300 - 650 khách (Từ chối phục vụ nếu dưới 250 khách).
+     * Phí dịch vụ: 10.000.000 VNĐ (Tiệc trên 300 khách) | 12.000.000 VNĐ (Tiệc dưới 300 khách).
+     * Đã bao gồm: Màn hình LED 30m², giàn đèn bướm, hoa lụa & đèn 2 bên đường dẫn, phông 2 bên sân khấu, phông chụp ảnh lưu niệm.
+
+   - Hội trường Tầng 4: Sức chứa 100 - 300 khách.
+     * Phí dịch vụ: 2.000.000 VNĐ (Giá niêm yết 14.700.000 VNĐ - Ưu đãi giảm 85%).
+     * Đã bao gồm: Màn hình LED 10m² (4tr), âm thanh ánh sáng (4tr), cổng chào (2tr), bàn trang trí (2tr), hoa lụa sân khấu (2tr), bánh cưới & rượu champagne, pháo điện.
+
+   - Quầy Bar: 50 - 100 khách.
+   - Phòng VIP: 10 - 50 khách.
+
+6. DỊCH VỤ NÂNG CAO:
+   - Nhạc công Keyboard: 800.000 VNĐ / người.
+   - Ca sĩ (Hát 3 bài): 800.000 VNĐ / người.
+   - MC dẫn chương trình: 800.000 VNĐ / người.
+   - Thiên thần: 1.000.000 VNĐ / cặp.
+   - Ban nhạc Saxophone: 5.000.000 VNĐ / ban.
+   - Ban nhạc Tứ tấu: 14.000.000 VNĐ / ban.
+   - Vòng ánh sáng laser trao nhẫn: 700.000 VNĐ (Tặng miễn phí cho tiệc > 400 khách).
+   - Bóng bay kích nổ (4 quả): 900.000 VNĐ.
+   - Flycam trao nhẫn cưới: 1.000.000 VNĐ.
+   - Bướm dẫn đường cô dâu: 3.000.000 VNĐ.
+
+7. BÁO GIÁ PHOTOBOOTH:
+   - Gói 1 (1.5 giờ, 200 ảnh nhỏ/100 ảnh to, 3 layout): 3.400.000 VNĐ.
+   - Gói 2 (2 giờ, Không giới hạn ảnh, 5 layout): 4.000.000 VNĐ.
+   - Gói 3 (3 giờ, Không giới hạn ảnh, 5 layout): 5.000.000 VNĐ.
+   - Đã bao gồm: 1 nhân viên hỗ trợ, file mềm lấy ngay, phụ kiện check-in, sổ lưu giữ ảnh.
+
+8. Công cụ Dự toán Chi phí: Khách hàng có thể tự chọn hội trường, tính ngân sách tức thì tại: /du-toan-chi-phi
+
+Phong cách trả lời: Ân cần, xưng "Em", gọi "Quý khách", ngắn gọn, rõ ràng, dẫn link công cụ Dự toán hoặc Hotline 0228 659 5959.
 `;
 
 export async function POST(request) {
@@ -78,7 +106,7 @@ export async function POST(request) {
     console.error('AI Chat Route Error:', error);
     return NextResponse.json(
       {
-        reply: 'Dạ em chào Quý khách! Hiện tại hệ thống đang cập nhật. Quý khách vui lòng gọi Hotline **0228 659 5959** hoặc thử công cụ **[Dự toán chi phí](/du-toan-chi-phi)** ạ!',
+        reply: 'Dạ em chào Quý khách! Hiện tại hệ thống đang bận. Quý khách vui lòng gọi Hotline **0228 659 5959** hoặc thử công cụ **[Dự toán chi phí](/du-toan-chi-phi)** ạ!',
         suggestions: ["📞 Gọi Hotline 0228 659 5959", "📝 Tính dự toán ngay"]
       },
       { status: 500 }
@@ -86,74 +114,62 @@ export async function POST(request) {
   }
 }
 
-// Smart Intent & Response Generator
 function generateSmartResponse(msg) {
-  if (msg.includes('mâm') || msg.includes('giá') || msg.includes('chi phí') || msg.includes('bao nhiêu')) {
+  if (msg.includes('sảnh') || msg.includes('hội trường') || msg.includes('tầng') || msg.includes('khách') || msg.includes('chứa')) {
     return {
-      reply: 'Dạ, mức giá mâm cỗ tiệc cưới tại **Golden Palace Nam Định** hiện khởi điểm từ **3.500.000 VNĐ / mâm 10 khách**.\n\n✨ Mức giá này đã bao gồm thực đơn cao cấp, hội trường trang trọng và đội ngũ phục vụ chuyên nghiệp.\n\nQuý khách có thể tự phối hợp ngân sách và xem dự toán chi tiết tức thì tại công cụ **[Dự toán chi phí sự kiện](/du-toan-chi-phi)** ạ!',
+      reply: 'Dạ, Golden Palace sở hữu hệ thống các tầng hội trường phù hợp từng quy mô tiệc:\n\n🏛️ **Hội trường Tầng 2:** 350 – 750 khách (Phí dịch vụ 10tr khi >350 khách | 12tr khi <350 khách). *Từ chối phục vụ tiệc dưới 250 khách*.\n🏛️ **Hội trường Tầng 3:** 300 – 650 khách (Phí dịch vụ 10tr khi >300 khách | 12tr khi <300 khách). *Từ chối phục vụ tiệc dưới 250 khách*.\n🏛️ **Hội trường Tầng 4:** 100 – 300 khách (Phí dịch vụ ưu đãi giảm 85% chỉ còn **2.000.000 VNĐ**).\n🍷 **Quầy Bar:** 50 – 100 khách.\n👑 **Phòng VIP:** 10 – 50 khách.\n\nQuý khách muốn xem chi tiết hội trường tầng nào ạ?',
       suggestions: [
-        "📝 Tính dự toán chi phí ngay",
-        "🏛️ Khám phá không gian sảnh tiệc",
-        "🎁 Các chương trình ưu đãi hiện có"
+        "🏛️ Chi tiết Hội trường Tầng 2",
+        "🏛️ Chi tiết Hội trường Tầng 3",
+        "🏛️ Chi tiết Hội trường Tầng 4",
+        "📝 Lập dự toán chi phí"
       ]
     };
   }
 
-  if (msg.includes('sảnh') || msg.includes('khách') || msg.includes('chứa') || msg.includes('quy mô') || msg.includes('rộng')) {
+  if (msg.includes('nâng cao') || msg.includes('dịch vụ') || msg.includes('photobooth') || msg.includes('mc') || msg.includes('ca sĩ') || msg.includes('ban nhạc') || msg.includes('flycam')) {
     return {
-      reply: 'Dạ, Golden Palace sở hữu hệ thống sảnh tiệc linh hoạt phù hợp cho các quy mô tiệc từ **100 đến 800 khách**:\n\n🏛️ **Đặc điểm nổi bật:**\n- Hội trường thiết kế hoàng gia, tầm nhìn thoáng không cột chắn.\n- Trang bị **màn hình LED 30m²** tiêu chuẩn sắc nét.\n- Hệ thống âm thanh, ánh sáng biểu diễn chuyên nghiệp.\n\nQuý khách có thể tham khảo chi tiết hình ảnh sảnh tiệc tại mục **[Hệ thống sảnh](/he-thong)** hoặc tính dự toán ngay ạ!',
+      reply: 'Dạ, Golden Palace cung cấp đầy đủ các **Dịch vụ Nâng cao & Phụ kiện Đẳng cấp**:\n\n🎭 **Giải trí & Biểu diễn:**\n- MC dẫn chương trình / Nhạc công / Ca sĩ: **800.000 VNĐ / người**\n- Cặp Thiên thần: **1.000.000 VNĐ / cặp**\n- Ban nhạc Saxophone: **5.000.000 VNĐ** | Ban nhạc Tứ tấu: **14.000.000 VNĐ**\n\n✨ **Phụ kiện độc đáo:**\n- Vòng laser trao nhẫn: **700k** *(Tặng miễn phí cho tiệc >400 khách)*\n- Flycam trao nhẫn: **1.000.000 VNĐ**\n- Bướm dẫn đường cô dâu: **3.000.000 VNĐ**\n- Bóng bay kích nổ: **900.000 VNĐ / quả**\n- **Photobooth chụp ảnh:** Từ **3.400.000 VNĐ / máy** (Lấy ảnh ngay, không giới hạn).',
       suggestions: [
-        "🏛️ Xem chi tiết sảnh tiệc",
-        "📝 Lập dự toán theo số lượng khách",
-        "📍 Địa chỉ chỉ đường"
+        "📸 Báo giá Photobooth chi tiết",
+        "🎁 Ưu đãi tặng vòng laser trao nhẫn",
+        "📝 Lập dự toán trọn gói"
       ]
     };
   }
 
-  if (msg.includes('ưu đãi') || msg.includes('khuyến mãi') || msg.includes('quà') || msg.includes('giảm giá')) {
+  if (msg.includes('photobooth') || msg.includes('chụp ảnh')) {
     return {
-      reply: 'Dạ, Golden Palace liên tục áp dụng các **chương trình ưu đãi hấp dẫn** dành riêng cho mùa cưới và sự kiện:\n\n🎁 **Ưu đãi đặc quyền bao gồm:**\n- Tặng gói trang trí sân khấu & cổng đón khách sang trọng.\n- Miễn phí hoặc hỗ trợ chi phí màn hình LED & hệ thống ánh sáng.\n- Ưu đãi đồ uống & tặng kèm mâm thử món.\n\nQuý khách vui lòng liên hệ Hotline **0228 659 5959** hoặc chọn **[Ưu đãi](/khuyen-mai)** để nhận báo giá ưu đãi nhất ạ!',
+      reply: 'Dạ, bảng giá **Dịch vụ Chụp ảnh Photobooth** tại Golden Palace:\n\n📸 **Gói 1 (1.5 giờ):** 3.400.000 VNĐ (200 ảnh nhỏ / 100 ảnh to, 3 layout thiết kế)\n📸 **Gói 2 (2 giờ):** 4.000.000 VNĐ (Không giới hạn ảnh, 5 layout)\n📸 **Gói 3 (3 giờ):** 5.000.000 VNĐ (Không giới hạn ảnh, 5 layout)\n\n✨ *Tất cả các gói đều bao gồm: 1 Nhân viên hỗ trợ, lấy File mềm ngay, phụ kiện check-in độc đáo và sổ lưu giữ ảnh kỷ niệm.*',
       suggestions: [
-        "🎁 Xem chi tiết gói ưu đãi",
-        "📞 Gọi Hotline 0228 659 5959",
-        "📝 Tính dự toán ngân sách"
+        "📝 Dự toán tổng chi phí tiệc",
+        "📞 Gọi Hotline đặt dịch vụ 0228 659 5959"
       ]
     };
   }
 
-  if (msg.includes('dự toán') || msg.includes('tính') || msg.includes('lập') || msg.includes('báo giá')) {
+  if (msg.includes('phí') || msg.includes('giá') || msg.includes('trọn gói') || msg.includes('hạng mục')) {
     return {
-      reply: 'Dạ, Golden Palace có sẵn công cụ **Dự toán chi phí trực tuyến 3 phút** vô cùng tiện lợi:\n\n1. Chọn số lượng khách & mâm dự phòng.\n2. Chọn sảnh tiệc mong muốn.\n3. Lựa chọn các gói dịch vụ & Combo thực đơn.\n\n👉 Quý khách hãy trải nghiệm ngay tại **[Công cụ Dự toán chi phí](/du-toan-chi-phi)** ạ!',
+      reply: 'Dạ, Golden Palace **không áp dụng gói cơ bản/trọn gói chung chung**, mà áp dụng **Phí dịch vụ hội trường trọn gói theo từng tầng** đã bao gồm đầy đủ toàn bộ trang thiết bị cao cấp:\n\n- **Tầng 4 (100 - 300 khách):** Chỉ **2.000.000 VNĐ** *(Giảm 85% từ 14,7tr)*.\n- **Tầng 2 (350 - 750 khách):** **10.000.000 VNĐ** *(>350 khách)* hoặc **12.000.000 VNĐ** *(<350 khách)*.\n- **Tầng 3 (300 - 650 khách):** **10.000.000 VNĐ** *(>300 khách)* hoặc **12.000.000 VNĐ** *(<300 khách)*.\n\n✨ Phí dịch vụ đã bao gồm: Màn hình LED, âm thanh ánh sáng, cổng hoa, bàn trang trí, phông chụp ảnh, hoa lụa đường dẫn, bánh cưới, champagne, pháo điện...',
       suggestions: [
-        "📝 Thử tính dự toán ngay",
-        "📞 Tư vấn qua Hotline 0228 659 5959"
-      ]
-    };
-  }
-
-  if (msg.includes('địa chỉ') || msg.includes('ở đâu') || msg.includes('vị trí') || msg.includes('hotline') || msg.includes('số điện thoại') || msg.includes('liên hệ')) {
-    return {
-      reply: 'Dạ, thông tin liên hệ chính thức của **Golden Palace**:\n\n📍 **Địa chỉ:** 98 Đông A, KĐT Hòa Vượng, TP Nam Định.\n📞 **Hotline tư vấn:** **0228 659 5959**\n✉️ **Email:** cungdienvang98donga@gmail.com\n⚡ **Facebook:** [Fanpage Golden Palace](https://www.facebook.com/goldenpalaceweddingnamdinh)\n\nGolden Palace rất hân hạnh được đón tiếp Quý khách ghé thăm và trải nghiệm trực tiếp ạ!',
-      suggestions: [
-        "📍 Chỉ đường Google Maps",
-        "📞 Gọi Hotline 0228 659 5959",
-        "📝 Dự toán chi phí tiệc"
+        "📝 Lập dự toán ngân sách ngay",
+        "📞 Hotline 0228 659 5959"
       ]
     };
   }
 
   return {
-    reply: 'Dạ, Golden Palace rất vui được hỗ trợ Quý khách! Quý khách có thể lựa chọn các chủ đề tư vấn dưới đây hoặc đặt câu hỏi cụ thể cho em nhé:\n\n- **Giá mâm cỗ cưới** từ 3.500.000đ/mâm.\n- **Sảnh tiệc** từ 100 - 800 khách.\n- **Dự toán chi phí** sự kiện trong 3 phút.\n- **Chương trình ưu đãi** đặt cọc sớm.\n\nHotline tư vấn nhanh: **0228 659 5959** ạ!',
+    reply: 'Dạ, Trợ lý AI Golden Palace rất hân hạnh được tư vấn cho Quý khách! Quý khách muốn tìm hiểu thêm về hạng mục nào ạ?\n\n- **Sức chứa các Hội trường** (Tầng 2, Tầng 3, Tầng 4, Bar, VIP)\n- **Phí dịch vụ trọn gói theo tầng** (Chỉ từ 2tr - 10tr)\n- **Danh mục Dịch vụ Nâng cao** (MC, Ca sĩ, Saxophone, Laser, Flycam...)\n- **Báo giá máy chụp ảnh Photobooth** lấy ngay\n\nHotline hỗ trợ trực tiếp: **0228 659 5959**',
     suggestions: generateSuggestions(msg)
   };
 }
 
 function generateSuggestions(msg) {
   return [
-    "💡 Giá 1 mâm cỗ cưới bao nhiêu?",
-    "🏛️ Sảnh tiệc chứa tối đa bao nhiêu khách?",
-    "🎁 Ưu đãi tiệc cưới hiện tại",
-    "📝 Lập dự toán chi phí ngay",
+    "🏛️ Sức chứa & Phí hội trường các tầng",
+    "✨ Danh mục Dịch vụ Nâng cao",
+    "📸 Báo giá Photobooth lấy ngay",
+    "📝 Lập dự toán chi phí sự kiện",
     "📍 Địa chỉ & Hotline liên hệ"
   ];
 }

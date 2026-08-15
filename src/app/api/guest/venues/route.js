@@ -8,21 +8,14 @@ export async function GET(request) {
   try {
     const venues = await prisma.venue.findMany({
       where: {
-        status: 'PUBLISHED',
-        ...(guests && {
-          minGuests: { lte: guests },
-          maxGuests: { gte: guests }
-        })
+        status: 'PUBLISHED'
       },
       include: {
         pricings: {
           where: {
-            status: 'PUBLISHED',
-            ...(guests && {
-              guestRangeMin: { lte: guests },
-              guestRangeMax: { gte: guests }
-            })
-          }
+            status: 'PUBLISHED'
+          },
+          orderBy: { guestRangeMin: 'asc' }
         }
       },
       orderBy: { displayOrder: 'asc' }
