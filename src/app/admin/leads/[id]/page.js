@@ -5,6 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { revalidatePath } from 'next/cache';
+import LeadZaloClientActions from './LeadZaloClientActions';
 
 export default async function LeadDetailPage({ params }) {
   const session = await getServerSession(authOptions);
@@ -43,25 +44,30 @@ export default async function LeadDetailPage({ params }) {
   }
 
   const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(val));
+  const latestProposal = lead.proposals[0];
+  const cleanPhone = lead.phone.replace(/[^0-9]/g, '');
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 font-inter">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
         <div className="flex items-center gap-4">
           <Link href="/admin/leads">
-            <button className="w-10 h-10 rounded-full border border-outline-variant/50 flex items-center justify-center hover:bg-surface-variant transition-colors text-on-surface-variant">
-              <span className="material-symbols-outlined">arrow_back</span>
+            <button className="w-10 h-10 rounded-xl border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors text-gray-700 cursor-pointer">
+              <span className="material-symbols-outlined text-lg">arrow_back</span>
             </button>
           </Link>
-          <h2 className="text-2xl font-headline-sm text-on-surface">Chi tiết Khách hàng</h2>
+          <div>
+            <span className="text-[10px] uppercase font-mono font-bold text-[#a66a3a] block">{lead.code}</span>
+            <h2 className="text-xl font-bold text-gray-900">Chi tiết Khách hàng: {lead.name}</h2>
+          </div>
         </div>
         
-        <form action={updateStatus} className="flex items-center gap-3 bg-surface-bright p-2 rounded-lg border border-outline-variant/30 shadow-sm">
-          <span className="text-sm font-label-md text-on-surface-variant">Cập nhật trạng thái:</span>
+        <form action={updateStatus} className="flex items-center gap-3 bg-gray-50 p-2 rounded-xl border border-gray-200 shadow-xs">
+          <span className="text-xs font-semibold text-gray-700">Trạng thái:</span>
           <select 
             name="status" 
             defaultValue={lead.leadStatus}
-            className="bg-transparent border border-outline-variant/50 rounded p-1 font-body-md text-sm outline-none focus:border-primary"
+            className="bg-white border border-gray-300 rounded-lg px-2.5 py-1 text-xs font-bold text-gray-900 outline-none focus:border-[#e3a638]"
           >
             <option value="NEW">Mới (NEW)</option>
             <option value="CONTACTED">Đã liên hệ</option>
@@ -69,102 +75,121 @@ export default async function LeadDetailPage({ params }) {
             <option value="WON">Chốt Hợp Đồng</option>
             <option value="LOST">Hủy</option>
           </select>
-          <button type="submit" className="bg-primary text-white px-3 py-1.5 rounded text-sm font-label-md hover:bg-primary/90 transition-colors">
+          <button type="submit" className="bg-gray-900 text-amber-300 px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-black transition-colors cursor-pointer">
             Lưu
           </button>
         </form>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Customer Info */}
-        <div className="glass-panel p-6 rounded-xl border border-outline-variant/30 flex flex-col gap-6">
-          <div className="flex items-center gap-4 border-b border-outline-variant/30 pb-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-gold-gradient-start to-gold-gradient-end flex items-center justify-center text-white text-2xl font-bold">
-              {lead.name.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <h3 className="font-headline-sm text-on-surface">{lead.name}</h3>
-              <p className="text-on-surface-variant text-sm">{lead.code}</p>
-            </div>
-          </div>
-
-          <div className="space-y-4 font-body-md">
-            <div>
-              <p className="text-sm text-on-surface-variant font-label-md">Số điện thoại</p>
-              <p className="text-on-surface font-semibold">{lead.phone}</p>
-            </div>
-            <div>
-              <p className="text-sm text-on-surface-variant font-label-md">Ngày nhận thông tin</p>
-              <p className="text-on-surface font-semibold">{format(new Date(lead.createdAt), 'dd/MM/yyyy HH:mm')}</p>
-            </div>
-            <div>
-              <p className="text-sm text-on-surface-variant font-label-md">Ghi chú từ khách hàng</p>
-              <div className="bg-surface-variant p-3 rounded-lg text-on-surface mt-1 text-sm border border-outline-variant/30">
-                {lead.notes ? lead.notes : <span className="text-on-surface-variant italic">Không có ghi chú</span>}
+        {/* Left Column: Customer Info & Zalo Actions */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between space-y-6">
+          <div className="space-y-6">
+            <div className="flex items-center gap-4 border-b border-gray-100 pb-4">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1c1917] to-[#a66a3a] text-amber-300 flex items-center justify-center text-xl font-bold font-playfair shadow-md">
+                {lead.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-gray-900">{lead.name}</h3>
+                <p className="text-xs text-amber-800 font-mono font-bold">{lead.phone}</p>
               </div>
             </div>
+
+            <div className="space-y-4 text-xs">
+              <div>
+                <p className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-0.5">Số điện thoại liên hệ</p>
+                <p className="text-gray-900 font-bold text-sm font-mono">{lead.phone}</p>
+              </div>
+              <div>
+                <p className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-0.5">Ngày gửi yêu cầu</p>
+                <p className="text-gray-900 font-medium">{format(new Date(lead.createdAt), 'dd/MM/yyyy HH:mm')}</p>
+              </div>
+              <div>
+                <p className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-0.5">Ghi chú của khách hàng</p>
+                <div className="bg-gray-50 p-3 rounded-xl text-gray-700 text-xs border border-gray-200/80 leading-relaxed">
+                  {lead.notes ? lead.notes : <span className="text-gray-400 italic">Không có ghi chú</span>}
+                </div>
+              </div>
+            </div>
+
+            {/* ZALO INTERACTION BUTTONS */}
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-3">
+              <span className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
+                <span>📱</span> Tương Tác & Gửi Zalo Trực Tiếp:
+              </span>
+              
+              <LeadZaloClientActions 
+                leadName={lead.name}
+                phone={cleanPhone}
+                code={lead.code}
+                proposal={latestProposal}
+                linkToken={lead.linkToken}
+              />
+            </div>
           </div>
 
-          <div className="mt-auto pt-6">
+          <div className="pt-4 border-t border-gray-100">
             <Link href={`/du-toan-chi-phi/link/${lead.linkToken}`} target="_blank">
-              <button className="w-full bg-surface-variant border border-primary/50 text-primary py-2 rounded-lg font-label-md hover:bg-primary/10 transition-colors flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined">link</span> Xem Link Khách Hàng
+              <button className="w-full bg-gray-900 text-amber-300 py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-black transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md">
+                <span className="material-symbols-outlined text-base">link</span> Xem Link Dự Toán Khách Hàng
               </button>
             </Link>
           </div>
         </div>
 
         {/* Right Column: Proposals History */}
-        <div className="lg:col-span-2 glass-panel p-6 rounded-xl border border-outline-variant/30">
-          <h3 className="font-headline-sm text-on-surface mb-6 border-b border-outline-variant/30 pb-4">Lịch sử Phương án (Proposals)</h3>
+        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+          <h3 className="font-bold text-gray-900 text-base mb-6 border-b border-gray-100 pb-3 flex items-center gap-2">
+            <span>📋</span> Lịch sử Phương án Báo Giá (Proposals)
+          </h3>
           
           <div className="space-y-8">
             {lead.proposals.length === 0 ? (
-              <p className="text-on-surface-variant italic">Chưa có phương án nào.</p>
+              <p className="text-gray-500 text-xs italic">Chưa có phương án nào.</p>
             ) : (
               lead.proposals.map((proposal, index) => {
                 const isLatest = index === 0;
                 return (
-                  <div key={proposal.id} className={`relative pl-8 border-l-2 ${isLatest ? 'border-primary' : 'border-outline-variant/50'}`}>
-                    <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 bg-surface ${isLatest ? 'border-primary' : 'border-outline-variant/50'}`}></div>
+                  <div key={proposal.id} className={`relative pl-8 border-l-2 ${isLatest ? 'border-[#e3a638]' : 'border-gray-200'}`}>
+                    <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 bg-white ${isLatest ? 'border-[#e3a638] bg-[#e3a638]' : 'border-gray-300'}`}></div>
                     
-                    <div className="flex justify-between items-start mb-4">
+                    <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h4 className={`font-label-lg font-bold ${isLatest ? 'text-primary' : 'text-on-surface-variant'}`}>
-                          Version {proposal.version} {isLatest && <span className="text-xs bg-primary-container text-on-primary-container px-2 py-0.5 rounded-full ml-2 font-normal">Mới nhất</span>}
+                        <h4 className={`text-sm font-bold ${isLatest ? 'text-gray-900' : 'text-gray-500'}`}>
+                          Phiên bản Version {proposal.version} {isLatest && <span className="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-full ml-2">Mới nhất</span>}
                         </h4>
-                        <p className="text-xs text-on-surface-variant mt-1">Lưu lúc: {format(new Date(proposal.createdAt), 'dd/MM/yyyy HH:mm')}</p>
+                        <p className="text-[11px] text-gray-400 mt-0.5">Lưu lúc: {format(new Date(proposal.createdAt), 'dd/MM/yyyy HH:mm')}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-label-md text-on-surface-variant">Tổng dự trù</p>
-                        <p className={`font-headline-sm ${isLatest ? 'text-on-surface' : 'text-on-surface-variant'}`}>{formatCurrency(proposal.totalBase)}</p>
+                        <p className="text-[10px] uppercase text-gray-400 font-semibold">Tổng dự trù kinh phí</p>
+                        <p className={`text-base font-bold font-playfair ${isLatest ? 'text-emerald-700' : 'text-gray-500'}`}>{formatCurrency(proposal.totalBase)}</p>
                       </div>
                     </div>
 
-                    <div className={`grid grid-cols-2 gap-4 text-sm font-body-sm p-4 rounded-lg bg-surface-bright border ${isLatest ? 'border-gold-gradient-start/30' : 'border-outline-variant/30'}`}>
+                    <div className={`grid grid-cols-2 gap-4 text-xs p-4 rounded-xl border ${isLatest ? 'bg-amber-50/40 border-amber-200' : 'bg-gray-50 border-gray-200'}`}>
                       <div>
-                        <span className="text-on-surface-variant block mb-1">Ngày tiệc & Quy mô</span>
-                        <p className="font-semibold">{format(new Date(proposal.eventDate), 'dd/MM/yyyy')} ({proposal.eventSession})</p>
-                        <p>{proposal.guestCount} khách • {proposal.mainTables} mâm</p>
+                        <span className="text-gray-400 font-semibold block text-[10px] uppercase mb-0.5">Ngày tiệc & Quy mô</span>
+                        <p className="font-bold text-gray-900">{format(new Date(proposal.eventDate), 'dd/MM/yyyy')} ({proposal.eventSession})</p>
+                        <p className="text-gray-700">{proposal.guestCount} khách • {proposal.mainTables} mâm chính</p>
                       </div>
                       
                       <div>
-                        <span className="text-on-surface-variant block mb-1">Hội trường ưu tiên</span>
+                        <span className="text-gray-400 font-semibold block text-[10px] uppercase mb-0.5">Hội trường ưu tiên</span>
                         {proposal.venues.filter(v => v.isPreferred).map(v => (
-                          <p key={v.venueId} className="font-semibold">{v.venueName} ({formatCurrency(v.venueFee)})</p>
+                          <p key={v.venueId} className="font-bold text-gray-900">{v.venueName} ({formatCurrency(v.venueFee)})</p>
                         ))}
-                        {proposal.venues.length === 0 && <p className="italic">Không chọn</p>}
+                        {proposal.venues.length === 0 && <p className="italic text-gray-400">Không chọn</p>}
                       </div>
 
                       <div>
-                        <span className="text-on-surface-variant block mb-1">Thực đơn</span>
-                        <p className="font-semibold">{formatCurrency(proposal.budgetPerTable)} / mâm</p>
+                        <span className="text-gray-400 font-semibold block text-[10px] uppercase mb-0.5">Thực đơn</span>
+                        <p className="font-bold text-gray-900">{formatCurrency(proposal.budgetPerTable)} / mâm</p>
                       </div>
 
                       <div>
-                        <span className="text-on-surface-variant block mb-1">Gói dịch vụ & Add-ons</span>
-                        <p className="font-semibold">{proposal.package ? proposal.package.name : 'Không chọn gói'}</p>
-                        <p className="text-xs mt-1 text-on-surface-variant">{proposal.addOns.length} dịch vụ bổ sung</p>
+                        <span className="text-gray-400 font-semibold block text-[10px] uppercase mb-0.5">Gói dịch vụ & Dịch vụ nâng cao</span>
+                        <p className="font-bold text-gray-900">{proposal.package ? proposal.package.name : 'Không chọn gói'}</p>
+                        <p className="text-[11px] text-gray-500">{proposal.addOns.length} hạng mục nâng cao</p>
                       </div>
                     </div>
                   </div>

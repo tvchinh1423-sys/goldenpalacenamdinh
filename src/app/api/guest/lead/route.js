@@ -145,6 +145,30 @@ export async function POST(request) {
       return newLead;
     });
 
+    // Real-time Automated Notification Trigger (Zalo / Telegram Webhook)
+    const webhookUrl = process.env.ZALO_WEBHOOK_URL || process.env.TELEGRAM_WEBHOOK_URL;
+    if (webhookUrl) {
+      try {
+        const notifyPayload = {
+          event: 'NEW_LEAD',
+          leadCode: code,
+          customerName: name,
+          phone,
+          guestCount,
+          estimatedTotal: totalBase,
+          zaloChatUrl: `https://zalo.me/${phone.replace(/[^0-9]/g, '')}`,
+          linkToken
+        };
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(notifyPayload)
+        }).catch(e => console.error('Webhook notify error:', e));
+      } catch (err) {
+        console.error('Notification dispatch error:', err);
+      }
+    }
+
     return NextResponse.json({ success: true, linkToken: lead.linkToken }, { status: 201 });
   } catch (error) {
     console.error('Error creating lead:', error);
