@@ -1,12 +1,13 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import BookingConsultationModal from '@/components/layout/BookingConsultationModal';
 
 const MENU_CATEGORIES = [
   { id: 'SET_TIEC', label: 'Set Menu Tiệc Cưới & Hội Nghị', icon: 'restaurant_menu', count: '6 Set cỗ mẫu' },
   { id: 'CHUYEN_MON', label: 'Menu Chuyên Món Đặc Sản', icon: 'workspace_premium', count: '8 Menu đặc sản' },
   { id: 'TRE_EM', label: 'Menu Trẻ Em & Học Sinh', icon: 'child_care', count: '5 Combo ưu đãi' },
-  { id: 'ALACARTE', label: 'Menu Chọn Món (Theo Thời Giá)', icon: 'menu_book', count: 'Tích chọn tạo bản nháp' },
+  { id: 'ALACARTE', label: 'Menu Chọn Món (3 Phần Chính)', icon: 'menu_book', count: 'Tích chọn tạo bản nháp' },
   { id: 'DO_UONG', label: 'Menu Đồ Uống & Phí Mang Vào', icon: 'wine_bar', count: 'Bảng giá chính thức' },
 ];
 
@@ -170,7 +171,6 @@ const SPECIALTY_MENUS = [
   }
 ];
 
-// KIDS MENU strictly formatted per user instruction (NO awkward text wrap)
 const KIDS_MENUS = [
   {
     code: 'COMBO 1',
@@ -204,65 +204,73 @@ const KIDS_MENUS = [
   }
 ];
 
-// MENU CHỌN MÓN FROM GOOGLE SHEET (NO PRICES SHOWN)
-const ALACARTE_GROUPS = [
+// MENU CHỌN MÓN STRUCTURED INTO 3 MAIN SECTIONS FOR EASY READING
+const ALACARTE_3_SECTIONS = [
   {
-    groupName: '1. Súp & Khai Vị',
-    dishes: [
-      'Súp gà ngô nấm (bát tô)', 'Súp gà nấm đông trùng (bát tô)', 'Súp gà Hoàng Kim (bát tô)', 'Súp gà hải sâm (bát tô)', 'Súp dê bát bảo (bát tô)', 'Súp dê nấm tươi (bát tô)', 'Súp bò nấm tươi (bát tô)', 'Súp cua gỡ nấm tuyết (bát tô)', 'Súp cua gỡ rong biển (bát tô)', 'Súp cua gỡ măng tây (bát tô)', 'Súp nấm cua gỡ (bát tô)', 'Súp cua gỡ thảo mộc (MỚI)', 'Súp nấm Bạch Ngọc (bát tô)', 'Súp tôm nấm (bát tô)', 'Súp tôm bí đỏ (bát tô)', 'Súp lươn bát bảo (bát tô)', 'Súp bào ngư nấm đông trùng (bát tô)', 'Súp bào ngư nấm đông cô', 'Súp gà yến sâm (bát tô)'
+    sectionTitle: 'I. KHAI VỊ & SALAD',
+    sectionDesc: 'Các món súp nóng hổi, salad và nộm khai vị tinh tế',
+    icon: 'soup_kitchen',
+    groups: [
+      {
+        subTitle: 'Súp Khai Vị Bổ Dưỡng',
+        dishes: [
+          'Súp gà ngô nấm (bát tô)', 'Súp gà nấm đông trùng (bát tô)', 'Súp gà Hoàng Kim (bát tô)', 'Súp gà hải sâm (bát tô)', 'Súp dê bát bảo (bát tô)', 'Súp dê nấm tươi (bát tô)', 'Súp bò nấm tươi (bát tô)', 'Súp cua gỡ nấm tuyết (bát tô)', 'Súp cua gỡ rong biển (bát tô)', 'Súp cua gỡ măng tây (bát tô)', 'Súp nấm cua gỡ (bát tô)', 'Súp cua gỡ thảo mộc (MỚI)', 'Súp nấm Bạch Ngọc (bát tô)', 'Súp tôm nấm (bát tô)', 'Súp tôm bí đỏ (bát tô)', 'Súp lươn bát bảo (bát tô)', 'Súp bào ngư nấm đông trùng (bát tô)', 'Súp bào ngư nấm đông cô', 'Súp gà yến sâm (bát tô)'
+        ]
+      },
+      {
+        subTitle: 'Salad & Nộm Tươi Mát',
+        dishes: [
+          'Salad rau xanh bắp bò muối (đĩa)', 'Salad trứng cá hồi (đĩa)', 'Salad cá hồi chiên giòn (đĩa)', 'Salad lườn ngỗng xông khói (đĩa)', 'Salad rau mầm (đĩa)', 'Salad cá ngừ (đĩa)', 'Salad rau má bắp bò (đĩa)', 'Nộm bắp bò hoa chuối (đĩa)', 'Nộm bò nướng cay (đĩa)', 'Nộm miến hải sản sốt Thái (đĩa)', 'Nộm hải sản sốt Thái (đĩa)', 'Nộm gà hoa chuối (đĩa)', 'Nộm cổ hũ dừa tôm thịt (đĩa)', 'Nộm sứa hoa chuối (đĩa)', 'Nộm bắp bò rau tiến vua (đĩa)', 'Nộm rau tiến vua tai heo (đĩa)'
+        ]
+      }
     ]
   },
   {
-    groupName: '2. Salad & Nộm Đặc Sản',
-    dishes: [
-      'Salad rau xanh bắp bò muối (đĩa)', 'Salad trứng cá hồi (đĩa)', 'Salad cá hồi chiên giòn (đĩa)', 'Salad lườn ngỗng xông khói (đĩa)', 'Salad rau mầm (đĩa)', 'Salad cá ngừ (đĩa)', 'Salad rau má bắp bò (đĩa)', 'Nộm bắp bò hoa chuối (đĩa)', 'Nộm bò nướng cay (đĩa)', 'Nộm miến hải sản sốt Thái (đĩa)', 'Nộm hải sản sốt Thái (đĩa)', 'Nộm gà hoa chuối (đĩa)', 'Nộm cổ hũ dừa tôm thịt (đĩa)', 'Nộm sứa hoa chuối (đĩa)', 'Nộm bắp bò rau tiến vua (đĩa)', 'Nộm rau tiến vua tai heo (đĩa)'
+    sectionTitle: 'II. MÓN CHÍNH & LẨU BẢO HẢO',
+    sectionDesc: 'Đặc sản Hải sản, Thịt Bò - Bê - Dê - Lợn mán, Canh xào và Lẩu tươi nóng',
+    icon: 'flatware',
+    groups: [
+      {
+        subTitle: 'Đặc Sản Cá & Ba Ba Sông',
+        dishes: [
+          'Cá lăng chiên riềng mẻ (đĩa)', 'Cá lăng nướng dân tộc (đĩa)', 'Cá lăng om chuối đậu (nồi)', 'Cá lăng hấp Hồng Kông nguyên con', 'Cá quả nướng mắm ớt (con)', 'Cá quả hấp Thái (con)', 'Cá trắm hấp mẻ (đĩa)', 'Ba ba rang muối hột (con)', 'Ba ba om chuối đậu + Bún (nồi)', 'Ba ba xào gừng tươi (đĩa)', 'Ba ba nướng lá lốt (đĩa)'
+        ]
+      },
+      {
+        subTitle: 'Các Món Bò, Bê & Dê Núi',
+        dishes: [
+          'Bò xào lúc lắc hạnh nhân (đĩa)', 'Bò sốt tiêu đen + Bánh bao chiên (đĩa)', 'Bắp bò xào cổ hũ dừa (đĩa)', 'Bê tái chanh Nam Định (đĩa)', 'Bê nướng tảng nguyên miếng (đĩa)', 'Bê xào lăn sả ớt (đĩa)', 'Bê cháy tỏi (đĩa)', 'Bê ủ muối thảo mộc (đĩa)', 'Bê hầm vang đỏ + Bánh mì (đĩa)', 'Dê chiên riềng (đĩa)', 'Dê hấp lá tía tô (đĩa)', 'Dê nướng tảng mạ vàng (đĩa)', 'Dê tái chanh (đĩa)'
+        ]
+      },
+      {
+        subTitle: 'Tôm, Bề Bề, Ếch & Chân Giò / Sườn',
+        dishes: [
+          'Tôm thẻ 6 hoa chiên giòn (đĩa)', 'Tôm thẻ chiên hạnh nhân (đĩa)', 'Tôm sú bỏ lò phô mai Pháp (đĩa)', 'Tôm chiên hoàng kim trứng muối (đĩa)', 'Bề bề rang muối hột (đĩa)', 'Bề bề hấp sả ớt (đĩa)', 'Hải sản xào sốt X.O (đĩa)', 'Ếch rang muối thảo mộc (đĩa)', 'Ếch xào măng củ (đĩa)', 'Chân giò hầm sen nấm (đĩa)', 'Chân giò nướng giòn da (đĩa)', 'Sườn nướng sốt BBQ (đĩa)', 'Sườn rang muối (đĩa)'
+        ]
+      },
+      {
+        subTitle: 'Canh, Xào & Các Loại Lẩu Tươi',
+        dishes: [
+          'Canh măng mọc (tô)', 'Canh mọc hải sản (tô)', 'Rau củ luộc chấm kho quẹt (đĩa)', 'Rau xào theo mùa (đĩa)', 'Măng tây xào tỏi (đĩa)', 'Lẩu cá lăng măng chua (nồi)', 'Lẩu hải sản thập cẩm (nồi)', 'Lẩu riêu cua bắp bò (nồi)', 'Lẩu dê núi tía tô (nồi)'
+        ]
+      }
     ]
   },
   {
-    groupName: '3. Món Cá & Ba Ba',
-    dishes: [
-      'Cá lăng chiên riềng mẻ (đĩa)', 'Cá lăng nướng dân tộc (đĩa)', 'Cá lăng om chuối đậu (nồi)', 'Cá lăng hấp Hồng Kông nguyên con', 'Cá quả nướng mắm ớt (con)', 'Cá quả hấp Thái (con)', 'Cá trắm hấp mẻ (đĩa)', 'Ba ba rang muối hột (con)', 'Ba ba om chuối đậu + Bún (nồi)', 'Ba ba xào gừng tươi (đĩa)', 'Ba ba nướng lá lốt (đĩa)'
-    ]
-  },
-  {
-    groupName: '4. Món Bò & Bê',
-    dishes: [
-      'Bò xào lúc lắc hạnh nhân (đĩa)', 'Bò sốt tiêu đen + Bánh bao chiên (đĩa)', 'Bắp bò xào cổ hũ dừa (đĩa)', 'Bê tái chanh Nam Định (đĩa)', 'Bê nướng tảng nguyên miếng (đĩa)', 'Bê xào lăn sả ớt (đĩa)', 'Bê cháy tỏi (đĩa)', 'Bê ủ muối thảo mộc (đĩa)', 'Bê hầm vang đỏ + Bánh mì (đĩa)'
-    ]
-  },
-  {
-    groupName: '5. Món Dê Núi',
-    dishes: [
-      'Dê chiên riềng (đĩa)', 'Dê hấp lá tía tô (đĩa)', 'Dê nướng tảng mạ vàng (đĩa)', 'Dê tái chanh (đĩa)', 'Lẩu dê núi tía tô (nồi)'
-    ]
-  },
-  {
-    groupName: '6. Món Tôm & Bề Bề',
-    dishes: [
-      'Tôm thẻ 6 hoa chiên giòn (đĩa)', 'Tôm thẻ chiên hạnh nhân (đĩa)', 'Tôm sú bỏ lò phô mai Pháp (đĩa)', 'Tôm chiên hoàng kim trứng muối (đĩa)', 'Bề bề rang muối hột (đĩa)', 'Bề bề hấp sả ớt (đĩa)', 'Hải sản xào sốt X.O (đĩa)'
-    ]
-  },
-  {
-    groupName: '7. Ếch, Chân Giò & Sườn',
-    dishes: [
-      'Ếch rang muối thảo mộc (đĩa)', 'Ếch xào măng củ (đĩa)', 'Chân giò hầm sen nấm (đĩa)', 'Chân giò nướng giòn da (đĩa)', 'Sườn nướng sốt BBQ (đĩa)', 'Sườn rang muối (đĩa)'
-    ]
-  },
-  {
-    groupName: '8. Canh, Xào & Lẩu',
-    dishes: [
-      'Canh măng mọc (tô)', 'Canh mọc hải sản (tô)', 'Rau củ luộc chấm kho quẹt (đĩa)', 'Rau xào theo mùa (đĩa)', 'Măng tây xào tỏi (đĩa)', 'Lẩu cá lăng măng chua (nồi)', 'Lẩu hải sản thập cẩm (nồi)', 'Lẩu riêu cua bắp bò (nồi)'
-    ]
-  },
-  {
-    groupName: '9. Tráng Miệng Tươi Ngon',
-    dishes: [
-      'Bưởi da xanh (đĩa)', 'Nho Mỹ nhập khẩu (đĩa)', 'Nho xanh nhập khẩu (đĩa)', 'Cam Canh ngọt (đĩa)', 'Chuối ngự Nam Định (đĩa)', 'Hoa quả tươi theo mùa (đĩa)', 'Sữa chua nhà làm (10 hộp)', 'Kem Caramel (10 hộp)', 'Bánh tuyết Mochi (10 chiếc)'
+    sectionTitle: 'III. TRÁNG MIỆNG',
+    sectionDesc: 'Hoa quả tươi theo mùa, bánh ngọt và kem chè tráng miệng thanh mát',
+    icon: 'icecream',
+    groups: [
+      {
+        subTitle: 'Hoa Quả Tươi & Món Ngọt',
+        dishes: [
+          'Bưởi da xanh (đĩa)', 'Nho Mỹ nhập khẩu (đĩa)', 'Nho xanh nhập khẩu (đĩa)', 'Cam Canh ngọt (đĩa)', 'Chuối ngự Nam Định (đĩa)', 'Hoa quả tươi theo mùa (đĩa)', 'Sữa chua nhà làm (10 hộp)', 'Kem Caramel (10 hộp)', 'Bánh tuyết Mochi (10 chiếc)'
+        ]
+      }
     ]
   }
 ];
 
-// MENU ĐỒ UỐNG STRICTLY MATCHING USER'S IMAGE 4 (NO EXTRA UNWANTED ITEMS)
 const DRINK_PRICES_IMAGE4 = [
   { stt: 1, name: 'Coca', unitPrice: '15.000/lon' },
   { stt: 2, name: 'Nước cam', unitPrice: '12.000/lon' },
@@ -280,7 +288,6 @@ const DRINK_PRICES_IMAGE4 = [
   { stt: 14, name: 'Rượu vang', unitPrice: 'Liên hệ' }
 ];
 
-// MANDATORY BRING-YOUR-OWN DRINK FEE TABLE FROM USER'S IMAGE 4
 const BRING_DRINK_FEES = [
   { item: 'Rượu ngâm', fee: '30.000/lít' },
   { item: 'Rượu vodka', fee: '70.000/chai' },
@@ -289,11 +296,20 @@ const BRING_DRINK_FEES = [
   { item: 'Bia, nước ngọt, nước lọc', fee: '30.000/người' }
 ];
 
-export default function MenuShowcasePage() {
+function MenuContent() {
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  
   const [activeTab, setActiveTab] = useState('SET_TIEC');
   const [selectedDishes, setSelectedDishes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showDraftModal, setShowDraftModal] = useState(false);
+
+  useEffect(() => {
+    if (tabParam && MENU_CATEGORIES.some(c => c.id === tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
 
   const toggleSelectDish = (dishName) => {
     if (selectedDishes.includes(dishName)) {
@@ -324,7 +340,7 @@ export default function MenuShowcasePage() {
           Thực Đơn Tiệc & Bảng Giá Chính Thức
         </h1>
         <p className="text-gray-600 font-light text-sm max-w-3xl mx-auto leading-relaxed">
-          Khám phá trọn bộ 5 danh mục thực đơn từ các Set Cỗ Tiệc Cưới tinh tế, Menu Chuyên Món Đặc Sản, Combo Trẻ Em Hè Rực Rỡ, Menu Chọn Món Tươi Sống đến Bảng Giá Đồ Uống & Phí Mang Đồ Vào Nhà Hàng.
+          Khám phá trọn bộ 5 danh mục thực đơn từ các Set Cỗ Tiệc Cưới tinh tế, Menu Chuyên Món Đặc Sản, Combo Trẻ Em Hè Rực Rỡ, Menu Chọn Món (Chia 3 Phần Khai Vị, Món Chính & Tráng Miệng) đến Bảng Giá Đồ Uống & Phí Mang Đồ Vào Nhà Hàng.
         </p>
       </section>
 
@@ -443,7 +459,7 @@ export default function MenuShowcasePage() {
         </section>
       )}
 
-      {/* TAB 3: MENU TRẺ EM & HỌC SINH (STRICT 1-LINE PRICE & NO SINGLE WORD WRAP) */}
+      {/* TAB 3: MENU TRẺ EM & HỌC SINH */}
       {activeTab === 'TRE_EM' && (
         <section className="max-w-7xl mx-auto px-6 space-y-8">
           <div className="bg-gradient-to-r from-amber-900 via-amber-950 to-gray-900 text-white rounded-3xl p-8 shadow-2xl border border-[#e3a638]/40 mb-8 flex flex-col md:flex-row justify-between items-center gap-6">
@@ -462,7 +478,7 @@ export default function MenuShowcasePage() {
               onClick={() => setIsModalOpen(true)}
               className="px-8 py-4 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-xl hover:scale-105 transition-transform cursor-pointer whitespace-nowrap"
             >
-              Đặt Tiệc Hè Rực Rỡ ➔
+              Đặt Tiệc Hè Rực RỠ ➔
             </button>
           </div>
 
@@ -470,7 +486,6 @@ export default function MenuShowcasePage() {
             {KIDS_MENUS.map((kids, idx) => (
               <div key={idx} className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg flex flex-col justify-between hover:border-[#e3a638] transition-all">
                 <div>
-                  {/* Single Line Header & Price Pill as per User Request */}
                   <div className="flex justify-between items-start gap-3 mb-1">
                     <div>
                       <h3 className="font-playfair font-bold text-gray-900 text-lg">{kids.code}</h3>
@@ -506,60 +521,81 @@ export default function MenuShowcasePage() {
         </section>
       )}
 
-      {/* TAB 4: MENU CHỌN MÓN (A LA CARTE FROM GOOGLE SHEET - NO PRICES + DRAFT SELECTION) */}
+      {/* TAB 4: MENU CHỌN MÓN (DIVIDED INTO 3 MAIN SECTIONS: KHAI VỊ, MÓN CHÍNH, TRÁNG MIỆNG) */}
       {activeTab === 'ALACARTE' && (
-        <section className="max-w-7xl mx-auto px-6 space-y-8">
+        <section className="max-w-7xl mx-auto px-6 space-y-10">
           
-          {/* Prominent Notice Banner (No Prices Shown) */}
+          {/* Prominent Notice Banner */}
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 shadow-md flex items-start gap-4 text-amber-900">
             <span className="material-symbols-outlined text-amber-700 text-3xl flex-shrink-0 mt-1">info</span>
             <div>
               <h3 className="font-playfair font-bold text-lg text-amber-950 mb-1">Lưu ý về Thực Đơn Chọn Món Tươi Sống:</h3>
               <p className="text-xs text-amber-900/90 font-light leading-relaxed">
                 • <strong>Món ăn thực phẩm tươi sống được nhập mới hằng ngày, giá thay đổi theo thời giá thị trường.</strong> Do đó danh mục bên dưới hoàn toàn không niêm yết giá cố định.<br />
-                • Quý khách vui lòng <strong>tích chọn (✔) các món ăn ưa thích</strong> để gom thành Bản Nháp Thực Đơn và gửi trực tiếp qua Zalo/Hotline cho chuyên viên Golden Palace báo giá chính xác nhất.
+                • Thực đơn được chia thành <strong>3 phần chính: Khai vị, Món chính và Tráng miệng</strong>. Quý khách vui lòng <strong>tích chọn (✔) các món ăn ưa thích</strong> để tạo Bản Nháp Thực Đơn gửi trực tiếp cho chuyên viên báo giá.
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ALACARTE_GROUPS.map((grp, idx) => (
-              <div key={idx} className="bg-white rounded-2xl border border-gray-200 p-6 shadow-md flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-playfair font-bold text-gray-900 pb-3 border-b border-[#e3a638]/30 flex items-center gap-2">
-                    <span className="text-[#e3a638]">🍽️</span> {grp.groupName}
-                  </h3>
-                  
-                  <div className="mt-4 space-y-2.5">
-                    {grp.dishes.map((dish, dIdx) => {
-                      const isChecked = selectedDishes.includes(dish);
-                      return (
-                        <div 
-                          key={dIdx}
-                          onClick={() => toggleSelectDish(dish)}
-                          className={`p-2.5 rounded-xl border text-xs flex items-center justify-between cursor-pointer transition-all ${
-                            isChecked 
-                              ? 'bg-amber-50 border-[#e3a638] font-semibold text-gray-900 shadow-xs' 
-                              : 'bg-white border-gray-100 text-gray-700 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5 pr-2">
-                            <input 
-                              type="checkbox" 
-                              checked={isChecked}
-                              onChange={() => {}}
-                              className="accent-[#e3a638] w-4 h-4 cursor-pointer"
-                            />
-                            <span>{dish}</span>
-                          </div>
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap ${isChecked ? 'bg-[#e3a638] text-white' : 'bg-gray-100 text-gray-500'}`}>
-                            {isChecked ? 'Đã chọn' : '+ Chọn món'}
-                          </span>
-                        </div>
-                      );
-                    })}
+          {/* RENDER 3 MAIN SECTIONS */}
+          <div className="space-y-12">
+            {ALACARTE_3_SECTIONS.map((sec, secIdx) => (
+              <div key={secIdx} className="bg-white rounded-3xl border border-gray-200 p-8 shadow-xl">
+                
+                {/* SECTION HEADER */}
+                <div className="flex items-center gap-3 pb-4 mb-6 border-b-2 border-[#e3a638]/40">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-100 text-[#a66a3a] flex items-center justify-center shadow-inner">
+                    <span className="material-symbols-outlined text-2xl">{sec.icon}</span>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-playfair font-bold text-gray-900">{sec.sectionTitle}</h2>
+                    <p className="text-xs text-gray-500 font-light mt-0.5">{sec.sectionDesc}</p>
                   </div>
                 </div>
+
+                {/* SUB GROUPS GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                  {sec.groups.map((grp, grpIdx) => (
+                    <div key={grpIdx} className="bg-[#fcf9f2] rounded-2xl border border-gray-200 p-6 flex flex-col justify-between">
+                      <div>
+                        <h3 className="text-base font-playfair font-bold text-gray-900 pb-2.5 border-b border-[#e3a638]/30 flex items-center gap-2">
+                          <span className="text-[#e3a638] text-sm">✨</span> {grp.subTitle}
+                        </h3>
+                        
+                        <div className="mt-4 space-y-2">
+                          {grp.dishes.map((dish, dIdx) => {
+                            const isChecked = selectedDishes.includes(dish);
+                            return (
+                              <div 
+                                key={dIdx}
+                                onClick={() => toggleSelectDish(dish)}
+                                className={`p-2.5 rounded-xl border text-xs flex items-center justify-between cursor-pointer transition-all ${
+                                  isChecked 
+                                    ? 'bg-amber-100/80 border-[#e3a638] font-semibold text-gray-900 shadow-xs' 
+                                    : 'bg-white border-gray-200/80 text-gray-700 hover:border-amber-300'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2.5 pr-2">
+                                  <input 
+                                    type="checkbox" 
+                                    checked={isChecked}
+                                    onChange={() => {}}
+                                    className="accent-[#e3a638] w-4 h-4 cursor-pointer"
+                                  />
+                                  <span>{dish}</span>
+                                </div>
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap ${isChecked ? 'bg-[#e3a638] text-white font-bold' : 'bg-gray-100 text-gray-500'}`}>
+                                  {isChecked ? 'Đã chọn' : '+ Chọn món'}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
               </div>
             ))}
           </div>
@@ -584,7 +620,7 @@ export default function MenuShowcasePage() {
         </section>
       )}
 
-      {/* TAB 5: MENU ĐỒ UỐNG STRICTLY MATCHING USER'S IMAGE 4 */}
+      {/* TAB 5: MENU ĐỒ UỐNG STRICTLY MATCHING USER'S IMAGE 4 & EXACT USER NOTE TEXT */}
       {activeTab === 'DO_UONG' && (
         <section className="max-w-7xl mx-auto px-6 space-y-10">
           <div className="text-center mb-6">
@@ -623,38 +659,41 @@ export default function MenuShowcasePage() {
               </div>
             </div>
 
-            {/* BẢNG 2: PHÍ MANG ĐỒ UỐNG VÀO NHÀ HÀNG (BẮT BUỘC THEO ẢNH 4) */}
-            <div className="lg:col-span-5 bg-gradient-to-b from-amber-950 via-gray-900 to-black text-white rounded-2xl border-2 border-[#e3a638]/60 p-6 shadow-2xl">
-              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#e3a638]/40">
-                <span className="text-[#e3a638] text-xl">⚠️</span>
-                <h3 className="text-xl font-playfair font-bold text-[#e3a638]">Phí Mang Đồ Uống Vào Nhà Hàng</h3>
-              </div>
-              
-              <p className="text-xs text-amber-200/80 font-light mb-4 leading-relaxed">
-                Quy định áp dụng đối với quý khách mang đồ uống từ bên ngoài vào sử dụng tại sảnh nhà hàng:
-              </p>
+            {/* BẢNG 2: PHÍ MANG ĐỒ UỐNG VÀO NHÀ HÀNG & EXACT USER NOTE TEXT */}
+            <div className="lg:col-span-5 bg-gradient-to-b from-amber-950 via-gray-900 to-black text-white rounded-2xl border-2 border-[#e3a638]/60 p-6 shadow-2xl flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#e3a638]/40">
+                  <span className="text-[#e3a638] text-xl">⚠️</span>
+                  <h3 className="text-xl font-playfair font-bold text-[#e3a638]">Phí Mang Đồ Uống Vào Nhà Hàng</h3>
+                </div>
+                
+                <p className="text-xs text-amber-200/80 font-light mb-4 leading-relaxed">
+                  Quy định áp dụng đối với quý khách mang đồ uống từ bên ngoài vào sử dụng tại sảnh nhà hàng:
+                </p>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs font-medium">
-                  <thead className="bg-[#e3a638]/20 text-[#e3a638] uppercase text-[11px] tracking-wider">
-                    <tr>
-                      <th className="p-3 rounded-l-lg">Loại Đồ Uống</th>
-                      <th className="p-3 text-right rounded-r-lg">Mức Phí Quy Định</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/10">
-                    {BRING_DRINK_FEES.map((feeRow, fIdx) => (
-                      <tr key={fIdx} className="hover:bg-white/5 transition-colors">
-                        <td className="p-3 text-gray-200 font-medium">{feeRow.item}</td>
-                        <td className="p-3 text-right font-bold text-amber-300 whitespace-nowrap">{feeRow.fee}</td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs font-medium">
+                    <thead className="bg-[#e3a638]/20 text-[#e3a638] uppercase text-[11px] tracking-wider">
+                      <tr>
+                        <th className="p-3 rounded-l-lg">Loại Đồ Uống</th>
+                        <th className="p-3 text-right rounded-r-lg">Mức Phí Quy Định</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {BRING_DRINK_FEES.map((feeRow, fIdx) => (
+                        <tr key={fIdx} className="hover:bg-white/5 transition-colors">
+                          <td className="p-3 text-gray-200 font-medium">{feeRow.item}</td>
+                          <td className="p-3 text-right font-bold text-amber-300 whitespace-nowrap">{feeRow.fee}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
-              <div className="mt-6 p-4 rounded-xl bg-white/10 border border-white/10 text-[11px] text-gray-300 leading-relaxed font-light">
-                💡 <em>Ghi chú: Phí phục vụ bao gồm đá lạnh, ly cốc cao cấp, đá khói và nhân viên rót rượu trực tiếp tại bàn.</em>
+              {/* EXACT NOTE TEXT REQUESTED BY USER IN IMAGE 1 */}
+              <div className="mt-6 p-4 rounded-xl bg-white/10 border border-[#e3a638]/40 text-xs text-amber-100 leading-relaxed font-light">
+                💡 <em>Ghi chú: Phí đã bao gồm đá lạnh, ly, cốc, nậm sứ đựng rượu mạnh hải cao cấp, nhân viên phục vụ.</em>
               </div>
             </div>
 
@@ -710,5 +749,13 @@ export default function MenuShowcasePage() {
         onClose={() => setIsModalOpen(false)}
       />
     </div>
+  );
+}
+
+export default function MenuShowcasePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#fcf9f2] flex items-center justify-center text-amber-900">Đang tải thực đơn...</div>}>
+      <MenuContent />
+    </Suspense>
   );
 }

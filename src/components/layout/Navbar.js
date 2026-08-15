@@ -5,6 +5,7 @@ import Link from 'next/link';
 export default function Navbar() {
   const [khongGianOpen, setKhongGianOpen] = useState(false);
   const [dichVuOpen, setDichVuOpen] = useState(false);
+  const [thucDonOpen, setThucDonOpen] = useState(false);
 
   return (
     <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-xs font-montserrat">
@@ -78,7 +79,37 @@ export default function Navbar() {
             </div>
           </div>
 
-          <Link href="/thuc-don" className="hover:text-[#a66a3a] transition-colors py-2">Thực đơn</Link>
+          {/* Dropdown: THỰC ĐƠN */}
+          <div 
+            className="relative group py-2"
+            onMouseEnter={() => setThucDonOpen(true)}
+            onMouseLeave={() => setThucDonOpen(false)}
+          >
+            <Link href="/thuc-don" className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer">
+              Thực đơn
+              <span className="material-symbols-outlined text-base">expand_more</span>
+            </Link>
+
+            <div className={`absolute left-0 top-full w-72 bg-white border border-[#e3a638]/20 shadow-2xl rounded-lg py-3 flex flex-col transition-all duration-200 ${thucDonOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+              <Link href="/thuc-don?tab=SET_TIEC" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
+                <span>🍱</span> Set Menu Tiệc Cưới & Hội Nghị
+              </Link>
+              <Link href="/thuc-don?tab=CHUYEN_MON" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
+                <span>👑</span> Menu Chuyên Món Đặc Sản
+              </Link>
+              <Link href="/thuc-don?tab=TRE_EM" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
+                <span>🎈</span> Menu Trẻ Em & Học Sinh
+              </Link>
+              <Link href="/thuc-don?tab=ALACARTE" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
+                <span>🍽️</span> Menu Chọn Món A la carte
+              </Link>
+              <div className="my-1 border-t border-gray-100"></div>
+              <Link href="/thuc-don?tab=DO_UONG" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
+                <span>🥂</span> Bảng Giá Đồ Uống & Phí Mang Vào
+              </Link>
+            </div>
+          </div>
+
           <Link href="/khuyen-mai" className="hover:text-[#a66a3a] transition-colors py-2">Ưu đãi</Link>
           <Link href="/tin-tuc" className="hover:text-[#a66a3a] transition-colors py-2">Tin tức</Link>
         </div>
