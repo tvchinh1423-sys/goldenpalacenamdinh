@@ -1,30 +1,33 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+const makeHdList = (prefix, count = 12) => {
+  const list = [];
+  for (let i = 1; i <= count; i++) {
+    list.push(`/images/hd-venues/${prefix}-hd-${i}.jpg`);
+  }
+  return list;
+};
+
 const VENUES_DATA = {
   'tang-2': {
     name: 'Hội trường Tầng 2',
-    subTitle: 'Đại Cung Điện Hoàng Gia',
+    subTitle: 'Đại Cung Điện Hoàng Gia Sang Trọng',
     capacity: '350 - 750 khách (Từ 35 - 75 mâm)',
     description: 'Hội trường Tầng 2 là sảnh tiệc đại tràng sang trọng bậc nhất tại Nam Định với kiến trúc trần cao 7m hoàn toàn không có cột chắn tầm nhìn. Được trang bị màn hình LED P2.5 30m² sắc nét cùng giàn đèn bướm nghệ thuật rực rỡ, Tầng 2 là sự lựa chọn hoàn hảo cho những đại lễ tiệc cưới hoàng gia và sự kiện quy mô hoành tráng.',
     features: [
-      'Diện tích rộng rãi, không cột chắn tầm nhìn',
-      'Màn hình LED P2.5 tiêu chuẩn 30m²',
+      'Diện tích rộng rãi, thiết kế hoàn toàn không cột chắn tầm nhìn',
+      'Màn hình LED P2.5 siêu nét tiêu chuẩn 30m²',
       'Hệ thống giàn đèn bướm & đèn chùm pha lê cao cấp',
       'Sân khấu đa tầng & đường dẫn hoa lụa lãng mạn',
       'Phông chụp ảnh lưu niệm & Cổng hoa chào đón độc quyền'
     ],
-    heroImage: '/images/venues/tang-2-3.jpg',
-    gallery: [
-      '/images/venues/tang-2-3.jpg',
-      '/images/venues/tang-2-4.jpg',
-      '/images/venues/tang-2-5.jpg',
-      '/images/pricing/slide-tang2.png'
-    ]
+    heroImage: '/images/hd-venues/tang-2-hd-1.jpg',
+    gallery: makeHdList('tang-2', 12)
   },
   'tang-3': {
     name: 'Hội trường Tầng 3',
-    subTitle: 'Không Gian Tiệc Cưới Hoàng Gia',
+    subTitle: 'Không Gian Tiệc Cưới Hoàng Gia Ấm Cúng',
     capacity: '300 - 650 khách (Từ 30 - 65 mâm)',
     description: 'Hội trường Tầng 3 sở hữu lối thiết kế tân cổ điển tinh tế với tông màu Rose Gold & Champagne ấm áp. Tầng 3 được trang bị màn hình LED 30m², hệ thống âm thanh ánh sáng biểu diễn chuyên nghiệp và trang trí đường dẫn hoa lụa lãng mạn, mang đến bầu không khí thiêng liêng tuyệt vời cho ngày trọng đại.',
     features: [
@@ -34,13 +37,8 @@ const VENUES_DATA = {
       'Phông 2 bên sân khấu & Phông chụp ảnh lưu niệm cao cấp',
       'Khu vực đón khách & Bàn gallery trang trí chỉn chu'
     ],
-    heroImage: '/images/venues/tang-3-2.jpg',
-    gallery: [
-      '/images/venues/tang-3-2.jpg',
-      '/images/venues/tang-3-3.jpg',
-      '/images/venues/tang-3-4.jpg',
-      '/images/venues/tang-3-5.jpg'
-    ]
+    heroImage: '/images/hd-venues/tang-3-hd-1.jpg',
+    gallery: makeHdList('tang-3', 12)
   },
   'tang-4': {
     name: 'Hội trường Tầng 4',
@@ -48,38 +46,28 @@ const VENUES_DATA = {
     capacity: '100 - 300 khách (Từ 10 - 30 mâm)',
     description: 'Hội trường Tầng 4 là lựa chọn lý tưởng cho các buổi tiệc cưới ấm cúng, tiệc báo hỷ hoặc hội nghị doanh nghiệp vừa và nhỏ. Không gian được trang bị màn hình LED 10m², hệ thống âm thanh ánh sáng chuẩn cùng hoa lụa trang trí sân khấu vô cùng tinh tế.',
     features: [
-      'Không gian ấm cúng, riêng tư cho tiệc dưới 300 khách',
+      'Không gian ấm cúng, riêng tư cho tiệc quy mô vừa và nhỏ',
       'Màn hình LED 10m² hiện đại',
       'Trang bị hệ thống âm thanh & ánh sáng biểu diễn chuyên nghiệp',
       'Cổng chào đón & Bàn trang trí tiền mừng chỉn chu',
       'Hoa lụa 2 bên sân khấu & Phông lưu niệm lãng mạn'
     ],
-    heroImage: '/images/venues/tang-4-2.jpg',
-    gallery: [
-      '/images/venues/tang-4-2.jpg',
-      '/images/venues/tang-4-3.jpg',
-      '/images/venues/tang-4-4.jpg',
-      '/images/venues/tang-4-5.jpg'
-    ]
+    heroImage: '/images/hd-venues/tang-4-hd-7.jpg',
+    gallery: makeHdList('tang-4', 12)
   },
   'quay-bar': {
     name: 'Quầy Bar Tầng 1',
-    subTitle: 'Không Gian Hiện Đại & Hiện Đại',
+    subTitle: 'Không Gian Sành Điệu & Hiện Đại',
     capacity: '50 - 100 khách',
     description: 'Quầy Bar Tầng 1 mang phong cách kiến trúc hiện đại, trẻ trung với hệ thống đèn trang trí và quầy pha chế sang trọng. Đây là địa điểm lý tưởng cho các buổi tiệc sinh nhật, tiệc kỷ niệm, tiệc cocktail hoặc các buổi gặp mặt giao lưu thân mật.',
     features: [
-      'Phong cách hiện đại, quầy pha chế chuyên nghiệp',
-      'Không gian kết nối mở sang trọng',
+      'Phong cách kiến trúc hiện đại, quầy pha chế sang trọng',
+      'Không gian kết nối mở thoáng đãng',
       'Hệ thống âm thanh Lounge & ánh sáng ấm áp',
       'Thích hợp cho tiệc sinh nhật, tiệc cocktail & kỷ niệm'
     ],
-    heroImage: '/images/venues/quay-bar-1.jpg',
-    gallery: [
-      '/images/venues/quay-bar-1.jpg',
-      '/images/venues/quay-bar-2.jpg',
-      '/images/venues/quay-bar-3.jpg',
-      '/images/venues/quay-bar-4.jpg'
-    ]
+    heroImage: '/images/hd-venues/quay-bar-hd-1.jpg',
+    gallery: makeHdList('quay-bar', 12)
   },
   'phong-vip': {
     name: 'Không Gian Phòng VIP',
@@ -92,13 +80,8 @@ const VENUES_DATA = {
       'Phục vụ riêng chuẩn 5 sao chu đáo',
       'Thích hợp tiệc gia đình, họp mặt & đối tác VIP'
     ],
-    heroImage: '/images/venues/phong-vip-2.jpg',
-    gallery: [
-      '/images/venues/phong-vip-2.jpg',
-      '/images/venues/phong-vip-3.jpg',
-      '/images/venues/phong-vip-4.jpg',
-      '/images/venues/phong-vip-5.jpg'
-    ]
+    heroImage: '/images/hd-venues/phong-vip-hd-1.jpg',
+    gallery: makeHdList('phong-vip', 12)
   }
 };
 
@@ -113,9 +96,9 @@ export default async function KhongGianPage({ params }) {
   return (
     <div className="min-h-screen bg-[#fcf9f2] font-montserrat text-gray-900 pt-20 pb-28">
       {/* Hero Banner */}
-      <section className="relative h-[65vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-[#fcf9f2] z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-[#fcf9f2] z-10" />
           <div 
             className="w-full h-full bg-cover bg-center transition-transform duration-1000 scale-105"
             style={{ backgroundImage: `url('${venue.heroImage}')` }}
@@ -124,7 +107,7 @@ export default async function KhongGianPage({ params }) {
 
         <div className="relative z-20 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
           <span className="px-4 py-1.5 bg-[#e3a638]/20 border border-[#e3a638] text-[#e3a638] rounded-full text-xs uppercase tracking-widest font-semibold mb-4 backdrop-blur-md">
-            Khám phá không gian
+            Khám phá không gian thực tế
           </span>
           <h1 className="text-4xl sm:text-6xl font-playfair font-semibold text-white mb-3 drop-shadow-lg">
             {venue.name}
@@ -132,9 +115,9 @@ export default async function KhongGianPage({ params }) {
           <p className="text-amber-200 text-lg sm:text-xl font-light font-playfair tracking-wide mb-6">
             {venue.subTitle}
           </p>
-          <div className="flex items-center gap-2 bg-black/60 text-[#fcf9f2] px-5 py-2 rounded-full border border-white/20 text-sm backdrop-blur-md">
-            <span className="material-symbols-outlined text-[#e3a638] text-lg">groups</span>
-            <span>Sức chứa: <strong>{venue.capacity}</strong></span>
+          <div className="flex items-center gap-2 bg-black/70 text-[#fcf9f2] px-6 py-2.5 rounded-full border border-white/30 text-sm backdrop-blur-md shadow-xl font-medium">
+            <span className="material-symbols-outlined text-[#e3a638] text-xl">groups</span>
+            <span>Sức chứa: <strong className="text-[#e3a638] font-semibold">{venue.capacity}</strong></span>
           </div>
         </div>
       </section>
@@ -167,7 +150,7 @@ export default async function KhongGianPage({ params }) {
             </div>
             <h3 className="text-2xl font-playfair text-gray-900 mb-3">Dự toán chi phí sự kiện</h3>
             <p className="text-gray-600 text-xs font-light leading-relaxed mb-6">
-              Tự do chọn sảnh tiệc, phối hợp thực đơn và nhận báo giá tự động trong 3 phút tại công cụ Dự toán.
+              Tự do chọn sảnh tiệc, phối hợp thực đơn và nhận báo giá tự động trong 3 phút tại công cụ Dự toán độc quyền.
             </p>
             <Link 
               href="/du-toan-chi-phi" 
@@ -179,22 +162,29 @@ export default async function KhongGianPage({ params }) {
         </div>
       </section>
 
-      {/* Real Photos Gallery */}
-      <section className="max-w-7xl mx-auto px-6 py-12 border-t border-[#e3a638]/20">
+      {/* Full 12 HD Photographer Photos Gallery */}
+      <section className="max-w-7xl mx-auto px-6 py-16 border-t border-[#e3a638]/20">
         <div className="text-center mb-12">
-          <h3 className="text-[#a66a3a] font-montserrat uppercase tracking-[0.2em] text-xs font-semibold mb-2">Thư viện ảnh thực tế</h3>
-          <h2 className="text-3xl sm:text-4xl font-playfair text-gray-900">Hình ảnh {venue.name}</h2>
+          <span className="px-3 py-1 bg-[#e3a638]/10 text-[#a66a3a] text-[11px] font-semibold uppercase tracking-widest rounded-full">
+            Bộ sưu tập nhiếp ảnh chất lượng cao
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-playfair text-gray-900 mt-3 mb-2">Thư Viện Ảnh Thực Tế {venue.name}</h2>
+          <p className="text-gray-500 text-xs font-light">Hình ảnh thực tế nhiếp ảnh gia chụp trực tiếp không gian {venue.name}</p>
           <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-4" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {venue.gallery.map((imgUrl, gIdx) => (
-            <div key={gIdx} className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-[#e3a638]/20">
+            <div key={gIdx} className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-[#e3a638]/20 cursor-pointer">
               <div 
-                className="w-full h-full bg-cover bg-center group-hover:scale-108 transition-transform duration-700"
+                className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
                 style={{ backgroundImage: `url('${imgUrl}')` }}
               />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-all duration-300" />
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <span className="text-white text-xs font-medium bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm">
+                  Hình ảnh thực tế #{gIdx + 1}
+                </span>
+              </div>
             </div>
           ))}
         </div>

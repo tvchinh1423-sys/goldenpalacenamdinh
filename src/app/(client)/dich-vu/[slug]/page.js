@@ -13,12 +13,16 @@ const SERVICES_DATA = {
       'Thực đơn mâm cỗ 10 món truyền thống kết hợp hiện đại chỉn chu',
       'Đội ngũ phục vụ chuyên nghiệp, tận tâm đồng hành suốt buổi lễ'
     ],
-    heroImage: '/images/venues/tang-2-4.jpg',
+    heroImage: '/images/hd-venues/tang-2-hd-1.jpg',
     gallery: [
-      '/images/venues/tang-2-3.jpg',
-      '/images/venues/tang-2-4.jpg',
-      '/images/venues/tang-3-2.jpg',
-      '/images/venues/tang-3-3.jpg'
+      '/images/hd-venues/tang-2-hd-1.jpg',
+      '/images/hd-venues/tang-2-hd-2.jpg',
+      '/images/hd-venues/tang-2-hd-3.jpg',
+      '/images/hd-venues/tang-2-hd-4.jpg',
+      '/images/hd-venues/tang-3-hd-1.jpg',
+      '/images/hd-venues/tang-3-hd-2.jpg',
+      '/images/hd-venues/tang-3-hd-3.jpg',
+      '/images/hd-venues/tang-3-hd-4.jpg'
     ]
   },
   'to-chuc-su-kien': {
@@ -32,12 +36,16 @@ const SERVICES_DATA = {
       'Thực đơn tiệc đứng (Buffet/Finger Food) hoặc tiệc bàn linh hoạt',
       'Hỗ trợ trọn gói âm thanh, ánh sáng, MC và kỹ thuật viên vận hành'
     ],
-    heroImage: '/images/venues/tang-3-2.jpg',
+    heroImage: '/images/hd-venues/tang-3-hd-1.jpg',
     gallery: [
-      '/images/venues/tang-3-2.jpg',
-      '/images/venues/tang-3-4.jpg',
-      '/images/venues/tang-4-2.jpg',
-      '/images/venues/tang-4-3.jpg'
+      '/images/hd-venues/tang-3-hd-5.jpg',
+      '/images/hd-venues/tang-3-hd-6.jpg',
+      '/images/hd-venues/tang-3-hd-7.jpg',
+      '/images/hd-venues/tang-3-hd-8.jpg',
+      '/images/hd-venues/tang-4-hd-7.jpg',
+      '/images/hd-venues/tang-4-hd-8.jpg',
+      '/images/hd-venues/tang-4-hd-9.jpg',
+      '/images/hd-venues/tang-4-hd-10.jpg'
     ]
   },
   'sinh-nhat-ky-niem': {
@@ -51,12 +59,16 @@ const SERVICES_DATA = {
       'Hệ thống âm thanh karaoke & màn hình trình chiếu kỷ niệm',
       'Dịch vụ máy chụp ảnh Photobooth lấy liền làm quà tặng lưu niệm'
     ],
-    heroImage: '/images/venues/quay-bar-2.jpg',
+    heroImage: '/images/hd-venues/quay-bar-hd-1.jpg',
     gallery: [
-      '/images/venues/quay-bar-1.jpg',
-      '/images/venues/quay-bar-2.jpg',
-      '/images/venues/quay-bar-3.jpg',
-      '/images/venues/quay-bar-4.jpg'
+      '/images/hd-venues/quay-bar-hd-1.jpg',
+      '/images/hd-venues/quay-bar-hd-2.jpg',
+      '/images/hd-venues/quay-bar-hd-3.jpg',
+      '/images/hd-venues/quay-bar-hd-4.jpg',
+      '/images/hd-venues/quay-bar-hd-5.jpg',
+      '/images/hd-venues/quay-bar-hd-6.jpg',
+      '/images/hd-venues/quay-bar-hd-7.jpg',
+      '/images/hd-venues/quay-bar-hd-8.jpg'
     ]
   },
   'phong-an-rieng': {
@@ -70,12 +82,16 @@ const SERVICES_DATA = {
       'Đội ngũ nhân viên phục vụ riêng chu đáo, riêng biệt',
       'Phù hợp tiệc từ 10 đến 50 khách'
     ],
-    heroImage: '/images/venues/phong-vip-2.jpg',
+    heroImage: '/images/hd-venues/phong-vip-hd-1.jpg',
     gallery: [
-      '/images/venues/phong-vip-2.jpg',
-      '/images/venues/phong-vip-3.jpg',
-      '/images/venues/phong-vip-4.jpg',
-      '/images/venues/phong-vip-5.jpg'
+      '/images/hd-venues/phong-vip-hd-1.jpg',
+      '/images/hd-venues/phong-vip-hd-2.jpg',
+      '/images/hd-venues/phong-vip-hd-3.jpg',
+      '/images/hd-venues/phong-vip-hd-4.jpg',
+      '/images/hd-venues/phong-vip-hd-5.jpg',
+      '/images/hd-venues/phong-vip-hd-6.jpg',
+      '/images/hd-venues/phong-vip-hd-7.jpg',
+      '/images/hd-venues/phong-vip-hd-8.jpg'
     ]
   }
 };
@@ -165,14 +181,14 @@ export default async function DichVuDetailPage({ params }) {
       {/* Gallery */}
       <section className="max-w-7xl mx-auto px-6 py-12 border-t border-[#e3a638]/20">
         <div className="text-center mb-12">
-          <h3 className="text-[#a66a3a] font-montserrat uppercase tracking-[0.2em] text-xs font-semibold mb-2">Hình ảnh dịch vụ</h3>
+          <h3 className="text-[#a66a3a] font-montserrat uppercase tracking-[0.2em] text-xs font-semibold mb-2">Thư viện ảnh thực tế</h3>
           <h2 className="text-3xl sm:text-4xl font-playfair text-gray-900">Không gian & Không khí {service.name}</h2>
           <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-4" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {service.gallery.map((imgUrl, gIdx) => (
-            <div key={gIdx} className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-[#e3a638]/20">
+            <div key={gIdx} className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-[#e3a638]/20 cursor-pointer">
               <div 
                 className="w-full h-full bg-cover bg-center group-hover:scale-108 transition-transform duration-700"
                 style={{ backgroundImage: `url('${imgUrl}')` }}

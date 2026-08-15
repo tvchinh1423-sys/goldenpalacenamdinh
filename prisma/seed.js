@@ -26,20 +26,25 @@ async function main() {
   await prisma.venuePricing.deleteMany({});
   await prisma.venue.deleteMany({});
 
-  // 3. Real Venues Data with Direct Google Drive Real Photos & Polite Descriptions
+  // Helper to generate HD image paths array
+  const makeHdImages = (prefix, count = 12) => {
+    const list = [];
+    for (let i = 1; i <= count; i++) {
+      list.push(`/images/hd-venues/${prefix}-hd-${i}.jpg`);
+    }
+    return JSON.stringify(list);
+  };
+
+  // 3. Real Venues Data with Crisp HD Google Drive Photographer Shots
   const venuesData = [
     {
       name: 'Hội trường Tầng 2',
-      description: 'Không gian Đại Cung Điện sức chứa từ 350 - 750 khách (Tối ưu tiệc từ 300 khách trở lên). Trang bị màn hình LED 30m², giàn đèn bướm nghệ thuật, phông 2 bên sân khấu sang trọng.',
+      description: 'Không gian Đại Cung Điện sức chứa từ 350 - 750 khách (Tối ưu cho tiệc từ 300 khách trở lên). Trang bị màn hình LED 30m², giàn đèn bướm nghệ thuật, phông 2 bên sân khấu sang trọng.',
       minGuests: 350,
       maxGuests: 750,
       displayOrder: 1,
       status: 'PUBLISHED',
-      images: JSON.stringify([
-        '/images/venues/tang-2-3.jpg',
-        '/images/venues/tang-2-4.jpg',
-        '/images/venues/tang-2-5.jpg'
-      ]),
+      images: makeHdImages('tang-2', 12),
       pricings: [
         {
           guestRangeMin: 350,
@@ -59,17 +64,12 @@ async function main() {
     },
     {
       name: 'Hội trường Tầng 3',
-      description: 'Hội trường Hoàng Gia sức chứa 300 - 650 khách (Tối ưu tiệc từ 300 khách trở lên). Màn hình LED 30m², giàn đèn bướm, trang trí đường dẫn hoa lụa cao cấp.',
+      description: 'Hội trường Hoàng Gia sức chứa 300 - 650 khách (Tối ưu cho tiệc từ 300 khách trở lên). Màn hình LED 30m², giàn đèn bướm, trang trí đường dẫn hoa lụa cao cấp.',
       minGuests: 300,
       maxGuests: 650,
       displayOrder: 2,
       status: 'PUBLISHED',
-      images: JSON.stringify([
-        '/images/venues/tang-3-2.jpg',
-        '/images/venues/tang-3-3.jpg',
-        '/images/venues/tang-3-4.jpg',
-        '/images/venues/tang-3-5.jpg'
-      ]),
+      images: makeHdImages('tang-3', 12),
       pricings: [
         {
           guestRangeMin: 300,
@@ -94,12 +94,7 @@ async function main() {
       maxGuests: 300,
       displayOrder: 3,
       status: 'PUBLISHED',
-      images: JSON.stringify([
-        '/images/venues/tang-4-2.jpg',
-        '/images/venues/tang-4-3.jpg',
-        '/images/venues/tang-4-4.jpg',
-        '/images/venues/tang-4-5.jpg'
-      ]),
+      images: makeHdImages('tang-4', 12),
       pricings: [
         {
           guestRangeMin: 100,
@@ -117,12 +112,7 @@ async function main() {
       maxGuests: 100,
       displayOrder: 4,
       status: 'PUBLISHED',
-      images: JSON.stringify([
-        '/images/venues/quay-bar-1.jpg',
-        '/images/venues/quay-bar-2.jpg',
-        '/images/venues/quay-bar-3.jpg',
-        '/images/venues/quay-bar-4.jpg'
-      ]),
+      images: makeHdImages('quay-bar', 12),
       pricings: [
         {
           guestRangeMin: 50,
@@ -140,12 +130,7 @@ async function main() {
       maxGuests: 50,
       displayOrder: 5,
       status: 'PUBLISHED',
-      images: JSON.stringify([
-        '/images/venues/phong-vip-2.jpg',
-        '/images/venues/phong-vip-3.jpg',
-        '/images/venues/phong-vip-4.jpg',
-        '/images/venues/phong-vip-5.jpg'
-      ]),
+      images: makeHdImages('phong-vip', 12),
       pricings: [
         {
           guestRangeMin: 10,
@@ -172,7 +157,7 @@ async function main() {
         }
       });
     }
-    console.log(`🏰 Seeded venue with Google Drive real photos: ${createdVenue.name}`);
+    console.log(`🏰 Seeded venue with 12 Crisp HD photos: ${createdVenue.name}`);
   }
 
   // 4. Seed Add-on Services

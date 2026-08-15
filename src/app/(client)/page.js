@@ -9,7 +9,7 @@ export default function Home() {
         {/* Background Image / Gradient */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/50 to-[#fcf9f2] z-10"></div>
-          <div className="w-full h-full bg-[url('/images/venues/tang-2-3.jpg')] bg-cover bg-center" />
+          <div className="w-full h-full bg-[url('/images/hd-venues/tang-2-hd-1.jpg')] bg-cover bg-center" />
         </div>
         
         {/* Hero Content */}
@@ -75,7 +75,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services Overview Section (4 Cards) */}
+      {/* Services Overview Section (4 Cards with Crisp HD Photos) */}
       <section className="py-24 px-6 max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <h3 className="text-[#a66a3a] font-montserrat uppercase tracking-[0.2em] text-sm mb-2 font-semibold">Dịch vụ</h3>
@@ -88,25 +88,25 @@ export default function Home() {
             {
               title: 'Tiệc Cưới',
               desc: 'Không gian lãng mạn, hệ thống âm thanh ánh sáng hiện đại, lưu giữ khoảnh khắc thiêng liêng.',
-              image: '/images/venues/tang-2-4.jpg',
+              image: '/images/hd-venues/tang-2-hd-1.jpg',
               link: '/dich-vu/tiec-cuoi'
             },
             {
               title: 'Tổ Chức Sự Kiện',
               desc: 'Trang thiết bị màn hình LED 30m² tiêu chuẩn, hội trường quy mô lớn, nâng tầm đẳng cấp doanh nghiệp.',
-              image: '/images/venues/tang-3-2.jpg',
+              image: '/images/hd-venues/tang-3-hd-1.jpg',
               link: '/dich-vu/to-chuc-su-kien'
             },
             {
               title: 'Tiệc Sinh Nhật & Kỷ Niệm',
               desc: 'Không gian ấm cúng tại Quầy Bar hoặc Phòng VIP, decor theo chủ đề trọn vẹn niềm vui.',
-              image: '/images/venues/quay-bar-2.jpg',
+              image: '/images/hd-venues/quay-bar-hd-1.jpg',
               link: '/dich-vu/sinh-nhat-ky-niem'
             },
             {
               title: 'Phòng Ăn Riêng',
               desc: 'Không gian phòng VIP riêng tư đẳng cấp, thực đơn tinh hoa dành cho đối tác & gia đình.',
-              image: '/images/venues/phong-vip-2.jpg',
+              image: '/images/hd-venues/phong-vip-hd-1.jpg',
               link: '/dich-vu/phong-an-rieng'
             }
           ].map((service, idx) => (
@@ -114,8 +114,8 @@ export default function Home() {
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500 z-10" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
               <div 
-                className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700"
-                style={{ backgroundImage: `url(${service.image})` }}
+                className="absolute inset-0 bg-cover bg-center group-hover:scale-108 transition-transform duration-700"
+                style={{ backgroundImage: `url('${service.image}')` }}
               />
               <div className="absolute bottom-0 left-0 w-full p-6 z-20 transform group-hover:-translate-y-1 transition-transform duration-500">
                 <h4 className="text-2xl mb-2 text-[#e3a638] font-playfair font-semibold">{service.title}</h4>
