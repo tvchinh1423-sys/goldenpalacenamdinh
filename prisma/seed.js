@@ -22,24 +22,23 @@ async function main() {
 
   console.log(`✅ Admin sẵn sàng: ${admin.email}`);
 
-  // 2. Clear old test venues to ensure accurate dataset
+  // 2. Clear old venues & pricings
   await prisma.venuePricing.deleteMany({});
   await prisma.venue.deleteMany({});
 
-  // 3. Real Venues Data
+  // 3. Real Venues Data with Direct Google Drive Real Photos & Polite Descriptions
   const venuesData = [
     {
       name: 'Hội trường Tầng 2',
-      description: 'Sức chứa 350 - 750 khách (Từ chối phục vụ nếu dưới 250 khách). Trang bị màn hình LED 30m², giàn đèn bướm, phông 2 bên sân khấu sang trọng.',
+      description: 'Không gian Đại Cung Điện sức chứa từ 350 - 750 khách (Tối ưu tiệc từ 300 khách trở lên). Trang bị màn hình LED 30m², giàn đèn bướm nghệ thuật, phông 2 bên sân khấu sang trọng.',
       minGuests: 350,
       maxGuests: 750,
       displayOrder: 1,
       status: 'PUBLISHED',
       images: JSON.stringify([
-        '/images/venues/tang-2-1.jpg',
-        '/images/venues/tang-2-2.jpg',
         '/images/venues/tang-2-3.jpg',
-        '/images/venues/tang-2-4.jpg'
+        '/images/venues/tang-2-4.jpg',
+        '/images/venues/tang-2-5.jpg'
       ]),
       pricings: [
         {
@@ -60,16 +59,16 @@ async function main() {
     },
     {
       name: 'Hội trường Tầng 3',
-      description: 'Sức chứa 300 - 650 khách (Từ chối phục vụ nếu dưới 250 khách). Màn hình LED 30m², giàn đèn bướm, hoa lụa 2 bên đường dẫn cao cấp.',
+      description: 'Hội trường Hoàng Gia sức chứa 300 - 650 khách (Tối ưu tiệc từ 300 khách trở lên). Màn hình LED 30m², giàn đèn bướm, trang trí đường dẫn hoa lụa cao cấp.',
       minGuests: 300,
       maxGuests: 650,
       displayOrder: 2,
       status: 'PUBLISHED',
       images: JSON.stringify([
-        '/images/venues/tang-3-1.jpg',
         '/images/venues/tang-3-2.jpg',
         '/images/venues/tang-3-3.jpg',
-        '/images/venues/tang-3-4.jpg'
+        '/images/venues/tang-3-4.jpg',
+        '/images/venues/tang-3-5.jpg'
       ]),
       pricings: [
         {
@@ -90,16 +89,16 @@ async function main() {
     },
     {
       name: 'Hội trường Tầng 4',
-      description: 'Sức chứa 100 - 300 khách. Màn hình LED 10m², hệ thống âm thanh ánh sáng hiện đại, hoa lụa 2 bên sân khấu (Ưu đãi giảm 85%).',
+      description: 'Hội trường ấm cúng sức chứa 100 - 300 khách. Trang bị màn hình LED 10m², âm thanh ánh sáng hiện đại, phông hoa lụa 2 bên sân khấu (Áp dụng gói ưu đãi đặc biệt).',
       minGuests: 100,
       maxGuests: 300,
       displayOrder: 3,
       status: 'PUBLISHED',
       images: JSON.stringify([
-        '/images/venues/tang-4-1.jpg',
         '/images/venues/tang-4-2.jpg',
         '/images/venues/tang-4-3.jpg',
-        '/images/venues/tang-4-4.jpg'
+        '/images/venues/tang-4-4.jpg',
+        '/images/venues/tang-4-5.jpg'
       ]),
       pricings: [
         {
@@ -112,14 +111,17 @@ async function main() {
       ]
     },
     {
-      name: 'Quầy Bar',
-      description: 'Không gian quầy Bar sang trọng phù hợp cho tiệc sinh nhật, tiệc kỷ niệm, tiệc cocktail từ 50 - 100 khách.',
+      name: 'Quầy Bar Tầng 1',
+      description: 'Không gian quầy Bar phong cách hiện đại sang trọng, thích hợp cho tiệc cocktail, sinh nhật, kỷ niệm từ 50 - 100 khách.',
       minGuests: 50,
       maxGuests: 100,
       displayOrder: 4,
       status: 'PUBLISHED',
       images: JSON.stringify([
-        'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&auto=format&fit=crop'
+        '/images/venues/quay-bar-1.jpg',
+        '/images/venues/quay-bar-2.jpg',
+        '/images/venues/quay-bar-3.jpg',
+        '/images/venues/quay-bar-4.jpg'
       ]),
       pricings: [
         {
@@ -133,13 +135,16 @@ async function main() {
     },
     {
       name: 'Phòng VIP',
-      description: 'Không gian phòng VIP riêng tư, ấm cúng dành cho tiệc gia đình, gặp mặt đối tác từ 10 - 50 khách.',
+      description: 'Không gian Phòng VIP riêng tư đẳng cấp, dành cho tiệc gia đình, tiếp đón đối tác từ 10 - 50 khách.',
       minGuests: 10,
       maxGuests: 50,
       displayOrder: 5,
       status: 'PUBLISHED',
       images: JSON.stringify([
-        'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop'
+        '/images/venues/phong-vip-2.jpg',
+        '/images/venues/phong-vip-3.jpg',
+        '/images/venues/phong-vip-4.jpg',
+        '/images/venues/phong-vip-5.jpg'
       ]),
       pricings: [
         {
@@ -167,10 +172,10 @@ async function main() {
         }
       });
     }
-    console.log(`🏰 Seeded venue: ${createdVenue.name}`);
+    console.log(`🏰 Seeded venue with Google Drive real photos: ${createdVenue.name}`);
   }
 
-  // 4. Seed Add-on Services (Advanced Services & Photobooth)
+  // 4. Seed Add-on Services
   await prisma.addOnService.deleteMany({});
   const addOnsData = [
     { name: 'Nhạc công Keyboard', description: '800.000 VNĐ / người', displayOrder: 1, status: 'PUBLISHED' },
