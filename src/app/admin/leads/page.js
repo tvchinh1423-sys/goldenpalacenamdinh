@@ -3,16 +3,38 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { format } from 'date-fns';
-
 import ZaloHeaderButton from './ZaloHeaderButton';
+
+const formatVietnamTime = (dateVal) => {
+  if (!dateVal) return 'N/A';
+  return new Date(dateVal).toLocaleString('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    hour12: false,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+const formatVietnamDateOnly = (dateVal) => {
+  if (!dateVal) return 'N/A';
+  return new Date(dateVal).toLocaleDateString('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+};
 
 export default async function LeadsPage({ searchParams }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 
-  const statusFilter = searchParams.status || 'ALL';
-  const searchQuery = searchParams.q || '';
+  const resolvedSearchParams = await searchParams;
+  const statusFilter = resolvedSearchParams?.status || 'ALL';
+  const searchQuery = resolvedSearchParams?.q || '';
 
   const whereClause = {
     ...(statusFilter !== 'ALL' && { leadStatus: statusFilter }),
@@ -68,7 +90,7 @@ export default async function LeadsPage({ searchParams }) {
               <option value="WON">Chốt Hợp Đồng</option>
               <option value="LOST">Hủy</option>
             </select>
-            <button type="submit" className="bg-gray-900 text-amber-300 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-black transition-colors flex items-center gap-1">
+            <button type="submit" className="bg-gray-900 text-amber-300 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-black transition-colors flex items-center gap-1 cursor-pointer">
               <span className="material-symbols-outlined text-base">search</span> Lọc
             </button>
           </form>
@@ -85,7 +107,7 @@ export default async function LeadsPage({ searchParams }) {
                 <th className="px-6 py-4">Sảnh & Quy Mô</th>
                 <th className="px-6 py-4">Dự Toán Chi Phí</th>
                 <th className="px-6 py-4">Trạng Thái</th>
-                <th className="px-6 py-4">Ngày Nhận</th>
+                <th className="px-6 py-4">Thời Gian Nhận (Giờ VN)</th>
                 <th className="px-6 py-4 text-right">Thao Tác & Zalo</th>
               </tr>
             </thead>
@@ -115,7 +137,7 @@ export default async function LeadsPage({ searchParams }) {
                         {latestProposal ? (
                           <div>
                             <span className="font-semibold text-gray-900 block">{latestProposal.guestCount} khách ({latestProposal.mainTables} mâm)</span>
-                            <span className="text-[11px] text-gray-500">Ngày: {format(new Date(latestProposal.eventDate), 'dd/MM/yyyy')}</span>
+                            <span className="text-[11px] text-gray-500">Ngày: {formatVietnamDateOnly(latestProposal.eventDate)}</span>
                           </div>
                         ) : 'N/A'}
                       </td>
@@ -132,8 +154,8 @@ export default async function LeadsPage({ searchParams }) {
                           {lead.leadStatus}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-gray-500 text-[11px] whitespace-nowrap">
-                        {format(new Date(lead.createdAt), 'dd/MM/yyyy HH:mm')}
+                      <td className="px-6 py-4 text-gray-900 font-bold text-[11px] whitespace-nowrap">
+                        {formatVietnamTime(lead.createdAt)}
                       </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-2">
@@ -149,7 +171,7 @@ export default async function LeadsPage({ searchParams }) {
                           </a>
 
                           <Link href={`/admin/leads/${lead.id}`}>
-                            <button className="bg-gray-900 hover:bg-black text-amber-300 p-1.5 rounded-lg transition-colors" title="Xem chi tiết đơn">
+                            <button className="bg-gray-900 hover:bg-black text-amber-300 p-1.5 rounded-lg transition-colors cursor-pointer" title="Xem chi tiết đơn">
                               <span className="material-symbols-outlined text-base">visibility</span>
                             </button>
                           </Link>

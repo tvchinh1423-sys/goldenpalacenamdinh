@@ -3,15 +3,40 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
-import { format } from 'date-fns';
 import { revalidatePath } from 'next/cache';
 import LeadZaloClientActions from './LeadZaloClientActions';
+
+const formatVietnamTime = (dateVal) => {
+  if (!dateVal) return 'N/A';
+  return new Date(dateVal).toLocaleString('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    hour12: false,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+const formatVietnamDateOnly = (dateVal) => {
+  if (!dateVal) return 'N/A';
+  return new Date(dateVal).toLocaleDateString('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+};
 
 export default async function LeadDetailPage({ params }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
 
-  const { id } = params;
+  const resolvedParams = await params;
+  const id = resolvedParams?.id;
+
+  if (!id) notFound();
 
   const lead = await prisma.lead.findUnique({
     where: { id },
@@ -101,8 +126,8 @@ export default async function LeadDetailPage({ params }) {
                 <p className="text-gray-900 font-bold text-sm font-mono">{lead.phone}</p>
               </div>
               <div>
-                <p className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-0.5">Ngày gửi yêu cầu</p>
-                <p className="text-gray-900 font-medium">{format(new Date(lead.createdAt), 'dd/MM/yyyy HH:mm')}</p>
+                <p className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-0.5">Thời gian nhận yêu cầu (Giờ Việt Nam)</p>
+                <p className="text-gray-900 font-bold text-sm text-emerald-700">{formatVietnamTime(lead.createdAt)}</p>
               </div>
               <div>
                 <p className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-0.5">Ghi chú của khách hàng</p>
@@ -159,7 +184,7 @@ export default async function LeadDetailPage({ params }) {
                         <h4 className={`text-sm font-bold ${isLatest ? 'text-gray-900' : 'text-gray-500'}`}>
                           Phiên bản Version {proposal.version} {isLatest && <span className="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-full ml-2">Mới nhất</span>}
                         </h4>
-                        <p className="text-[11px] text-gray-400 mt-0.5">Lưu lúc: {format(new Date(proposal.createdAt), 'dd/MM/yyyy HH:mm')}</p>
+                        <p className="text-[11px] text-gray-400 mt-0.5">Lưu lúc: {formatVietnamTime(proposal.createdAt)}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-[10px] uppercase text-gray-400 font-semibold">Tổng dự trù kinh phí</p>
@@ -170,7 +195,7 @@ export default async function LeadDetailPage({ params }) {
                     <div className={`grid grid-cols-2 gap-4 text-xs p-4 rounded-xl border ${isLatest ? 'bg-amber-50/40 border-amber-200' : 'bg-gray-50 border-gray-200'}`}>
                       <div>
                         <span className="text-gray-400 font-semibold block text-[10px] uppercase mb-0.5">Ngày tiệc & Quy mô</span>
-                        <p className="font-bold text-gray-900">{format(new Date(proposal.eventDate), 'dd/MM/yyyy')} ({proposal.eventSession})</p>
+                        <p className="font-bold text-gray-900">{formatVietnamDateOnly(proposal.eventDate)} ({proposal.eventSession})</p>
                         <p className="text-gray-700">{proposal.guestCount} khách • {proposal.mainTables} mâm chính</p>
                       </div>
                       
