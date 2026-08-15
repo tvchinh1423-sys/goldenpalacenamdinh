@@ -49,9 +49,9 @@ Chuyên viên tư vấn Golden Palace rất hân hạnh được đồng hành v
 
     navigator.clipboard.writeText(text);
     
-    // Ask user if they want to open Zalo Chat Web directly
-    if (confirm('✅ Đã copy toàn bộ thông tin khách hàng!\n\nBấm OK để mở Zalo và dán (Paste) vào nhóm "Chốt tiền hàng".')) {
-      window.open(`https://chat.zalo.me`, '_blank');
+    // Ask user if they want to open Zalo Group directly
+    if (confirm('✅ Đã sao chép toàn bộ thông tin khách hàng!\n\nBấm OK để mở trực tiếp Nhóm Zalo "Chốt tiền hàng" (https://zalo.me/g/xlvgxc877) và dán (Paste) gửi ngay.')) {
+      window.open(`https://zalo.me/g/xlvgxc877`, '_blank');
     }
   };
 
