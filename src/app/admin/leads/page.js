@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { format } from 'date-fns';
 
+import ZaloHeaderButton from './ZaloHeaderButton';
+
 export default async function LeadsPage({ searchParams }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
@@ -41,10 +43,11 @@ export default async function LeadsPage({ searchParams }) {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
         <div>
           <h2 className="text-xl font-bold text-gray-900">Quản lý Khách hàng (Leads) & Thông báo Zalo</h2>
-          <p className="text-xs text-gray-500 mt-1">Đồng bộ yêu cầu đặt tiệc và gửi tin nhắn Zalo trực tiếp cho khách hàng</p>
+          <p className="text-xs text-gray-500 mt-1">Đồng bộ yêu cầu đặt tiệc và gửi tin nhắn Zalo trực tiếp cho nhóm "Chốt tiền hàng"</p>
         </div>
         
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <ZaloHeaderButton />
           <form className="flex gap-2">
             <input 
               type="text" 
