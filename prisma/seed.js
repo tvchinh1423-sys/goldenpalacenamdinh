@@ -117,7 +117,7 @@ async function main() {
         {
           guestRangeMin: 50,
           guestRangeMax: 100,
-          price: 1500000,
+          price: 2000000,
           effectiveFrom: new Date('2026-01-01'),
           status: 'PUBLISHED'
         }

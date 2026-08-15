@@ -5,6 +5,7 @@ const EstimateContext = createContext({});
 
 export function EstimateProvider({ children }) {
   const [estimateData, setEstimateData] = useState({
+    eventType: 'WEDDING', // WEDDING | CONFERENCE | BIRTHDAY | ANNIVERSARY | OTHER
     guestCount: 350,
     budgetPerTable: 3500000,
     session: 'Trưa',
@@ -15,12 +16,12 @@ export function EstimateProvider({ children }) {
     selectedMenus: []
   });
 
-  // Load from localStorage on mount (optional)
+  // Load from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('golden_palace_estimate');
     if (saved) {
       try {
-        setEstimateData(JSON.parse(saved));
+        setEstimateData(prev => ({ ...prev, ...JSON.parse(saved) }));
       } catch (e) {
         console.error('Failed to parse saved estimate', e);
       }

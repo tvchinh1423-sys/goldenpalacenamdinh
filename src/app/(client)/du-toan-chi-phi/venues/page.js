@@ -3,17 +3,33 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useEstimate } from '@/components/guest/EstimateContext';
 
+const EVENT_LABEL_MAP = {
+  'WEDDING': 'Tiệc Cưới',
+  'CONFERENCE': 'Hội Nghị & Sự Kiện',
+  'BIRTHDAY': 'Tiệc Sinh Nhật',
+  'ANNIVERSARY': 'Tiệc Kỷ Niệm',
+  'OTHER': 'Sự Kiện Khác'
+};
+
 export default function Venues() {
   const { estimateData, updateEstimate } = useEstimate();
-  const { guestCount, budgetPerTable, selectedVenues } = estimateData;
+  const { eventType, guestCount, budgetPerTable, selectedVenues } = estimateData;
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const currentEventType = eventType || 'WEDDING';
 
   useEffect(() => {
     async function fetchVenues() {
       try {
         const res = await fetch(`/api/guest/venues?guests=${guestCount}`);
-        const data = await res.json();
+        let data = await res.json();
+
+        // Business Rule: "Phòng VIP không cần hiển thị trong phần tiệc cưới"
+        if (currentEventType === 'WEDDING') {
+          data = data.filter(v => !v.name.includes('Phòng VIP'));
+        }
+
         setVenues(data);
       } catch (error) {
         console.error('Failed to fetch venues:', error);
@@ -22,7 +38,7 @@ export default function Venues() {
       }
     }
     fetchVenues();
-  }, [guestCount]);
+  }, [guestCount, currentEventType]);
 
   const toggleSelect = (id) => {
     if (selectedVenues.includes(id)) {
@@ -42,22 +58,29 @@ export default function Venues() {
     <div className="bg-background text-on-surface font-body-md antialiased pt-32 pb-40">
       <header className="fixed top-0 w-full z-50 bg-surface/80 dark:bg-on-surface/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm transition-all duration-300">
         <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full max-w-container-max mx-auto">
-          <div className="flex items-center gap-4 cursor-pointer active:scale-95 duration-200">
-            <span className="material-symbols-outlined text-primary dark:text-primary-fixed">menu</span>
-          </div>
+          <Link href="/du-toan-chi-phi" className="flex items-center gap-2 text-primary text-xs uppercase font-semibold">
+            <span className="material-symbols-outlined">arrow_back</span>
+            Đổi loại sự kiện
+          </Link>
           <h1 className="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-display-lg text-primary-container bg-clip-text bg-gradient-to-r from-gold-gradient-start to-gold-gradient-end text-transparent text-center absolute left-1/2 -translate-x-1/2">
             Golden Palace
           </h1>
-          <div className="flex items-center gap-4 cursor-pointer active:scale-95 duration-200">
-            <span className="font-label-md text-primary dark:text-primary-fixed hover:text-primary-container transition-colors hidden md:block">Trợ giúp</span>
-            <span className="material-symbols-outlined text-primary dark:text-primary-fixed hover:text-primary-container transition-colors md:hidden">help</span>
+          <div className="flex items-center gap-4">
+            <span className="font-label-md text-primary text-xs font-bold uppercase">
+              Nhánh: {EVENT_LABEL_MAP[currentEventType]}
+            </span>
           </div>
         </div>
       </header>
 
       <div className="fixed top-16 w-full z-40 bg-surface-container-high/90 backdrop-blur-md border-b border-gold-gradient-start/20 shadow-sm">
-        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-6 text-on-surface-variant font-body-md">
+        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-3.5 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-6 text-on-surface-variant font-body-md text-xs">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>event_note</span>
+              <span className="font-semibold text-gray-900">{EVENT_LABEL_MAP[currentEventType]}</span>
+            </div>
+            <div className="hidden sm:block w-1 h-1 rounded-full bg-outline-variant"></div>
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
               <span>{guestCount} khách</span>
@@ -69,9 +92,9 @@ export default function Venues() {
             </div>
           </div>
           <Link href="/du-toan-chi-phi">
-            <button className="text-primary font-label-md hover:underline flex items-center gap-1 transition-colors duration-200">
+            <button className="text-primary font-label-md hover:underline flex items-center gap-1 transition-colors duration-200 text-xs">
               <span className="material-symbols-outlined text-sm">edit</span>
-              Sửa yêu cầu
+              Sửa quy mô & nhánh
             </button>
           </Link>
         </div>
@@ -79,9 +102,10 @@ export default function Venues() {
 
       <main className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-8">
         <div className="text-center mb-section-gap">
-          <h2 className="font-headline-md text-headline-md text-on-surface mb-4">Chọn Hội Trường Sự Kiện</h2>
-          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
-            Khám phá các không gian tổ chức sang trọng phù hợp với quy mô khách mời của bạn. Chọn tối đa 2 hội trường để so sánh chi tiết.
+          <span className="text-[#a66a3a] uppercase tracking-[0.2em] text-xs font-semibold">Bước 2 / 4</span>
+          <h2 className="font-headline-md text-headline-md text-on-surface mt-1 mb-3">Hội Trường Sự Kiện Cho {EVENT_LABEL_MAP[currentEventType]}</h2>
+          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto text-sm">
+            Khám phá các không gian phù hợp với quy mô khách mời. Chọn tối đa 2 hội trường để so sánh chi tiết.
           </p>
         </div>
 
@@ -93,7 +117,8 @@ export default function Venues() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
             {venues.map(v => {
               const isSelected = selectedVenues.includes(v.id);
-              const images = JSON.parse(v.images || '[]');
+              let images = [];
+              try { images = JSON.parse(v.images || '[]'); } catch(e) {}
               const image = images[0] || 'https://via.placeholder.com/600x400';
 
               // Pricing matching
@@ -148,7 +173,7 @@ export default function Venues() {
                       </div>
                       <div className="flex items-center gap-2 col-span-2">
                         <span className="material-symbols-outlined text-primary opacity-80 text-sm">payments</span>
-                        <span className="font-semibold text-primary">Phí trọn gói: {formattedPrice}</span>
+                        <span className="font-semibold text-primary">Phí dịch vụ sảnh: {formattedPrice}</span>
                       </div>
                     </div>
 
@@ -156,14 +181,14 @@ export default function Venues() {
                       {isEligible ? (
                         <>
                           <Link href="/du-toan-chi-phi/services" className="flex-1">
-                            <button onClick={() => selectPreferred(v.id)} className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white font-label-md py-3 rounded-lg flex justify-center items-center gap-2 transition-all shadow-md hover:opacity-90">
+                            <button onClick={() => selectPreferred(v.id)} className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white font-label-md py-3 rounded-lg flex justify-center items-center gap-2 transition-all shadow-md hover:opacity-90 cursor-pointer">
                               <span className="material-symbols-outlined text-[20px]">check</span>
                               Chọn Sảnh
                             </button>
                           </Link>
                           <button 
                             onClick={() => toggleSelect(v.id)}
-                            className={`flex-1 font-label-md py-3 rounded-lg flex justify-center items-center gap-2 transition-colors text-xs ${
+                            className={`flex-1 font-label-md py-3 rounded-lg flex justify-center items-center gap-2 transition-colors text-xs cursor-pointer ${
                               isSelected 
                                 ? 'bg-primary-container/20 border border-primary text-primary font-semibold' 
                                 : 'bg-transparent border border-outline text-outline hover:border-primary hover:text-primary'

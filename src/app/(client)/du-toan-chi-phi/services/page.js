@@ -3,76 +3,109 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useEstimate } from '@/components/guest/EstimateContext';
 
+// EXACT ITEM BREAKDOWN FROM GOLDEN PALACE OFFICIAL PRICING TABLES
 const VENUE_INCLUDED_ITEMS = {
   'Hội trường Tầng 2': {
     name: 'Hạng mục Dịch vụ Cơ bản Tầng 2',
-    description: 'Bao gồm toàn bộ trang thiết bị & dịch vụ phục vụ tiệc cưới tại Đại Cung Điện Tầng 2',
+    description: 'Bao gồm 13 hạng mục trang thiết bị & dịch vụ phục vụ tiệc tại Đại Cung Điện Tầng 2 (Sức chứa 350 - 750 khách)',
     items: [
-      'Không gian Đại Cung Điện trần cao 7m hoàn toàn không cột chắn tầm nhìn',
-      'Màn hình LED P2.5 siêu nét tiêu chuẩn 30m²',
-      'Hệ thống âm thanh ánh sáng biểu diễn chuyên nghiệp',
-      'Giàn đèn bướm nghệ thuật rực rỡ & đường dẫn hoa lụa lãng mạn',
-      'Trang trí phông 2 bên sân khấu & Phông chụp ảnh lưu niệm cao cấp',
-      'Cổng hoa chào đón & Bàn gallery đón khách chỉn chu',
-      'Đội ngũ quản lý & nhân viên phục vụ tận tâm suốt tiệc'
+      'Cổng hoa chào đón (1 Bộ)',
+      'Bàn trang trí, hộp tiền mừng (1 Bộ)',
+      'Bàn hoa cắt bánh cưới (1 Bộ)',
+      'Bàn hoa Tháp ly (1 Bộ)',
+      'Hoa lụa 2 bên đường dẫn (2 Bộ)',
+      'Đèn 2 bên đường dẫn (10 Cột)',
+      'Phông 2 bên sân khấu (2 Bộ)',
+      'Giàn đèn bướm (10 Bộ)',
+      'Phông chụp ảnh lưu niệm (1 Bộ)',
+      'Giá để ảnh cưới cỡ lớn (1 Cái)',
+      'Màn hình LED 30m² (1 Bộ)',
+      'Hệ thống Âm thanh, Ánh sáng biểu diễn (1 Bộ)',
+      'Bánh cưới, rượu Champagne, đá khói, pháo điện, bộ chữ lồng tên (1 Bộ)'
     ]
   },
   'Hội trường Tầng 3': {
     name: 'Hạng mục Dịch vụ Cơ bản Tầng 3',
-    description: 'Bao gồm toàn bộ trang thiết bị & dịch vụ phục vụ tiệc cưới tại Hội trường Hoàng Gia Tầng 3',
+    description: 'Bao gồm 13 hạng mục trang thiết bị & dịch vụ phục vụ tiệc tại Hội trường Hoàng Gia Tầng 3 (Sức chứa 300 - 650 khách)',
     items: [
-      'Không gian sảnh tiệc tân cổ điển Rose Gold thoáng đãng không cột chắn',
-      'Màn hình LED P2.5 tiêu chuẩn 30m² trình chiếu sắc nét',
-      'Hệ thống âm thanh ánh sáng sân khấu biểu diễn cao cấp',
-      'Giàn đèn bướm nghệ thuật & hệ thống đèn đường dẫn cô dâu tự động',
-      'Trang trí phông 2 bên sân khấu & Phông lưu niệm đón khách',
-      'Cổng chào đón & Bàn tiền mừng/bàn mừng lụa chỉn chu',
-      'Đội ngũ quản lý & nhân viên phục vụ chuyên nghiệp'
+      'Cổng hoa chào đón (1 Bộ)',
+      'Bàn trang trí, hộp tiền mừng (1 Bộ)',
+      'Bàn hoa cắt bánh cưới (1 Bộ)',
+      'Bàn hoa Tháp ly (1 Bộ)',
+      'Hoa lụa 2 bên đường dẫn (2 Bộ)',
+      'Đèn 2 bên đường dẫn (10 Cột)',
+      'Phông 2 bên sân khấu (2 Bộ)',
+      'Giàn đèn bướm (10 Bộ)',
+      'Phông chụp ảnh lưu niệm (1 Bộ)',
+      'Giá để ảnh cưới cỡ lớn (1 Cái)',
+      'Màn hình LED 30m² (1 Bộ)',
+      'Hệ thống Âm thanh, Ánh sáng biểu diễn (1 Bộ)',
+      'Bánh cưới, rượu Champagne, đá khói, pháo điện, bộ chữ lồng tên (1 Bộ)'
     ]
   },
   'Hội trường Tầng 4': {
     name: 'Hạng mục Dịch vụ Cơ bản Tầng 4',
-    description: 'Bao gồm toàn bộ trang thiết bị & dịch vụ phục vụ tiệc cưới tại Tầng 4',
+    description: 'Bao gồm 11 hạng mục trang thiết bị & dịch vụ phục vụ tiệc tại Hội trường Tầng 4 (Sức chứa 100 - 300 khách)',
     items: [
-      'Không gian tiệc cưới ấm cúng, sang trọng cho tiệc 100 - 300 khách',
-      'Màn hình LED 10m² hiện đại',
-      'Hệ thống âm thanh & ánh sáng biểu diễn tiêu chuẩn',
-      'Hoa lụa trang trí 2 bên sân khấu & Cổng hoa chào đón',
-      'Phông chụp ảnh lưu niệm & Bàn mừng chỉn chu',
-      'Đội ngũ nhân viên phục vụ chu đáo'
+      'Cổng chào đón (1 Bộ)',
+      'Bàn, trang trí, hộp tiền mừng (1 Bộ)',
+      'Bàn hoa đặt bánh cưới (1 Bộ)',
+      'Bàn hoa Tháp ly (1 Bộ)',
+      'Cột hoa 2 bên thảm đỏ (6 Cột)',
+      'Phông chụp ảnh lưu niệm (1 Bộ)',
+      'Hoa lụa 2 bên sân khấu (2 Bộ)',
+      'Giá để ảnh cưới cỡ lớn (1 Cái)',
+      'Màn hình LED 10m² (1 Màn)',
+      'Hệ thống Âm thanh, Ánh sáng (1 Bộ)',
+      'Bánh cưới, rượu Champagne, đá khói, pháo điện, bộ chữ lồng tên (1 Bộ)'
     ]
   },
   'Quầy Bar Tầng 1': {
-    name: 'Hạng mục Dịch vụ Cơ bản Quầy Bar',
-    description: 'Bao gồm toàn bộ trang thiết bị & dịch vụ cho tiệc tại Quầy Bar Tầng 1',
+    name: 'Hạng mục Dịch vụ Cơ bản Quầy Bar Tầng 1',
+    description: 'Bao gồm 10 hạng mục trang thiết bị & dịch vụ phục vụ tiệc tại Quầy Bar Tầng 1 (Sức chứa 50 - 100 khách - Giá 2.000.000 VNĐ)',
     items: [
-      'Không gian quầy Bar kiến trúc hiện đại sành điệu',
-      'Quầy pha chế chuyên nghiệp & hệ thống ánh sáng Lounge ấm cúng',
-      'Hệ thống âm thanh chất lượng cao cho tiệc sinh nhật/kỷ niệm',
-      'Đội ngũ nhân viên phục vụ tiệc tận tình'
+      'Cổng chào đón hiện đại (1 Bộ)',
+      'Bàn, trang trí đón khách & hộp tiền mừng (1 Bộ)',
+      'Bàn hoa đặt bánh chúc mừng (1 Bộ)',
+      'Bàn hoa Tháp ly / Tháp rượu chúc mừng (1 Bộ)',
+      'Cột hoa 2 bên lối đi (6 Cột)',
+      'Phông chụp ảnh lưu niệm check-in (1 Bộ)',
+      'Hoa lụa trang trí không gian sân khấu (2 Bộ)',
+      'Giá để ảnh kỷ niệm / banner sự kiện (1 Cái)',
+      'Màn hình LED / Máy chiếu trình chiếu (1 Màn)',
+      'Hệ thống Âm thanh, Ánh sáng Lounge hiện đại (1 Bộ)'
     ]
   },
   'Phòng VIP': {
     name: 'Hạng mục Dịch vụ Cơ bản Phòng VIP',
-    description: 'Bao gồm toàn bộ dịch vụ cho tiệc riêng tư tại Phòng VIP',
+    description: 'Bao gồm các dịch vụ cao cấp riêng tư cho tiệc tại Phòng VIP (Sức chứa 10 - 50 khách)',
     items: [
       'Không gian phòng VIP biệt lập, riêng tư tuyệt đối',
-      'Nội thất sang trọng mạ vàng & bàn tiệc xoay hoàng gia',
-      'Phục vụ riêng chuẩn 5 sao tận tình chu đáo',
-      'Không gian yên tĩnh phù hợp tiếp đón đối tác & gia đình'
+      'Bàn xoay Hoàng gia mạ vàng & bộ bát đĩa sứ mạ vàng cao cấp',
+      'Hệ thống âm thanh background & màn hình hỗ trợ hội thảo/hát',
+      'Đội ngũ quản lý & phục vụ riêng chuẩn 5 sao tận tình chu đáo'
     ]
   }
 };
 
+const EVENT_LABEL_MAP = {
+  'WEDDING': 'Tiệc Cưới',
+  'CONFERENCE': 'Hội Nghị & Sự Kiện',
+  'BIRTHDAY': 'Tiệc Sinh Nhật',
+  'ANNIVERSARY': 'Tiệc Kỷ Niệm',
+  'OTHER': 'Sự Kiện Khác'
+};
+
 export default function Services() {
   const { estimateData, updateEstimate } = useEstimate();
-  const { guestCount, selectedVenues, selectedAddOns } = estimateData;
+  const { eventType, guestCount, selectedVenues, selectedAddOns } = estimateData;
 
   const [allVenues, setAllVenues] = useState([]);
   const [addons, setAddons] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const selectedVenueId = selectedVenues[0];
+  const currentEventType = eventType || 'WEDDING';
 
   useEffect(() => {
     async function fetchData() {
@@ -96,7 +129,6 @@ export default function Services() {
     fetchData();
   }, []);
 
-  // Find selected venue object
   const currentVenue = allVenues.find(v => v.id === selectedVenueId) || allVenues[0];
   const currentVenueName = currentVenue?.name || 'Hội trường Tầng 2';
   const venueIncludedInfo = VENUE_INCLUDED_ITEMS[currentVenueName] || VENUE_INCLUDED_ITEMS['Hội trường Tầng 2'];
@@ -111,11 +143,9 @@ export default function Services() {
     }
   };
 
-  // Helper to extract clean price vs note in parentheses ()
   const parseAddonDetails = (addon) => {
     const raw = addon.description || '';
     
-    // Check Laser Ring free gift condition
     if (addon.name.includes('Vòng ánh sáng laser')) {
       if (isEligibleForFreeLaserRing) {
         return {
@@ -143,7 +173,6 @@ export default function Services() {
       };
     }
 
-    // Split text before '(' and inside '(...)'
     const parenIndex = raw.indexOf('(');
     if (parenIndex !== -1) {
       const mainPrice = raw.substring(0, parenIndex).trim();
@@ -206,13 +235,13 @@ export default function Services() {
       <main className="flex-grow w-full max-w-7xl mx-auto px-6 py-8 flex flex-col gap-10">
         <div className="text-center flex flex-col gap-3">
           <span className="text-[#a66a3a] uppercase tracking-[0.2em] text-xs font-semibold">
-            Bước 3: Tinh hoa dịch vụ & Hạng mục đi kèm
+            Bước 3 / 4: Tinh hoa dịch vụ ({EVENT_LABEL_MAP[currentEventType]})
           </span>
           <h2 className="text-3xl sm:text-4xl font-playfair font-semibold text-gray-900">
             Dịch Vụ & Hạng Mục Cho {currentVenueName}
           </h2>
           <p className="text-gray-600 font-light text-sm max-w-2xl mx-auto">
-            Xem toàn bộ các hạng mục cơ bản đã bao gồm theo sảnh và chủ động chọn các dịch vụ nâng cao/bổ sung cho ngày trọng đại.
+            Xem danh sách đầy đủ các hạng mục dịch vụ cơ bản đã bao gồm theo sảnh và chủ động chọn thêm các dịch vụ biểu diễn/nâng cao.
           </p>
         </div>
 
@@ -234,15 +263,17 @@ export default function Services() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-playfair font-semibold text-gray-900">{venueIncludedInfo.name}</h3>
-                  <p className="text-gray-500 text-xs font-light">{venueIncludedInfo.description}</p>
+                  <p className="text-gray-500 text-xs font-light mt-1">{venueIncludedInfo.description}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-gray-100 pt-6">
                 {venueIncludedInfo.items.map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-[#fcf9f2] border border-[#e3a638]/15">
-                    <span className="material-symbols-outlined text-[#e3a638] text-lg mt-0.5">check_circle</span>
-                    <span className="text-xs text-gray-800 font-medium leading-relaxed">{item}</span>
+                  <div key={idx} className="flex items-start gap-3 p-3.5 rounded-xl bg-[#fcf9f2] border border-[#e3a638]/20 shadow-xs hover:border-[#e3a638] transition-colors">
+                    <div className="w-6 h-6 rounded-full bg-[#e3a638]/15 text-[#a66a3a] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="material-symbols-outlined text-sm font-bold">check</span>
+                    </div>
+                    <span className="text-xs text-gray-900 font-medium leading-relaxed">{item}</span>
                   </div>
                 ))}
               </div>
@@ -276,7 +307,6 @@ export default function Services() {
                       }`}
                     >
                       <div>
-                        {/* Title & Plus/Check Button */}
                         <div className="flex items-start justify-between gap-3 mb-2">
                           <h4 className="font-semibold text-gray-900 text-sm font-playfair">{a.name}</h4>
                           
@@ -287,7 +317,6 @@ export default function Services() {
                           </button>
                         </div>
 
-                        {/* SINGLE PRICE DISPLAY */}
                         <div className="mb-2">
                           <span className={`text-xs font-semibold ${
                             details.isFree 
@@ -300,7 +329,6 @@ export default function Services() {
                           </span>
                         </div>
 
-                        {/* YELLOW/AMBER PILL NOTE FOR TEXT IN PARENTHESES () */}
                         {details.note && (
                           <div className={`p-2.5 rounded-lg text-xs leading-relaxed font-medium ${
                             details.isFree 
