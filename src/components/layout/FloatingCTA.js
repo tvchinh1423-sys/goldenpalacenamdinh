@@ -2,10 +2,12 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AIChatModal from './AIChatModal';
+import BookingConsultationModal from './BookingConsultationModal';
 
 export default function FloatingCTA() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,45 +39,57 @@ export default function FloatingCTA() {
             className="group/ai relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#1a1a1a] via-[#2a2419] to-[#0d0d0d] text-white shadow-[0_0_30px_rgba(227,166,56,0.6)] hover:shadow-[0_0_40px_rgba(227,166,56,0.9)] hover:scale-110 transition-all duration-300 ring-2 ring-[#e3a638] cursor-pointer"
             title="Hỏi đáp 24/7 cùng Trợ lý AI Golden Palace"
           >
-            {/* Inner Rotating Gold Ring */}
             <div className="absolute inset-0 rounded-full border-2 border-dashed border-[#e3a638]/60 animate-spin [animation-duration:12s]"></div>
             
-            {/* Logo Emblem */}
             <div className="w-10 h-10 rounded-full bg-black/90 flex items-center justify-center p-1.5 shadow-inner border border-[#e3a638]/40">
               <img src="/logo-icon.png" alt="AI Consultant" className="w-full h-full object-contain filter drop-shadow-[0_0_4px_rgba(227,166,56,0.8)]" />
             </div>
 
-            {/* Sparkle Icon */}
             <span className="absolute -top-1 -left-1 text-amber-300 text-sm animate-pulse">✨</span>
 
-            {/* Floating Luxury Pill Label */}
             <span className="absolute -top-2.5 right-1 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-white font-bold text-[9px] px-2 py-0.5 rounded-full border border-white/80 shadow-md uppercase tracking-wider whitespace-nowrap">
               TRỢ LÝ AI 24/7
             </span>
 
-            {/* Expandable Hover Tooltip */}
             <span className="absolute right-18 bg-black/95 text-[#fcf9f2] font-montserrat text-xs px-4 py-2 rounded-xl whitespace-nowrap opacity-0 group-hover/ai:opacity-100 transition-all duration-300 pointer-events-none shadow-2xl border border-[#e3a638]/40 backdrop-blur-md font-medium translate-x-2 group-hover/ai:translate-x-0">
               💬 Chat ngay với <strong className="text-[#e3a638] font-semibold">Trợ lý AI Golden Palace</strong>
             </span>
           </button>
         </div>
 
-        {/* 📅 2. Dự toán chi phí & Đặt lịch */}
+        {/* 📅 2. NÚT ĐẶT LỊCH TƯ VẤN (ONLINE & TRỰC TIẾP) */}
+        <button
+          onClick={() => setIsBookingModalOpen(true)}
+          className="group/item relative flex items-center justify-center w-13 h-13 rounded-full bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white shadow-xl hover:shadow-[0_0_25px_rgba(227,166,56,0.7)] hover:scale-110 transition-all duration-300 border-2 border-amber-300 cursor-pointer"
+          title="Đặt lịch tư vấn Online & Trực tiếp tại nhà hàng"
+        >
+          <span className="material-symbols-outlined text-2xl drop-shadow-sm">edit_calendar</span>
+          
+          <span className="absolute -top-2 -right-1 bg-red-600 text-white font-bold text-[8px] px-1.5 py-0.5 rounded-full shadow-sm uppercase tracking-wider animate-bounce">
+            HOT
+          </span>
+
+          <span className="absolute right-16 bg-black/95 text-white font-montserrat text-xs px-4 py-2 rounded-xl whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-all duration-200 pointer-events-none shadow-2xl border border-[#e3a638]/40 backdrop-blur-md font-medium">
+            📅 Đặt lịch tư vấn <strong className="text-[#e3a638]">Online & Trực tiếp</strong>
+          </span>
+        </button>
+
+        {/* 🧮 3. Dự toán chi phí */}
         <Link 
           href="/du-toan-chi-phi" 
-          className="group/item relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.5)] hover:scale-108 transition-all duration-300 border border-white/20"
-          title="Dự toán chi phí & Đặt lịch hẹn"
+          className="group/item relative flex items-center justify-center w-12 h-12 rounded-full bg-[#1c1917] text-[#e3a638] shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] hover:scale-108 transition-all duration-300 border border-[#e3a638]/40"
+          title="Dự toán chi phí sự kiện"
         >
-          <span className="material-symbols-outlined text-2xl drop-shadow-sm">calendar_month</span>
+          <span className="material-symbols-outlined text-2xl">calculate</span>
           <span className="absolute right-15 bg-black/90 text-white font-montserrat text-xs px-3.5 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-all duration-200 pointer-events-none shadow-xl border border-white/10 backdrop-blur-sm font-medium">
-            Dự toán & Đặt lịch tiệc
+            Dự toán chi phí sự kiện
           </span>
         </Link>
 
-        {/* 📞 3. Hotline Trực tiếp */}
+        {/* 📞 4. Hotline Trực tiếp */}
         <a 
           href="tel:02286595959" 
-          className="group/item relative flex items-center justify-center w-12 h-12 rounded-full bg-[#1c1917] text-[#e3a638] shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] hover:scale-108 transition-all duration-300 border border-[#e3a638]/40"
+          className="group/item relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-amber-950 to-gray-900 text-[#e3a638] shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] hover:scale-108 transition-all duration-300 border border-[#e3a638]/40"
           title="Hotline tư vấn nhanh"
         >
           <span className="material-symbols-outlined text-2xl">call</span>
@@ -84,7 +98,7 @@ export default function FloatingCTA() {
           </span>
         </a>
 
-        {/* ⚡ 4. Facebook Messenger */}
+        {/* ⚡ 5. Facebook Messenger */}
         <a 
           href="https://m.me/goldenpalaceweddingnamdinh" 
           target="_blank" 
@@ -100,7 +114,7 @@ export default function FloatingCTA() {
           </span>
         </a>
 
-        {/* 📍 5. Chỉ đường Maps */}
+        {/* 📍 6. Chỉ đường Maps */}
         <a 
           href="https://www.google.com/maps/search/?api=1&query=98+Đông+A,+KĐT+Hòa+Vượng,+Nam+Định" 
           target="_blank" 
@@ -114,7 +128,7 @@ export default function FloatingCTA() {
           </span>
         </a>
 
-        {/* 🔝 6. Nút cuộn lên đầu trang */}
+        {/* 🔝 7. Nút cuộn lên đầu trang */}
         {showBackToTop && (
           <button
             onClick={scrollToTop}
@@ -134,6 +148,12 @@ export default function FloatingCTA() {
       <AIChatModal 
         isOpen={isAIChatOpen} 
         onClose={() => setIsAIChatOpen(false)} 
+      />
+
+      {/* Booking Consultation Modal */}
+      <BookingConsultationModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
       />
     </>
   );

@@ -160,28 +160,29 @@ async function main() {
     console.log(`🏰 Seeded venue with 12 Crisp HD photos: ${createdVenue.name}`);
   }
 
-  // 4. Seed Add-on Services
+  // 4. Seed Add-on Services (Including Thêm Trang Trí: Liên hệ)
   await prisma.addOnService.deleteMany({});
   const addOnsData = [
-    { name: 'Nhạc công Keyboard', description: '800.000 VNĐ / người', displayOrder: 1, status: 'PUBLISHED' },
-    { name: 'Ca sĩ (Hát 3 bài)', description: '800.000 VNĐ / người', displayOrder: 2, status: 'PUBLISHED' },
-    { name: 'Người dẫn chương trình (MC)', description: '800.000 VNĐ / người', displayOrder: 3, status: 'PUBLISHED' },
-    { name: 'Thiên thần (1 cặp)', description: '1.000.000 VNĐ / cặp', displayOrder: 4, status: 'PUBLISHED' },
-    { name: 'Ban nhạc Saxophone', description: '5.000.000 VNĐ / ban', displayOrder: 5, status: 'PUBLISHED' },
-    { name: 'Ban nhạc tứ tấu', description: '14.000.000 VNĐ / ban', displayOrder: 6, status: 'PUBLISHED' },
-    { name: 'Vòng ánh sáng laser trao nhẫn', description: '700.000 VNĐ / lần (Tặng miễn phí tiệc chốt > 400 khách)', displayOrder: 7, status: 'PUBLISHED' },
-    { name: 'Bóng bay kích nổ (Làm từ 4 quả)', description: '900.000 VNĐ / quả', displayOrder: 8, status: 'PUBLISHED' },
-    { name: 'Flycam trao nhẫn cưới', description: '1.000.000 VNĐ / lần', displayOrder: 9, status: 'PUBLISHED' },
-    { name: 'Bướm dẫn đường cô dâu', description: '3.000.000 VNĐ / con', displayOrder: 10, status: 'PUBLISHED' },
-    { name: 'Photobooth Gói 1 (1.5 giờ, 200 ảnh nhỏ/100 ảnh to)', description: '3.400.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 11, status: 'PUBLISHED' },
-    { name: 'Photobooth Gói 2 (2 giờ, Không giới hạn ảnh)', description: '4.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 12, status: 'PUBLISHED' },
-    { name: 'Photobooth Gói 3 (3 giờ, Không giới hạn ảnh)', description: '5.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 13, status: 'PUBLISHED' }
+    { name: 'Thêm Trang Trí Theo Yêu Cầu', description: 'Liên hệ tư vấn concept & báo giá riêng', displayOrder: 1, status: 'PUBLISHED' },
+    { name: 'Nhạc công Keyboard', description: '800.000 VNĐ / người', displayOrder: 2, status: 'PUBLISHED' },
+    { name: 'Ca sĩ (Hát 3 bài)', description: '800.000 VNĐ / người', displayOrder: 3, status: 'PUBLISHED' },
+    { name: 'Người dẫn chương trình (MC)', description: '800.000 VNĐ / người', displayOrder: 4, status: 'PUBLISHED' },
+    { name: 'Thiên thần (1 cặp)', description: '1.000.000 VNĐ / cặp', displayOrder: 5, status: 'PUBLISHED' },
+    { name: 'Ban nhạc Saxophone', description: '5.000.000 VNĐ / ban', displayOrder: 6, status: 'PUBLISHED' },
+    { name: 'Ban nhạc tứ tấu', description: '14.000.000 VNĐ / ban', displayOrder: 7, status: 'PUBLISHED' },
+    { name: 'Vòng ánh sáng laser trao nhẫn', description: '700.000 VNĐ / lần (Tặng miễn phí tiệc chốt > 400 khách)', displayOrder: 8, status: 'PUBLISHED' },
+    { name: 'Bóng bay kích nổ (Làm từ 4 quả)', description: '900.000 VNĐ / quả', displayOrder: 9, status: 'PUBLISHED' },
+    { name: 'Flycam trao nhẫn cưới', description: '1.000.000 VNĐ / lần', displayOrder: 10, status: 'PUBLISHED' },
+    { name: 'Bướm dẫn đường cô dâu', description: '3.000.000 VNĐ / con', displayOrder: 11, status: 'PUBLISHED' },
+    { name: 'Photobooth Gói 1 (1.5 giờ, 200 ảnh nhỏ/100 ảnh to)', description: '3.400.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 12, status: 'PUBLISHED' },
+    { name: 'Photobooth Gói 2 (2 giờ, Không giới hạn ảnh)', description: '4.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 13, status: 'PUBLISHED' },
+    { name: 'Photobooth Gói 3 (3 giờ, Không giới hạn ảnh)', description: '5.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 14, status: 'PUBLISHED' }
   ];
 
   for (const item of addOnsData) {
     await prisma.addOnService.create({ data: item });
   }
-  console.log('✨ Seeded Add-on Services!');
+  console.log('✨ Seeded Add-on Services (including Thêm Trang Trí)!');
 }
 
 main()
