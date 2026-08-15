@@ -146,7 +146,7 @@ export async function POST(request) {
     });
 
     // Real-time Automated Notification Trigger (Zalo / Telegram Webhook)
-    const webhookUrl = process.env.ZALO_WEBHOOK_URL || process.env.TELEGRAM_WEBHOOK_URL;
+    const webhookUrl = process.env.ZALO_WEBHOOK_URL || process.env.TELEGRAM_WEBHOOK_URL || 'http://localhost:4000/dispatch';
     if (webhookUrl) {
       try {
         const notifyPayload = {
