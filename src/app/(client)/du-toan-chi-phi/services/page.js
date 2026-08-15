@@ -101,6 +101,8 @@ export default function Services() {
   const currentVenueName = currentVenue?.name || 'Hội trường Tầng 2';
   const venueIncludedInfo = VENUE_INCLUDED_ITEMS[currentVenueName] || VENUE_INCLUDED_ITEMS['Hội trường Tầng 2'];
 
+  const isEligibleForFreeLaserRing = Number(guestCount) >= 400;
+
   const toggleAddon = (id) => {
     if (selectedAddOns.includes(id)) {
       updateEstimate({ selectedAddOns: selectedAddOns.filter(a => a !== id) });
@@ -109,33 +111,74 @@ export default function Services() {
     }
   };
 
-  const getAddonPriceText = (addon) => {
-    if (addon.description && addon.description.includes('Liên hệ')) {
-      return 'Liên hệ';
+  // Helper to extract clean price vs note in parentheses ()
+  const parseAddonDetails = (addon) => {
+    const raw = addon.description || '';
+    
+    // Check Laser Ring free gift condition
+    if (addon.name.includes('Vòng ánh sáng laser')) {
+      if (isEligibleForFreeLaserRing) {
+        return {
+          mainPrice: '0 VNĐ (Tặng miễn phí)',
+          note: '🎁 Tiệc > 400 khách được TẶNG MIỄN PHÍ',
+          numericPrice: 0,
+          isFree: true
+        };
+      } else {
+        return {
+          mainPrice: '700.000 VNĐ / lần',
+          note: '🎁 Tặng miễn phí cho tiệc từ 400 khách',
+          numericPrice: 700000,
+          isFree: false
+        };
+      }
     }
-    return addon.description || 'Theo báo giá';
-  };
 
-  const parseAddonNumericPrice = (addon) => {
-    if (!addon.description) return 0;
-    if (addon.description.includes('800.000')) return 800000;
-    if (addon.description.includes('1.000.000')) return 1000000;
-    if (addon.description.includes('1.500.000')) return 1500000;
-    if (addon.description.includes('3.000.000')) return 3000000;
-    if (addon.description.includes('3.400.000')) return 3400000;
-    if (addon.description.includes('4.000.000')) return 4000000;
-    if (addon.description.includes('5.000.000')) return 5000000;
-    if (addon.description.includes('14.000.000')) return 14000000;
-    if (addon.description.includes('700.000')) return 700000;
-    if (addon.description.includes('900.000')) return 900000;
-    return 0;
+    if (addon.name.includes('Trang Trí') || raw.includes('Liên hệ')) {
+      return {
+        mainPrice: 'Báo giá: Liên hệ',
+        note: 'Trao đổi concept & trang trí riêng',
+        numericPrice: 0,
+        isContact: true
+      };
+    }
+
+    // Split text before '(' and inside '(...)'
+    const parenIndex = raw.indexOf('(');
+    if (parenIndex !== -1) {
+      const mainPrice = raw.substring(0, parenIndex).trim();
+      const note = raw.substring(parenIndex + 1, raw.lastIndexOf(')')).trim();
+      
+      let numericPrice = 0;
+      if (mainPrice.includes('800.000')) numericPrice = 800000;
+      else if (mainPrice.includes('1.000.000')) numericPrice = 1000000;
+      else if (mainPrice.includes('1.500.000')) numericPrice = 1500000;
+      else if (mainPrice.includes('3.000.000')) numericPrice = 3000000;
+      else if (mainPrice.includes('3.400.000')) numericPrice = 3400000;
+      else if (mainPrice.includes('4.000.000')) numericPrice = 4000000;
+      else if (mainPrice.includes('5.000.000')) numericPrice = 5000000;
+      else if (mainPrice.includes('14.000.000')) numericPrice = 14000000;
+      else if (mainPrice.includes('900.000')) numericPrice = 900000;
+
+      return { mainPrice, note, numericPrice };
+    }
+
+    let numericPrice = 0;
+    if (raw.includes('800.000')) numericPrice = 800000;
+    else if (raw.includes('1.000.000')) numericPrice = 1000000;
+    else if (raw.includes('5.000.000')) numericPrice = 5000000;
+
+    return { mainPrice: raw, note: null, numericPrice };
   };
 
   const calculateAddonsTotal = () => {
     let total = 0;
     selectedAddOns.forEach(id => {
       const addon = addons.find(a => a.id === id);
-      if (addon) total += parseAddonNumericPrice(addon);
+      if (addon) {
+        const details = parseAddonDetails(addon);
+        total += details.numericPrice;
+      }
     });
     return total;
   };
@@ -220,8 +263,7 @@ export default function Services() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {addons.map(a => {
                   const isSelected = selectedAddOns.includes(a.id);
-                  const isContactItem = a.name.includes('Trang Trí') || a.description?.includes('Liên hệ');
-                  const priceText = getAddonPriceText(a);
+                  const details = parseAddonDetails(a);
 
                   return (
                     <div 
@@ -233,27 +275,42 @@ export default function Services() {
                           : 'border-gray-200 hover:border-[#e3a638]/60'
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-3 mb-3">
-                        <div>
-                          <h4 className="font-semibold text-gray-900 text-sm mb-1 font-playfair">{a.name}</h4>
-                          <span className={`inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-full ${
-                            isContactItem 
-                              ? 'bg-amber-100 text-amber-800 font-semibold' 
-                              : 'bg-amber-50 text-[#a66a3a]'
+                      <div>
+                        {/* Title & Plus/Check Button */}
+                        <div className="flex items-start justify-between gap-3 mb-2">
+                          <h4 className="font-semibold text-gray-900 text-sm font-playfair">{a.name}</h4>
+                          
+                          <button className={`w-7 h-7 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ${
+                            isSelected ? 'bg-[#e3a638] border-[#e3a638] text-white' : 'border-gray-300 text-gray-400'
                           }`}>
-                            {priceText}
+                            <span className="material-symbols-outlined text-sm">{isSelected ? 'check' : 'add'}</span>
+                          </button>
+                        </div>
+
+                        {/* SINGLE PRICE DISPLAY */}
+                        <div className="mb-2">
+                          <span className={`text-xs font-semibold ${
+                            details.isFree 
+                              ? 'text-emerald-600 font-bold' 
+                              : details.isContact 
+                              ? 'text-amber-800' 
+                              : 'text-gray-900'
+                          }`}>
+                            {details.mainPrice}
                           </span>
                         </div>
-                        <button className={`w-7 h-7 rounded-full border flex items-center justify-center transition-colors flex-shrink-0 ${
-                          isSelected ? 'bg-[#e3a638] border-[#e3a638] text-white' : 'border-gray-300 text-gray-400'
-                        }`}>
-                          <span className="material-symbols-outlined text-sm">{isSelected ? 'check' : 'add'}</span>
-                        </button>
-                      </div>
 
-                      {a.description && !isContactItem && (
-                        <p className="text-gray-500 text-xs font-light line-clamp-2 mt-2">{a.description}</p>
-                      )}
+                        {/* YELLOW/AMBER PILL NOTE FOR TEXT IN PARENTHESES () */}
+                        {details.note && (
+                          <div className={`p-2.5 rounded-lg text-xs leading-relaxed font-medium ${
+                            details.isFree 
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
+                              : 'bg-amber-50 text-amber-900 border border-amber-200/60'
+                          }`}>
+                            {details.note}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -266,6 +323,9 @@ export default function Services() {
                 <p className="text-gray-500 text-xs font-light mb-1">Tạm tính Dịch vụ nâng cao đã chọn:</p>
                 <div className="text-2xl sm:text-3xl font-playfair font-semibold text-[#a66a3a]">
                   {calculateAddonsTotal() > 0 ? formatCurrency(calculateAddonsTotal()) : '0 VNĐ'}
+                  {isEligibleForFreeLaserRing && selectedAddOns.some(id => addons.find(a => a.id === id)?.name.includes('Vòng ánh sáng')) && (
+                    <span className="text-xs font-normal text-emerald-600 ml-2">(🎉 Đã được TẶNG MIỄN PHÍ Vòng Laser)</span>
+                  )}
                   {selectedAddOns.some(id => addons.find(a => a.id === id)?.name.includes('Trang Trí')) && (
                     <span className="text-xs font-normal text-amber-700 ml-2">(+ Chi phí trang trí Liên hệ riêng)</span>
                   )}
@@ -273,12 +333,12 @@ export default function Services() {
               </div>
               <div className="flex gap-4 w-full md:w-auto">
                 <Link href="/du-toan-chi-phi/venues" className="flex-1 md:flex-none">
-                  <button className="w-full px-6 py-3.5 rounded-lg border border-gray-300 text-gray-700 font-semibold text-xs uppercase tracking-wider hover:bg-gray-50 transition-colors">
+                  <button className="w-full px-6 py-3.5 rounded-lg border border-gray-300 text-gray-700 font-semibold text-xs uppercase tracking-wider hover:bg-gray-50 transition-colors cursor-pointer">
                     Quay Lại
                   </button>
                 </Link>
                 <Link href="/du-toan-chi-phi/estimate" className="flex-1 md:flex-none">
-                  <button className="w-full px-8 py-3.5 rounded-lg bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-semibold text-xs uppercase tracking-wider shadow-lg hover:opacity-90 transition-opacity">
+                  <button className="w-full px-8 py-3.5 rounded-lg bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-semibold text-xs uppercase tracking-wider shadow-lg hover:opacity-90 transition-opacity cursor-pointer">
                     Tiếp Tục Bảng Báo Giá ➔
                   </button>
                 </Link>

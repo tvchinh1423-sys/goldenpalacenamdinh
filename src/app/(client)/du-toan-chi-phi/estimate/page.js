@@ -118,14 +118,14 @@ export default function Estimate() {
                 )}
               </div>
 
-              {/* CRITICAL RESTORED VAT & DRINK NOTICE NOTE */}
+              {/* CRITICAL RESTORED VAT 8% & DRINK NOTICE NOTE */}
               <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-5 text-amber-900 text-xs leading-relaxed flex items-start gap-3">
                 <span className="material-symbols-outlined text-amber-700 text-lg flex-shrink-0 mt-0.5">info</span>
                 <div>
                   <p className="font-semibold text-amber-900 mb-1">Lưu ý quan trọng về báo giá:</p>
                   <p className="font-light text-amber-800">
                     • Giá trên là kinh phí dự trù tham khảo.<br />
-                    • <strong>Báo giá CHƯA bao gồm thuế VAT (10%) và Chi phí đồ uống (Bia, Nước ngọt, Nước suối).</strong><br />
+                    • <strong>Báo giá CHƯA bao gồm thuế VAT (8%) và Chi phí đồ uống (Bia, Nước ngọt, Nước suối).</strong><br />
                     • Đối với tiệc từ 300 khách trở lên, Golden Palace có áp dụng các gói ưu đãi tặng kèm đặc quyền theo thời điểm.
                   </p>
                 </div>
