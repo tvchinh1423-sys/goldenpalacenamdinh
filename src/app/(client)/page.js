@@ -8,9 +8,8 @@ export default function Home() {
       <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Background Image / Gradient */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-[#fcf9f2] z-10"></div>
-          {/* Mockup image placeholder (in real life this is a high-res venue photo or video) */}
-          <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2098&auto=format&fit=crop')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/50 to-[#fcf9f2] z-10"></div>
+          <div className="w-full h-full bg-[url('/images/venues/tang-2-3.jpg')] bg-cover bg-center" />
         </div>
         
         {/* Hero Content */}
@@ -31,7 +30,7 @@ export default function Home() {
             <Link href="/du-toan-chi-phi" className="px-8 py-4 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-semibold rounded-none hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all uppercase tracking-wider font-montserrat text-sm">
               Dự toán chi phí sự kiện
             </Link>
-            <Link href="/he-thong" className="px-8 py-4 border border-[#e3a638] text-[#e3a638] font-semibold rounded-none hover:bg-[#e3a638]/10 transition-all uppercase tracking-wider font-montserrat text-sm bg-black/40 backdrop-blur-md">
+            <Link href="/khong-gian/tang-2" className="px-8 py-4 border border-[#e3a638] text-[#e3a638] font-semibold rounded-none hover:bg-[#e3a638]/10 transition-all uppercase tracking-wider font-montserrat text-sm bg-black/40 backdrop-blur-md">
               Khám phá không gian
             </Link>
           </div>
@@ -76,46 +75,52 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services Overview */}
+      {/* Services Overview Section (4 Cards) */}
       <section className="py-24 px-6 max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <h3 className="text-[#a66a3a] font-montserrat uppercase tracking-[0.2em] text-sm mb-2 font-semibold">Dịch vụ</h3>
-          <h2 className="text-4xl md:text-5xl font-playfair text-gray-900">Dấu ấn khó phai</h2>
+          <h2 className="text-4xl md:text-5xl font-playfair text-gray-900">Dấu ấn đẳng cấp</h2>
           <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-6"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             {
               title: 'Tiệc Cưới',
               desc: 'Không gian lãng mạn, hệ thống âm thanh ánh sáng hiện đại, lưu giữ khoảnh khắc thiêng liêng.',
-              image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&auto=format&fit=crop',
+              image: '/images/venues/tang-2-4.jpg',
               link: '/dich-vu/tiec-cuoi'
             },
             {
-              title: 'Sự Kiện Công Ty',
-              desc: 'Trang thiết bị màn hình LED 30m2 tiêu chuẩn, hội trường quy mô lớn, nâng tầm đẳng cấp doanh nghiệp.',
-              image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop',
-              link: '/dich-vu/su-kien'
+              title: 'Tổ Chức Sự Kiện',
+              desc: 'Trang thiết bị màn hình LED 30m² tiêu chuẩn, hội trường quy mô lớn, nâng tầm đẳng cấp doanh nghiệp.',
+              image: '/images/venues/tang-3-2.jpg',
+              link: '/dich-vu/to-chuc-su-kien'
             },
             {
               title: 'Tiệc Sinh Nhật & Kỷ Niệm',
-              desc: 'Không gian ấm cúng tại Phòng VIP hoặc Quầy Bar, decor theo chủ đề trọn vẹn niềm vui.',
-              image: 'https://images.unsplash.com/photo-1530103862676-de3c9de59f9e?w=800&auto=format&fit=crop',
-              link: '/dich-vu/sinh-nhat'
+              desc: 'Không gian ấm cúng tại Quầy Bar hoặc Phòng VIP, decor theo chủ đề trọn vẹn niềm vui.',
+              image: '/images/venues/quay-bar-2.jpg',
+              link: '/dich-vu/sinh-nhat-ky-niem'
+            },
+            {
+              title: 'Phòng Ăn Riêng',
+              desc: 'Không gian phòng VIP riêng tư đẳng cấp, thực đơn tinh hoa dành cho đối tác & gia đình.',
+              image: '/images/venues/phong-vip-2.jpg',
+              link: '/dich-vu/phong-an-rieng'
             }
           ].map((service, idx) => (
-            <Link href={service.link} key={idx} className="group relative h-[450px] overflow-hidden rounded-sm cursor-pointer shadow-lg">
+            <Link href={service.link} key={idx} className="group relative h-[420px] overflow-hidden rounded-lg cursor-pointer shadow-xl border border-[#e3a638]/20">
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500 z-10" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
               <div 
                 className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700"
                 style={{ backgroundImage: `url(${service.image})` }}
               />
-              <div className="absolute bottom-0 left-0 w-full p-8 z-20 transform group-hover:-translate-y-2 transition-transform duration-500">
-                <h4 className="text-2xl mb-3 text-[#e3a638] font-playfair">{service.title}</h4>
-                <p className="text-gray-200 font-montserrat text-sm font-light opacity-0 group-hover:opacity-100 transition-opacity duration-500 h-0 group-hover:h-auto mb-4">{service.desc}</p>
-                <span className="inline-block border-b border-[#e3a638] text-white text-xs uppercase font-montserrat pb-1 tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+              <div className="absolute bottom-0 left-0 w-full p-6 z-20 transform group-hover:-translate-y-1 transition-transform duration-500">
+                <h4 className="text-2xl mb-2 text-[#e3a638] font-playfair font-semibold">{service.title}</h4>
+                <p className="text-gray-200 font-montserrat text-xs font-light leading-relaxed mb-4 line-clamp-3">{service.desc}</p>
+                <span className="inline-block border-b border-[#e3a638] text-white text-xs uppercase font-montserrat pb-1 tracking-widest font-medium group-hover:text-[#e3a638] transition-colors">
                   Xem chi tiết
                 </span>
               </div>
@@ -150,9 +155,9 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            
-            <div className="w-full md:w-auto relative z-20">
-              <Link href="/du-toan-chi-phi" className="block w-full text-center px-10 py-5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-semibold hover:shadow-lg transition-all uppercase tracking-wider font-montserrat text-sm rounded-sm">
+
+            <div className="relative z-20 flex flex-col gap-4">
+              <Link href="/du-toan-chi-phi" className="px-8 py-4 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-semibold rounded-none hover:shadow-xl transition-all uppercase tracking-wider font-montserrat text-sm text-center">
                 Dự toán chi phí ngay
               </Link>
             </div>
