@@ -25,7 +25,7 @@ Chuyên viên tư vấn Golden Palace rất hân hạnh được đồng hành v
     alert('✅ Đã sao chép tin nhắn báo giá Khách hàng! Bạn có thể dán (Paste) gửi qua Zalo.');
   };
 
-  // Format message for Zalo Group "Chốt tiền hàng"
+  // Format message for Zalo Group "Tiền Tiền Hàng"
   const handleCopyGroupChotTienHang = () => {
     const venueName = proposal?.venues?.find(v => v.isPreferred)?.venueName || 'Chưa chọn sảnh';
     const eventDateStr = proposal?.eventDate ? new Date(proposal.eventDate).toLocaleDateString('vi-VN') : 'Chưa xác định';
@@ -49,33 +49,31 @@ Chuyên viên tư vấn Golden Palace rất hân hạnh được đồng hành v
 
     navigator.clipboard.writeText(text);
     
-    // Ask user if they want to open Zalo Group directly
-    if (confirm('✅ Đã sao chép toàn bộ thông tin khách hàng!\n\nBấm OK để mở trực tiếp Nhóm Zalo "Chốt tiền hàng" (https://zalo.me/g/xlvgxc877) và dán (Paste) gửi ngay.')) {
-      window.open(`https://zalo.me/g/xlvgxc877`, '_blank');
-    }
+    // Open direct Zalo Web app where user is logged in
+    window.open(`https://chat.zalo.me`, '_blank');
   };
 
   return (
     <div className="flex flex-col gap-2 font-inter">
-      {/* Open Direct Zalo Chat */}
-      <a 
-        href={`https://zalo.me/${phone}`} 
-        target="_blank" 
-        rel="noreferrer"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
-      >
-        <span className="text-base">📱</span>
-        <span>Mở Chat Zalo Cá Nhân Số {phone}</span>
-      </a>
-
-      {/* Send to Group "Chốt tiền hàng" */}
+      {/* Send to Group "Tiền Tiền Hàng" */}
       <button
         onClick={handleCopyGroupChotTienHang}
         className="w-full bg-gradient-to-r from-[#e3a638] to-[#a66a3a] hover:opacity-90 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
       >
-        <span className="text-base">👥</span>
-        <span>Gửi Thông Báo Vào Nhóm Zalo "Chốt tiền hàng"</span>
+        <span className="text-base">🚀</span>
+        <span>Gửi Thông Báo Đơn Này Cho Nhóm "Tiền Tiền Hàng"</span>
       </button>
+
+      {/* Open Direct Zalo Chat with Customer Phone */}
+      <a 
+        href={`https://zalo.me/${phone}`} 
+        target="_blank" 
+        rel="noreferrer"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+      >
+        <span className="text-base">📱</span>
+        <span>Chat Zalo Trực Tiếp Với Khách ({phone})</span>
+      </a>
 
       {/* Copy Quotation for Customer */}
       <button
