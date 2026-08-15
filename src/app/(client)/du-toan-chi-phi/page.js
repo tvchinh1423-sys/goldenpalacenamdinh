@@ -23,8 +23,9 @@ export default function Home() {
       <header className="bg-surface/80 dark:bg-on-surface/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/30 shadow-sm">
         <div className="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full max-w-container-max mx-auto">
           <div className="flex items-center gap-4">
-            <Link href="/" className="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-display-lg text-primary-container bg-clip-text bg-gradient-to-r from-gold-gradient-start to-gold-gradient-end text-transparent">
-              Golden Palace
+            <Link href="/" className="flex items-center gap-3 group">
+              <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+              <span className="text-[#a66a3a] font-playfair text-xl tracking-widest uppercase font-semibold">Golden Palace</span>
             </Link>
           </div>
           <nav className="hidden md:flex items-center gap-8">

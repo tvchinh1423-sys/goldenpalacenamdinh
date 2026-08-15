@@ -64,9 +64,10 @@ export default function Estimate() {
             <span className="material-symbols-outlined">arrow_back</span>
             Quay lại chọn dịch vụ
           </Link>
-          <h1 className="font-playfair text-xl tracking-widest uppercase font-semibold text-[#a66a3a]">
-            Golden Palace
-          </h1>
+          <Link href="/" className="flex items-center gap-3 group">
+            <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+            <span className="text-[#a66a3a] font-playfair text-xl tracking-widest uppercase font-semibold">Golden Palace</span>
+          </Link>
           <div className="text-xs uppercase tracking-wider font-semibold text-[#a66a3a]">
             Báo giá tự động
           </div>

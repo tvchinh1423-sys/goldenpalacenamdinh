@@ -62,9 +62,10 @@ export default function Venues() {
             <span className="material-symbols-outlined">arrow_back</span>
             Đổi loại sự kiện
           </Link>
-          <h1 className="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-display-lg text-primary-container bg-clip-text bg-gradient-to-r from-gold-gradient-start to-gold-gradient-end text-transparent text-center absolute left-1/2 -translate-x-1/2">
-            Golden Palace
-          </h1>
+          <Link href="/" className="flex items-center gap-3 group absolute left-1/2 -translate-x-1/2">
+            <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+            <span className="text-[#a66a3a] font-playfair text-xl tracking-widest uppercase font-semibold">Golden Palace</span>
+          </Link>
           <div className="flex items-center gap-4">
             <span className="font-label-md text-primary text-xs font-bold uppercase">
               Nhánh: {EVENT_LABEL_MAP[currentEventType]}

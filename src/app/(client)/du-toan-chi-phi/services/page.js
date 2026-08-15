@@ -223,9 +223,10 @@ export default function Services() {
             <span className="material-symbols-outlined">arrow_back</span>
             Quay lại chọn sảnh
           </Link>
-          <h1 className="font-playfair text-xl tracking-widest uppercase font-semibold text-[#a66a3a]">
-            Golden Palace
-          </h1>
+          <Link href="/" className="flex items-center gap-3 group">
+            <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+            <span className="text-[#a66a3a] font-playfair text-xl tracking-widest uppercase font-semibold">Golden Palace</span>
+          </Link>
           <Link href="/du-toan-chi-phi/estimate" className="text-xs uppercase tracking-wider font-semibold text-[#a66a3a] hover:underline">
             Bước tiếp theo
           </Link>

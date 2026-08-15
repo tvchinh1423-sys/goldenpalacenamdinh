@@ -31,7 +31,6 @@ export default function FloatingCTA() {
         
         {/* 🌟 1. NÚT AI CHAT - NGÔI SAO NỔI BẬT NHẤT */}
         <div className="relative flex items-center justify-end">
-          {/* Glowing Aura Radar Effect */}
           <span className="absolute w-16 h-16 rounded-full bg-gradient-to-r from-[#e3a638] via-[#a66a3a] to-[#e3a638] opacity-75 animate-ping duration-1000"></span>
           
           <button
@@ -57,19 +56,19 @@ export default function FloatingCTA() {
           </button>
         </div>
 
-        {/* 📅 2. NÚT ĐẶT LỊCH TƯ VẤN (ONLINE & TRỰC TIẾP) */}
+        {/* 📅 2. NÚT ĐẶT LỊCH TƯ VẤN (CÙNG KÍCH THƯỚC W-12 H-12 CHUẨN XÁC) */}
         <button
           onClick={() => setIsBookingModalOpen(true)}
-          className="group/item relative flex items-center justify-center w-13 h-13 rounded-full bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white shadow-xl hover:shadow-[0_0_25px_rgba(227,166,56,0.7)] hover:scale-110 transition-all duration-300 border-2 border-amber-300 cursor-pointer"
+          className="group/item relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white shadow-lg hover:shadow-[0_0_25px_rgba(227,166,56,0.7)] hover:scale-110 transition-all duration-300 border border-white/30 cursor-pointer"
           title="Đặt lịch tư vấn Online & Trực tiếp tại nhà hàng"
         >
           <span className="material-symbols-outlined text-2xl drop-shadow-sm">edit_calendar</span>
           
-          <span className="absolute -top-2 -right-1 bg-red-600 text-white font-bold text-[8px] px-1.5 py-0.5 rounded-full shadow-sm uppercase tracking-wider animate-bounce">
+          <span className="absolute -top-2 right-0 bg-red-600 text-white font-bold text-[8px] px-1.5 py-0.5 rounded-full shadow-md uppercase tracking-wider animate-bounce">
             HOT
           </span>
 
-          <span className="absolute right-16 bg-black/95 text-white font-montserrat text-xs px-4 py-2 rounded-xl whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-all duration-200 pointer-events-none shadow-2xl border border-[#e3a638]/40 backdrop-blur-md font-medium">
+          <span className="absolute right-15 bg-black/95 text-white font-montserrat text-xs px-3.5 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-all duration-200 pointer-events-none shadow-xl border border-[#e3a638]/40 backdrop-blur-md font-medium">
             📅 Đặt lịch tư vấn <strong className="text-[#e3a638]">Online & Trực tiếp</strong>
           </span>
         </button>
