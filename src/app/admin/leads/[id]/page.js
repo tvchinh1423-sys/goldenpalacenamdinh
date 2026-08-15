@@ -124,6 +124,7 @@ export default async function LeadDetailPage({ params }) {
                 code={lead.code}
                 proposal={latestProposal}
                 linkToken={lead.linkToken}
+                notes={lead.notes}
               />
             </div>
           </div>
