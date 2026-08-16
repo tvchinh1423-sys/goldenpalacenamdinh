@@ -16,7 +16,7 @@ export default function Navbar() {
   return (
     <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-xs font-montserrat">
       
-      {/* Top Hotline Bar - Guaranteed Single Line Whitespace-Nowrap */}
+      {/* Top Hotline Bar - Single Line Whitespace-Nowrap */}
       <div className="bg-[#1c1917] text-white py-1.5 px-4 text-[11px] font-medium border-b border-amber-500/20">
         <div className="max-w-7xl mx-auto flex justify-between items-center whitespace-nowrap">
           <div className="flex items-center gap-4 whitespace-nowrap">
@@ -31,10 +31,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-3 text-amber-300/90 whitespace-nowrap">
-            <span className="hidden md:inline text-[10px] tracking-wider uppercase font-semibold">Trung tâm Tiệc cưới & Sự kiện số 1 Nam Định</span>
-            <Link href="/admin/login" className="text-gray-400 hover:text-white text-[10px] uppercase font-bold tracking-wider underline">
-              Admin
-            </Link>
+            <span className="text-[10px] tracking-wider uppercase font-semibold">Trung tâm Tiệc cưới & Sự kiện số 1 Nam Định</span>
           </div>
         </div>
       </div>
@@ -50,7 +47,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Center Pill Button for Mobile & Desktop - Like Trống Đồng Palace */}
+        {/* Center Pill Button for Mobile - Like Trống Đồng Palace */}
         <div className="flex md:hidden items-center justify-center shrink-0">
           <Link 
             href="/du-toan-chi-phi" 
@@ -153,8 +150,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          <Link href="/khuyen-mai" className="hover:text-[#a66a3a] transition-colors py-2">Ưu đãi</Link>
-          <Link href="/tin-tuc" className="hover:text-[#a66a3a] transition-colors py-2">Tin tức</Link>
         </div>
 
         {/* Desktop CTA Pill */}
@@ -255,22 +250,6 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-
-              <Link 
-                href="/khuyen-mai" 
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-3 px-3 rounded-lg hover:bg-amber-50 hover:text-[#a66a3a] transition-colors border-b border-gray-100"
-              >
-                Ưu Đãi
-              </Link>
-
-              <Link 
-                href="/tin-tuc" 
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-3 px-3 rounded-lg hover:bg-amber-50 hover:text-[#a66a3a] transition-colors border-b border-gray-100"
-              >
-                Tin Tức
-              </Link>
             </div>
 
             {/* Hotline & Address Box in Mobile Menu */}

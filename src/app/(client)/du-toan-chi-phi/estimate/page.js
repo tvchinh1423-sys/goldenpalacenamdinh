@@ -4,6 +4,23 @@ import { useState, useEffect } from 'react';
 import { useEstimate } from '@/components/guest/EstimateContext';
 import { format } from 'date-fns';
 
+function calculateVenueFee(venueName, guestCount) {
+  const name = venueName || '';
+  const count = Number(guestCount) || 100;
+
+  if (name.includes('Tầng 2')) {
+    if (count >= 350) return 10000000;
+    if (count >= 250) return 12000000;
+    return 0;
+  }
+  if (name.includes('Tầng 3')) {
+    if (count >= 300) return 10000000;
+    if (count >= 250) return 12000000;
+    return 0;
+  }
+  return 2000000;
+}
+
 export default function Estimate() {
   const { estimateData } = useEstimate();
   const { guestCount, budgetPerTable, session, date, selectedVenues, selectedPackage, selectedAddOns } = estimateData;
@@ -16,14 +33,38 @@ export default function Estimate() {
   const [notes, setNotes] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const [venueInfo, setVenueInfo] = useState({ name: 'Hội trường chọn', fee: 2000000 });
   const [pricing, setPricing] = useState(null);
 
   useEffect(() => {
-    // Basic recalculation for display
-    const tableCount = Math.ceil(guestCount / 10);
-    const menuBase = tableCount * budgetPerTable;
-    setPricing({ menuBase, tableCount });
-  }, [guestCount, budgetPerTable]);
+    async function fetchVenueData() {
+      let venueName = 'Hội trường Tầng 2';
+      let fee = 10000000;
+
+      if (selectedVenues && selectedVenues.length > 0) {
+        try {
+          const res = await fetch(`/api/guest/venues?guests=${guestCount}`);
+          const venues = await res.json();
+          const selected = venues.find(v => v.id === selectedVenues[0]);
+          if (selected) {
+            venueName = selected.name;
+            fee = calculateVenueFee(selected.name, guestCount);
+          }
+        } catch(e) {}
+      } else {
+        fee = calculateVenueFee('Tầng 2', guestCount);
+      }
+
+      setVenueInfo({ name: venueName, fee });
+
+      const tableCount = Math.ceil(guestCount / 10);
+      const menuBase = tableCount * budgetPerTable;
+      const totalBase = menuBase + fee;
+
+      setPricing({ menuBase, tableCount, totalBase });
+    }
+    fetchVenueData();
+  }, [guestCount, budgetPerTable, selectedVenues]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,122 +98,140 @@ export default function Estimate() {
 
   return (
     <div className="bg-[#fcf9f2] text-gray-900 font-montserrat min-h-screen pt-24 pb-32">
-      {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-xs">
-        <div className="flex justify-between items-center px-6 h-20 max-w-7xl mx-auto">
-          <Link href="/du-toan-chi-phi/services" className="flex items-center gap-2 text-gray-700 hover:text-[#a66a3a] transition-colors text-sm uppercase font-semibold">
-            <span className="material-symbols-outlined">arrow_back</span>
-            Quay lại chọn dịch vụ
+      
+      {/* Sub-header Navigation Context */}
+      <div className="bg-white border-b border-gray-200 shadow-xs py-3 px-6 mb-8">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <Link href="/du-toan-chi-phi/services" className="flex items-center gap-2 text-[#a66a3a] hover:underline text-xs uppercase font-bold">
+            <span className="material-symbols-outlined text-sm">arrow_back</span>
+            <span>Quay lại chọn dịch vụ</span>
           </Link>
-          <Link href="/" className="flex items-center gap-3 group">
-            <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
-            <span className="text-[#a66a3a] font-playfair text-xl tracking-widest uppercase font-semibold">Golden Palace</span>
-          </Link>
-          <div className="text-xs uppercase tracking-wider font-semibold text-[#a66a3a]">
-            Báo giá tự động
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-6 pt-8">
-        <div className="text-center mb-12">
-          <span className="text-[#a66a3a] uppercase tracking-[0.2em] text-xs font-semibold">
-            Bước 4: Tổng hợp phương án kinh phí
+          <span className="text-xs uppercase tracking-wider font-bold text-[#a66a3a]">
+            Bước 4 / 4: Báo Giá Tự Động
           </span>
-          <h2 className="text-3xl sm:text-4xl font-playfair font-semibold text-gray-900 mt-2 mb-3">
-            Bảng Dự Trù Ngân Sách Sự Kiện
+        </div>
+      </div>
+
+      <main className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-10">
+          <span className="text-[#a66a3a] uppercase tracking-[0.2em] text-xs font-bold block mb-1">
+            Tổng hợp phương án kinh phí
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-playfair font-bold text-gray-900">
+            Bảng Dự Trù Ngân Sách Chi Tiết
           </h2>
-          <p className="text-gray-600 font-light text-sm max-w-2xl mx-auto">
-            Chi tiết các hạng mục dự kiến. Vui lòng để lại thông tin để chuyên viên Golden Palace gửi bản mềm báo giá chi tiết kèm ưu đãi đặc quyền.
+          <p className="text-gray-600 font-light text-xs sm:text-sm max-w-2xl mx-auto mt-1">
+            Chi tiết các hạng mục dự kiến. Vui lòng để lại thông tin để chuyên viên Golden Palace gửi bản mềm báo giá kèm ưu đãi đặc quyền.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Detailed Pricing Breakdown */}
           <div className="lg:col-span-7">
-            <div className="bg-white rounded-2xl p-8 shadow-xl border border-[#e3a638]/30 space-y-6">
-              <div className="border-b border-gray-100 pb-6">
-                <span className="text-xs text-[#a66a3a] font-semibold uppercase tracking-widest block mb-1">Thông số tiệc</span>
-                <h3 className="text-2xl font-playfair font-semibold text-gray-900">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-[#e3a638]/40 space-y-6">
+              
+              <div className="border-b border-gray-100 pb-5">
+                <span className="text-xs text-[#a66a3a] font-bold uppercase tracking-widest block mb-1">Thông số tiệc</span>
+                <h3 className="text-2xl font-playfair font-bold text-gray-900">
                   {guestCount} Khách ({pricing?.tableCount} mâm tiệc)
                 </h3>
-                <p className="text-gray-500 text-xs font-light mt-1">
+                <p className="text-gray-600 text-xs font-light mt-1">
                   Thời gian: <strong>{date ? format(new Date(date), 'dd/MM/yyyy') : 'Chưa xác định'}</strong> ({session})
                 </p>
               </div>
 
-              <div className="space-y-4 text-sm font-medium">
-                <div className="flex justify-between items-center py-2 border-b border-gray-50">
+              <div className="space-y-4 text-xs sm:text-sm font-medium">
+                
+                {/* 1. Mâm cỗ */}
+                <div className="flex justify-between items-center py-2.5 border-b border-gray-100">
                   <span className="text-gray-700">Dự kiến Mâm cỗ ({formatCurrency(budgetPerTable)}/mâm)</span>
-                  <span className="text-[#a66a3a] font-semibold text-base">{formatCurrency(pricing?.menuBase || 0)}</span>
+                  <span className="text-gray-900 font-bold text-base">{formatCurrency(pricing?.menuBase || 0)}</span>
                 </div>
-                {selectedVenues.length > 0 && (
-                  <div className="flex justify-between items-center py-2 border-b border-gray-50">
-                    <span className="text-gray-700">Phí dịch vụ hội trường ({selectedVenues.length} sảnh)</span>
-                    <span className="text-[#a66a3a] font-semibold">Theo quy định sảnh chọn</span>
+
+                {/* 2. Phí thuê hội trường (Explicitly calculated per user rules) */}
+                <div className="flex justify-between items-center py-2.5 border-b border-gray-100 bg-amber-50/60 p-3 rounded-xl">
+                  <div>
+                    <span className="text-gray-900 font-bold block">Phí dịch vụ hội trường ({venueInfo.name})</span>
+                    <span className="text-[11px] text-gray-500 font-light">Tính theo quy định chuẩn quy mô {guestCount} khách</span>
                   </div>
-                )}
+                  <span className="text-[#a66a3a] font-bold text-base">{formatCurrency(venueInfo.fee)}</span>
+                </div>
+
+                {/* 3. Phụ phí dịch vụ bổ sung nếu chọn */}
                 {selectedAddOns.length > 0 && (
-                  <div className="flex justify-between items-center py-2 border-b border-gray-50">
+                  <div className="flex justify-between items-center py-2.5 border-b border-gray-100">
                     <span className="text-gray-700">Dịch vụ nâng cao / bổ sung ({selectedAddOns.length} hạng mục)</span>
-                    <span className="text-[#a66a3a] font-semibold">Đã tổng hợp</span>
+                    <span className="text-gray-900 font-bold">Đã tổng hợp</span>
                   </div>
                 )}
+
+                {/* 4. Tổng dự toán ban đầu */}
+                <div className="flex justify-between items-center pt-3 text-sm sm:text-base font-bold text-gray-900 border-t-2 border-[#e3a638]/40">
+                  <span>Tổng dự toán tạm tính:</span>
+                  <span className="text-xl sm:text-2xl font-playfair font-bold text-[#a66a3a]">
+                    {formatCurrency(pricing?.totalBase || 0)}
+                  </span>
+                </div>
+
               </div>
 
-              {/* CRITICAL RESTORED VAT 8% & DRINK NOTICE NOTE */}
-              <div className="bg-amber-50/80 border border-amber-200/80 rounded-xl p-5 text-amber-900 text-xs leading-relaxed flex items-start gap-3">
+              {/* VAT 8% & DRINK NOTICE NOTE */}
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-amber-950 text-xs leading-relaxed flex items-start gap-3">
                 <span className="material-symbols-outlined text-amber-700 text-lg flex-shrink-0 mt-0.5">info</span>
                 <div>
-                  <p className="font-semibold text-amber-900 mb-1">Lưu ý quan trọng về báo giá:</p>
-                  <p className="font-light text-amber-800">
+                  <p className="font-bold text-amber-950 mb-1">Lưu ý quan trọng về báo giá:</p>
+                  <p className="font-light text-amber-900/90 leading-relaxed">
                     • Giá trên là kinh phí dự trù tham khảo.<br />
                     • <strong>Báo giá CHƯA bao gồm thuế VAT (8%) và Chi phí đồ uống (Bia, Nước ngọt, Nước suối).</strong><br />
                     • Đối với tiệc từ 300 khách trở lên, Golden Palace có áp dụng các gói ưu đãi tặng kèm đặc quyền theo thời điểm.
                   </p>
                 </div>
               </div>
+
             </div>
           </div>
 
+          {/* Form to submit and get quote */}
           <div className="lg:col-span-5">
-            <div className="bg-white border border-[#e3a638]/30 rounded-2xl p-8 shadow-xl sticky top-28">
+            <div className="bg-white border border-[#e3a638]/40 rounded-3xl p-6 sm:p-8 shadow-xl sticky top-28">
               {!submitted ? (
                 <>
-                  <h3 className="text-2xl font-playfair font-semibold text-gray-900 mb-2">Lưu Phương Án & Nhận Báo Giá</h3>
+                  <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1">Lưu Phương Án & Nhận Báo Giá</h3>
                   <p className="text-gray-500 text-xs font-light mb-6">
-                    Điền thông tin để chuyên viên Golden Palace hỗ trợ tư vấn & giữ chỗ ưu đãi.
+                    Điền thông tin để chuyên viên Golden Palace hỗ trợ giữ chỗ và gửi báo giá chi tiết qua Zalo.
                   </p>
                   
-                  <form onSubmit={handleSubmit} className="space-y-5">
+                  <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-xs uppercase font-semibold text-gray-700 mb-1">Họ và tên *</label>
+                      <label className="block text-xs uppercase font-bold text-gray-700 mb-1">Họ và tên *</label>
                       <input 
                         type="text" 
                         required 
                         value={name} 
                         onChange={e => setName(e.target.value)} 
-                        className="w-full bg-[#fcf9f2] border border-gray-200 rounded-lg py-3 px-4 text-sm font-medium focus:border-[#e3a638] focus:outline-none" 
+                        className="w-full bg-[#fcf9f2] border border-gray-300 rounded-xl py-3 px-4 text-xs font-medium focus:border-[#e3a638] focus:outline-none" 
                         placeholder="Nhập tên của bạn" 
                       />
                     </div>
                     <div>
-                      <label className="block text-xs uppercase font-semibold text-gray-700 mb-1">Số điện thoại *</label>
+                      <label className="block text-xs uppercase font-bold text-gray-700 mb-1">Số điện thoại Zalo *</label>
                       <input 
                         type="tel" 
                         required 
                         value={phone} 
                         onChange={e => setPhone(e.target.value)} 
-                        className="w-full bg-[#fcf9f2] border border-gray-200 rounded-lg py-3 px-4 text-sm font-medium focus:border-[#e3a638] focus:outline-none" 
+                        className="w-full bg-[#fcf9f2] border border-gray-300 rounded-xl py-3 px-4 text-xs font-medium focus:border-[#e3a638] focus:outline-none" 
                         placeholder="Nhập số điện thoại Zalo" 
                       />
                     </div>
                     <div>
-                      <label className="block text-xs uppercase font-semibold text-gray-700 mb-1">Ghi chú thêm (Tùy chọn)</label>
+                      <label className="block text-xs uppercase font-bold text-gray-700 mb-1">Ghi chú thêm (Tùy chọn)</label>
                       <input 
                         type="text" 
                         value={notes} 
                         onChange={e => setNotes(e.target.value)} 
-                        className="w-full bg-[#fcf9f2] border border-gray-200 rounded-lg py-3 px-4 text-sm font-medium focus:border-[#e3a638] focus:outline-none" 
+                        className="w-full bg-[#fcf9f2] border border-gray-300 rounded-xl py-3 px-4 text-xs font-medium focus:border-[#e3a638] focus:outline-none" 
                         placeholder="Yêu cầu riêng về trang trí, thực đơn..." 
                       />
                     </div>
@@ -180,9 +239,9 @@ export default function Estimate() {
                     <button 
                       type="submit" 
                       disabled={isLoading} 
-                      className="w-full py-4 mt-2 rounded-lg bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-semibold uppercase text-xs tracking-wider shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      className="w-full py-4 mt-2 rounded-xl bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold uppercase text-xs tracking-wider shadow-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                     >
-                      <span className="material-symbols-outlined">{isLoading ? 'hourglass_empty' : 'send'}</span> 
+                      <span className="material-symbols-outlined text-base">{isLoading ? 'hourglass_empty' : 'send'}</span> 
                       {isLoading ? 'Đang gửi...' : 'Gửi Nhận Báo Giá Chi Tiết'}
                     </button>
                   </form>
@@ -192,17 +251,18 @@ export default function Estimate() {
                   <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="material-symbols-outlined text-4xl">check_circle</span>
                   </div>
-                  <h3 className="text-2xl font-playfair font-semibold text-gray-900 mb-2">Gửi Thành Công!</h3>
+                  <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-2">Gửi Thành Công!</h3>
                   <p className="text-gray-600 text-xs font-light mb-6 leading-relaxed">
-                    Cảm ơn bạn! Chuyên viên Golden Palace sẽ liên hệ tư vấn và gửi file báo giá chính xác nhất trong 15 phút.
+                    Cảm ơn bạn! Chuyên viên Golden Palace sẽ liên hệ tư vấn và gửi file báo giá chính xác nhất trong ít phút.
                   </p>
-                  <Link href="/" className="inline-block w-full py-3.5 bg-gray-900 text-amber-300 font-medium text-xs uppercase tracking-wider rounded-lg hover:bg-black transition-colors">
+                  <Link href="/" className="inline-block w-full py-3.5 bg-gray-900 text-amber-300 font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-black transition-colors">
                     Trở về Trang chủ
                   </Link>
                 </div>
               )}
             </div>
           </div>
+
         </div>
       </main>
     </div>

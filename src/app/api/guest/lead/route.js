@@ -2,27 +2,45 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
 
+// Business Rule Venue Fee Calculator
+function calculateVenueFee(venueName, guestCount) {
+  const name = venueName || '';
+  const count = Number(guestCount) || 100;
+
+  if (name.includes('Tầng 2')) {
+    if (count >= 350) return 10000000;
+    if (count >= 250) return 12000000;
+    return 0;
+  }
+  if (name.includes('Tầng 3')) {
+    if (count >= 300) return 10000000;
+    if (count >= 250) return 12000000;
+    return 0;
+  }
+  return 2000000; // Tầng 4, Quầy Bar, Phòng VIP
+}
+
 export async function POST(request) {
   try {
     const body = await request.json();
     const { 
-      name, phone, notes,
+      name = '', phone, notes = '',
       guestCount, budgetPerTable, session = 'Tối', date,
       selectedVenues = [], selectedPackage = null, selectedAddOns = []
     } = body;
 
-    // Validate name and phone
-    if (!name || !phone) {
-      return NextResponse.json({ error: 'Họ tên và số điện thoại là bắt buộc' }, { status: 400 });
+    // Validate phone
+    if (!phone) {
+      return NextResponse.json({ error: 'Số điện thoại là bắt buộc' }, { status: 400 });
     }
 
     // Generate unique code and token
     const code = 'GP-' + Math.random().toString(36).substr(2, 6).toUpperCase();
     const linkToken = uuidv4();
 
-    // Safely parse numbers to prevent NaN database errors
+    // Safely parse numbers
     const parsedGuestCount = Math.max(10, parseInt(guestCount, 10) || 100);
-    const parsedBudgetPerTable = Math.max(0, parseInt(budgetPerTable, 10) || 1500000);
+    const parsedBudgetPerTable = Math.max(0, parseInt(budgetPerTable, 10) || 1850000);
 
     const mainTables = Math.ceil(parsedGuestCount / 10);
     const reserveTables = Math.ceil(mainTables * 0.1);
@@ -32,20 +50,12 @@ export async function POST(request) {
     const proposalVenues = [];
     if (selectedVenues && selectedVenues.length > 0) {
       const venues = await prisma.venue.findMany({
-        where: { id: { in: selectedVenues } },
-        include: {
-          pricings: {
-            where: {
-              guestRangeMin: { lte: parsedGuestCount },
-              guestRangeMax: { gte: parsedGuestCount }
-            }
-          }
-        }
+        where: { id: { in: selectedVenues } }
       });
       
       venues.forEach((v, index) => {
-        const fee = v.pricings[0]?.price || 0;
-        if (index === 0) venueTotal = Number(fee); // Use preferred venue for total
+        const fee = calculateVenueFee(v.name, parsedGuestCount);
+        if (index === 0) venueTotal = Number(fee); // Use preferred venue fee
         proposalVenues.push({
           venueId: v.id,
           venueName: v.name,
@@ -113,9 +123,9 @@ export async function POST(request) {
         data: {
           code,
           linkToken,
-          name,
+          name: name.trim() || `Khách hàng ${phone}`,
           phone,
-          notes,
+          notes: notes.trim(),
           leadStatus: 'NEW'
         }
       });
@@ -156,7 +166,7 @@ export async function POST(request) {
         const notifyPayload = {
           event: 'NEW_LEAD',
           leadCode: code,
-          customerName: name,
+          customerName: name.trim() || `Khách (${phone})`,
           phone,
           guestCount: parsedGuestCount,
           estimatedTotal: totalBase,

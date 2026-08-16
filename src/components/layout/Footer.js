@@ -16,11 +16,11 @@ export default function Footer() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: `Khách gửi SĐT Footer (${phone})`,
+          name: '',
           phone: phone,
           guestCount: 200,
           budgetPerTable: 1850000,
-          notes: 'Yêu cầu tư vấn nhanh từ ô Nhận Tư Vấn chân trang Website (Footer)',
+          notes: 'Yêu cầu tư vấn nhanh từ ô Nhận Tư Vấn chân trang Website',
         })
       });
 
