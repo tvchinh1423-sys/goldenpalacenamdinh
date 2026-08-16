@@ -3,21 +3,64 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 export default function Navbar() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [khongGianOpen, setKhongGianOpen] = useState(false);
   const [dichVuOpen, setDichVuOpen] = useState(false);
   const [thucDonOpen, setThucDonOpen] = useState(false);
 
+  // Mobile Accordion states
+  const [mobileKhongGian, setMobileKhongGian] = useState(false);
+  const [mobileDichVu, setMobileDichVu] = useState(false);
+  const [mobileThucDon, setMobileThucDon] = useState(false);
+
   return (
     <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-xs font-montserrat">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      
+      {/* Top Hotline Bar - Guaranteed Single Line Whitespace-Nowrap */}
+      <div className="bg-[#1c1917] text-white py-1.5 px-4 text-[11px] font-medium border-b border-amber-500/20">
+        <div className="max-w-7xl mx-auto flex justify-between items-center whitespace-nowrap">
+          <div className="flex items-center gap-4 whitespace-nowrap">
+            <span className="inline-flex items-center gap-1 text-amber-300 font-semibold whitespace-nowrap">
+              <span className="material-symbols-outlined text-xs">call</span>
+              Hotline: <strong className="text-white whitespace-nowrap inline-block">0228 659 5959</strong>
+            </span>
+            <span className="hidden sm:inline-flex items-center gap-1 text-gray-300 whitespace-nowrap">
+              <span className="material-symbols-outlined text-xs">location_on</span>
+              98 Đông A, KĐT Hòa Vượng, TP Nam Định
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 text-amber-300/90 whitespace-nowrap">
+            <span className="hidden md:inline text-[10px] tracking-wider uppercase font-semibold">Trung tâm Tiệc cưới & Sự kiện số 1 Nam Định</span>
+            <Link href="/admin/login" className="text-gray-400 hover:text-white text-[10px] uppercase font-bold tracking-wider underline">
+              Admin
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Header Navbar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2">
         
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
-          <span className="text-[#a66a3a] font-playfair text-xl tracking-widest uppercase font-semibold">Golden Palace</span>
+        {/* Brand Logo */}
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
+          <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-9 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+          <span className="text-[#a66a3a] font-playfair text-base sm:text-xl tracking-widest uppercase font-bold whitespace-nowrap">
+            Golden Palace
+          </span>
         </Link>
 
-        {/* Links */}
+        {/* Center Pill Button for Mobile & Desktop - Like Trống Đồng Palace */}
+        <div className="flex md:hidden items-center justify-center shrink-0">
+          <Link 
+            href="/du-toan-chi-phi" 
+            className="px-3.5 py-1.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-[11px] font-bold uppercase tracking-wider rounded-full shadow-md hover:opacity-90 transition-all whitespace-nowrap border border-amber-300/40"
+          >
+            Dự Tính Chi Phí
+          </Link>
+        </div>
+
+        {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-7 text-sm tracking-wider uppercase font-medium text-gray-700">
           <Link href="/" className="hover:text-[#a66a3a] transition-colors py-2">Trang chủ</Link>
           
@@ -32,7 +75,7 @@ export default function Navbar() {
               <span className="material-symbols-outlined text-base">expand_more</span>
             </button>
 
-            <div className={`absolute left-0 top-full w-64 bg-white border border-[#e3a638]/20 shadow-2xl rounded-lg py-3 flex flex-col transition-all duration-200 ${khongGianOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+            <div className={`absolute left-0 top-full w-64 bg-white border border-[#e3a638]/20 shadow-2xl rounded-xl py-3 flex flex-col transition-all duration-200 ${khongGianOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
               <Link href="/khong-gian/tang-2" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
                 <span>🏛️</span> Hội trường Tầng 2
               </Link>
@@ -63,7 +106,7 @@ export default function Navbar() {
               <span className="material-symbols-outlined text-base">expand_more</span>
             </button>
 
-            <div className={`absolute left-0 top-full w-64 bg-white border border-[#e3a638]/20 shadow-2xl rounded-lg py-3 flex flex-col transition-all duration-200 ${dichVuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+            <div className={`absolute left-0 top-full w-64 bg-white border border-[#e3a638]/20 shadow-2xl rounded-xl py-3 flex flex-col transition-all duration-200 ${dichVuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
               <Link href="/dich-vu/tiec-cuoi" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
                 <span>💍</span> Tiệc cưới
               </Link>
@@ -90,7 +133,7 @@ export default function Navbar() {
               <span className="material-symbols-outlined text-base">expand_more</span>
             </Link>
 
-            <div className={`absolute left-0 top-full w-72 bg-white border border-[#e3a638]/20 shadow-2xl rounded-lg py-3 flex flex-col transition-all duration-200 ${thucDonOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+            <div className={`absolute left-0 top-full w-72 bg-white border border-[#e3a638]/20 shadow-2xl rounded-xl py-3 flex flex-col transition-all duration-200 ${thucDonOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
               <Link href="/thuc-don?tab=SET_TIEC" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
                 <span>🍱</span> Set Menu Tiệc Cưới & Hội Nghị
               </Link>
@@ -114,13 +157,137 @@ export default function Navbar() {
           <Link href="/tin-tuc" className="hover:text-[#a66a3a] transition-colors py-2">Tin tức</Link>
         </div>
 
-        {/* CTA */}
-        <div className="hidden md:flex items-center gap-4">
-          <Link href="/du-toan-chi-phi" className="px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white hover:opacity-90 font-montserrat text-xs tracking-widest uppercase transition-all font-semibold rounded-md shadow-sm">
-            Dự toán chi phí
+        {/* Desktop CTA Pill */}
+        <div className="hidden md:flex items-center gap-4 shrink-0">
+          <Link href="/du-toan-chi-phi" className="px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white hover:opacity-90 font-montserrat text-xs tracking-widest uppercase transition-all font-semibold rounded-full shadow-md">
+            Dự Toán Chi Phí
           </Link>
         </div>
+
+        {/* Mobile Hamburger Button */}
+        <button 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-gray-100 cursor-pointer shrink-0"
+          aria-label="Toggle Navigation Menu"
+        >
+          <span className="material-symbols-outlined text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
+        </button>
       </div>
+
+      {/* Mobile Side Drawer Navigation */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-x-0 top-full bg-white border-b border-gray-200 shadow-2xl animate-fade-in max-h-[85vh] overflow-y-auto font-montserrat">
+          <div className="p-5 space-y-4">
+            
+            {/* Primary Action Button inside Drawer */}
+            <Link 
+              href="/du-toan-chi-phi" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block w-full text-center py-3 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold uppercase text-xs tracking-widest rounded-xl shadow-md"
+            >
+              Dự Tính Chi Phí Sự Kiện
+            </Link>
+
+            <div className="space-y-1 text-xs uppercase tracking-wider font-semibold text-gray-800 pt-2">
+              <Link 
+                href="/" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-3 px-3 rounded-lg hover:bg-amber-50 hover:text-[#a66a3a] transition-colors border-b border-gray-100"
+              >
+                Trang Chủ
+              </Link>
+
+              {/* Accordion: KHÔNG GIAN */}
+              <div className="border-b border-gray-100">
+                <button 
+                  onClick={() => setMobileKhongGian(!mobileKhongGian)}
+                  className="w-full py-3 px-3 flex justify-between items-center text-left hover:text-[#a66a3a] cursor-pointer uppercase font-semibold"
+                >
+                  <span>Không Gian</span>
+                  <span className="material-symbols-outlined text-base">{mobileKhongGian ? 'expand_less' : 'expand_more'}</span>
+                </button>
+                {mobileKhongGian && (
+                  <div className="pl-6 pb-3 space-y-2 text-xs font-normal normal-case text-gray-600">
+                    <Link href="/khong-gian/tang-2" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🏛️ Hội trường Tầng 2 (350 - 750 khách)</Link>
+                    <Link href="/khong-gian/tang-3" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🏛️ Hội trường Tầng 3 (300 - 650 khách)</Link>
+                    <Link href="/khong-gian/tang-4" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🏛️ Hội trường Tầng 4 (100 - 300 khách)</Link>
+                    <Link href="/khong-gian/quay-bar" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🍸 Quầy Bar Tầng 1 (50 - 100 khách)</Link>
+                    <Link href="/khong-gian/phong-vip" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">👑 Phòng VIP (10 - 50 khách)</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Accordion: DỊCH VỤ */}
+              <div className="border-b border-gray-100">
+                <button 
+                  onClick={() => setMobileDichVu(!mobileDichVu)}
+                  className="w-full py-3 px-3 flex justify-between items-center text-left hover:text-[#a66a3a] cursor-pointer uppercase font-semibold"
+                >
+                  <span>Dịch Vụ</span>
+                  <span className="material-symbols-outlined text-base">{mobileDichVu ? 'expand_less' : 'expand_more'}</span>
+                </button>
+                {mobileDichVu && (
+                  <div className="pl-6 pb-3 space-y-2 text-xs font-normal normal-case text-gray-600">
+                    <Link href="/dich-vu/tiec-cuoi" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">💍 Tiệc cưới Hoàng Gia</Link>
+                    <Link href="/dich-vu/to-chuc-su-kien" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🏢 Tổ chức sự kiện công ty</Link>
+                    <Link href="/dich-vu/sinh-nhat-ky-niem" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🎂 Tiệc sinh nhật & Kỷ niệm</Link>
+                    <Link href="/dich-vu/phong-an-rieng" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🍷 Phòng ăn riêng VIP</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Accordion: THỰC ĐƠN */}
+              <div className="border-b border-gray-100">
+                <button 
+                  onClick={() => setMobileThucDon(!mobileThucDon)}
+                  className="w-full py-3 px-3 flex justify-between items-center text-left hover:text-[#a66a3a] cursor-pointer uppercase font-semibold"
+                >
+                  <span>Thực Đơn</span>
+                  <span className="material-symbols-outlined text-base">{mobileThucDon ? 'expand_less' : 'expand_more'}</span>
+                </button>
+                {mobileThucDon && (
+                  <div className="pl-6 pb-3 space-y-2 text-xs font-normal normal-case text-gray-600">
+                    <Link href="/thuc-don?tab=SET_TIEC" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🍱 Set Menu Tiệc Cưới & Hội Nghị</Link>
+                    <Link href="/thuc-don?tab=CHUYEN_MON" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">👑 Menu Chuyên Món Đặc Sản</Link>
+                    <Link href="/thuc-don?tab=TRE_EM" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🎈 Menu Trẻ Em & Học Sinh</Link>
+                    <Link href="/thuc-don?tab=ALACARTE" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🍽️ Menu Chọn Món A la carte</Link>
+                    <Link href="/thuc-don?tab=DO_UONG" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🥂 Bảng Giá Đồ Uống & Phí Mang Vào</Link>
+                  </div>
+                )}
+              </div>
+
+              <Link 
+                href="/khuyen-mai" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-3 px-3 rounded-lg hover:bg-amber-50 hover:text-[#a66a3a] transition-colors border-b border-gray-100"
+              >
+                Ưu Đãi
+              </Link>
+
+              <Link 
+                href="/tin-tuc" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-3 px-3 rounded-lg hover:bg-amber-50 hover:text-[#a66a3a] transition-colors border-b border-gray-100"
+              >
+                Tin Tức
+              </Link>
+            </div>
+
+            {/* Hotline & Address Box in Mobile Menu */}
+            <div className="bg-[#1c1917] text-white p-4 rounded-xl space-y-2 text-xs">
+              <span className="text-[#e3a638] uppercase font-bold text-[10px] tracking-wider block">Hotline Hỗ Trợ 24/7</span>
+              <a href="tel:02286595959" className="text-white font-bold text-sm block whitespace-nowrap">
+                📞 Hotline: 0228 659 5959
+              </a>
+              <p className="text-gray-300 text-[11px] font-light">
+                📍 98 Đông A, KĐT Hòa Vượng, TP Nam Định
+              </p>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </nav>
   );
 }

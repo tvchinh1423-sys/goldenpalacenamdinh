@@ -16,26 +16,26 @@ export default function Footer() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'Khách từ Footer',
+          name: `Khách gửi SĐT Footer (${phone})`,
           phone: phone,
-          notes: 'Yêu cầu tư vấn từ form Footer',
-          status: 'NEW'
+          guestCount: 200,
+          budgetPerTable: 1850000,
+          notes: 'Yêu cầu tư vấn nhanh từ ô Nhận Tư Vấn chân trang Website (Footer)',
         })
       });
 
       if (res.ok) {
         setStatus("success");
         setPhone("");
-        // Reset sau 3 giây
-        setTimeout(() => setStatus("idle"), 3000);
+        setTimeout(() => setStatus("idle"), 4000);
       } else {
         setStatus("error");
-        setTimeout(() => setStatus("idle"), 3000);
+        setTimeout(() => setStatus("idle"), 4000);
       }
     } catch (err) {
       console.error(err);
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 3000);
+      setTimeout(() => setStatus("idle"), 4000);
     }
   };
 
@@ -64,11 +64,11 @@ export default function Footer() {
             </li>
             <li>
               <span className="block text-[#a66a3a] text-xs mb-1 uppercase tracking-widest font-medium">Hotline</span>
-              0228 659 5959
+              <span className="whitespace-nowrap inline-block text-gray-900 font-medium">0228 659 5959</span>
             </li>
             <li>
               <span className="block text-[#a66a3a] text-xs mb-1 uppercase tracking-widest font-medium">Email</span>
-              cungdienvang98donga@gmail.com
+              <span className="break-all text-xs">cungdienvang98donga@gmail.com</span>
             </li>
           </ul>
         </div>
@@ -113,22 +113,26 @@ export default function Footer() {
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Số điện thoại của bạn" 
                 required
-                className="bg-white border border-gray-300 px-4 py-2 w-full text-sm focus:outline-none focus:border-[#e3a638] transition-colors text-gray-900"
+                className="bg-white border border-gray-300 px-4 py-2.5 w-full text-xs focus:outline-none focus:border-[#e3a638] transition-colors text-gray-900 rounded-l-lg font-mono"
               />
               <button 
                 type="submit" 
                 disabled={status === 'loading'}
-                className="bg-[#e3a638] text-white px-4 py-2 text-sm font-semibold hover:bg-[#a66a3a] transition-colors disabled:opacity-70 disabled:cursor-not-allowed whitespace-nowrap"
+                className="bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed whitespace-nowrap rounded-r-lg shadow-sm cursor-pointer"
               >
                 {status === 'loading' ? 'ĐANG GỬI...' : 'GỬI'}
               </button>
             </div>
             
             {status === 'success' && (
-              <p className="text-green-600 text-xs mt-2 font-medium">Cảm ơn bạn! Chúng tôi sẽ liên hệ lại sớm nhất.</p>
+              <p className="text-emerald-700 bg-emerald-50 border border-emerald-200 text-xs mt-2 p-2 rounded-lg font-bold">
+                ✅ Đã tiếp nhận SĐT! Chuyên viên sẽ gọi tư vấn trong ít phút.
+              </p>
             )}
             {status === 'error' && (
-              <p className="text-red-500 text-xs mt-2 font-medium">Có lỗi xảy ra, vui lòng thử lại sau.</p>
+              <p className="text-red-600 bg-red-50 border border-red-200 text-xs mt-2 p-2 rounded-lg font-medium">
+                ❌ Có lỗi xảy ra, vui lòng thử lại sau.
+              </p>
             )}
           </form>
         </div>

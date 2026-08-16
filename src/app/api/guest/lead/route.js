@@ -7,20 +7,24 @@ export async function POST(request) {
     const body = await request.json();
     const { 
       name, phone, notes,
-      guestCount, budgetPerTable, session, date,
-      selectedVenues, selectedPackage, selectedAddOns
+      guestCount, budgetPerTable, session = 'Tối', date,
+      selectedVenues = [], selectedPackage = null, selectedAddOns = []
     } = body;
 
-    // Validate
+    // Validate name and phone
     if (!name || !phone) {
-      return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 });
+      return NextResponse.json({ error: 'Họ tên và số điện thoại là bắt buộc' }, { status: 400 });
     }
 
     // Generate unique code and token
     const code = 'GP-' + Math.random().toString(36).substr(2, 6).toUpperCase();
     const linkToken = uuidv4();
 
-    const mainTables = Math.ceil(guestCount / 10);
+    // Safely parse numbers to prevent NaN database errors
+    const parsedGuestCount = Math.max(10, parseInt(guestCount, 10) || 100);
+    const parsedBudgetPerTable = Math.max(0, parseInt(budgetPerTable, 10) || 1500000);
+
+    const mainTables = Math.ceil(parsedGuestCount / 10);
     const reserveTables = Math.ceil(mainTables * 0.1);
 
     // Fetch pricing details to freeze them
@@ -32,8 +36,8 @@ export async function POST(request) {
         include: {
           pricings: {
             where: {
-              guestRangeMin: { lte: guestCount },
-              guestRangeMax: { gte: guestCount }
+              guestRangeMin: { lte: parsedGuestCount },
+              guestRangeMax: { gte: parsedGuestCount }
             }
           }
         }
@@ -59,8 +63,8 @@ export async function POST(request) {
           pricings: {
             where: {
               ...(selectedVenues?.[0] && { venueId: selectedVenues[0] }),
-              guestRangeMin: { lte: guestCount },
-              guestRangeMax: { gte: guestCount }
+              guestRangeMin: { lte: parsedGuestCount },
+              guestRangeMax: { gte: parsedGuestCount }
             }
           }
         }
@@ -79,8 +83,8 @@ export async function POST(request) {
           pricings: {
             where: {
               ...(selectedVenues?.[0] && { venueId: selectedVenues[0] }),
-              guestRangeMin: { lte: guestCount },
-              guestRangeMax: { gte: guestCount }
+              guestRangeMin: { lte: parsedGuestCount },
+              guestRangeMax: { gte: parsedGuestCount }
             }
           }
         }
@@ -96,14 +100,14 @@ export async function POST(request) {
       });
     }
 
-    const menuBase = mainTables * budgetPerTable;
-    const menuMax = (mainTables + reserveTables) * budgetPerTable;
-    const fixedTotal = venueTotal + packagePrice + addOnsTotal;
+    const menuBase = mainTables * parsedBudgetPerTable;
+    const menuMax = (mainTables + reserveTables) * parsedBudgetPerTable;
+    const fixedTotal = Number(venueTotal || 0) + Number(packagePrice || 0) + Number(addOnsTotal || 0);
 
-    const totalBase = fixedTotal + menuBase;
-    const totalMax = fixedTotal + menuMax;
+    const totalBase = Math.round(fixedTotal + menuBase);
+    const totalMax = Math.round(fixedTotal + menuMax);
 
-    // Use a transaction
+    // Save lead in Prisma DB transaction
     const lead = await prisma.$transaction(async (tx) => {
       const newLead = await tx.lead.create({
         data: {
@@ -122,10 +126,10 @@ export async function POST(request) {
         data: {
           leadId: newLead.id,
           version: 1,
-          guestCount,
-          budgetPerTable,
+          guestCount: parsedGuestCount,
+          budgetPerTable: parsedBudgetPerTable,
           eventDate,
-          eventSession: session,
+          eventSession: session || 'Tối',
           mainTables,
           reserveTables,
           packageId: selectedPackage || null,
@@ -154,7 +158,7 @@ export async function POST(request) {
           leadCode: code,
           customerName: name,
           phone,
-          guestCount,
+          guestCount: parsedGuestCount,
           estimatedTotal: totalBase,
           zaloChatUrl: `https://zalo.me/${phone.replace(/[^0-9]/g, '')}`,
           linkToken
@@ -172,6 +176,6 @@ export async function POST(request) {
     return NextResponse.json({ success: true, linkToken: lead.linkToken }, { status: 201 });
   } catch (error) {
     console.error('Error creating lead:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -44,9 +44,11 @@ export default function BookingConsultationModal({ isOpen, onClose }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name,
-          phone,
-          notes: `[ĐẶT LỊCH TƯ VẤN] ${timeSummary} | Sự kiện: ${eventType} | Khách: ${guestCount} | Ghi chú: ${notes}`
+          name: name || 'Khách Đặt Lịch Tư Vấn',
+          phone: phone,
+          guestCount: guestCount || 300,
+          budgetPerTable: 1850000,
+          notes: `[ĐẶT LỊCH TƯ VẤN] ${timeSummary} | Loại sự kiện: ${eventType} | Khách: ${guestCount} | Ghi chú thêm: ${notes}`
         })
       });
       const data = await res.json();
