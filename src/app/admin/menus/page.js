@@ -74,7 +74,7 @@ export default function AdminMenusPage() {
           onClick={() => setActiveSubTab('ALACARTE')}
           className={`px-4 py-2 rounded-lg text-xs font-bold cursor-pointer transition-all ${activeSubTab === 'ALACARTE' ? 'bg-gray-900 text-amber-300 shadow-md' : 'text-gray-600 hover:text-gray-900'}`}
         >
-          Menu Chọn Món (3 Phần Chính)
+          Menu Chọn Món A la carte
         </button>
       </div>
 
@@ -139,7 +139,7 @@ export default function AdminMenusPage() {
       {activeSubTab === 'ALACARTE' && (
         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-xs space-y-4">
           <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl text-xs text-amber-900">
-            💡 <strong>Phần Menu Chọn Món:</strong> Đã đồng bộ cấu trúc 3 Phần chính (I. Khai Vị & Salad, II. Món Chính & Lẩu, III. Tráng Miệng). Không hiển thị giá cố định vì là thực phẩm tươi sống biến động theo thời giá.
+            💡 <strong>Phần Menu Chọn Món:</strong> Đã đồng bộ cấu trúc phân loại (I. Khai Vị & Salad, II. Món Chính & Lẩu, III. Tráng Miệng). Không hiển thị giá cố định vì là thực phẩm tươi sống biến động theo thời giá.
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

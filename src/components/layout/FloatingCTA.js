@@ -33,7 +33,7 @@ export default function FloatingCTA() {
       {/* Floating Action Container with Auto-Collapse on Idle */}
       <aside 
         aria-label="Kênh hỗ trợ & Liên hệ cao cấp" 
-        className="fixed right-4 bottom-6 z-50 flex flex-col items-end gap-3 font-montserrat"
+        className="fixed right-4 bottom-[88px] sm:bottom-6 z-50 flex flex-col items-end gap-3 font-montserrat"
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
       >

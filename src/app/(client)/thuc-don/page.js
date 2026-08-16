@@ -7,7 +7,7 @@ const MENU_CATEGORIES = [
   { id: 'SET_TIEC', label: 'Set Menu Tiệc Cưới & Hội Nghị', icon: 'restaurant_menu', count: '18 Set cỗ chính thức' },
   { id: 'CHUYEN_MON', label: 'Menu Chuyên Món Đặc Sản', icon: 'workspace_premium', count: 'Cá, Ba Ba, Dúi, Vịt Trời, Lợn Mán, Bê' },
   { id: 'TRE_EM', label: 'Menu Trẻ Em & Học Sinh', icon: 'child_care', count: '5 Combo ưu đãi 10%' },
-  { id: 'ALACARTE', label: 'Menu Chọn Món (3 Phần Chính)', icon: 'menu_book', count: 'Tích chọn tạo bản nháp' },
+  { id: 'ALACARTE', label: 'Menu Chọn Món A la carte', icon: 'menu_book', count: 'Tích chọn tạo bản nháp' },
   { id: 'DO_UONG', label: 'Menu Đồ Uống & Phí Mang Vào', icon: 'wine_bar', count: 'Bảng giá chính thức' },
 ];
 
@@ -858,7 +858,7 @@ function MenuContent() {
                   : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-400'
               }`}
             >
-              Tất Cả 3 Phần
+              Tất Cả Món
             </button>
             {ALACARTE_3_SECTIONS.map((sec) => (
               <button
@@ -942,15 +942,15 @@ function MenuContent() {
 
           {/* FLOATING DRAFT MENU BAR WHEN DISHES ARE SELECTED */}
           {selectedDishes.length > 0 && (
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#1c1917] border-2 border-[#e3a638] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 max-w-xl w-full">
-              <div className="flex-grow">
-                <span className="text-[10px] uppercase tracking-widest text-[#e3a638] font-bold block">Bản Nháp Thực Đơn</span>
-                <span className="text-sm font-semibold">Đã chọn <strong className="text-[#e3a638] font-bold text-base">{selectedDishes.length}</strong> món ăn</span>
+            <div className="fixed bottom-4 left-3 right-3 sm:left-1/2 sm:-translate-x-1/2 z-40 bg-[#1c1917] border-2 border-[#e3a638] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-2xl shadow-2xl flex items-center justify-between gap-3 sm:gap-6 max-w-xl">
+              <div className="flex-grow min-w-0">
+                <span className="text-[10px] uppercase tracking-widest text-[#e3a638] font-bold block truncate">Bản Nháp Thực Đơn</span>
+                <span className="text-xs sm:text-sm font-semibold truncate block">Đã chọn <strong className="text-[#e3a638] font-bold text-sm sm:text-base">{selectedDishes.length}</strong> món</span>
               </div>
               
               <button
                 onClick={() => setShowDraftModal(true)}
-                className="px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-xs font-semibold uppercase tracking-wider rounded-lg shadow-lg hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap"
+                className="px-3.5 sm:px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-[11px] sm:text-xs font-semibold uppercase tracking-wider rounded-lg shadow-lg hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap shrink-0"
               >
                 Xem Bản Nháp & Gửi Zalo
               </button>

@@ -16,23 +16,24 @@ export default function Navbar() {
   return (
     <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-xs font-montserrat">
       
-      {/* Top Hotline Bar - Single Line Whitespace-Nowrap */}
-      <div className="bg-[#1c1917] text-white py-1.5 px-4 text-[11px] font-medium border-b border-amber-500/20">
-        <div className="max-w-7xl mx-auto flex justify-between items-center whitespace-nowrap">
-          <div className="flex items-center gap-4 whitespace-nowrap">
-            <span className="inline-flex items-center gap-1 text-amber-300 font-semibold whitespace-nowrap">
-              <span className="material-symbols-outlined text-xs">call</span>
-              Hotline: <strong className="text-white whitespace-nowrap inline-block">0228 659 5959</strong>
-            </span>
-            <span className="hidden sm:inline-flex items-center gap-1 text-gray-300 whitespace-nowrap">
-              <span className="material-symbols-outlined text-xs">location_on</span>
-              98 Đông A, KĐT Hòa Vượng, TP Nam Định
-            </span>
-          </div>
+      {/* Top Bar - Hotline & Address */}
+      <div className="bg-[#1c1917] text-white py-1.5 px-3 sm:px-4 text-[11px] font-medium border-b border-amber-500/20">
+        <div className="max-w-7xl mx-auto flex justify-between items-center gap-2">
+          <a href="tel:02286595959" className="inline-flex items-center gap-1 text-amber-300 hover:text-amber-200 font-semibold whitespace-nowrap shrink-0">
+            <span className="material-symbols-outlined text-xs">call</span>
+            <span>Hotline:</span>
+            <strong className="text-white">0228 659 5959</strong>
+          </a>
 
-          <div className="flex items-center gap-3 text-amber-300/90 whitespace-nowrap">
-            <span className="text-[10px] tracking-wider uppercase font-semibold">Trung tâm Tiệc cưới & Sự kiện số 1 Nam Định</span>
-          </div>
+          <a 
+            href="https://www.google.com/maps/search/?api=1&query=98+Đông+A,+KĐT+Hòa+Vượng,+Nam+Định" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="inline-flex items-center gap-1 text-gray-300 hover:text-amber-300 transition-colors text-[10px] sm:text-[11px] font-medium truncate"
+          >
+            <span className="material-symbols-outlined text-xs text-amber-400 shrink-0">location_on</span>
+            <span className="truncate">98 Đông A, KĐT Hòa Vượng, TP Nam Định</span>
+          </a>
         </div>
       </div>
 
@@ -73,21 +74,21 @@ export default function Navbar() {
             </button>
 
             <div className={`absolute left-0 top-full w-64 bg-white border border-[#e3a638]/20 shadow-2xl rounded-xl py-3 flex flex-col transition-all duration-200 ${khongGianOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
-              <Link href="/khong-gian/tang-2" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🏛️</span> Hội trường Tầng 2
+              <Link href="/khong-gian/tang-2" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Hội trường Tầng 2
               </Link>
-              <Link href="/khong-gian/tang-3" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🏛️</span> Hội trường Tầng 3
+              <Link href="/khong-gian/tang-3" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Hội trường Tầng 3
               </Link>
-              <Link href="/khong-gian/tang-4" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🏛️</span> Hội trường Tầng 4
+              <Link href="/khong-gian/tang-4" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Hội trường Tầng 4
               </Link>
               <div className="my-1 border-t border-gray-100"></div>
-              <Link href="/khong-gian/quay-bar" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🍸</span> Quầy Bar Tầng 1
+              <Link href="/khong-gian/quay-bar" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Quầy Bar Tầng 1
               </Link>
-              <Link href="/khong-gian/phong-vip" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>👑</span> Phòng VIP
+              <Link href="/khong-gian/phong-vip" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Phòng VIP
               </Link>
             </div>
           </div>
@@ -104,17 +105,17 @@ export default function Navbar() {
             </button>
 
             <div className={`absolute left-0 top-full w-64 bg-white border border-[#e3a638]/20 shadow-2xl rounded-xl py-3 flex flex-col transition-all duration-200 ${dichVuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
-              <Link href="/dich-vu/tiec-cuoi" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>💍</span> Tiệc cưới
+              <Link href="/dich-vu/tiec-cuoi" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Tiệc cưới
               </Link>
-              <Link href="/dich-vu/to-chuc-su-kien" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🏢</span> Tổ chức sự kiện
+              <Link href="/dich-vu/to-chuc-su-kien" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Tổ chức sự kiện
               </Link>
-              <Link href="/dich-vu/sinh-nhat-ky-niem" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🎂</span> Tiệc sinh nhật & Kỷ niệm
+              <Link href="/dich-vu/sinh-nhat-ky-niem" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Tiệc sinh nhật & Kỷ niệm
               </Link>
-              <Link href="/dich-vu/phong-an-rieng" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🍷</span> Phòng ăn riêng
+              <Link href="/dich-vu/phong-an-rieng" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Phòng ăn riêng
               </Link>
             </div>
           </div>
@@ -131,21 +132,21 @@ export default function Navbar() {
             </Link>
 
             <div className={`absolute left-0 top-full w-72 bg-white border border-[#e3a638]/20 shadow-2xl rounded-xl py-3 flex flex-col transition-all duration-200 ${thucDonOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
-              <Link href="/thuc-don?tab=SET_TIEC" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🍱</span> Set Menu Tiệc Cưới & Hội Nghị
+              <Link href="/thuc-don?tab=SET_TIEC" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Set Menu Tiệc Cưới & Hội Nghị
               </Link>
-              <Link href="/thuc-don?tab=CHUYEN_MON" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>👑</span> Menu Chuyên Món Đặc Sản
+              <Link href="/thuc-don?tab=CHUYEN_MON" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Menu Chuyên Món Đặc Sản
               </Link>
-              <Link href="/thuc-don?tab=TRE_EM" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🎈</span> Menu Trẻ Em & Học Sinh
+              <Link href="/thuc-don?tab=TRE_EM" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Menu Trẻ Em & Học Sinh
               </Link>
-              <Link href="/thuc-don?tab=ALACARTE" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🍽️</span> Menu Chọn Món A la carte
+              <Link href="/thuc-don?tab=ALACARTE" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Menu Chọn Món A la carte
               </Link>
               <div className="my-1 border-t border-gray-100"></div>
-              <Link href="/thuc-don?tab=DO_UONG" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors flex items-center gap-2.5 text-xs font-medium">
-                <span>🥂</span> Bảng Giá Đồ Uống & Phí Mang Vào
+              <Link href="/thuc-don?tab=DO_UONG" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
+                Bảng Giá Đồ Uống & Phí Mang Vào
               </Link>
             </div>
           </div>
@@ -203,11 +204,11 @@ export default function Navbar() {
                 </button>
                 {mobileKhongGian && (
                   <div className="pl-6 pb-3 space-y-2 text-xs font-normal normal-case text-gray-600">
-                    <Link href="/khong-gian/tang-2" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🏛️ Hội trường Tầng 2 (350 - 750 khách)</Link>
-                    <Link href="/khong-gian/tang-3" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🏛️ Hội trường Tầng 3 (300 - 650 khách)</Link>
-                    <Link href="/khong-gian/tang-4" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🏛️ Hội trường Tầng 4 (100 - 300 khách)</Link>
-                    <Link href="/khong-gian/quay-bar" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🍸 Quầy Bar Tầng 1 (50 - 100 khách)</Link>
-                    <Link href="/khong-gian/phong-vip" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">👑 Phòng VIP (10 - 50 khách)</Link>
+                    <Link href="/khong-gian/tang-2" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Hội trường Tầng 2 (350 - 750 khách)</Link>
+                    <Link href="/khong-gian/tang-3" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Hội trường Tầng 3 (300 - 650 khách)</Link>
+                    <Link href="/khong-gian/tang-4" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Hội trường Tầng 4 (100 - 300 khách)</Link>
+                    <Link href="/khong-gian/quay-bar" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Quầy Bar Tầng 1 (50 - 100 khách)</Link>
+                    <Link href="/khong-gian/phong-vip" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Phòng VIP (10 - 50 khách)</Link>
                   </div>
                 )}
               </div>
@@ -223,10 +224,10 @@ export default function Navbar() {
                 </button>
                 {mobileDichVu && (
                   <div className="pl-6 pb-3 space-y-2 text-xs font-normal normal-case text-gray-600">
-                    <Link href="/dich-vu/tiec-cuoi" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">💍 Tiệc cưới Hoàng Gia</Link>
-                    <Link href="/dich-vu/to-chuc-su-kien" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🏢 Tổ chức sự kiện công ty</Link>
-                    <Link href="/dich-vu/sinh-nhat-ky-niem" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🎂 Tiệc sinh nhật & Kỷ niệm</Link>
-                    <Link href="/dich-vu/phong-an-rieng" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🍷 Phòng ăn riêng VIP</Link>
+                    <Link href="/dich-vu/tiec-cuoi" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Tiệc cưới Hoàng Gia</Link>
+                    <Link href="/dich-vu/to-chuc-su-kien" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Tổ chức sự kiện công ty</Link>
+                    <Link href="/dich-vu/sinh-nhat-ky-niem" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Tiệc sinh nhật & Kỷ niệm</Link>
+                    <Link href="/dich-vu/phong-an-rieng" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Phòng ăn riêng VIP</Link>
                   </div>
                 )}
               </div>
@@ -242,11 +243,11 @@ export default function Navbar() {
                 </button>
                 {mobileThucDon && (
                   <div className="pl-6 pb-3 space-y-2 text-xs font-normal normal-case text-gray-600">
-                    <Link href="/thuc-don?tab=SET_TIEC" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🍱 Set Menu Tiệc Cưới & Hội Nghị</Link>
-                    <Link href="/thuc-don?tab=CHUYEN_MON" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">👑 Menu Chuyên Món Đặc Sản</Link>
-                    <Link href="/thuc-don?tab=TRE_EM" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🎈 Menu Trẻ Em & Học Sinh</Link>
-                    <Link href="/thuc-don?tab=ALACARTE" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🍽️ Menu Chọn Món A la carte</Link>
-                    <Link href="/thuc-don?tab=DO_UONG" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">🥂 Bảng Giá Đồ Uống & Phí Mang Vào</Link>
+                    <Link href="/thuc-don?tab=SET_TIEC" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Set Menu Tiệc Cưới & Hội Nghị</Link>
+                    <Link href="/thuc-don?tab=CHUYEN_MON" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Menu Chuyên Món Đặc Sản</Link>
+                    <Link href="/thuc-don?tab=TRE_EM" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Menu Trẻ Em & Học Sinh</Link>
+                    <Link href="/thuc-don?tab=ALACARTE" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Menu Chọn Món A la carte</Link>
+                    <Link href="/thuc-don?tab=DO_UONG" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Bảng Giá Đồ Uống & Phí Mang Vào</Link>
                   </div>
                 )}
               </div>
