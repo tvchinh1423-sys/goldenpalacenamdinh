@@ -181,14 +181,21 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
             {/* LED Frame Border */}
             <div className={`w-[90%] h-[85%] rounded-xl flex flex-col items-center justify-center p-6 relative backdrop-blur-xs transition-all duration-500 ${selectedTemplate.frameStyle}`}>
               
+              {/* Logo Golden Palace ở góc trái trên cùng */}
+              <div className="absolute top-3 left-4 flex items-center gap-1.5 z-20">
+                <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-6 sm:h-8 w-auto object-contain drop-shadow-[0_0_10px_rgba(227,166,56,0.8)]" />
+                <span className="text-[9px] sm:text-[10px] tracking-[0.2em] font-playfair uppercase text-amber-300 font-bold drop-shadow hidden sm:inline">
+                  GOLDEN PALACE
+                </span>
+              </div>
+
               {/* Corner Ornaments */}
-              <div className="absolute top-2 left-2 text-[#e3a638] text-xs font-serif opacity-70">❖</div>
               <div className="absolute top-2 right-2 text-[#e3a638] text-xs font-serif opacity-70">❖</div>
               <div className="absolute bottom-2 left-2 text-[#e3a638] text-xs font-serif opacity-70">❖</div>
               <div className="absolute bottom-2 right-2 text-[#e3a638] text-xs font-serif opacity-70">❖</div>
 
               {/* Header Badge */}
-              <div className="text-[10px] sm:text-xs tracking-[0.3em] uppercase text-amber-300 font-semibold mb-2 drop-shadow-md">
+              <div className="text-[9px] sm:text-[11px] tracking-[0.3em] uppercase text-amber-200/90 font-semibold mb-1 drop-shadow-md mt-2 sm:mt-0">
                 LỄ THÀNH HÔN • WEDDING CEREMONY
               </div>
 

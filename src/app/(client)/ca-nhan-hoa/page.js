@@ -53,10 +53,12 @@ export default function PersonalizePage() {
       <section className="relative py-16 px-4 sm:px-6 bg-gradient-to-b from-[#1c1509] via-[#120f09] to-[#0d0d0d] border-b border-[#e3a638]/20 overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gradient-to-r from-amber-500/10 via-amber-300/15 to-amber-500/10 blur-3xl rounded-full pointer-events-none"></div>
         
-        <div className="max-w-6xl mx-auto text-center relative z-10">
+        <div className="max-w-6xl mx-auto text-center relative z-10 flex flex-col items-center">
+          <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-14 sm:h-16 w-auto object-contain mb-4 drop-shadow-[0_0_20px_rgba(227,166,56,0.5)]" />
+          
           <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#e3a638]/10 border border-[#e3a638]/30 text-[#e3a638] text-xs uppercase font-bold tracking-[0.2em] mb-4">
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            Đặc Quyền Cá Nhân Hóa Tiệc Cưới
+            Đặc Quyền Cá Nhân Hóa Tiệc Cưới Golden Palace
           </span>
 
           <h1 className="text-3xl sm:text-5xl font-playfair font-bold text-white mb-4 tracking-tight">

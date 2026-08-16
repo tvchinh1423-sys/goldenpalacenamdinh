@@ -98,45 +98,91 @@ export const MUSIC_TRACKS = [
   { id: 'm14', catId: 'dining', title: 'You Are The Reason', artist: 'Calum Scott', duration: '3:24', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_247e68e4c7.mp3?filename=piano-wedding-love-126296.mp3' }
 ];
 
+// 6 Light-themed Luxury Wedding Invitation Templates
 export const INVITATION_TEMPLATES = [
   {
-    id: 'GOLDEN_ELEGANCE',
-    name: 'Hoàng Gia Hoàng Kim',
-    themeClass: 'bg-gradient-to-b from-[#1a160d] via-[#2a2114] to-[#120f08] text-[#f8fafc]',
-    accentColor: '#e3a638',
-    cardBg: 'bg-[#1e1910]/90 border-[#e3a638]/40',
-    fontHeading: 'font-playfair',
-    desc: 'Phong cách cổ điển hoàng gia với tone màu Vàng Kim & Đen Khói huyền bí',
-    badge: 'Đặc Quyền Golden Palace'
+    id: 'CRYSTAL_GOLD_GLASS',
+    name: '1. Trắng Kem & Ép Kim Vàng (We Do)',
+    themeClass: 'bg-[#faf6f0] text-gray-800 border-amber-300/80 shadow-[0_10px_30px_rgba(217,162,60,0.15)]',
+    accentColor: '#b8860b',
+    textColor: '#2d241e',
+    subTextColor: '#8c6d3f',
+    headerTitleFont: 'font-serif tracking-widest text-[#a66a3a]',
+    scriptFont: 'font-serif italic text-3xl font-normal text-[#b8860b]',
+    cardBg: 'bg-white/90 backdrop-blur-md border border-amber-200',
+    desc: 'Trắng kem nhã nhặn, chữ thư pháp vàng ép kim sang trọng (Tham khảo mẫu 3)',
+    badge: 'Mới & Ép Kim Sang Trọng'
   },
   {
-    id: 'BLOSSOM_ROMANCE',
-    name: 'Hoa Tươi Lãng Mạn',
-    themeClass: 'bg-gradient-to-b from-[#2d121c] via-[#421b2b] to-[#1f0b13] text-[#f8fafc]',
-    accentColor: '#f472b6',
-    cardBg: 'bg-[#361623]/90 border-pink-400/40',
-    fontHeading: 'font-serif',
-    desc: 'Phong cách lãng mạn ngọt ngào với họa tiết hoa hồng & ánh nến lung linh',
-    badge: 'Được Yêu Thích Nhất'
+    id: 'ROSE_BLUSH_ELEGANCE',
+    name: '2. Hồng Đất & Hoa Thần Thái',
+    themeClass: 'bg-[#fbf2ed] text-gray-800 border-pink-200 shadow-[0_10px_30px_rgba(219,112,147,0.15)]',
+    accentColor: '#9e475e',
+    textColor: '#3a2027',
+    subTextColor: '#8a4b5b',
+    headerTitleFont: 'font-serif text-[#9e475e]',
+    scriptFont: 'font-serif italic text-3xl font-semibold text-[#9e475e]',
+    cardBg: 'bg-[#fff9f6]/95 border border-pink-200/80',
+    desc: 'Nền hồng đất tinh tế phối họa tiết hoa thanh lịch (Tham khảo mẫu 4)',
+    badge: 'Lãng Mạn Nữ Tính'
   },
   {
-    id: 'MODERN_MINIMAL',
-    name: 'Tối Giản Hiện Đại',
-    themeClass: 'bg-gradient-to-b from-[#091e17] via-[#0f3026] to-[#06140f] text-[#f8fafc]',
-    accentColor: '#34d399',
-    cardBg: 'bg-[#0b251e]/90 border-emerald-400/40',
-    fontHeading: 'font-sans',
-    desc: 'Phong cách tối giản, tinh tế dành cho cặp đôi yêu thích sự trẻ trung, hiện đại',
+    id: 'EMERALD_BOTANICAL',
+    name: '3. Xanh Lá Botanical & Khung Tròn',
+    themeClass: 'bg-[#f4f7f4] text-gray-800 border-emerald-200 shadow-[0_10px_30px_rgba(52,211,153,0.12)]',
+    accentColor: '#2d6a4f',
+    textColor: '#1b4332',
+    subTextColor: '#40916c',
+    headerTitleFont: 'font-serif text-[#2d6a4f]',
+    scriptFont: 'font-serif italic text-3xl text-[#2d6a4f]',
+    cardBg: 'bg-white/95 border border-emerald-300/60',
+    desc: 'Nền trắng xanh botanical tự nhiên kết hợp hoa cẩm tú cầu (Tham khảo mẫu 5)',
     badge: 'Xu Hướng Mới'
   },
   {
-    id: 'VINTAGE_CLASSIC',
-    name: 'Cổ Điển Quý Phái',
-    themeClass: 'bg-gradient-to-b from-[#260a0a] via-[#3d1111] to-[#1a0707] text-[#f8fafc]',
-    accentColor: '#f87171',
-    cardBg: 'bg-[#2e0d0d]/90 border-red-400/40',
-    fontHeading: 'font-serif',
-    desc: 'Nét đẹp truyền thống kết hợp phương Tây với tone Đỏ Nhung & Vàng Ánh Kim',
-    badge: 'Trang Trọng'
+    id: 'PEARL_CHAMPAGNE',
+    name: '4. Champagne Ngọc Trai',
+    themeClass: 'bg-[#faf5ee] text-gray-800 border-amber-200 shadow-md',
+    accentColor: '#c8963e',
+    textColor: '#2c251e',
+    subTextColor: '#947545',
+    headerTitleFont: 'font-serif text-[#c8963e]',
+    scriptFont: 'font-serif italic text-3xl text-[#c8963e]',
+    cardBg: 'bg-[#ffffff]/90 border border-amber-300/40',
+    desc: 'Sắc ngọc trai rạng rỡ, phông chữ mềm mại quyến rũ',
+    badge: 'Nhã Nhặn'
+  },
+  {
+    id: 'VELVET_ROSE_GOLD',
+    name: '5. Đỏ Nhung Cổ Điển',
+    themeClass: 'bg-[#fdf6f6] text-gray-800 border-red-200 shadow-md',
+    accentColor: '#9b2226',
+    textColor: '#3d0c0e',
+    subTextColor: '#9b2226',
+    headerTitleFont: 'font-serif text-[#9b2226]',
+    scriptFont: 'font-serif italic text-3xl text-[#9b2226]',
+    cardBg: 'bg-white border border-red-200',
+    desc: 'Thiết kế chữ nổi đỏ nhung trên nền giấy kem truyền thống',
+    badge: 'Trang Trọng Truyền Thống'
+  },
+  {
+    id: 'MODERN_MINIMAL_LIGHT',
+    name: '6. Tối Giản Tinh Khôi',
+    themeClass: 'bg-[#ffffff] text-gray-900 border-gray-200 shadow-sm',
+    accentColor: '#1c1917',
+    textColor: '#1c1917',
+    subTextColor: '#78716c',
+    headerTitleFont: 'font-sans font-bold tracking-widest text-[#1c1917]',
+    scriptFont: 'font-serif italic text-3xl text-gray-900',
+    cardBg: 'bg-stone-50 border border-stone-200',
+    desc: 'Trắng tinh khôi tối giản, phông chữ thanh thoát đương đại',
+    badge: 'Tối Giản Hiện Đại'
   }
+];
+
+export const VENUE_FLOOR_OPTIONS = [
+  { id: 'FLOOR_1', name: 'Tầng 1 - Sảnh Bar & Tiệc Nhẹ (50 - 100 khách)', shortName: 'Tầng 1 (Sảnh Bar)' },
+  { id: 'FLOOR_2', name: 'Tầng 2 - Sảnh Ngọc Bích (350 - 750 khách)', shortName: 'Tầng 2 (Sảnh Ngọc Bích)' },
+  { id: 'FLOOR_3', name: 'Tầng 3 - Sảnh Hoàng Gia (300 - 650 khách)', shortName: 'Tầng 3 (Sảnh Hoàng Gia)' },
+  { id: 'FLOOR_4', name: 'Tầng 4 - Sảnh Kim Cương (100 - 300 khách)', shortName: 'Tầng 4 (Sảnh Kim Cương)' }
 ];
