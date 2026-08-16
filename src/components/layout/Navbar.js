@@ -151,10 +151,19 @@ export default function Navbar() {
             </div>
           </div>
 
+          {/* Link: CÁ NHÂN HÓA */}
+          <Link href="/ca-nhan-hoa" className="hover:text-[#a66a3a] transition-colors py-2 flex items-center gap-1">
+            <span className="material-symbols-outlined text-base text-[#e3a638]">auto_awesome</span>
+            <span>Cá Nhân Hóa</span>
+          </Link>
         </div>
 
         {/* Desktop CTA Pill */}
         <div className="hidden md:flex items-center gap-4 shrink-0">
+          <Link href="/ca-nhan-hoa" className="px-4 py-2 border border-[#e3a638] text-[#a66a3a] hover:bg-[#e3a638]/10 font-montserrat text-xs tracking-wider uppercase transition-all font-semibold rounded-full flex items-center gap-1">
+            <span className="material-symbols-outlined text-sm text-[#e3a638]">auto_awesome</span>
+            Cá Nhân Hóa
+          </Link>
           <Link href="/du-toan-chi-phi" className="px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white hover:opacity-90 font-montserrat text-xs tracking-widest uppercase transition-all font-semibold rounded-full shadow-md">
             Dự Toán Chi Phí
           </Link>
@@ -176,13 +185,23 @@ export default function Navbar() {
           <div className="p-5 space-y-4">
             
             {/* Primary Action Button inside Drawer */}
-            <Link 
-              href="/du-toan-chi-phi" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block w-full text-center py-3 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold uppercase text-xs tracking-widest rounded-xl shadow-md"
-            >
-              Dự Tính Chi Phí Sự Kiện
-            </Link>
+            <div className="grid grid-cols-2 gap-2">
+              <Link 
+                href="/ca-nhan-hoa" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block w-full text-center py-3 border border-[#e3a638] text-[#a66a3a] bg-amber-50/50 font-bold uppercase text-[11px] tracking-wider rounded-xl shadow-xs flex items-center justify-center gap-1"
+              >
+                <span className="material-symbols-outlined text-sm">auto_awesome</span>
+                Cá Nhân Hóa
+              </Link>
+              <Link 
+                href="/du-toan-chi-phi" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="block w-full text-center py-3 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold uppercase text-[11px] tracking-wider rounded-xl shadow-md"
+              >
+                Dự Tính Chi Phí
+              </Link>
+            </div>
 
             <div className="space-y-1 text-xs uppercase tracking-wider font-semibold text-gray-800 pt-2">
               <Link 
