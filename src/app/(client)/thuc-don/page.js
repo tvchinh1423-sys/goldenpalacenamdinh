@@ -4,18 +4,18 @@ import { useSearchParams } from 'next/navigation';
 import BookingConsultationModal from '@/components/layout/BookingConsultationModal';
 
 const MENU_CATEGORIES = [
-  { id: 'SET_TIEC', label: 'Set Menu Tiệc Cưới & Hội Nghị', icon: 'restaurant_menu', count: '6 Set cỗ mẫu' },
-  { id: 'CHUYEN_MON', label: 'Menu Chuyên Món Đặc Sản', icon: 'workspace_premium', count: '8 Menu đặc sản' },
-  { id: 'TRE_EM', label: 'Menu Trẻ Em & Học Sinh', icon: 'child_care', count: '5 Combo ưu đãi' },
+  { id: 'SET_TIEC', label: 'Set Menu Tiệc Cưới & Hội Nghị', icon: 'restaurant_menu', count: '18 Set cỗ chính thức' },
+  { id: 'CHUYEN_MON', label: 'Menu Chuyên Món Đặc Sản', icon: 'workspace_premium', count: 'Cá, Ba Ba, Dúi, Vịt Trời, Lợn Mán, Bê' },
+  { id: 'TRE_EM', label: 'Menu Trẻ Em & Học Sinh', icon: 'child_care', count: '5 Combo ưu đãi 10%' },
   { id: 'ALACARTE', label: 'Menu Chọn Món (3 Phần Chính)', icon: 'menu_book', count: 'Tích chọn tạo bản nháp' },
   { id: 'DO_UONG', label: 'Menu Đồ Uống & Phí Mang Vào', icon: 'wine_bar', count: 'Bảng giá chính thức' },
 ];
 
-const SET_MENUS = [
+// FULL 18 SET MENUS STRICTLY FROM GOOGLE SHEET (UNIFORM TITLES: SET MENU TIỆC 1 -> SET MENU TIỆC 18)
+const SET_MENUS_18 = [
   {
     title: 'SET MENU TIỆC 1',
-    price: '320.000 VNĐ/khách',
-    bestFor: 'Tiệc cưới & Tiệc mừng ấm cúng',
+    price: '320.000 VNĐ / 1 KHÁCH',
     dishes: [
       { type: 'Khai vị', name: 'Súp hải sản rong biển' },
       { type: 'Khai vị', name: 'Salad rau má bắp bò muối' },
@@ -33,8 +33,7 @@ const SET_MENUS = [
   },
   {
     title: 'SET MENU TIỆC 2',
-    price: '340.000 VNĐ/khách',
-    bestFor: 'Tiệc cưới & Hội nghị doanh nghiệp',
+    price: '340.000 VNĐ / 1 KHÁCH',
     dishes: [
       { type: 'Khai vị', name: 'Súp tôm nấm' },
       { type: 'Khai vị', name: 'Salad lườn ngỗng xông khói' },
@@ -47,32 +46,30 @@ const SET_MENUS = [
       { type: 'Canh', name: 'Canh mọc hải sản' },
       { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
       { type: 'Cơm / Xôi', name: 'Xôi Hoàng Phố ruốc bông' },
-      { type: 'Tráng miệng', name: 'Dưa hấu tươi' },
+      { type: 'Tráng miệng', name: 'Dưa hấu' },
     ]
   },
   {
     title: 'SET MENU TIỆC 3',
-    price: '345.000 VNĐ/khách',
-    bestFor: 'Tiệc kỷ niệm & Hội khóa sang trọng',
+    price: '345.000 VNĐ / 1 KHÁCH',
     dishes: [
       { type: 'Khai vị', name: 'Súp tôm rong biển' },
       { type: 'Khai vị', name: 'Nộm cổ hũ dừa tôm thịt' },
       { type: 'Món chính', name: 'Cá trắm hấp mẻ' },
       { type: 'Món chính', name: 'Dê chiên riềng' },
       { type: 'Món chính', name: 'Gà hấp lá chanh' },
-      { type: 'Món chính', name: 'Bò sốt tiêu đen + Bánh bao chiên' },
+      { type: 'Món chính', name: 'Bò sốt tiêu đen + Bánh bao' },
       { type: 'Món chính', name: 'Hải sản xào sốt X.O' },
       { type: 'Món củ', name: 'Rau xào theo mùa' },
       { type: 'Canh', name: 'Canh mọc hải sản' },
       { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
       { type: 'Cơm / Xôi', name: 'Xôi cốm vò' },
-      { type: 'Tráng miệng', name: 'Nho Mỹ nhập khẩu' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
     ]
   },
   {
     title: 'SET MENU TIỆC 4',
-    price: '375.000 VNĐ/khách',
-    bestFor: 'Đại tiệc cưới sang trọng & Đẳng cấp',
+    price: '375.000 VNĐ / 1 KHÁCH',
     dishes: [
       { type: 'Khai vị', name: 'Súp hải sản ngó xuân' },
       { type: 'Khai vị', name: 'Nộm rau má bắp bò muối' },
@@ -85,60 +82,267 @@ const SET_MENUS = [
       { type: 'Canh', name: 'Cá lăng om chuối đậu' },
       { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
       { type: 'Cơm / Xôi', name: 'Xôi sen dừa' },
-      { type: 'Tráng miệng', name: 'Nho Mỹ cao cấp' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
     ]
   },
   {
-    title: 'SET MENU TIỆC VIP 5',
-    price: '395.000 VNĐ/khách',
-    bestFor: 'Tiệc cưới VIP Hoàng Gia',
+    title: 'SET MENU TIỆC 5',
+    price: '395.000 VNĐ / 1 KHÁCH',
     dishes: [
-      { type: 'Khai vị', name: 'Súp sụn vi cá hải sản' },
-      { type: 'Khai vị', name: 'Salad hải sản sốt Chanh dây' },
-      { type: 'Món chính', name: 'Cá lăng nướng riềng mẻ' },
-      { type: 'Món chính', name: 'Tôm sú bỏ lò phô mai Pháp' },
-      { type: 'Món chính', name: 'Bò nướng tảng sốt rượu vang' },
-      { type: 'Món chính', name: 'Gà quay da giòn bánh bao' },
-      { type: 'Món chính', name: 'Lườn ngỗng xông khói áp chảo' },
-      { type: 'Món củ', name: 'Măng tây xào tỏi' },
-      { type: 'Canh', name: 'Canh hải sản sâm bổ lượng' },
-      { type: 'Cơm / Xôi', name: 'Cơm chiên hải sản Hoàng Kim' },
-      { type: 'Cơm / Xôi', name: 'Xôi gấc hạt sen ruốc nướng' },
-      { type: 'Tráng miệng', name: 'Hoa quả mùa cao cấp & Chè dưỡng nhan' },
+      { type: 'Khai vị', name: 'Súp bò ngó xuân' },
+      { type: 'Khai vị', name: 'Salad cá ngừ' },
+      { type: 'Món chính', name: 'Gà rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Cá lăng rang muối' },
+      { type: 'Món chính', name: 'Tôm phượng hoàng (5 hoa)' },
+      { type: 'Món chính', name: 'Bò cuộn măng tây sốt tiêu' },
+      { type: 'Món chính', name: 'Hải sản xào ngồng tỏi' },
+      { type: 'Món củ', name: 'Rau xào theo mùa' },
+      { type: 'Canh', name: 'Cá lăng om chuối đậu' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi chả mực' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
     ]
   },
   {
-    title: 'SET MENU TIỆC VVIP 6',
-    price: '415.000 VNĐ/khách',
-    bestFor: 'Tiệc VIP thượng lưu & Tiếp khách cao cấp',
+    title: 'SET MENU TIỆC 6',
+    price: '405.000 VNĐ / 1 KHÁCH',
     dishes: [
-      { type: 'Khai vị', name: 'Súp lươn đồng xứ Nghệ' },
-      { type: 'Khai vị', name: 'Salad bò Úc nướng sốt Balsamic' },
-      { type: 'Món chính', name: 'Cá lăng hấp Hồng Kông nguyên con' },
-      { type: 'Món chính', name: 'Tôm sú chiên hoàng kim trứng muối' },
-      { type: 'Món chính', name: 'Thịt bê chao dầu vừng chiên' },
-      { type: 'Món chính', name: 'Dê núi nướng tảng lá lốt' },
-      { type: 'Món chính', name: 'Mực ống nhồi thịt sốt cay' },
-      { type: 'Món củ', name: 'Rau mầm đá xào nấm tươi' },
-      { type: 'Canh', name: 'Lẩu cá lăng măng chua / Canh hải sản' },
-      { type: 'Cơm / Xôi', name: 'Cơm tám thơm nương' },
-      { type: 'Cơm / Xôi', name: 'Xôi cốm làng Vòng dừa nạo' },
-      { type: 'Tráng miệng', name: 'Panna Cotta mâm xôi & Nho ngón tay' },
+      { type: 'Khai vị', name: 'Súp tôm ngó xuân' },
+      { type: 'Khai vị', name: 'Salad trứng cá hồi' },
+      { type: 'Món chính', name: 'Cá lăng hấp xì dầu' },
+      { type: 'Món chính', name: 'Bò hầm rượu vang + Bánh mì' },
+      { type: 'Món chính', name: 'Dê hấp lá thơm' },
+      { type: 'Món chính', name: 'Hải sâm tôm nõn xào nấm' },
+      { type: 'Món chính', name: 'Gà rút xương xốt nấm' },
+      { type: 'Món củ', name: 'Rau củ luộc' },
+      { type: 'Canh', name: 'Canh mọc bò viên' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi chim câu' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 7',
+    price: '415.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp lươn nấm thả' },
+      { type: 'Khai vị', name: 'Salad trứng cá hồi' },
+      { type: 'Món chính', name: 'Gà rút xương sốt sâm nấm' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.5kg)' },
+      { type: 'Món chính', name: 'Dê hấp lá hương' },
+      { type: 'Món chính', name: 'Tôm 5 hoa chiên trứng muối' },
+      { type: 'Món chính', name: 'Hải sâm tôm nõn xào xốt X.O' },
+      { type: 'Món củ', name: 'Củ quả luộc' },
+      { type: 'Mon ăn phụ', name: 'Bánh bí chiên' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi Hoàng Phố' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 8',
+    price: '440.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp gà hải sâm' },
+      { type: 'Khai vị', name: 'Salad cá hồi chiên giòn' },
+      { type: 'Món chính', name: 'Gà hấp rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Cá lăng nướng dân tộc' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Dê chiên riềng' },
+      { type: 'Món chính', name: 'Cồi điệp sốt nấm bông cải' },
+      { type: 'Món củ', name: 'Rau xào theo mùa' },
+      { type: 'Canh', name: 'Canh mọc bò viên' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi cốm dẻo' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 9',
+    price: '445.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp gà hải sâm' },
+      { type: 'Khai vị', name: 'Salad rau mầm bắp bò' },
+      { type: 'Món chính', name: 'Cá chình rang muối' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.3kg)' },
+      { type: 'Món chính', name: 'Gà rút xương sốt sen nấm' },
+      { type: 'Món chính', name: 'Cồi điệp xốt nấm đông trùng' },
+      { type: 'Món chính', name: 'Dê hấp lá thơm' },
+      { type: 'Món củ', name: 'Rau củ luộc' },
+      { type: 'Món ăn phụ', name: 'Bánh bí chiên' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám' },
+      { type: 'Cơm / Xôi', name: 'Xôi Hoàng Phố ruốc bông' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 10',
+    price: '465.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp cua gỡ rong biển' },
+      { type: 'Khai vị', name: 'Salad rau mầm bò chiên cay' },
+      { type: 'Món chính', name: 'Cá chình chiên riềng' },
+      { type: 'Món chính', name: 'Gà hấp rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Dê ủ trấu' },
+      { type: 'Món chính', name: 'Hải sản xào cần Mỹ' },
+      { type: 'Món củ', name: 'Rau xào theo mùa' },
+      { type: 'Canh', name: 'Cá chình om chuối đậu' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi cá rô' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 11',
+    price: '475.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp cua gỡ rong biển' },
+      { type: 'Khai vị', name: 'Salad cá hồi chiên giòn' },
+      { type: 'Món chính', name: 'Cá song hấp kiểu Thái' },
+      { type: 'Món chính', name: 'Chả cua bọc giấy bạc' },
+      { type: 'Món chính', name: 'Gà rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Dê ủ trấu' },
+      { type: 'Món chính', name: 'Bò Nhật xào hạnh nhân' },
+      { type: 'Món củ', name: 'Rau xào theo mùa' },
+      { type: 'Canh', name: 'Canh mọc hải sản' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi Hoàng Phố ruốc bông' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 12',
+    price: '510.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp hải sản bạch ngọc' },
+      { type: 'Khai vị', name: 'Salad trứng cá hồi' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.5kg)' },
+      { type: 'Món chính', name: 'Gà rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Bò Fuji nướng xốt tiêu + Bánh mì' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên trứng muối' },
+      { type: 'Món chính', name: 'Hải sản xào xốt X.O' },
+      { type: 'Món củ', name: 'Rau củ luộc chấm kho quẹt' },
+      { type: 'Món ăn phụ', name: 'Nem hải sản' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi chim câu' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 13',
+    price: '515.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp lươn nấm thả' },
+      { type: 'Khai vị', name: 'Nộm cổ hũ dừa tôm thịt' },
+      { type: 'Món chính', name: 'Cá hồi sốt chanh leo' },
+      { type: 'Món chính', name: 'Gà rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Dê hấp lá é' },
+      { type: 'Món chính', name: 'Cồi điệp hải sâm sốt nấm đông trùng' },
+      { type: 'Món củ', name: 'Củ quả luộc' },
+      { type: 'Canh', name: 'Lươn om chuối đậu' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi cốm vò' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 14',
+    price: '540.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp dê bát bảo' },
+      { type: 'Khai vị', name: 'Salad bắp bò muối' },
+      { type: 'Món chính', name: 'Cá chình nướng dân tộc' },
+      { type: 'Món chính', name: 'Tôm sú 1 lạng bỏ lò phomai' },
+      { type: 'Món chính', name: 'Chả ốc hương lá lốt' },
+      { type: 'Món chính', name: 'Cồi điệp xốt nấm đông trùng' },
+      { type: 'Món chính', name: 'Gà rút xương sốt lá é' },
+      { type: 'Món củ', name: 'Rau củ luộc' },
+      { type: 'Canh', name: 'Canh lươn hoa chuối' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi vò hạt sen' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 15',
+    price: '540.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp cua gỡ ngó xuân' },
+      { type: 'Khai vị', name: 'Salad trứng cá hồi' },
+      { type: 'Món chính', name: 'Cá hồi áp chảo xốt xì dầu' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Gà rút xương sốt sâm nấm' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.3kg)' },
+      { type: 'Món chính', name: 'Mực một nắng xào ngồng tỏi' },
+      { type: 'Món củ', name: 'Rau củ luộc' },
+      { type: 'Món ăn phụ', name: 'Nem hải sản' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi Hoàng Phố' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 16',
+    price: '590.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp bò ngó xuân' },
+      { type: 'Khai vị', name: 'Salad trứng cá hồi' },
+      { type: 'Món chính', name: 'Cá hồi chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.3kg)' },
+      { type: 'Món chính', name: 'Tôm 1 lạng bỏ lò phomai' },
+      { type: 'Món chính', name: 'Bò Nhật xào măng tây' },
+      { type: 'Món chính', name: 'Gà rút xương sốt bát bảo' },
+      { type: 'Món củ', name: 'Rau củ luộc chấm kho quẹt' },
+      { type: 'Món ăn phụ', name: 'Bánh bí chiên' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám' },
+      { type: 'Cơm / Xôi', name: 'Xôi chả mực Hạ Long' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 17',
+    price: '660.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp gà sâm tươi' },
+      { type: 'Khai vị', name: 'Salad rau má trứng cá hồi' },
+      { type: 'Món chính', name: 'Nem cua bể chiên giòn' },
+      { type: 'Món chính', name: 'Cá hồi xốt chanh leo' },
+      { type: 'Món chính', name: 'Ba ba nướng lá lốt (1.5kg)' },
+      { type: 'Món chính', name: 'Tôm sú chiên bơ tỏi (Tôm 1 lạng)' },
+      { type: 'Món chính', name: 'Vịt trời hấp lá thơm (rút xương)' },
+      { type: 'Món chính', name: 'Bò Fuji nướng xốt tiêu' },
+      { type: 'Món củ', name: 'Ngó xuân xào tỏi' },
+      { type: 'Canh', name: 'Canh mọc hải sản' },
+      { type: 'Cơm / Xôi', name: 'Xôi chim câu' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 18',
+    price: '690.000 VNĐ / 1 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp nấm bào ngư' },
+      { type: 'Khai vị', name: 'Salad lườn ngỗng xông khói' },
+      { type: 'Món chính', name: 'Nem cá chiên giòn' },
+      { type: 'Món chính', name: 'Bò Fuji nướng xốt tiêu + Bánh mì' },
+      { type: 'Món chính', name: 'Cá hồi áp chảo xốt xì dầu Nhật' },
+      { type: 'Món chính', name: 'Tôm 1 lạng chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Chim câu quay' },
+      { type: 'Món chính', name: 'Cồi điệp sốt X.O' },
+      { type: 'Món củ', name: 'Rau củ luộc ngũ sắc' },
+      { type: 'Canh', name: 'Canh nấm hải sản' },
+      { type: 'Cơm / Xôi', name: 'Xôi sen dừa' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
     ]
   }
 ];
 
-const SPECIALTY_MENUS = [
-  {
-    title: 'MENU CẦY HƯƠNG',
-    subtitle: 'Đặc sản thượng hạng chế biến 5 món chuẩn vị',
-    items: ['1. Tiết canh cầy hương', '2. Lòng nhồi đỗ xanh', '3. Cầy hương hấp lá mớ', '4. Canh xương khoai + Bún', '5. Cháo cầy hương']
-  },
-  {
-    title: 'MENU MÒNG KÉT',
-    subtitle: 'Chim mòng két thiên nhiên 11 món phong phú',
-    items: ['1. Tiết canh mòng két', '2. Lòng xào hành hoa', '3. Hấp nguyên con', '4. Trộn thính lá chanh', '5. Nộm hành răm', '6. Chao dầu giòn', '7. Nhựa mận + Bánh mì', '8. Canh khoai + Bún', '9. Cháo mòng két', '10. Xôi chả', '11. Xào lăn']
-  },
+// MENU CHUYÊN MÓN (EXCLUDING CẦY HƯƠNG & MÒNG KẾT)
+const SPECIALTY_MENUS_6 = [
   {
     title: 'MENU CÁ LĂNG / CÁ TRẮM',
     subtitle: 'Cá tươi chọn lọc chế biến 6 món độc đáo',
@@ -204,9 +408,9 @@ const KIDS_MENUS = [
   }
 ];
 
-// MENU CHỌN MÓN STRUCTURED INTO 3 MAIN SECTIONS FOR EASY READING
 const ALACARTE_3_SECTIONS = [
   {
+    id: 'sec-1',
     sectionTitle: 'I. KHAI VỊ & SALAD',
     sectionDesc: 'Các món súp nóng hổi, salad và nộm khai vị tinh tế',
     icon: 'soup_kitchen',
@@ -214,49 +418,51 @@ const ALACARTE_3_SECTIONS = [
       {
         subTitle: 'Súp Khai Vị Bổ Dưỡng',
         dishes: [
-          'Súp gà ngô nấm (bát tô)', 'Súp gà nấm đông trùng (bát tô)', 'Súp gà Hoàng Kim (bát tô)', 'Súp gà hải sâm (bát tô)', 'Súp dê bát bảo (bát tô)', 'Súp dê nấm tươi (bát tô)', 'Súp bò nấm tươi (bát tô)', 'Súp cua gỡ nấm tuyết (bát tô)', 'Súp cua gỡ rong biển (bát tô)', 'Súp cua gỡ măng tây (bát tô)', 'Súp nấm cua gỡ (bát tô)', 'Súp cua gỡ thảo mộc (MỚI)', 'Súp nấm Bạch Ngọc (bát tô)', 'Súp tôm nấm (bát tô)', 'Súp tôm bí đỏ (bát tô)', 'Súp lươn bát bảo (bát tô)', 'Súp bào ngư nấm đông trùng (bát tô)', 'Súp bào ngư nấm đông cô', 'Súp gà yến sâm (bát tô)'
+          'Súp gà ngô nấm', 'Súp gà nấm đông trùng', 'Súp gà Hoàng Kim', 'Súp gà hải sâm', 'Súp dê bát bảo', 'Súp dê nấm tươi', 'Súp bò nấm tươi', 'Súp cua gỡ nấm tuyết', 'Súp cua gỡ rong biển', 'Súp cua gỡ măng tây', 'Súp nấm cua gỡ', 'Súp cua gỡ thảo mộc', 'Súp nấm Bạch Ngọc', 'Súp tôm nấm', 'Súp tôm bí đỏ', 'Súp lươn bát bảo', 'Súp bào ngư nấm đông trùng', 'Súp bào ngư nấm đông cô', 'Súp gà yến sâm'
         ]
       },
       {
         subTitle: 'Salad & Nộm Tươi Mát',
         dishes: [
-          'Salad rau xanh bắp bò muối (đĩa)', 'Salad trứng cá hồi (đĩa)', 'Salad cá hồi chiên giòn (đĩa)', 'Salad lườn ngỗng xông khói (đĩa)', 'Salad rau mầm (đĩa)', 'Salad cá ngừ (đĩa)', 'Salad rau má bắp bò (đĩa)', 'Nộm bắp bò hoa chuối (đĩa)', 'Nộm bò nướng cay (đĩa)', 'Nộm miến hải sản sốt Thái (đĩa)', 'Nộm hải sản sốt Thái (đĩa)', 'Nộm gà hoa chuối (đĩa)', 'Nộm cổ hũ dừa tôm thịt (đĩa)', 'Nộm sứa hoa chuối (đĩa)', 'Nộm bắp bò rau tiến vua (đĩa)', 'Nộm rau tiến vua tai heo (đĩa)'
+          'Salad rau xanh bắp bò muối', 'Salad trứng cá hồi', 'Salad cá hồi chiên giòn', 'Salad lườn ngỗng xông khói', 'Salad rau mầm', 'Salad cá ngừ', 'Salad rau má bắp bò', 'Nộm bắp bò hoa chuối', 'Nộm bò nướng cay', 'Nộm miến hải sản sốt Thái', 'Nộm hải sản sốt Thái', 'Nộm gà hoa chuối', 'Nộm cổ hũ dừa tôm thịt', 'Nộm sứa hoa chuối', 'Nộm bắp bò rau tiến vua', 'Nộm rau tiến vua tai heo'
         ]
       }
     ]
   },
   {
-    sectionTitle: 'II. MÓN CHÍNH & LẨU BẢO HẢO',
-    sectionDesc: 'Đặc sản Hải sản, Thịt Bò - Bê - Dê - Lợn mán, Canh xào và Lẩu tươi nóng',
+    id: 'sec-2',
+    sectionTitle: 'II. MÓN CHÍNH & LẨU',
+    sectionDesc: 'Đặc sản Hải sản, Bò - Bê - Dê - Lợn mán, Canh xào và Lẩu tươi nóng',
     icon: 'flatware',
     groups: [
       {
         subTitle: 'Đặc Sản Cá & Ba Ba Sông',
         dishes: [
-          'Cá lăng chiên riềng mẻ (đĩa)', 'Cá lăng nướng dân tộc (đĩa)', 'Cá lăng om chuối đậu (nồi)', 'Cá lăng hấp Hồng Kông nguyên con', 'Cá quả nướng mắm ớt (con)', 'Cá quả hấp Thái (con)', 'Cá trắm hấp mẻ (đĩa)', 'Ba ba rang muối hột (con)', 'Ba ba om chuối đậu + Bún (nồi)', 'Ba ba xào gừng tươi (đĩa)', 'Ba ba nướng lá lốt (đĩa)'
+          'Cá lăng chiên riềng mẻ', 'Cá lăng nướng dân tộc', 'Cá lăng om chuối đậu', 'Cá lăng hấp Hồng Kông nguyên con', 'Cá quả nướng mắm ớt', 'Cá quả hấp Thái', 'Cá trắm hấp mẻ', 'Ba ba rang muối hột', 'Ba ba om chuối đậu + Bún', 'Ba ba xào gừng tươi', 'Ba ba nướng lá lốt'
         ]
       },
       {
         subTitle: 'Các Món Bò, Bê & Dê Núi',
         dishes: [
-          'Bò xào lúc lắc hạnh nhân (đĩa)', 'Bò sốt tiêu đen + Bánh bao chiên (đĩa)', 'Bắp bò xào cổ hũ dừa (đĩa)', 'Bê tái chanh Nam Định (đĩa)', 'Bê nướng tảng nguyên miếng (đĩa)', 'Bê xào lăn sả ớt (đĩa)', 'Bê cháy tỏi (đĩa)', 'Bê ủ muối thảo mộc (đĩa)', 'Bê hầm vang đỏ + Bánh mì (đĩa)', 'Dê chiên riềng (đĩa)', 'Dê hấp lá tía tô (đĩa)', 'Dê nướng tảng mạ vàng (đĩa)', 'Dê tái chanh (đĩa)'
+          'Bò xào lúc lắc hạnh nhân', 'Bò sốt tiêu đen + Bánh bao chiên', 'Bắp bò xào cổ hũ dừa', 'Bê tái chanh Nam Định', 'Bê nướng tảng nguyên miếng', 'Bê xào lăn sả ớt', 'Bê cháy tỏi', 'Bê ủ muối thảo mộc', 'Bê hầm vang đỏ + Bánh mì', 'Dê chiên riềng', 'Dê hấp lá tía tô', 'Dê nướng tảng mạ vàng', 'Dê tái chanh'
         ]
       },
       {
         subTitle: 'Tôm, Bề Bề, Ếch & Chân Giò / Sườn',
         dishes: [
-          'Tôm thẻ 6 hoa chiên giòn (đĩa)', 'Tôm thẻ chiên hạnh nhân (đĩa)', 'Tôm sú bỏ lò phô mai Pháp (đĩa)', 'Tôm chiên hoàng kim trứng muối (đĩa)', 'Bề bề rang muối hột (đĩa)', 'Bề bề hấp sả ớt (đĩa)', 'Hải sản xào sốt X.O (đĩa)', 'Ếch rang muối thảo mộc (đĩa)', 'Ếch xào măng củ (đĩa)', 'Chân giò hầm sen nấm (đĩa)', 'Chân giò nướng giòn da (đĩa)', 'Sườn nướng sốt BBQ (đĩa)', 'Sườn rang muối (đĩa)'
+          'Tôm thẻ 6 hoa chiên giòn', 'Tôm thẻ chiên hạnh nhân', 'Tôm sú bỏ lò phô mai Pháp', 'Tôm chiên hoàng kim trứng muối', 'Bề bề rang muối hột', 'Bề bề hấp sả ớt', 'Hải sản xào sốt X.O', 'Ếch rang muối thảo mộc', 'Ếch xào măng củ', 'Chân giò hầm sen nấm', 'Chân giò nướng giòn da', 'Sườn nướng sốt BBQ', 'Sườn rang muối'
         ]
       },
       {
         subTitle: 'Canh, Xào & Các Loại Lẩu Tươi',
         dishes: [
-          'Canh măng mọc (tô)', 'Canh mọc hải sản (tô)', 'Rau củ luộc chấm kho quẹt (đĩa)', 'Rau xào theo mùa (đĩa)', 'Măng tây xào tỏi (đĩa)', 'Lẩu cá lăng măng chua (nồi)', 'Lẩu hải sản thập cẩm (nồi)', 'Lẩu riêu cua bắp bò (nồi)', 'Lẩu dê núi tía tô (nồi)'
+          'Canh măng mọc', 'Canh mọc hải sản', 'Rau củ luộc chấm kho quẹt', 'Rau xào theo mùa', 'Măng tây xào tỏi', 'Lẩu cá lăng măng chua', 'Lẩu hải sản thập cẩm', 'Lẩu riêu cua bắp bò', 'Lẩu dê núi tía tô'
         ]
       }
     ]
   },
   {
+    id: 'sec-3',
     sectionTitle: 'III. TRÁNG MIỆNG',
     sectionDesc: 'Hoa quả tươi theo mùa, bánh ngọt và kem chè tráng miệng thanh mát',
     icon: 'icecream',
@@ -264,7 +470,7 @@ const ALACARTE_3_SECTIONS = [
       {
         subTitle: 'Hoa Quả Tươi & Món Ngọt',
         dishes: [
-          'Bưởi da xanh (đĩa)', 'Nho Mỹ nhập khẩu (đĩa)', 'Nho xanh nhập khẩu (đĩa)', 'Cam Canh ngọt (đĩa)', 'Chuối ngự Nam Định (đĩa)', 'Hoa quả tươi theo mùa (đĩa)', 'Sữa chua nhà làm (10 hộp)', 'Kem Caramel (10 hộp)', 'Bánh tuyết Mochi (10 chiếc)'
+          'Bưởi da xanh', 'Nho Mỹ nhập khẩu', 'Nho xanh nhập khẩu', 'Cam Canh ngọt', 'Chuối ngự Nam Định', 'Hoa quả tươi theo mùa', 'Sữa chua nhà làm', 'Kem Caramel', 'Bánh tuyết Mochi'
         ]
       }
     ]
@@ -305,6 +511,12 @@ function MenuContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showDraftModal, setShowDraftModal] = useState(false);
 
+  // Pagination / Page index for 18 Set Menus (Slider Carousel)
+  const [setMenuIndex, setSetMenuIndex] = useState(0); // 0 to 17
+
+  // Active section filter for ALACARTE
+  const [activeAlacarteSec, setActiveAlacarteSec] = useState('ALL');
+
   useEffect(() => {
     if (tabParam && MENU_CATEGORIES.some(c => c.id === tabParam)) {
       setActiveTab(tabParam);
@@ -320,11 +532,11 @@ function MenuContent() {
   };
 
   const handleShareZalo = () => {
-    const text = `Họ tên khách: [Tên Khách]\nBẢN NHÁP THỰC ĐƠN ĐÃ CHỌN TẠI GOLDEN PALACE (${selectedDishes.length} món):\n` + 
+    const text = `BẢN NHÁP THỰC ĐƠN ĐÃ CHỌN TẠI GOLDEN PALACE (${selectedDishes.length} món):\n` + 
       selectedDishes.map((d, i) => `${i + 1}. ${d}`).join('\n') + 
       `\n\nNhờ chuyên viên Golden Palace kiểm tra thời giá và báo giá chi tiết giúp em!`;
     navigator.clipboard.writeText(text);
-    alert('Đã sao chép bản nháp thực đơn! Bạn có thể dán (Paste) để gửi trực tiếp qua Zalo cho chuyên viên.');
+    alert('✅ Đã sao chép bản nháp thực đơn! Bạn có thể dán (Paste) để gửi trực tiếp qua Zalo cho chuyên viên.');
     window.open('https://zalo.me/02286595959', '_blank');
   };
 
@@ -332,7 +544,7 @@ function MenuContent() {
     <div className="bg-[#fcf9f2] text-gray-900 font-montserrat min-h-screen flex flex-col pt-24 pb-28">
       
       {/* Banner Title */}
-      <section className="max-w-7xl mx-auto px-6 mb-10 text-center">
+      <section className="max-w-7xl mx-auto px-6 mb-8 text-center">
         <span className="text-[#a66a3a] uppercase tracking-[0.25em] text-xs font-bold whitespace-nowrap">
           Ẩm Thực Đỉnh Cao Golden Palace
         </span>
@@ -340,7 +552,7 @@ function MenuContent() {
           Thực Đơn Tiệc & Bảng Giá Chính Thức
         </h1>
         <p className="text-gray-600 font-light text-sm max-w-3xl mx-auto leading-relaxed">
-          Khám phá trọn bộ 5 danh mục thực đơn từ các Set Cỗ Tiệc Cưới tinh tế, Menu Chuyên Món Đặc Sản, Combo Trẻ Em Hè Rực Rỡ, Menu Chọn Món (Chia 3 Phần Khai Vị, Món Chính & Tráng Miệng) đến Bảng Giá Đồ Uống & Phí Mang Đồ Vào Nhà Hàng.
+          Khám phá trọn bộ 18 Set Menu Tiệc Cưới & Hội Nghị, Menu Chuyên Món Đặc Sản, Combo Trẻ Em Hè Rực Rỡ, Menu Chọn Món và Bảng Giá Đồ Uống & Phí Mang Đồ Vào.
         </p>
       </section>
 
@@ -370,63 +582,141 @@ function MenuContent() {
         </div>
       </section>
 
-      {/* TAB 1: SET MENU TIỆC CƯỚI & HỘI NGHỊ */}
+      {/* TAB 1: SET MENU TIỆC CƯỚI & HỘI NGHỊ (FULL 18 SETS WITH SLIDER / PAGE CAROUSEL) */}
       {activeTab === 'SET_TIEC' && (
         <section className="max-w-7xl mx-auto px-6 space-y-8">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-playfair font-bold text-gray-900">Danh Sách 6 Set Cỗ Tiệc Cưới & Sự Kiện Mẫu</h2>
-            <p className="text-gray-500 text-xs font-light mt-1">Liệt kê đầy đủ 12 món ăn được phối hợp tinh tế giữa Khai vị, Món chính và Tráng miệng</p>
+          
+          <div className="text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl font-playfair font-bold text-gray-900">
+              Trọn Bộ 18 Set Menu Tiệc Cưới & Hội Nghị Chính Thức
+            </h2>
+            <p className="text-gray-600 text-xs font-light mt-1">
+              Phối hợp chuẩn vị 12 món ăn từ Khai vị, Món chính đến Tráng miệng (Sử dụng nút bấm hoặc vuốt qua lại để xem đủ 18 Set)
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SET_MENUS.map((menu, idx) => (
-              <div key={idx} className="bg-white rounded-2xl border border-[#e3a638]/30 shadow-xl overflow-hidden flex flex-col justify-between group hover:border-[#e3a638] transition-all">
-                <div className="bg-gradient-to-r from-gray-900 via-amber-950 to-gray-900 text-white p-5 border-b border-[#e3a638]/40">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-widest text-[#e3a638] font-bold block">{menu.bestFor}</span>
-                      <h3 className="text-xl font-playfair font-bold text-white mt-0.5">{menu.title}</h3>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-sm font-bold text-[#e3a638] font-playfair block whitespace-nowrap">{menu.price}</span>
-                    </div>
+          {/* SLIDER NAVIGATION CONTROLS */}
+          <div className="flex items-center justify-between bg-white px-6 py-3 rounded-2xl border border-[#e3a638]/30 shadow-md">
+            <button 
+              onClick={() => setSetMenuIndex(prev => Math.max(0, prev - 1))}
+              disabled={setMenuIndex === 0}
+              className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl bg-amber-50 text-[#a66a3a] border border-[#e3a638]/40 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e3a638] hover:text-white transition-all cursor-pointer whitespace-nowrap"
+            >
+              <span className="material-symbols-outlined text-base">arrow_back</span>
+              <span>Set Trước</span>
+            </button>
+
+            {/* Pagination Badges */}
+            <div className="flex items-center gap-1.5 overflow-x-auto max-w-[60vw] py-1">
+              {SET_MENUS_18.map((m, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSetMenuIndex(idx)}
+                  className={`w-7 h-7 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center justify-center ${
+                    setMenuIndex === idx 
+                      ? 'bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white shadow-md scale-110' 
+                      : 'bg-gray-100 text-gray-600 hover:bg-amber-100'
+                  }`}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+
+            <button 
+              onClick={() => setSetMenuIndex(prev => Math.min(SET_MENUS_18.length - 1, prev + 1))}
+              disabled={setMenuIndex === SET_MENUS_18.length - 1}
+              className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl bg-amber-50 text-[#a66a3a] border border-[#e3a638]/40 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e3a638] hover:text-white transition-all cursor-pointer whitespace-nowrap"
+            >
+              <span>Set Tiếp</span>
+              <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </button>
+          </div>
+
+          {/* DISPLAY CURRENT SET MENU CARD (SWIPER / CAROUSEL FORMAT) */}
+          <div className="max-w-2xl mx-auto">
+            {(() => {
+              const menu = SET_MENUS_18[setMenuIndex];
+              return (
+                <div className="bg-white rounded-3xl border-2 border-[#e3a638] shadow-2xl overflow-hidden flex flex-col justify-between transition-all">
+                  
+                  {/* Card Header */}
+                  <div className="bg-gradient-to-r from-gray-900 via-amber-950 to-gray-900 text-white p-6 border-b border-[#e3a638]/40 relative">
+                    <span className="absolute top-4 right-4 bg-[#e3a638]/20 border border-[#e3a638] text-[#e3a638] text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+                      {setMenuIndex + 1} / 18 SET MENUS
+                    </span>
+                    <h3 className="text-2xl font-playfair font-bold text-[#e3a638] mt-1">{menu.title}</h3>
+                    <p className="text-lg font-bold text-white mt-1 font-playfair">{menu.price}</p>
                   </div>
-                </div>
 
-                <div className="p-6 space-y-2.5 flex-grow">
-                  {menu.dishes.map((dish, dIdx) => (
-                    <div key={dIdx} className="flex justify-between items-center text-xs py-1 border-b border-gray-100 last:border-0">
-                      <span className="font-medium text-gray-800">{dIdx + 1}. {dish.name}</span>
-                      <span className="text-[10px] font-semibold text-[#a66a3a] bg-amber-50 px-2 py-0.5 rounded-full flex-shrink-0 ml-2 whitespace-nowrap">{dish.type}</span>
-                    </div>
-                  ))}
-                </div>
+                  {/* Dishes List */}
+                  <div className="p-6 space-y-3">
+                    {menu.dishes.map((dish, dIdx) => (
+                      <div key={dIdx} className="flex justify-between items-center text-xs sm:text-sm py-1.5 border-b border-gray-100 last:border-0">
+                        <span className="font-medium text-gray-800">{dIdx + 1}. {dish.name}</span>
+                        <span className="text-[10px] font-semibold text-[#a66a3a] bg-amber-50 px-2.5 py-0.5 rounded-full flex-shrink-0 ml-2 whitespace-nowrap">{dish.type}</span>
+                      </div>
+                    ))}
+                  </div>
 
-                <div className="p-4 bg-[#fcf9f2] border-t border-gray-100 flex justify-between items-center">
-                  <span className="text-[11px] text-gray-500 font-light whitespace-nowrap">Mâm 10 khách chuẩn chỉnh</span>
-                  <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="px-4 py-2 bg-[#1c1917] text-amber-300 hover:bg-black text-[11px] font-semibold uppercase tracking-wider rounded-lg transition-colors cursor-pointer whitespace-nowrap"
-                  >
-                    Đặt Thực Đơn
-                  </button>
+                  {/* Card Action Footer */}
+                  <div className="p-5 bg-[#fcf9f2] border-t border-gray-100 flex justify-between items-center gap-4">
+                    <span className="text-xs text-gray-500 font-light whitespace-nowrap">Mâm 10 khách chuẩn chỉnh</span>
+                    <button 
+                      onClick={() => setIsModalOpen(true)}
+                      className="px-6 py-3 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white hover:opacity-90 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md cursor-pointer whitespace-nowrap"
+                    >
+                      Đặt Thực Đơn {menu.title}
+                    </button>
+                  </div>
+
                 </div>
-              </div>
-            ))}
+              );
+            })()}
           </div>
+
+          {/* GRID PREVIEW OF ALL 18 SET MENUS BELOW */}
+          <div className="pt-8">
+            <h3 className="text-center font-playfair font-bold text-xl text-gray-900 mb-6">Tất Cả 18 Set Menu (Bấm để xem chi tiết)</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {SET_MENUS_18.map((m, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSetMenuIndex(idx)}
+                  className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                    setMenuIndex === idx 
+                      ? 'bg-amber-900 text-amber-300 border-[#e3a638] shadow-md font-bold' 
+                      : 'bg-white text-gray-800 border-gray-200 hover:border-amber-400'
+                  }`}
+                >
+                  <span className="block text-[10px] uppercase text-[#a66a3a] font-bold">SET {idx + 1}</span>
+                  <span className="block text-xs font-bold mt-0.5 whitespace-nowrap">{m.price.split(' ')[0]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
         </section>
       )}
 
-      {/* TAB 2: MENU CHUYÊN MÓN ĐẶC SẢN */}
+      {/* TAB 2: MENU CHUYÊN MÓN ĐẶC SẢN (EXCLUDING CẦY HƯƠNG & MÒNG KẾT, WITH NOTE & END CARD) */}
       {activeTab === 'CHUYEN_MON' && (
         <section className="max-w-7xl mx-auto px-6 space-y-8">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-playfair font-bold text-gray-900">8 Bộ Menu Chuyên Món Đặc Sản</h2>
-            <p className="text-gray-500 text-xs font-light mt-1">Cầy hương, Mòng két, Ba ba, Dúi, Vịt trời, Lợn mán, Bê tảng & Cá lăng sông</p>
+          
+          <div className="text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl font-playfair font-bold text-gray-900">
+              Danh Mục Menu Chuyên Món Đặc Sản
+            </h2>
+            
+            {/* MANDATORY NOTICE REQUESTED BY USER */}
+            <div className="mt-3 inline-flex items-center gap-2 bg-amber-100/80 border border-amber-300 text-amber-950 px-4 py-2 rounded-full text-xs font-semibold shadow-xs">
+              <span className="material-symbols-outlined text-base text-amber-700">warning</span>
+              <span>Lưu ý: Thực đơn không có sẵn, quý khách vui lòng đặt trước 1 ngày.</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {SPECIALTY_MENUS.map((sp, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {SPECIALTY_MENUS_6.map((sp, idx) => (
               <div key={idx} className="bg-white rounded-2xl border border-amber-200 p-6 shadow-lg flex flex-col justify-between hover:shadow-2xl hover:border-[#e3a638] transition-all">
                 <div>
                   <div className="w-10 h-10 rounded-full bg-amber-100 text-[#a66a3a] flex items-center justify-center mb-3">
@@ -455,6 +745,27 @@ function MenuContent() {
                 </div>
               </div>
             ))}
+
+            {/* MANDATORY END CARD REQUESTED BY USER */}
+            <div className="bg-gradient-to-br from-gray-900 via-amber-950 to-black text-white rounded-2xl border-2 border-[#e3a638] p-6 shadow-xl flex flex-col justify-between items-center text-center">
+              <div>
+                <div className="w-12 h-12 rounded-full bg-[#e3a638]/20 border border-[#e3a638] text-[#e3a638] flex items-center justify-center mx-auto mb-4">
+                  <span className="material-symbols-outlined text-2xl">restaurant</span>
+                </div>
+                <h3 className="text-xl font-playfair font-bold text-[#e3a638] mb-2">Còn Nhiều Loại Khác...</h3>
+                <p className="text-xs text-gray-300 font-light leading-relaxed mb-4">
+                  Golden Palace đáp ứng đầy đủ các loại thực đơn đặc sản cao cấp theo khẩu vị và yêu cầu riêng của quý khách.
+                </p>
+              </div>
+
+              <a 
+                href="tel:02286595959"
+                className="w-full py-3 bg-[#e3a638] text-gray-900 font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-amber-400 transition-colors shadow-lg whitespace-nowrap block"
+              >
+                📞 Liên Hệ Hotline 0228 659 5959
+              </a>
+            </div>
+
           </div>
         </section>
       )}
@@ -521,9 +832,9 @@ function MenuContent() {
         </section>
       )}
 
-      {/* TAB 4: MENU CHỌN MÓN (DIVIDED INTO 3 MAIN SECTIONS: KHAI VỊ, MÓN CHÍNH, TRÁNG MIỆNG) */}
+      {/* TAB 4: MENU CHỌN MÓN (DIVIDED INTO 3 SECTIONS WITH TAB FILTER & COLLAPSIBLE CARDS) */}
       {activeTab === 'ALACARTE' && (
-        <section className="max-w-7xl mx-auto px-6 space-y-10">
+        <section className="max-w-7xl mx-auto px-6 space-y-8">
           
           {/* Prominent Notice Banner */}
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 shadow-md flex items-start gap-4 text-amber-900">
@@ -531,73 +842,102 @@ function MenuContent() {
             <div>
               <h3 className="font-playfair font-bold text-lg text-amber-950 mb-1">Lưu ý về Thực Đơn Chọn Món Tươi Sống:</h3>
               <p className="text-xs text-amber-900/90 font-light leading-relaxed">
-                • <strong>Món ăn thực phẩm tươi sống được nhập mới hằng ngày, giá thay đổi theo thời giá thị trường.</strong> Do đó danh mục bên dưới hoàn toàn không niêm yết giá cố định.<br />
-                • Thực đơn được chia thành <strong>3 phần chính: Khai vị, Món chính và Tráng miệng</strong>. Quý khách vui lòng <strong>tích chọn (✔) các món ăn ưa thích</strong> để tạo Bản Nháp Thực Đơn gửi trực tiếp cho chuyên viên báo giá.
+                • <strong>Món ăn thực phẩm tươi sống được nhập mới hằng ngày, giá thay đổi theo thời giá thị trường.</strong> Do đó danh mục hoàn toàn không niêm yết giá cố định.<br />
+                • Quý khách vui lòng <strong>tích chọn (✔) các món ăn ưa thích</strong> để tạo Bản Nháp Thực Đơn gửi trực tiếp cho chuyên viên báo giá.
               </p>
             </div>
           </div>
 
-          {/* RENDER 3 MAIN SECTIONS */}
-          <div className="space-y-12">
-            {ALACARTE_3_SECTIONS.map((sec, secIdx) => (
-              <div key={secIdx} className="bg-white rounded-3xl border border-gray-200 p-8 shadow-xl">
-                
-                {/* SECTION HEADER */}
-                <div className="flex items-center gap-3 pb-4 mb-6 border-b-2 border-[#e3a638]/40">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-100 text-[#a66a3a] flex items-center justify-center shadow-inner">
-                    <span className="material-symbols-outlined text-2xl">{sec.icon}</span>
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-playfair font-bold text-gray-900">{sec.sectionTitle}</h2>
-                    <p className="text-xs text-gray-500 font-light mt-0.5">{sec.sectionDesc}</p>
-                  </div>
-                </div>
+          {/* FILTER BUTTONS FOR 3 MAIN SECTIONS TO PREVENT OVERWHELMING SCROLL */}
+          <div className="flex flex-wrap justify-center gap-3">
+            <button
+              onClick={() => setActiveAlacarteSec('ALL')}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                activeAlacarteSec === 'ALL' 
+                  ? 'bg-gray-900 text-amber-300 shadow-md' 
+                  : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-400'
+              }`}
+            >
+              Tất Cả 3 Phần
+            </button>
+            {ALACARTE_3_SECTIONS.map((sec) => (
+              <button
+                key={sec.id}
+                onClick={() => setActiveAlacarteSec(sec.id)}
+                className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  activeAlacarteSec === sec.id 
+                    ? 'bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white shadow-md' 
+                    : 'bg-white text-gray-700 border border-gray-200 hover:border-amber-400'
+                }`}
+              >
+                {sec.sectionTitle}
+              </button>
+            ))}
+          </div>
 
-                {/* SUB GROUPS GRID */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                  {sec.groups.map((grp, grpIdx) => (
-                    <div key={grpIdx} className="bg-[#fcf9f2] rounded-2xl border border-gray-200 p-6 flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-base font-playfair font-bold text-gray-900 pb-2.5 border-b border-[#e3a638]/30 flex items-center gap-2">
-                          <span className="text-[#e3a638] text-sm">✨</span> {grp.subTitle}
-                        </h3>
-                        
-                        <div className="mt-4 space-y-2">
-                          {grp.dishes.map((dish, dIdx) => {
-                            const isChecked = selectedDishes.includes(dish);
-                            return (
-                              <div 
-                                key={dIdx}
-                                onClick={() => toggleSelectDish(dish)}
-                                className={`p-2.5 rounded-xl border text-xs flex items-center justify-between cursor-pointer transition-all ${
-                                  isChecked 
-                                    ? 'bg-amber-100/80 border-[#e3a638] font-semibold text-gray-900 shadow-xs' 
-                                    : 'bg-white border-gray-200/80 text-gray-700 hover:border-amber-300'
-                                }`}
-                              >
-                                <div className="flex items-center gap-2.5 pr-2">
-                                  <input 
-                                    type="checkbox" 
-                                    checked={isChecked}
-                                    onChange={() => {}}
-                                    className="accent-[#e3a638] w-4 h-4 cursor-pointer"
-                                  />
-                                  <span>{dish}</span>
+          {/* RENDER FILTERED SECTIONS */}
+          <div className="space-y-10">
+            {ALACARTE_3_SECTIONS
+              .filter(sec => activeAlacarteSec === 'ALL' || activeAlacarteSec === sec.id)
+              .map((sec, secIdx) => (
+                <div key={secIdx} className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-xl">
+                  
+                  {/* SECTION HEADER */}
+                  <div className="flex items-center gap-3 pb-4 mb-6 border-b-2 border-[#e3a638]/40">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-100 text-[#a66a3a] flex items-center justify-center shadow-inner shrink-0">
+                      <span className="material-symbols-outlined text-2xl">{sec.icon}</span>
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-playfair font-bold text-gray-900">{sec.sectionTitle}</h2>
+                      <p className="text-xs text-gray-500 font-light mt-0.5">{sec.sectionDesc}</p>
+                    </div>
+                  </div>
+
+                  {/* SUB GROUPS GRID */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {sec.groups.map((grp, grpIdx) => (
+                      <div key={grpIdx} className="bg-[#fcf9f2] rounded-2xl border border-gray-200 p-5 flex flex-col justify-between">
+                        <div>
+                          <h3 className="text-base font-playfair font-bold text-gray-900 pb-2.5 border-b border-[#e3a638]/30 flex items-center gap-2">
+                            <span className="text-[#e3a638] text-sm">✨</span> {grp.subTitle}
+                          </h3>
+                          
+                          <div className="mt-4 space-y-2 max-h-[400px] overflow-y-auto pr-1">
+                            {grp.dishes.map((dish, dIdx) => {
+                              const isChecked = selectedDishes.includes(dish);
+                              return (
+                                <div 
+                                  key={dIdx}
+                                  onClick={() => toggleSelectDish(dish)}
+                                  className={`p-2.5 rounded-xl border text-xs flex items-center justify-between cursor-pointer transition-all ${
+                                    isChecked 
+                                      ? 'bg-amber-100/80 border-[#e3a638] font-semibold text-gray-900 shadow-xs' 
+                                      : 'bg-white border-gray-200/80 text-gray-700 hover:border-amber-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2.5 pr-2">
+                                    <input 
+                                      type="checkbox" 
+                                      checked={isChecked}
+                                      onChange={() => {}}
+                                      className="accent-[#e3a638] w-4 h-4 cursor-pointer"
+                                    />
+                                    <span>{dish}</span>
+                                  </div>
+                                  <span className={`text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap ${isChecked ? 'bg-[#e3a638] text-white font-bold' : 'bg-gray-100 text-gray-500'}`}>
+                                    {isChecked ? 'Đã chọn' : '+ Chọn món'}
+                                  </span>
                                 </div>
-                                <span className={`text-[10px] px-2 py-0.5 rounded-full whitespace-nowrap ${isChecked ? 'bg-[#e3a638] text-white font-bold' : 'bg-gray-100 text-gray-500'}`}>
-                                  {isChecked ? 'Đã chọn' : '+ Chọn món'}
-                                </span>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
 
-              </div>
-            ))}
+                </div>
+              ))}
           </div>
 
           {/* FLOATING DRAFT MENU BAR WHEN DISHES ARE SELECTED */}
