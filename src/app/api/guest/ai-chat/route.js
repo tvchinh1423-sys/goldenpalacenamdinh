@@ -32,10 +32,10 @@ Thông tin chính thức & Quy tắc tư vấn chính xác:
    - Phí dịch vụ Hội trường Tầng 4: 2.000.000 VNĐ (áp dụng chung trọn gói, không yêu cầu điều kiện ràng buộc số mâm).
    - Phí dịch vụ Hội trường Tầng 2 & Tầng 3: Đã được tính toán theo quy mô. Khách hàng tự tính toán ngân sách tại: [Công cụ Dự toán Chi phí](/du-toan-chi-phi)
 
-6. QUY TRÌNH ĐẶT TIỆC & ĐẶT CỌC GIỮ SẢNH:
-   - Trước 03 tháng (Giữ lịch ngày đẹp): Khảo sát quy mô sảnh, đặt cọc giữ sảnh cưới 5.000.000 VNĐ.
-   - Trước 01 tháng (Ký hợp đồng): Chốt số lượng khách, thiết kế menu healthy riêng biệt, chốt gói dịch vụ, đặt cọc 50% giá trị hợp đồng.
-   - Trước 01 ngày (Bàn giao): Bàn giao thông tin gia đình, gửi video/ảnh cưới, bàn giao rượu mang vào.
+6. QUY TRÌNH ĐẶT TIỆC CƯỚI CHUẨN (3 GIAI ĐOẠN):
+   - 03 THÁNG TRƯỚC (GIỮ LỊCH NGÀY ĐẸP): Khảo sát quy mô sảnh, Đặt cọc giữ sảnh cưới 5.000.000 VNĐ.
+   - 01 THÁNG TRƯỚC (KÝ HỢP ĐỒNG): Chốt số lượng khách, Thiết kế menu healthy riêng biệt, Chốt gói dịch vụ, Đặt cọc 50% giá trị hợp đồng.
+   - 01 NGÀY TRƯỚC (BÀN GIAO): Bàn giao thông tin gia đình, Gửi video/ảnh cưới, Bàn giao rượu mang vào.
 
 7. DỊCH VỤ TRANG TRÍ (DECOR) BÊN NGOÀI:
    - Khách hàng ĐƯỢC PHÉP mang đơn vị trang trí (decor) từ bên ngoài vào, tuy nhiên nhà hàng có tính phí dịch vụ/mặt bằng. Vui lòng liên hệ Hotline 0228 659 5959 để nhận báo giá chi tiết.
@@ -170,10 +170,10 @@ function generateSmartResponse(msg) {
     };
   }
 
-  // PRIORITY 6: Quy trình đặt tiệc & Đặt cọc
+  // PRIORITY 6: Quy trình đặt tiệc & Đặt cọc (Strictly Matching Graphic)
   if (msg.includes('cọc') || msg.includes('quy trình') || msg.includes('hợp đồng') || msg.includes('giữ lịch') || msg.includes('bàn giao')) {
     return {
-      reply: 'Dạ, **Quy trình Đặt tiệc cưới chuẩn 3 bước** tại Golden Palace như sau:\n\n1️⃣ **Trước 03 tháng (Giữ lịch ngày đẹp):** Khảo sát quy mô sảnh và đặt cọc giữ sảnh cưới **5.000.000 VNĐ**.\n2️⃣ **Trước 01 tháng (Ký hợp đồng):** Chốt số lượng khách, thiết kế menu healthy riêng biệt, chốt gói dịch vụ và **đặt cọc 50% giá trị hợp đồng**.\n3️⃣ **Trước 01 ngày (Bàn giao):** Bàn giao thông tin gia đình, gửi video/ảnh cưới và bàn giao rượu mang vào.\n\nHotline hỗ trợ làm thủ tục cọc: **0228 659 5959** ạ!',
+      reply: 'Dạ, **QUY TRÌNH ĐẶT TIỆC CƯỚI CHUẨN** tại Golden Palace Nam Định gồm 3 bước như sau:\n\n📅 **03 THÁNG TRƯỚC – GIỮ LỊCH NGÀY ĐẸP:**\n• Khảo sát quy mô sảnh\n• Đặt cọc giữ sảnh cưới: **5.000.000 VNĐ**\n\n📝 **01 THÁNG TRƯỚC – KÝ HỢP ĐỒNG:**\n• Chốt số lượng khách\n• Thiết kế menu healthy riêng biệt\n• Chốt gói dịch vụ\n• **Đặt cọc 50% giá trị hợp đồng**\n\n🤝 **01 NGÀY TRƯỚC – BÀN GIAO:**\n• Bàn giao thông tin gia đình\n• Gửi video, ảnh cưới\n• Bàn giao rượu mang vào\n\nQuý khách gọi ngay **Hotline / Zalo: 0228 659 5959** để được hỗ trợ giữ ngày đẹp ngay ạ!',
       suggestions: [
         "📅 Đặt lịch khảo sát sảnh",
         "📞 Hotline hỗ trợ cọc 0228 659 5959"
