@@ -55,4 +55,8 @@
   .glow-hover:hover {
       box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
   }
+
+  .font-script {
+    font-family: var(--font-greatvibes), 'Great Vibes', 'Playfair Display', cursive, serif;
+  }
 }
