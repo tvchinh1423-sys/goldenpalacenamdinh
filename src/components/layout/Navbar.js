@@ -7,11 +7,13 @@ export default function Navbar() {
   const [khongGianOpen, setKhongGianOpen] = useState(false);
   const [dichVuOpen, setDichVuOpen] = useState(false);
   const [thucDonOpen, setThucDonOpen] = useState(false);
+  const [caNhanHoaOpen, setCaNhanHoaOpen] = useState(false);
 
   // Mobile Accordion states
   const [mobileKhongGian, setMobileKhongGian] = useState(false);
   const [mobileDichVu, setMobileDichVu] = useState(false);
   const [mobileThucDon, setMobileThucDon] = useState(false);
+  const [mobileCaNhanHoa, setMobileCaNhanHoa] = useState(false);
 
   return (
     <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-xs font-montserrat">
@@ -151,11 +153,33 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Link: CÁ NHÂN HÓA */}
-          <Link href="/ca-nhan-hoa" className="hover:text-[#a66a3a] transition-colors py-2 flex items-center gap-1">
-            <span className="material-symbols-outlined text-base text-[#e3a638]">auto_awesome</span>
-            <span>Cá Nhân Hóa</span>
-          </Link>
+          {/* Dropdown: CÁ NHÂN HÓA */}
+          <div 
+            className="relative group py-2"
+            onMouseEnter={() => setCaNhanHoaOpen(true)}
+            onMouseLeave={() => setCaNhanHoaOpen(false)}
+          >
+            <Link href="/ca-nhan-hoa" className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer">
+              <span className="material-symbols-outlined text-base text-[#e3a638]">auto_awesome</span>
+              <span>Cá Nhân Hóa</span>
+              <span className="material-symbols-outlined text-base">expand_more</span>
+            </Link>
+
+            <div className={`absolute left-0 top-full w-72 bg-white border border-[#e3a638]/20 shadow-2xl rounded-xl py-3 flex flex-col transition-all duration-200 ${caNhanHoaOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+              <Link href="/ca-nhan-hoa?tab=invitation" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm text-[#e3a638]">mark_email_read</span>
+                Thiệp Cưới Điện Tử Online
+              </Link>
+              <Link href="/ca-nhan-hoa?tab=led" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm text-[#e3a638]">tune</span>
+                Customize Phông LED Sân Khấu
+              </Link>
+              <Link href="/ca-nhan-hoa?tab=music" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm text-[#e3a638]">library_music</span>
+                Kịch Bản Nhạc Tiệc Cưới
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Desktop CTA Pill */}

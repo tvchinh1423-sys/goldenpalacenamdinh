@@ -1,39 +1,90 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import LedCustomizer from '@/components/personalize/LedCustomizer';
 import MusicSelector from '@/components/personalize/MusicSelector';
 import InvitationBuilder from '@/components/personalize/InvitationBuilder';
+import { VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
 
-export default function PersonalizePage() {
+function PersonalizePageContent() {
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+
   const [activeTab, setActiveTab] = useState('led'); // 'led' | 'music' | 'invitation'
+
+  useEffect(() => {
+    if (tabParam === 'music' || tabParam === 'invitation' || tabParam === 'led') {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
   
-  // Shared state across tools
-  const [groomName, setGroomName] = useState('Văn Chinh');
-  const [brideName, setBrideName] = useState('Thu Hà');
+  // Shared global state across all 3 personalization tools
+  const [partyTitle, setPartyTitle] = useState('Tiệc cưới Anh Thư & Văn Mạnh');
+  const [groomName, setGroomName] = useState('Văn Mạnh');
+  const [brideName, setBrideName] = useState('Anh Thư');
+  const [phone, setPhone] = useState('0912345678');
   const [eventDate, setEventDate] = useState('2026-11-20');
+  const [eventTime, setEventTime] = useState('Buổi Trưa (11:00 AM)');
+  const [selectedFloor, setSelectedFloor] = useState('FLOOR_3');
 
   // Music selector state
   const [selectedTracks, setSelectedTracks] = useState(['m1', 'm5', 'm10', 'm12']);
   const [customNotes, setCustomNotes] = useState('');
 
-  // Notification Toast state
+  // Saving state & Notification
+  const [saving, setSaving] = useState(false);
   const [savedNotification, setSavedNotification] = useState(false);
 
-  const handleSaveAllToEstimate = () => {
-    // Save state to LocalStorage for Integration with Estimate Lead
-    const personalizationData = {
-      groomName,
-      brideName,
-      eventDate,
-      selectedTracks,
-      customNotes,
-      savedAt: new Date().toISOString()
-    };
-    localStorage.setItem('golden_palace_personalize', JSON.stringify(personalizationData));
-    setSavedNotification(true);
-    setTimeout(() => setSavedNotification(false), 3000);
+  // Auto-parse Bride & Groom names when Party Title changes
+  const handlePartyTitleChange = (val) => {
+    setPartyTitle(val);
+    if (!val) return;
+
+    // Check for patterns like "Tiệc cưới [Cô Dâu] & [Chú Rể]" or "[Cô Dâu] và [Chú Rể]"
+    const cleanStr = val.replace(/tiệc\s*cưới|đám\s*cưới|lễ\s*thành\s*hôn/gi, '').trim();
+    if (cleanStr.includes('&')) {
+      const parts = cleanStr.split('&');
+      if (parts[0]?.trim()) setBrideName(parts[0].trim());
+      if (parts[1]?.trim()) setGroomName(parts[1].trim());
+    } else if (cleanStr.includes('và')) {
+      const parts = cleanStr.split('và');
+      if (parts[0]?.trim()) setBrideName(parts[0].trim());
+      if (parts[1]?.trim()) setGroomName(parts[1].trim());
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    setSaving(true);
+    try {
+      const payload = {
+        partyTitle,
+        groomName,
+        brideName,
+        phone,
+        eventDate,
+        eventTime,
+        floorId: selectedFloor,
+        selectedMusic: selectedTracks,
+        invitationSlug: `thiep-${(groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-${(brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-2026`
+      };
+
+      const res = await fetch('/api/personalize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSavedNotification(true);
+        setTimeout(() => setSavedNotification(false), 4500);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -41,11 +92,12 @@ export default function PersonalizePage() {
       
       {/* Toast Notification */}
       {savedNotification && (
-        <div className="fixed top-24 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-bounce">
-          <span className="material-symbols-outlined text-xl">check_circle</span>
-          <span className="text-xs font-semibold uppercase tracking-wider">
-            Đã Lưu Cấu Hình Cá Nhân Hóa Vào Dự Toán Của Bạn!
-          </span>
+        <div className="fixed top-24 right-6 z-50 bg-emerald-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce border border-emerald-400">
+          <span className="material-symbols-outlined text-2xl">check_circle</span>
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wider">Lưu Hồ Sơ Thành Công!</div>
+            <div className="text-[11px] text-emerald-100">Thông tin đã được chuyển tới Đội Kỹ Thuật Golden Palace.</div>
+          </div>
         </div>
       )}
 
@@ -66,14 +118,147 @@ export default function PersonalizePage() {
           </h1>
 
           <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Trải nghiệm trực quan phông màn LED sân khấu, chọn danh sách nhạc đong đầy cảm xúc và tạo thiệp cưới điện tử độc quyền chỉ có tại Golden Palace Nam Định.
+            Nhập thông tin tiệc một lần duy nhất – hệ thống tự động đồng bộ Phông Màn LED Sân Khấu, Kịch Bản Nhạc Tiệc và Thiệp Cưới Điện Tử.
           </p>
 
+          {/* Unified Global Registration Form (Đồng bộ cả 3 phần) */}
+          <div className="w-full max-w-3xl mt-10 bg-[#161616] border border-[#e3a638]/30 rounded-3xl p-6 sm:p-8 text-left shadow-2xl backdrop-blur-md">
+            <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-6">
+              <div className="flex items-center gap-2 text-[#e3a638]">
+                <span className="material-symbols-outlined text-2xl">badge</span>
+                <h3 className="text-base sm:text-lg font-playfair font-bold">Đăng Ký Thông Tin Tiệc Cưới Dùng Chung</h3>
+              </div>
+              <span className="text-[10px] text-amber-300 font-mono bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+                Đồng Bộ Real-time 3 Tính Năng
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              
+              {/* Tên Tiệc Cưới */}
+              <div className="sm:col-span-2">
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
+                  Tên Tiệc Cưới (*)
+                </label>
+                <input
+                  type="text"
+                  value={partyTitle}
+                  onChange={(e) => handlePartyTitleChange(e.target.value)}
+                  placeholder="VD: Tiệc cưới Anh Thư & Văn Mạnh"
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white font-medium outline-none transition-colors"
+                />
+              </div>
+
+              {/* Tên Chú Rể & Cô Dâu */}
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
+                  Tên Chú Rể
+                </label>
+                <input
+                  type="text"
+                  value={groomName}
+                  onChange={(e) => setGroomName(e.target.value)}
+                  placeholder="VD: Văn Mạnh"
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
+                  Tên Cô Dâu
+                </label>
+                <input
+                  type="text"
+                  value={brideName}
+                  onChange={(e) => setBrideName(e.target.value)}
+                  placeholder="VD: Anh Thư"
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none"
+                />
+              </div>
+
+              {/* Ngày Tổ Chức */}
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
+                  Ngày Tổ Chức Cưới (*)
+                </label>
+                <input
+                  type="date"
+                  value={eventDate}
+                  onChange={(e) => setEventDate(e.target.value)}
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none"
+                />
+              </div>
+
+              {/* Buổi / Thời Gian */}
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
+                  Thời Gian Tổ Chức (*)
+                </label>
+                <select
+                  value={eventTime}
+                  onChange={(e) => setEventTime(e.target.value)}
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none cursor-pointer"
+                >
+                  <option value="Buổi Trưa (11:00 AM)">Buổi Trưa (11:00 AM)</option>
+                  <option value="Buổi Chiều (17:30 PM)">Buổi Chiều (17:30 PM)</option>
+                </select>
+              </div>
+
+              {/* Địa Điểm Tầng */}
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
+                  Địa Điểm Tầng Tổ Chức (*)
+                </label>
+                <select
+                  value={selectedFloor}
+                  onChange={(e) => setSelectedFloor(e.target.value)}
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-[#e3a638] font-bold outline-none cursor-pointer"
+                >
+                  {VENUE_FLOOR_OPTIONS.map((floor) => (
+                    <option key={floor.id} value={floor.id}>
+                      {floor.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* SĐT Liên Hệ */}
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
+                  Số Điện Thoại Liên Hệ Gia Chủ (*)
+                </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="0912 345 678"
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none"
+                />
+              </div>
+
+            </div>
+
+            {/* Global Submit / Save Profile Button */}
+            <div className="mt-6 pt-4 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-[11px] text-gray-400 italic">
+                * Thông tin này sẽ tự động điền vào Phông LED, Playlist nhạc & Thiệp cưới bên dưới.
+              </p>
+              <button
+                onClick={handleSaveProfile}
+                disabled={saving}
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+              >
+                <span className="material-symbols-outlined text-base">cloud_upload</span>
+                {saving ? 'Đang Lưu...' : 'Lưu Hồ Sơ & Gửi Đội Kỹ Thuật'}
+              </button>
+            </div>
+          </div>
+
           {/* Nav Tabs */}
-          <div className="flex flex-wrap justify-center gap-3 mt-10">
+          <div className="flex flex-wrap justify-center gap-3 mt-12">
             <button
               onClick={() => setActiveTab('led')}
-              className={`px-6 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${
+              className={`px-6 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border cursor-pointer ${
                 activeTab === 'led'
                   ? 'bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white border-amber-300 shadow-[0_0_20px_rgba(227,166,56,0.4)]'
                   : 'bg-[#181818] text-gray-400 border-gray-800 hover:text-white hover:border-gray-700'
@@ -85,7 +270,7 @@ export default function PersonalizePage() {
 
             <button
               onClick={() => setActiveTab('music')}
-              className={`px-6 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${
+              className={`px-6 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border cursor-pointer ${
                 activeTab === 'music'
                   ? 'bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white border-amber-300 shadow-[0_0_20px_rgba(227,166,56,0.4)]'
                   : 'bg-[#181818] text-gray-400 border-gray-800 hover:text-white hover:border-gray-700'
@@ -97,14 +282,14 @@ export default function PersonalizePage() {
 
             <button
               onClick={() => setActiveTab('invitation')}
-              className={`px-6 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border ${
+              className={`px-6 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 border cursor-pointer ${
                 activeTab === 'invitation'
                   ? 'bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white border-amber-300 shadow-[0_0_20px_rgba(227,166,56,0.4)]'
                   : 'bg-[#181818] text-gray-400 border-gray-800 hover:text-white hover:border-gray-700'
               }`}
             >
               <span className="material-symbols-outlined text-base">mark_email_read</span>
-              3. Thiệp Cưới Online & RSVP
+              3. Thiệp Cưới Online
             </button>
           </div>
         </div>
@@ -120,7 +305,7 @@ export default function PersonalizePage() {
             setBrideName={setBrideName}
             eventDate={eventDate}
             setEventDate={setEventDate}
-            onSave={handleSaveAllToEstimate}
+            onSave={handleSaveProfile}
           />
         )}
 
@@ -143,38 +328,16 @@ export default function PersonalizePage() {
             setEventDate={setEventDate}
           />
         )}
-
-        {/* Global Save Banner */}
-        <div className="mt-16 bg-gradient-to-r from-[#17140b] via-[#261d0f] to-[#17140b] border border-amber-500/30 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-3xl text-amber-400">task_alt</span>
-            </div>
-            <div>
-              <h4 className="text-lg font-playfair font-bold text-white">Lưu Kịch Bản Cá Nhân Hóa Vào Dự Toán</h4>
-              <p className="text-xs text-gray-400 mt-1 max-w-xl">
-                Lưu lại toàn bộ tùy chỉnh màn LED, danh sách bài hát đã chọn và thông tin thiệp để đính kèm khi bạn gửi yêu cầu dự toán tới nhân viên Golden Palace.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-            <button
-              onClick={handleSaveAllToEstimate}
-              className="px-6 py-3.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-xs uppercase font-bold tracking-wider rounded-xl shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all whitespace-nowrap"
-            >
-              Lưu Cấu Hình Hiện Tại
-            </button>
-            <Link
-              href="/du-toan-chi-phi"
-              className="px-6 py-3.5 bg-[#222] hover:bg-[#333] text-gray-200 text-xs uppercase font-bold tracking-wider rounded-xl border border-gray-700 transition-all text-center whitespace-nowrap"
-            >
-              Chuyển Sang Trang Dự Toán →
-            </Link>
-          </div>
-        </div>
       </section>
 
     </div>
+  );
+}
+
+export default function PersonalizePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0d0d0d] text-white p-12 text-center">Đang tải trang cá nhân hóa...</div>}>
+      <PersonalizePageContent />
+    </Suspense>
   );
 }

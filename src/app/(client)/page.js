@@ -129,6 +129,71 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Personalization Suite Feature Showcase Section */}
+      <section className="py-20 px-6 max-w-7xl mx-auto relative z-10 border-t border-b border-[#e3a638]/20 bg-[#faf6f0]/50 rounded-2xl my-12">
+        <div className="text-center mb-14">
+          <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-[#e3a638]/10 border border-[#e3a638]/30 text-[#a66a3a] text-xs font-bold uppercase tracking-widest mb-3">
+            <span className="material-symbols-outlined text-sm">auto_awesome</span>
+            Đặc Quyền Dành Cho Cặp Đôi
+          </span>
+          <h2 className="text-3xl md:text-5xl font-playfair text-gray-900 mb-4">Cá Nhân Hóa Trải Nghiệm Tiệc Cưới</h2>
+          <p className="text-gray-600 font-montserrat text-sm max-w-2xl mx-auto font-light leading-relaxed">
+            Thiết kế thiệp điện tử nền sáng sang trọng, xem trước tên cô dâu chú rể trên màn LED sân khấu P3 và tự do chọn kịch bản nhạc tiệc theo từng giai đoạn.
+          </p>
+          <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-6"></div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Card 1: Thiệp Cưới Online */}
+          <div className="bg-white p-8 rounded-2xl border border-amber-200/80 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between group">
+            <div>
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#a66a3a] mb-6 group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-3xl">mark_email_read</span>
+              </div>
+              <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-3">Thiệp Cưới Điện Tử Online</h3>
+              <p className="text-gray-600 text-xs font-light leading-relaxed mb-6">
+                6 mẫu thiệp nền sáng tinh tế, chữ thư pháp lãng mạn bay bổng, thông tin gia đình 2 họ chỉn chu, gửi link Zalo/FB mượt mà.
+              </p>
+            </div>
+            <Link href="/ca-nhan-hoa?tab=invitation" className="inline-flex items-center gap-2 text-xs font-bold text-[#a66a3a] uppercase tracking-wider group-hover:text-amber-600">
+              Tạo Thiệp Cưới Ngay <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </Link>
+          </div>
+
+          {/* Card 2: Customize Phông LED */}
+          <div className="bg-white p-8 rounded-2xl border border-amber-200/80 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between group">
+            <div>
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#a66a3a] mb-6 group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-3xl">tune</span>
+              </div>
+              <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-3">Phông Màn LED Sân Khấu</h3>
+              <p className="text-gray-600 text-xs font-light leading-relaxed mb-6">
+                Trực quan hóa tên Cô Dâu & Chú Rể trên màn hình LED P3 Full HD tại các sảnh tiệc Tầng 1, 2, 3, 4 theo chuẩn nhận diện Golden Palace.
+              </p>
+            </div>
+            <Link href="/ca-nhan-hoa?tab=led" className="inline-flex items-center gap-2 text-xs font-bold text-[#a66a3a] uppercase tracking-wider group-hover:text-amber-600">
+              Customize Phông LED <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </Link>
+          </div>
+
+          {/* Card 3: Album Nhạc Tiệc Cưới */}
+          <div className="bg-white p-8 rounded-2xl border border-amber-200/80 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between group">
+            <div>
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#a66a3a] mb-6 group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-3xl">library_music</span>
+              </div>
+              <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-3">Kịch Bản Nhạc Tiệc Cưới</h3>
+              <p className="text-gray-600 text-xs font-light leading-relaxed mb-6">
+                Lắng nghe thử và lên danh sách ca khúc yêu thích cho 4 giai đoạn tiệc (Đón khách, Vào lễ, Rót rượu & Khai tiệc) gửi Đội Kỹ Thuật.
+              </p>
+            </div>
+            <Link href="/ca-nhan-hoa?tab=music" className="inline-flex items-center gap-2 text-xs font-bold text-[#a66a3a] uppercase tracking-wider group-hover:text-amber-600">
+              Chọn Nhạc Tiệc Cưới <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Estimator CTA Banner */}
       <section className="py-20 relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 relative z-10">

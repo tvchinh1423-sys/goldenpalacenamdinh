@@ -19,6 +19,7 @@ export default function AdminLayout({ children }) {
     { name: 'Thực đơn', href: '/admin/menus', icon: 'restaurant_menu' },
     { name: 'Đồ uống', href: '/admin/beverages', icon: 'local_bar' },
     { name: 'Bài viết & Ưu đãi', href: '/admin/posts', icon: 'article' },
+    { name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' },
   ];
 
   return (
