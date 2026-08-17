@@ -2,19 +2,11 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-const DATA_FILE = path.join(process.cwd(), '.next', 'personalize-profiles.json');
+// Use /tmp on Vercel / Linux serverless environment for reliable write access
+const DATA_FILE = path.join('/tmp', 'personalize-profiles.json');
 
-// Helper to read saved profiles
-function readProfiles() {
-  try {
-    if (fs.existsSync(DATA_FILE)) {
-      const data = fs.readFileSync(DATA_FILE, 'utf8');
-      return JSON.parse(data);
-    }
-  } catch (e) {
-    console.error('Error reading profiles file:', e);
-  }
-  return [
+if (!global.gpProfilesCache) {
+  global.gpProfilesCache = [
     {
       id: 'demo-1',
       partyTitle: 'Tiệc cưới Anh Thư & Văn Mạnh',
@@ -37,8 +29,25 @@ function readProfiles() {
   ];
 }
 
+// Helper to read saved profiles
+function readProfiles() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const data = fs.readFileSync(DATA_FILE, 'utf8');
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        global.gpProfilesCache = parsed;
+      }
+    }
+  } catch (e) {
+    console.error('Error reading profiles file:', e);
+  }
+  return global.gpProfilesCache || [];
+}
+
 // Helper to save profiles
 function saveProfiles(profiles) {
+  global.gpProfilesCache = profiles;
   try {
     const dir = path.dirname(DATA_FILE);
     if (!fs.existsSync(dir)) {
