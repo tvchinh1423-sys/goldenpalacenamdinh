@@ -9,6 +9,11 @@ export default function AdminPersonalizePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProfile, setSelectedProfile] = useState(null);
   
+  // Date Filtering State matching Screenshot 2
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [dateFilterPreset, setDateFilterPreset] = useState('all'); // 'all' | 'month' | 'week' | 'today' | 'custom'
+
   // State for Fullscreen LED visualizer modal
   const [fullscreenLed, setFullscreenLed] = useState(false);
 
@@ -30,16 +35,62 @@ export default function AdminPersonalizePage() {
     }
   };
 
+  // Date Filtering Logic
   const filteredProfiles = profiles.filter(p => {
-    const term = searchTerm.toLowerCase();
-    return (
-      (p.partyTitle && p.partyTitle.toLowerCase().includes(term)) ||
-      (p.groomName && p.groomName.toLowerCase().includes(term)) ||
-      (p.brideName && p.brideName.toLowerCase().includes(term)) ||
-      (p.phone && p.phone.includes(term)) ||
-      (p.venueName && p.venueName.toLowerCase().includes(term))
-    );
+    // 1. Text Search Filter
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      const matchText = (
+        (p.partyTitle && p.partyTitle.toLowerCase().includes(term)) ||
+        (p.groomName && p.groomName.toLowerCase().includes(term)) ||
+        (p.brideName && p.brideName.toLowerCase().includes(term)) ||
+        (p.phone && p.phone.includes(term)) ||
+        (p.venueName && p.venueName.toLowerCase().includes(term))
+      );
+      if (!matchText) return false;
+    }
+
+    // 2. Date Range Filter
+    if (!p.eventDate) return true;
+    const profileDate = new Date(p.eventDate);
+    const today = new Date();
+
+    if (dateFilterPreset === 'today') {
+      return (
+        profileDate.getDate() === today.getDate() &&
+        profileDate.getMonth() === today.getMonth() &&
+        profileDate.getFullYear() === today.getFullYear()
+      );
+    }
+
+    if (dateFilterPreset === 'week') {
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay() + 1);
+      const endOfWeek = new Date(today);
+      endOfWeek.setDate(today.getDate() - today.getDay() + 7);
+      return profileDate >= startOfWeek && profileDate <= endOfWeek;
+    }
+
+    if (dateFilterPreset === 'month') {
+      return (
+        profileDate.getMonth() === today.getMonth() &&
+        profileDate.getFullYear() === today.getFullYear()
+      );
+    }
+
+    if (dateFilterPreset === 'custom' && (startDate || endDate)) {
+      if (startDate && new Date(p.eventDate) < new Date(startDate)) return false;
+      if (endDate && new Date(p.eventDate) > new Date(endDate)) return false;
+    }
+
+    return true;
   });
+
+  const handleApplyCustomDates = () => {
+    if (startDate || endDate) {
+      setDateFilterPreset('custom');
+    }
+  };
 
   // Find LED Template Object for selected profile
   const currentLedTemplate = selectedProfile
@@ -113,7 +164,7 @@ export default function AdminPersonalizePage() {
           </div>
           <h1 className="text-2xl font-playfair font-bold text-white">Quản Lý Phông Màn LED & Kịch Bản Âm Nhạc</h1>
           <p className="text-xs text-stone-400 mt-1">
-            Phát nhạc tiệc cưới chọn lọc, tải phông LED P3 Full HD và theo dõi yêu cầu kỹ thuật từng tiệc.
+            Phát nhạc tiệc cưới trực tiếp từ YouTube, tải phông LED P3 Full HD và lọc theo ngày tổ chức tiệc.
           </p>
         </div>
         <button
@@ -125,16 +176,80 @@ export default function AdminPersonalizePage() {
         </button>
       </div>
 
-      {/* Search Bar */}
-      <div className="flex items-center gap-3 bg-white p-4 rounded-xl border border-stone-200 shadow-xs">
-        <span className="material-symbols-outlined text-gray-400">search</span>
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Tìm theo Tên tiệc, Chú rể, Cô dâu, SĐT hoặc Tầng sảnh tổ chức..."
-          className="w-full text-sm outline-none bg-transparent text-gray-800"
-        />
+      {/* Date Filter Bar matching Screenshot 2 */}
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-stone-200 shadow-xs text-xs">
+        
+        {/* Date From -> Date To Picker */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="bg-white border border-gray-300 rounded-xl px-3 py-2 text-stone-800 font-mono outline-none shadow-2xs"
+          />
+          <span className="text-gray-400 font-bold">→</span>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="bg-white border border-gray-300 rounded-xl px-3 py-2 text-stone-800 font-mono outline-none shadow-2xs"
+          />
+          <button
+            onClick={handleApplyCustomDates}
+            className="px-4 py-2 bg-white border border-gray-300 font-bold text-stone-800 rounded-xl hover:bg-stone-50 transition-colors shadow-2xs cursor-pointer"
+          >
+            Áp dụng
+          </button>
+        </div>
+
+        {/* Text Quick Search Box */}
+        <div className="flex-1 max-w-xs flex items-center gap-2 bg-stone-50 px-3 py-1.5 rounded-xl border border-gray-200">
+          <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Tìm tên tiệc, SĐT..."
+            className="w-full bg-transparent text-xs outline-none"
+          />
+        </div>
+
+        {/* Filter Presets: Toàn thời gian | Tháng này | Tuần này | Hôm nay */}
+        <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden shrink-0">
+          <button
+            onClick={() => setDateFilterPreset('all')}
+            className={`px-4 py-2 font-medium transition-colors cursor-pointer ${
+              dateFilterPreset === 'all' ? 'bg-[#b8860b] text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-50'
+            }`}
+          >
+            Toàn thời gian
+          </button>
+          <button
+            onClick={() => setDateFilterPreset('month')}
+            className={`px-4 py-2 font-medium transition-colors cursor-pointer border-l border-gray-300 ${
+              dateFilterPreset === 'month' ? 'bg-[#b8860b] text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-50'
+            }`}
+          >
+            Tháng này
+          </button>
+          <button
+            onClick={() => setDateFilterPreset('week')}
+            className={`px-4 py-2 font-medium transition-colors cursor-pointer border-l border-gray-300 ${
+              dateFilterPreset === 'week' ? 'bg-[#b8860b] text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-50'
+            }`}
+          >
+            Tuần này
+          </button>
+          <button
+            onClick={() => setDateFilterPreset('today')}
+            className={`px-4 py-2 font-medium transition-colors cursor-pointer border-l border-gray-300 ${
+              dateFilterPreset === 'today' ? 'bg-[#b8860b] text-white font-bold' : 'bg-white text-stone-700 hover:bg-stone-50'
+            }`}
+          >
+            Hôm nay
+          </button>
+        </div>
+
       </div>
 
       {/* Table of Saved Profiles */}
@@ -142,7 +257,7 @@ export default function AdminPersonalizePage() {
         {loading ? (
           <div className="p-12 text-center text-gray-500 text-sm">Đang tải dữ liệu hồ sơ cá nhân hóa...</div>
         ) : filteredProfiles.length === 0 ? (
-          <div className="p-12 text-center text-gray-500 text-sm">Chưa có hồ sơ kỹ thuật nào được đăng ký.</div>
+          <div className="p-12 text-center text-gray-500 text-sm">Không tìm thấy tiệc cưới nào trong khoảng thời gian đã chọn.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
@@ -166,7 +281,7 @@ export default function AdminPersonalizePage() {
                       </div>
                     </td>
                     <td className="p-4 font-mono font-medium">
-                      <div>{prof.eventDate}</div>
+                      <div className="font-bold text-stone-900">{prof.eventDate}</div>
                       <div className="text-[11px] text-gray-500">{prof.eventTime}</div>
                     </td>
                     <td className="p-4 font-bold text-amber-700">
@@ -257,6 +372,28 @@ export default function AdminPersonalizePage() {
                 </div>
               </div>
 
+              {/* Link Drive chứa Ảnh / Video Cưới nếu có */}
+              {selectedProfile.driveLink && (
+                <div className="p-3.5 bg-blue-950/40 border border-blue-500/40 rounded-xl flex items-center justify-between gap-3 text-blue-300">
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="material-symbols-outlined text-xl text-blue-400">cloud_download</span>
+                    <span className="font-bold">Link Google Drive Ảnh & Video Cưới:</span>
+                    <a href={selectedProfile.driveLink} target="_blank" rel="noopener noreferrer" className="underline font-mono text-blue-200 truncate">
+                      {selectedProfile.driveLink}
+                    </a>
+                  </div>
+                  <a
+                    href={selectedProfile.driveLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs shrink-0 flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-sm">open_in_new</span>
+                    Mở Drive
+                  </a>
+                </div>
+              )}
+
               {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
@@ -314,15 +451,15 @@ export default function AdminPersonalizePage() {
                 )}
               </div>
 
-              {/* SECTION 2: BẢNG PHÁT NHẠC CHỈ HIỆN CÁC BÀI ĐÃ CHỌN HOẶC YOUTUBE LINK */}
+              {/* SECTION 2: BẢNG PHÁT NHẠC VỚI NÚT MỞ YOUTUBE THẬT */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-amber-400 font-bold uppercase tracking-wider text-xs">
                     <span className="material-symbols-outlined text-base">volume_up</span>
-                    Danh Sách Bài Hát & Link YouTube Theo Yêu Cầu
+                    Danh Sách Bài Hát & Link YouTube Mở Trực Tiếp
                   </div>
                   <span className="text-[10px] text-[#e3a638] font-mono font-bold">
-                    Kịch Bản Âm Thanh Chi Tiết
+                    Kịch Bản Âm Thanh Sân Khấu
                   </span>
                 </div>
 
@@ -350,23 +487,24 @@ export default function AdminPersonalizePage() {
                                 </div>
                               </div>
 
-                              {/* YouTube Custom Link if provided */}
+                              {/* Custom YouTube Link */}
                               {ytUrl && (
-                                <div className="p-2.5 bg-red-950/40 border border-red-500/40 rounded-lg text-xs text-red-300 flex items-center justify-between gap-2">
+                                <div className="p-2.5 bg-red-950/50 border border-red-500/40 rounded-lg text-xs text-red-300 flex items-center justify-between gap-2">
                                   <div className="flex items-center gap-2 truncate">
                                     <span className="material-symbols-outlined text-red-400 text-sm">smart_display</span>
-                                    <span className="font-bold">Link YouTube yêu cầu:</span>
-                                    <a href={ytUrl} target="_blank" rel="noopener noreferrer" className="underline truncate font-mono text-red-200">
+                                    <span className="font-bold">Link YouTube bài hát yêu cầu riêng:</span>
+                                    <a href={ytUrl} target="_blank" rel="noopener noreferrer" className="underline font-mono text-red-200 truncate">
                                       {ytUrl}
                                     </a>
                                   </div>
-                                  <a href={ytUrl} target="_blank" rel="noopener noreferrer" className="px-2.5 py-1 bg-red-600 text-white rounded font-bold text-[10px] shrink-0 hover:bg-red-500">
+                                  <a href={ytUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-1 bg-red-600 text-white rounded font-bold text-[10px] shrink-0 hover:bg-red-500 flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-xs">open_in_new</span>
                                     Mở YouTube
                                   </a>
                                 </div>
                               )}
 
-                              {/* Audio Tracks List */}
+                              {/* Audio Tracks with Direct YouTube Buttons */}
                               <div className="space-y-2">
                                 {selectedCatTracks.length === 0 && !ytUrl ? (
                                   <div className="text-[11px] text-gray-500 italic py-1">
@@ -374,7 +512,7 @@ export default function AdminPersonalizePage() {
                                   </div>
                                 ) : (
                                   selectedCatTracks.map((track) => (
-                                    <div key={track.id} className="p-2.5 bg-stone-900 rounded-lg border border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <div key={track.id} className="p-3 bg-stone-900 rounded-lg border border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                       <div>
                                         <div className="font-bold text-white text-xs flex items-center gap-1.5">
                                           <span className="material-symbols-outlined text-xs text-amber-400">music_note</span>
@@ -383,21 +521,16 @@ export default function AdminPersonalizePage() {
                                         <div className="text-[10px] text-gray-400">{track.artist} ({track.duration})</div>
                                       </div>
 
-                                      {/* Audio Player Component */}
+                                      {/* Open YouTube Direct Link Button */}
                                       <div className="flex items-center gap-2 shrink-0">
-                                        <audio controls className="h-8 max-w-[200px] sm:max-w-[240px] opacity-90">
-                                          <source src={track.audioUrl} type="audio/mpeg" />
-                                          Trình duyệt không hỗ trợ audio
-                                        </audio>
                                         <a
-                                          href={track.audioUrl}
+                                          href={track.youtubeUrl || `https://www.youtube.com/results?search_query=${encodeURIComponent(track.title + ' ' + track.artist)}`}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          download
-                                          className="px-2.5 py-1 bg-stone-800 hover:bg-stone-700 text-amber-300 rounded text-[10px] font-bold flex items-center gap-1"
+                                          className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                                         >
-                                          <span className="material-symbols-outlined text-xs">download</span>
-                                          MP3
+                                          <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                          Mở YouTube / Tải Nhạc
                                         </a>
                                       </div>
                                     </div>
@@ -454,7 +587,7 @@ export default function AdminPersonalizePage() {
         </div>
       )}
 
-      {/* FULLSCREEN STAGE LED SCREEN MODAL FOR STAGE PROJECTOR */}
+      {/* FULLSCREEN STAGE LED SCREEN MODAL */}
       {fullscreenLed && selectedProfile && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-4">
           <div className="absolute top-6 right-6 z-50 flex items-center gap-3">
@@ -474,7 +607,6 @@ export default function AdminPersonalizePage() {
             </button>
           </div>
 
-          {/* Fullscreen LED Canvas */}
           <div className={`w-full max-w-6xl aspect-video rounded-3xl border-4 border-amber-500/60 shadow-[0_0_80px_rgba(227,166,56,0.3)] bg-gradient-to-br ${currentLedTemplate.bgGradient} relative flex flex-col items-center justify-center p-8 text-center`}>
             <div className="absolute top-6 left-8 flex items-center gap-2 z-20">
               <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-12 w-auto object-contain drop-shadow-[0_0_15px_rgba(227,166,56,0.8)]" />

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import LedCustomizer from '@/components/personalize/LedCustomizer';
 import MusicSelector from '@/components/personalize/MusicSelector';
 import InvitationBuilder from '@/components/personalize/InvitationBuilder';
@@ -28,6 +27,7 @@ function PersonalizePageContent() {
   const [eventDate, setEventDate] = useState('2026-11-20');
   const [eventTime, setEventTime] = useState('Buổi Trưa (11:00 AM)');
   const [selectedFloor, setSelectedFloor] = useState('FLOOR_3');
+  const [driveLink, setDriveLink] = useState('');
 
   // Tracking section modifications
   const [ledModified, setLedModified] = useState(false);
@@ -70,6 +70,7 @@ function PersonalizePageContent() {
         eventDate,
         eventTime,
         floorId: selectedFloor,
+        driveLink,
         ledStatus: ledModified ? 'Đã tùy chỉnh phông LED' : 'Không có yêu cầu gì',
         musicStatus: (selectedTracks.length > 0 || Object.values(youtubeLinks).some(Boolean)) ? 'Đã chọn danh sách nhạc' : 'Không có yêu cầu gì',
         selectedMusic: selectedTracks,
@@ -129,7 +130,7 @@ function PersonalizePageContent() {
             Nhập thông tin tiệc một lần duy nhất – hệ thống tự động đồng bộ Phông Màn LED Sân Khấu, Kịch Bản Nhạc Tiệc và Thiệp Cưới Điện Tử.
           </p>
 
-          {/* Unified Global Registration Form (DUY NHẤT 1 FORM DÙNG CHUNG) */}
+          {/* Unified Global Registration Form */}
           <div className="w-full max-w-3xl mt-10 bg-[#161616] border border-[#e3a638]/30 rounded-3xl p-6 sm:p-8 text-left shadow-2xl backdrop-blur-md">
             <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-6">
               <div className="flex items-center gap-2 text-[#e3a638]">
@@ -242,6 +243,24 @@ function PersonalizePageContent() {
                   placeholder="0912 345 678"
                   className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none"
                 />
+              </div>
+
+              {/* Link Google Drive chứa Ảnh / Video Cưới */}
+              <div className="sm:col-span-2 bg-[#1b1b1b] p-3.5 rounded-xl border border-blue-500/30 space-y-1.5">
+                <label className="block text-blue-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-base">cloud_upload</span>
+                  Link Google Drive / Cloud chứa Ảnh & Video Cưới (Giải pháp tối ưu cho file dung lượng lớn):
+                </label>
+                <input
+                  type="url"
+                  value={driveLink}
+                  onChange={(e) => setDriveLink(e.target.value)}
+                  placeholder="Dán link Google Drive / Dropbox (VD: https://drive.google.com/drive/folders/...)"
+                  className="w-full bg-[#121212] border border-gray-700 focus:border-blue-400 rounded-lg px-3.5 py-2 text-white font-mono outline-none"
+                />
+                <p className="text-[11px] text-gray-400 leading-relaxed italic">
+                  💡 <strong>Khuyên dùng:</strong> Do Video 4K & Ảnh cưới nguyên gốc có dung lượng rất lớn (hàng chục GB), việc dán Link Google Drive / Dropbox giúp Đội Kỹ Thuật tải về máy chiếu nhanh nhất, giữ nguyên 100% chất lượng sắc nét và không bị nghẽn mạng server.
+                </p>
               </div>
 
             </div>

@@ -76,39 +76,39 @@ export const MUSIC_CATEGORIES = [
 
 export const MUSIC_TRACKS = [
   // Giai đoạn 1: Đón khách
-  { id: 'w1', catId: 'welcome', title: 'Đi Tìm Tình Yêu', artist: 'MONO', duration: '3:15', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-piano-113540.mp3' },
-  { id: 'w2', catId: 'welcome', title: 'Có Em Đời Bỗng Vui', artist: 'Chillies', duration: '3:40', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939bf9a22.mp3?filename=love-background-piano-124445.mp3' },
-  { id: 'w3', catId: 'welcome', title: 'Lễ Đường', artist: 'Kai Đinh', duration: '3:50', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c51121d5.mp3?filename=sweet-love-10332.mp3' },
-  { id: 'w4', catId: 'welcome', title: 'Until I Found You', artist: 'Stephen Sanchez', duration: '2:57', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db65646197.mp3?filename=romantic-guitars-112316.mp3' },
+  { id: 'w1', catId: 'welcome', title: 'Đi Tìm Tình Yêu', artist: 'MONO', duration: '3:15', youtubeUrl: 'https://www.youtube.com/results?search_query=Di+Tim+Tinh+Yeu+MONO' },
+  { id: 'w2', catId: 'welcome', title: 'Có Em Đời Bỗng Vui', artist: 'Chillies', duration: '3:40', youtubeUrl: 'https://www.youtube.com/results?search_query=Co+Em+Doi+Bong+Vui+Chillies' },
+  { id: 'w3', catId: 'welcome', title: 'Lễ Đường', artist: 'Kai Đinh', duration: '3:50', youtubeUrl: 'https://www.youtube.com/results?search_query=Le+Duong+Kai+Dinh' },
+  { id: 'w4', catId: 'welcome', title: 'Until I Found You', artist: 'Stephen Sanchez', duration: '2:57', youtubeUrl: 'https://www.youtube.com/results?search_query=Until+I+Found+You+Stephen+Sanchez' },
 
   // Giai đoạn 2: Nghi lễ chính
-  { id: 'e1', catId: 'entrance', title: 'Em Đồng Ý (I Do)', artist: 'Đức Phúc x 911', duration: '3:34', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=wedding-march-piano-version-17154.mp3' },
-  { id: 'e2', catId: 'entrance', title: 'Nắm Lấy Tay Anh', artist: 'Tuấn Hưng', duration: '4:10', audioUrl: 'https://cdn.pixabay.com/download/audio/2021/08/09/audio_88c42661aa.mp3?filename=canon-in-d-11458.mp3' },
-  { id: 'e3', catId: 'entrance', title: 'Lover', artist: 'Taylor Swift', duration: '3:41', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_247e68e4c7.mp3?filename=piano-wedding-love-126296.mp3' },
-  { id: 'e4', catId: 'entrance', title: 'Yes I Do', artist: 'Only C x Lou Hoàng', duration: '3:55', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c2957b42fa.mp3?filename=happy-wedding-day-10025.mp3' },
-  { id: 'e5', catId: 'entrance', title: 'Beautiful in White', artist: 'Westlife', duration: '3:52', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=wedding-march-piano-version-17154.mp3' },
-  { id: 'e6', catId: 'entrance', title: 'Ánh Nắng Của Anh', artist: 'Đức Phúc', duration: '4:20', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_247e68e4c7.mp3?filename=piano-wedding-love-126296.mp3' },
-  { id: 'e7', catId: 'entrance', title: 'Perfect', artist: 'Ed Sheeran', duration: '4:23', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-piano-113540.mp3' },
-  { id: 'e8', catId: 'entrance', title: 'Hơn Cả Yêu', artist: 'Đức Phúc', duration: '4:05', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939bf9a22.mp3?filename=love-background-piano-124445.mp3' },
+  { id: 'e1', catId: 'entrance', title: 'Em Đồng Ý (I Do)', artist: 'Đức Phúc x 911', duration: '3:34', youtubeUrl: 'https://www.youtube.com/results?search_query=Em+Dong+Y+I+Do+Duc+Phuc+911' },
+  { id: 'e2', catId: 'entrance', title: 'Nắm Lấy Tay Anh', artist: 'Tuấn Hưng', duration: '4:10', youtubeUrl: 'https://www.youtube.com/results?search_query=Nam+Lay+Tay+Anh+Tuan+Hung' },
+  { id: 'e3', catId: 'entrance', title: 'Lover', artist: 'Taylor Swift', duration: '3:41', youtubeUrl: 'https://www.youtube.com/results?search_query=Lover+Taylor+Swift' },
+  { id: 'e4', catId: 'entrance', title: 'Yes I Do', artist: 'Only C x Lou Hoàng', duration: '3:55', youtubeUrl: 'https://www.youtube.com/results?search_query=Yes+I+Do+OnlyC+Lou+Hoang' },
+  { id: 'e5', catId: 'entrance', title: 'Beautiful in White', artist: 'Westlife', duration: '3:52', youtubeUrl: 'https://www.youtube.com/results?search_query=Beautiful+in+White+Westlife' },
+  { id: 'e6', catId: 'entrance', title: 'Ánh Nắng Của Anh', artist: 'Đức Phúc', duration: '4:20', youtubeUrl: 'https://www.youtube.com/results?search_query=Anh+Nang+Cua+Anh+Duc+Phuc' },
+  { id: 'e7', catId: 'entrance', title: 'Perfect', artist: 'Ed Sheeran', duration: '4:23', youtubeUrl: 'https://www.youtube.com/results?search_query=Perfect+Ed+Sheeran' },
+  { id: 'e8', catId: 'entrance', title: 'Hơn Cả Yêu', artist: 'Đức Phúc', duration: '4:05', youtubeUrl: 'https://www.youtube.com/results?search_query=Hon+Ca+Yeu+Duc+Phuc' },
 
   // Giai đoạn 3: Khai tiệc & Nâng ly
-  { id: 't1', catId: 'toast', title: 'Đừng Làm Trái Tim Anh Đau', artist: 'Sơn Tùng M-TP', duration: '3:50', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c51121d5.mp3?filename=sweet-love-10332.mp3' },
-  { id: 't2', catId: 'toast', title: 'Love Paradise', artist: 'Kelly Chen', duration: '3:15', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db65646197.mp3?filename=romantic-guitars-112316.mp3' },
-  { id: 't3', catId: 'toast', title: 'Ngày Mình Chung Đôi', artist: 'Hùng Min', duration: '3:45', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c2957b42fa.mp3?filename=happy-wedding-day-10025.mp3' },
-  { id: 't4', catId: 'toast', title: 'Ngày Hạnh Phúc', artist: 'Đan Trường', duration: '4:10', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-piano-113540.mp3' },
-  { id: 't5', catId: 'toast', title: 'Sugar', artist: 'Maroon 5', duration: '3:55', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c51121d5.mp3?filename=sweet-love-10332.mp3' },
-  { id: 't6', catId: 'toast', title: 'Cưới Thôi', artist: 'Masew x Masiu', duration: '3:05', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c2957b42fa.mp3?filename=happy-wedding-day-10025.mp3' },
-  { id: 't7', catId: 'toast', title: 'Marry You', artist: 'Bruno Mars', duration: '3:50', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c2957b42fa.mp3?filename=happy-wedding-day-10025.mp3' },
-  { id: 't8', catId: 'toast', title: 'Dancing Queen', artist: 'ABBA', duration: '3:51', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db65646197.mp3?filename=romantic-guitars-112316.mp3' },
+  { id: 't1', catId: 'toast', title: 'Đừng Làm Trái Tim Anh Đau', artist: 'Sơn Tùng M-TP', duration: '3:50', youtubeUrl: 'https://www.youtube.com/results?search_query=Dung+Lam+Trai+Tim+Anh+Dau+Son+Tung+M-TP' },
+  { id: 't2', catId: 'toast', title: 'Love Paradise', artist: 'Kelly Chen', duration: '3:15', youtubeUrl: 'https://www.youtube.com/results?search_query=Love+Paradise+Kelly+Chen' },
+  { id: 't3', catId: 'toast', title: 'Ngày Mình Chung Đôi', artist: 'Hùng Min', duration: '3:45', youtubeUrl: 'https://www.youtube.com/results?search_query=Ngay+Minh+Chung+Doi+Hung+Min' },
+  { id: 't4', catId: 'toast', title: 'Ngày Hạnh Phúc', artist: 'Đan Trường', duration: '4:10', youtubeUrl: 'https://www.youtube.com/results?search_query=Ngay+Hanh+Phuc+Dan+Truong' },
+  { id: 't5', catId: 'toast', title: 'Sugar', artist: 'Maroon 5', duration: '3:55', youtubeUrl: 'https://www.youtube.com/results?search_query=Sugar+Maroon+5' },
+  { id: 't6', catId: 'toast', title: 'Cưới Thôi', artist: 'Masew x Masiu', duration: '3:05', youtubeUrl: 'https://www.youtube.com/results?search_query=Cuoi+Thoi+Masew+Masiu' },
+  { id: 't7', catId: 'toast', title: 'Marry You', artist: 'Bruno Mars', duration: '3:50', youtubeUrl: 'https://www.youtube.com/results?search_query=Marry+You+Bruno+Mars' },
+  { id: 't8', catId: 'toast', title: 'Dancing Queen', artist: 'ABBA', duration: '3:51', youtubeUrl: 'https://www.youtube.com/results?search_query=Dancing+Queen+ABBA' },
 
   // Giai đoạn 4: Giao lưu & Tiễn khách
-  { id: 'd1', catId: 'dining', title: 'Một Nhà', artist: 'Da LAB', duration: '3:15', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-piano-113540.mp3' },
-  { id: 'd2', catId: 'dining', title: 'Pretty Boy', artist: 'M2M', duration: '4:40', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939bf9a22.mp3?filename=love-background-piano-124445.mp3' },
-  { id: 'd3', catId: 'dining', title: 'Túp Lều Vàng', artist: 'Nguyễn Đình Vũ x NBORO', duration: '3:20', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c2957b42fa.mp3?filename=happy-wedding-day-10025.mp3' },
-  { id: 'd4', catId: 'dining', title: 'Chỉ Cần Có Nhau', artist: 'Vũ Cát Tường', duration: '3:35', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_247e68e4c7.mp3?filename=piano-wedding-love-126296.mp3' },
-  { id: 'd5', catId: 'dining', title: 'You Are The Reason', artist: 'Calum Scott', duration: '3:24', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/11/06/audio_247e68e4c7.mp3?filename=piano-wedding-love-126296.mp3' },
-  { id: 'd6', catId: 'dining', title: 'Vài Câu Nói Có Khiến Người Thay Đổi', artist: 'GREY D', duration: '3:45', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db65646197.mp3?filename=romantic-guitars-112316.mp3' },
-  { id: 'd7', catId: 'dining', title: 'I Do', artist: '911', duration: '3:28', audioUrl: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c51121d5.mp3?filename=sweet-love-10332.mp3' }
+  { id: 'd1', catId: 'dining', title: 'Một Nhà', artist: 'Da LAB', duration: '3:15', youtubeUrl: 'https://www.youtube.com/results?search_query=Mot+Nha+Da+LAB' },
+  { id: 'd2', catId: 'dining', title: 'Pretty Boy', artist: 'M2M', duration: '4:40', youtubeUrl: 'https://www.youtube.com/results?search_query=Pretty+Boy+M2M' },
+  { id: 'd3', catId: 'dining', title: 'Túp Lều Vàng', artist: 'Nguyễn Đình Vũ x NBORO', duration: '3:20', youtubeUrl: 'https://www.youtube.com/results?search_query=Tup+Leu+Vang+Nguyen+Dinh+Vu' },
+  { id: 'd4', catId: 'dining', title: 'Chỉ Cần Có Nhau', artist: 'Vũ Cát Tường', duration: '3:35', youtubeUrl: 'https://www.youtube.com/results?search_query=Chi+Can+Co+Nhau+Vu+Cat+Tuong' },
+  { id: 'd5', catId: 'dining', title: 'You Are The Reason', artist: 'Calum Scott', duration: '3:24', youtubeUrl: 'https://www.youtube.com/results?search_query=You+Are+The+Reason+Calum+Scott' },
+  { id: 'd6', catId: 'dining', title: 'Vài Câu Nói Có Khiến Người Thay Đổi', artist: 'GREY D', duration: '3:45', youtubeUrl: 'https://www.youtube.com/results?search_query=Vai+Cau+Noi+Co+Khien+Nguoi+Thay+Doi+GREY+D' },
+  { id: 'd7', catId: 'dining', title: 'I Do', artist: '911', duration: '3:28', youtubeUrl: 'https://www.youtube.com/results?search_query=I+Do+911' }
 ];
 
 // 6 Distinct Luxury Light-themed Wedding Invitation Templates
