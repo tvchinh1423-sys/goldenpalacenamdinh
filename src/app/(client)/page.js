@@ -1,6 +1,57 @@
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export default async function Home() {
+  let venues = [];
+  try {
+    venues = await prisma.venue.findMany();
+  } catch (e) {
+    console.error('Error fetching venues on homepage:', e);
+  }
+
+  const getVenueImage = (searchName, fallback) => {
+    const v = venues.find(item => item.name.toLowerCase().includes(searchName.toLowerCase()));
+    if (v && v.images) {
+      try {
+        const parsed = JSON.parse(v.images);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed[0]) {
+          return parsed[0];
+        }
+      } catch (err) {}
+    }
+    return fallback;
+  };
+
+  const services = [
+    {
+      title: 'Tiệc Cưới',
+      desc: 'Không gian lãng mạn, hệ thống âm thanh ánh sáng hiện đại, lưu giữ khoảnh khắc thiêng liêng.',
+      image: getVenueImage('Tầng 3', '/images/hd-venues/tang-3-hd-1.jpg'),
+      link: '/dich-vu/tiec-cuoi'
+    },
+    {
+      title: 'Tổ Chức Sự Kiện',
+      desc: 'Trang thiết bị màn hình LED 30m² tiêu chuẩn, hội trường quy mô lớn, nâng tầm đẳng cấp doanh nghiệp.',
+      image: getVenueImage('Tầng 2', '/images/hd-venues/tang-2-hd-1.jpg'),
+      link: '/dich-vu/to-chuc-su-kien'
+    },
+    {
+      title: 'Tiệc Sinh Nhật & Kỷ Niệm',
+      desc: 'Không gian ấm cúng tại Quầy Bar hoặc Phòng VIP, decor theo chủ đề trọn vẹn niềm vui.',
+      image: getVenueImage('Bar', '/images/hd-venues/quay-bar-hd-7.jpg'),
+      link: '/dich-vu/sinh-nhat-ky-niem'
+    },
+    {
+      title: 'Phòng Ăn Riêng',
+      desc: 'Không gian phòng VIP riêng tư đẳng cấp, thực đơn tinh hoa dành cho đối tác & gia đình.',
+      image: getVenueImage('VIP', '/images/hd-venues/phong-vip-hd-1.jpg'),
+      link: '/dich-vu/phong-an-rieng'
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-[#fcf9f2] text-gray-900 font-montserrat selection:bg-[#e3a638] selection:text-white pb-20">
       
@@ -84,32 +135,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              title: 'Tiệc Cưới',
-              desc: 'Không gian lãng mạn, hệ thống âm thanh ánh sáng hiện đại, lưu giữ khoảnh khắc thiêng liêng.',
-              image: '/images/hd-venues/tang-3-hd-1.jpg',
-              link: '/dich-vu/tiec-cuoi'
-            },
-            {
-              title: 'Tổ Chức Sự Kiện',
-              desc: 'Trang thiết bị màn hình LED 30m² tiêu chuẩn, hội trường quy mô lớn, nâng tầm đẳng cấp doanh nghiệp.',
-              image: '/images/hd-venues/tang-2-hd-1.jpg',
-              link: '/dich-vu/to-chuc-su-kien'
-            },
-            {
-              title: 'Tiệc Sinh Nhật & Kỷ Niệm',
-              desc: 'Không gian ấm cúng tại Quầy Bar hoặc Phòng VIP, decor theo chủ đề trọn vẹn niềm vui.',
-              image: '/images/hd-venues/quay-bar-hd-1.jpg',
-              link: '/dich-vu/sinh-nhat-ky-niem'
-            },
-            {
-              title: 'Phòng Ăn Riêng',
-              desc: 'Không gian phòng VIP riêng tư đẳng cấp, thực đơn tinh hoa dành cho đối tác & gia đình.',
-              image: '/images/hd-venues/phong-vip-hd-1.jpg',
-              link: '/dich-vu/phong-an-rieng'
-            }
-          ].map((service, idx) => (
+          {services.map((service, idx) => (
             <Link href={service.link} key={idx} className="group relative h-[420px] overflow-hidden rounded-lg cursor-pointer shadow-xl border border-[#e3a638]/20">
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500 z-10" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
@@ -126,107 +152,6 @@ export default function Home() {
               </div>
             </Link>
           ))}
-        </div>
-      </section>
-
-      {/* Personalization Suite Feature Showcase Section */}
-      <section className="py-20 px-6 max-w-7xl mx-auto relative z-10 border-t border-b border-[#e3a638]/20 bg-[#faf6f0]/50 rounded-2xl my-12">
-        <div className="text-center mb-14">
-          <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-[#e3a638]/10 border border-[#e3a638]/30 text-[#a66a3a] text-xs font-bold uppercase tracking-widest mb-3">
-            <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            Đặc Quyền Dành Cho Cặp Đôi
-          </span>
-          <h2 className="text-3xl md:text-5xl font-playfair text-gray-900 mb-4">Cá Nhân Hóa Trải Nghiệm Tiệc Cưới</h2>
-          <p className="text-gray-600 font-montserrat text-sm max-w-2xl mx-auto font-light leading-relaxed">
-            Thiết kế thiệp điện tử nền sáng sang trọng, xem trước tên cô dâu chú rể trên màn LED sân khấu P3 và tự do chọn kịch bản nhạc tiệc theo từng giai đoạn.
-          </p>
-          <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-6"></div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Card 1: Thiệp Cưới Online */}
-          <div className="bg-white p-8 rounded-2xl border border-amber-200/80 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between group">
-            <div>
-              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#a66a3a] mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-3xl">mark_email_read</span>
-              </div>
-              <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-3">Thiệp Cưới Điện Tử Online</h3>
-              <p className="text-gray-600 text-xs font-light leading-relaxed mb-6">
-                6 mẫu thiệp nền sáng tinh tế, chữ thư pháp lãng mạn bay bổng, thông tin gia đình 2 họ chỉn chu, gửi link Zalo/FB mượt mà.
-              </p>
-            </div>
-            <Link href="/ca-nhan-hoa?tab=invitation" className="inline-flex items-center gap-2 text-xs font-bold text-[#a66a3a] uppercase tracking-wider group-hover:text-amber-600">
-              Tạo Thiệp Cưới Ngay <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
-          </div>
-
-          {/* Card 2: Customize Phông LED */}
-          <div className="bg-white p-8 rounded-2xl border border-amber-200/80 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between group">
-            <div>
-              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#a66a3a] mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-3xl">tune</span>
-              </div>
-              <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-3">Phông Màn LED Sân Khấu</h3>
-              <p className="text-gray-600 text-xs font-light leading-relaxed mb-6">
-                Trực quan hóa tên Cô Dâu & Chú Rể trên màn hình LED P3 Full HD tại các sảnh tiệc Tầng 1, 2, 3, 4 theo chuẩn nhận diện Golden Palace.
-              </p>
-            </div>
-            <Link href="/ca-nhan-hoa?tab=led" className="inline-flex items-center gap-2 text-xs font-bold text-[#a66a3a] uppercase tracking-wider group-hover:text-amber-600">
-              Customize Phông LED <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
-          </div>
-
-          {/* Card 3: Album Nhạc Tiệc Cưới */}
-          <div className="bg-white p-8 rounded-2xl border border-amber-200/80 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between group">
-            <div>
-              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-[#a66a3a] mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-3xl">library_music</span>
-              </div>
-              <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-3">Kịch Bản Nhạc Tiệc Cưới</h3>
-              <p className="text-gray-600 text-xs font-light leading-relaxed mb-6">
-                Lắng nghe thử và lên danh sách ca khúc yêu thích cho 4 giai đoạn tiệc (Đón khách, Vào lễ, Rót rượu & Khai tiệc) gửi Đội Kỹ Thuật.
-              </p>
-            </div>
-            <Link href="/ca-nhan-hoa?tab=music" className="inline-flex items-center gap-2 text-xs font-bold text-[#a66a3a] uppercase tracking-wider group-hover:text-amber-600">
-              Chọn Nhạc Tiệc Cưới <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Estimator CTA Banner */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6 relative z-10">
-          <div className="bg-white border border-[#e3a638]/20 p-10 md:p-16 rounded-lg flex flex-col md:flex-row items-center justify-between gap-10 shadow-2xl relative overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#e3a638]/10 rounded-full blur-3xl"></div>
-            
-            <div className="flex-1 relative z-20">
-              <h3 className="text-3xl font-semibold mb-4 text-[#a66a3a] font-playfair">Bạn đang lên kế hoạch cho sự kiện?</h3>
-              <p className="text-gray-600 font-montserrat font-light mb-6 max-w-xl">
-                Trải nghiệm công cụ Dự toán chi phí độc quyền của Golden Palace. Khám phá không gian, so sánh ngân sách và nhận báo giá tham khảo chỉ trong 3 phút.
-              </p>
-              <ul className="space-y-3 font-montserrat text-sm text-gray-700 font-light mb-8">
-                <li className="flex items-center gap-3">
-                  <span className="w-1.5 h-1.5 bg-[#e3a638] rounded-full"></span>
-                  Minh bạch toàn bộ chi phí mâm cỗ & hội trường
-                </li>
-                <li className="flex items-center gap-3">
-                  <span className="w-1.5 h-1.5 bg-[#e3a638] rounded-full"></span>
-                  So sánh trực quan 18 Set menu cao cấp
-                </li>
-                <li className="flex items-center gap-3">
-                  <span className="w-1.5 h-1.5 bg-[#e3a638] rounded-full"></span>
-                  Liên hệ Hotline <strong className="text-[#a66a3a] ml-1">0228 659 5959</strong>
-                </li>
-              </ul>
-            </div>
-
-            <div className="relative z-20 flex flex-col gap-4">
-              <Link href="/du-toan-chi-phi" className="px-8 py-4 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-semibold rounded-none hover:shadow-xl transition-all uppercase tracking-wider font-montserrat text-sm text-center">
-                Dự toán chi phí ngay
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
 

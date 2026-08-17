@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function DichVuPage() {
   const serviceVenueMap = {
     'tiec-cuoi': { search: 'Tầng 3', defaultImg: '/images/hd-venues/tang-3-hd-1.jpg' },

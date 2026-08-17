@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const SLUG_MAP = {
   'tang-2': 'Hội trường Tầng 2',
   'tang-3': 'Hội trường Tầng 3',

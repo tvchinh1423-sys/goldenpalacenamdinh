@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const SERVICE_VENUE_MAP = {
   'tiec-cuoi': 'Hội trường Tầng 3',
   'to-chuc-su-kien': 'Hội trường Tầng 2',
