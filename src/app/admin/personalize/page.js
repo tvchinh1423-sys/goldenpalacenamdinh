@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MUSIC_TRACKS, MUSIC_CATEGORIES, LED_STAGE_TEMPLATES } from '@/lib/personalize-data';
+import { MUSIC_TRACKS, MUSIC_CATEGORIES, LED_STAGE_TEMPLATES, VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
 
 export default function AdminPersonalizePage() {
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [editingProfile, setEditingProfile] = useState(null); // Edit profile modal state
   
   // Date Filtering State matching Screenshot 2
   const [startDate, setStartDate] = useState('');
@@ -35,9 +36,44 @@ export default function AdminPersonalizePage() {
     }
   };
 
+  const handleDeleteProfile = async (id) => {
+    if (!confirm('Anh Chinh có chắc chắn muốn xóa bản ghi tiệc cưới này khỏi hệ thống?')) return;
+    try {
+      const res = await fetch(`/api/personalize?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        if (selectedProfile?.id === id) setSelectedProfile(null);
+        fetchProfiles();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    if (!editingProfile) return;
+    try {
+      const res = await fetch('/api/personalize', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingProfile)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEditingProfile(null);
+        if (selectedProfile?.id === editingProfile.id) {
+          setSelectedProfile(data.profile);
+        }
+        fetchProfiles();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   // Date Filtering Logic
   const filteredProfiles = profiles.filter(p => {
-    // 1. Text Search Filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       const matchText = (
@@ -50,7 +86,6 @@ export default function AdminPersonalizePage() {
       if (!matchText) return false;
     }
 
-    // 2. Date Range Filter
     if (!p.eventDate) return true;
     const profileDate = new Date(p.eventDate);
     const today = new Date();
@@ -164,7 +199,7 @@ export default function AdminPersonalizePage() {
           </div>
           <h1 className="text-2xl font-playfair font-bold text-white">Quản Lý Phông Màn LED & Kịch Bản Âm Nhạc</h1>
           <p className="text-xs text-stone-400 mt-1">
-            Phát nhạc tiệc cưới trực tiếp từ YouTube, tải phông LED P3 Full HD và lọc theo ngày tổ chức tiệc.
+            Ghi đè bản cập nhật mới nhất, cho phép sửa xóa, phát nhạc tiệc cưới trực tiếp từ YouTube & tải phông LED.
           </p>
         </div>
         <button
@@ -178,8 +213,6 @@ export default function AdminPersonalizePage() {
 
       {/* Date Filter Bar matching Screenshot 2 */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-stone-200 shadow-xs text-xs">
-        
-        {/* Date From -> Date To Picker */}
         <div className="flex items-center gap-2 flex-wrap">
           <input
             type="date"
@@ -202,7 +235,6 @@ export default function AdminPersonalizePage() {
           </button>
         </div>
 
-        {/* Text Quick Search Box */}
         <div className="flex-1 max-w-xs flex items-center gap-2 bg-stone-50 px-3 py-1.5 rounded-xl border border-gray-200">
           <span className="material-symbols-outlined text-gray-400 text-sm">search</span>
           <input
@@ -214,7 +246,6 @@ export default function AdminPersonalizePage() {
           />
         </div>
 
-        {/* Filter Presets: Toàn thời gian | Tháng này | Tuần này | Hôm nay */}
         <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden shrink-0">
           <button
             onClick={() => setDateFilterPreset('all')}
@@ -294,10 +325,8 @@ export default function AdminPersonalizePage() {
                     </td>
                     <td className="p-4">
                       <div className="flex flex-wrap gap-1">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                          prof.ledStatus === 'Không có yêu cầu gì' ? 'bg-gray-100 text-gray-600' : 'bg-amber-100 text-amber-800'
-                        }`}>
-                          LED: {prof.ledStatus || 'Không có yêu cầu gì'}
+                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-800">
+                          LED: {prof.ledStatus || 'Phông Mặc Định Sảnh Tiệc'}
                         </span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                           prof.musicStatus === 'Không có yêu cầu gì' ? 'bg-gray-100 text-gray-600' : 'bg-emerald-100 text-emerald-800'
@@ -307,13 +336,33 @@ export default function AdminPersonalizePage() {
                       </div>
                     </td>
                     <td className="p-4 text-center">
-                      <button
-                        onClick={() => setSelectedProfile(prof)}
-                        className="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-lg text-[11px] hover:brightness-110 transition-colors flex items-center gap-1 shadow-xs cursor-pointer mx-auto"
-                      >
-                        <span className="material-symbols-outlined text-xs">tune</span>
-                        Mở Kịch Bản & Phát Nhạc
-                      </button>
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => setSelectedProfile(prof)}
+                          className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-lg text-[11px] hover:brightness-110 transition-colors flex items-center gap-1 shadow-xs cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-xs">tune</span>
+                          Mở Kịch Bản & Phát Nhạc
+                        </button>
+
+                        <button
+                          onClick={() => setEditingProfile(prof)}
+                          className="px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 border border-stone-300 cursor-pointer"
+                          title="Sửa thông tin tiệc"
+                        >
+                          <span className="material-symbols-outlined text-xs">edit</span>
+                          Sửa
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteProfile(prof.id)}
+                          className="px-2.5 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 border border-rose-300 cursor-pointer"
+                          title="Xóa bản ghi"
+                        >
+                          <span className="material-symbols-outlined text-xs">delete</span>
+                          Xóa
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -322,6 +371,138 @@ export default function AdminPersonalizePage() {
           </div>
         )}
       </div>
+
+      {/* MODAL EDIT PROFILE */}
+      {editingProfile && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg rounded-2xl p-6 space-y-4 shadow-2xl border border-stone-200 text-stone-900 text-xs animate-fade-in">
+            <div className="flex items-center justify-between border-b pb-3">
+              <h3 className="text-base font-bold font-playfair">Chỉnh Sửa Thông Tin Tiệc Cưới</h3>
+              <button onClick={() => setEditingProfile(null)} className="text-gray-400 hover:text-black">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateProfile} className="space-y-3">
+              <div>
+                <label className="block font-bold mb-1">Tên Tiệc Cưới</label>
+                <input
+                  type="text"
+                  value={editingProfile.partyTitle || ''}
+                  onChange={(e) => setEditingProfile({ ...editingProfile, partyTitle: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2 outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold mb-1">Tên Chú Rể</label>
+                  <input
+                    type="text"
+                    value={editingProfile.groomName || ''}
+                    onChange={(e) => setEditingProfile({ ...editingProfile, groomName: e.target.value })}
+                    className="w-full border rounded-lg px-3 py-2 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold mb-1">Tên Cô Dâu</label>
+                  <input
+                    type="text"
+                    value={editingProfile.brideName || ''}
+                    onChange={(e) => setEditingProfile({ ...editingProfile, brideName: e.target.value })}
+                    className="w-full border rounded-lg px-3 py-2 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold mb-1">Ngày Tổ Chức</label>
+                  <input
+                    type="date"
+                    value={editingProfile.eventDate || ''}
+                    onChange={(e) => setEditingProfile({ ...editingProfile, eventDate: e.target.value })}
+                    className="w-full border rounded-lg px-3 py-2 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold mb-1">Giờ Tổ Chức</label>
+                  <input
+                    type="text"
+                    value={editingProfile.eventTime || ''}
+                    onChange={(e) => setEditingProfile({ ...editingProfile, eventTime: e.target.value })}
+                    className="w-full border rounded-lg px-3 py-2 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold mb-1">Địa Điểm Sảnh</label>
+                  <select
+                    value={editingProfile.floorId || 'FLOOR_3'}
+                    onChange={(e) => {
+                      const floorId = e.target.value;
+                      const venueName = floorId === 'FLOOR_1' ? 'Tầng 1' : floorId === 'FLOOR_2' ? 'Tầng 2' : floorId === 'FLOOR_4' ? 'Tầng 4' : 'Tầng 3';
+                      setEditingProfile({ ...editingProfile, floorId, venueName });
+                    }}
+                    className="w-full border rounded-lg px-3 py-2 outline-none"
+                  >
+                    {VENUE_FLOOR_OPTIONS.map(f => (
+                      <option key={f.id} value={f.id}>{f.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold mb-1">Số Điện Thoại</label>
+                  <input
+                    type="tel"
+                    value={editingProfile.phone || ''}
+                    onChange={(e) => setEditingProfile({ ...editingProfile, phone: e.target.value })}
+                    className="w-full border rounded-lg px-3 py-2 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-bold mb-1">Link Google Drive Ảnh & Video</label>
+                <input
+                  type="url"
+                  value={editingProfile.driveLink || ''}
+                  onChange={(e) => setEditingProfile({ ...editingProfile, driveLink: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2 outline-none font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold mb-1">Ghi Chú Kịch Bản & Yêu Cầu Riêng</label>
+                <textarea
+                  rows={3}
+                  value={editingProfile.customNotes || ''}
+                  onChange={(e) => setEditingProfile({ ...editingProfile, customNotes: e.target.value })}
+                  className="w-full border rounded-lg p-2.5 outline-none"
+                />
+              </div>
+
+              <div className="pt-3 flex justify-end gap-2 border-t">
+                <button
+                  type="button"
+                  onClick={() => setEditingProfile(null)}
+                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg font-bold"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg shadow-sm"
+                >
+                  Lưu Thay Đổi
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Main Interactive Technical Workstation Modal */}
       {selectedProfile && (
@@ -394,64 +575,56 @@ export default function AdminPersonalizePage() {
                 </div>
               )}
 
-              {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU */}
+              {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU (Luôn cho xem, Fullscreen & Tải phông mặc định) */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2 text-amber-400 font-bold uppercase tracking-wider text-xs">
                     <span className="material-symbols-outlined text-base">live_tv</span>
                     Phông Màn LED Sân Khấu P3 Full HD
                   </div>
-                  {selectedProfile.ledStatus !== 'Không có yêu cầu gì' && (
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={handleDownloadLedBackdrop}
-                        className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs hover:bg-emerald-500 transition-colors flex items-center gap-1 cursor-pointer"
-                      >
-                        <span className="material-symbols-outlined text-sm">download</span>
-                        Tải File Ảnh Phông LED (1920x1080)
-                      </button>
-                      <button
-                        onClick={() => setFullscreenLed(true)}
-                        className="px-3 py-1.5 bg-amber-500 text-black font-bold rounded-lg text-xs hover:bg-amber-400 transition-colors flex items-center gap-1 cursor-pointer"
-                      >
-                        <span className="material-symbols-outlined text-sm">fullscreen</span>
-                        Mở Trình Chiếu LED Fullscreen
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleDownloadLedBackdrop}
+                      className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs hover:bg-emerald-500 transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-sm">download</span>
+                      Tải File Ảnh Phông LED (1920x1080)
+                    </button>
+                    <button
+                      onClick={() => setFullscreenLed(true)}
+                      className="px-3 py-1.5 bg-amber-500 text-black font-bold rounded-lg text-xs hover:bg-amber-400 transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-sm">fullscreen</span>
+                      Mở Trình Chiếu LED Fullscreen
+                    </button>
+                  </div>
                 </div>
 
-                {selectedProfile.ledStatus === 'Không có yêu cầu gì' ? (
-                  <div className="p-4 bg-stone-950 rounded-xl border border-stone-800 text-gray-400 italic">
-                    Gia chủ không có yêu cầu tùy chỉnh phông LED riêng (Sử dụng màn phông tiêu chuẩn của sảnh).
-                  </div>
-                ) : (
-                  /* Mini LED Canvas Visualizer */
-                  <div className="relative aspect-video w-full rounded-xl overflow-hidden border-2 border-amber-500/40 shadow-inner bg-black flex items-center justify-center">
-                    <div className={`w-full h-full bg-gradient-to-br ${currentLedTemplate.bgGradient} relative flex flex-col items-center justify-center p-4 text-center`}>
-                      <div className="absolute top-2 left-3 flex items-center gap-1 z-20">
-                        <img src="/logo-icon.png" alt="Golden Palace" className="h-5 w-auto object-contain" />
-                        <span className="text-[8px] tracking-widest font-playfair uppercase text-amber-300 font-bold">
-                          GOLDEN PALACE
-                        </span>
+                {/* Mini LED Canvas Visualizer */}
+                <div className="relative aspect-video w-full rounded-xl overflow-hidden border-2 border-amber-500/40 shadow-inner bg-black flex items-center justify-center">
+                  <div className={`w-full h-full bg-gradient-to-br ${currentLedTemplate.bgGradient} relative flex flex-col items-center justify-center p-4 text-center`}>
+                    <div className="absolute top-2 left-3 flex items-center gap-1 z-20">
+                      <img src="/logo-icon.png" alt="Golden Palace" className="h-5 w-auto object-contain" />
+                      <span className="text-[8px] tracking-widest font-playfair uppercase text-amber-300 font-bold">
+                        GOLDEN PALACE
+                      </span>
+                    </div>
+                    <div className={`w-[90%] h-[80%] rounded-lg flex flex-col items-center justify-center p-4 relative ${currentLedTemplate.frameStyle}`}>
+                      <div className="text-[8px] tracking-widest uppercase text-amber-200 font-semibold mb-1">
+                        LỄ THÀNH HÔN • WEDDING CEREMONY
                       </div>
-                      <div className={`w-[90%] h-[80%] rounded-lg flex flex-col items-center justify-center p-4 relative ${currentLedTemplate.frameStyle}`}>
-                        <div className="text-[8px] tracking-widest uppercase text-amber-200 font-semibold mb-1">
-                          LỄ THÀNH HÔN • WEDDING CEREMONY
-                        </div>
-                        <div className="font-playfair text-xl sm:text-2xl font-bold text-white tracking-wider my-1 drop-shadow-md">
-                          {selectedProfile.groomName} & {selectedProfile.brideName}
-                        </div>
-                        <div className="text-[9px] font-mono text-amber-300 mt-1">
-                          {selectedProfile.eventDate} • GOLDEN PALACE {selectedProfile.venueName}
-                        </div>
+                      <div className="font-playfair text-xl sm:text-2xl font-bold text-white tracking-wider my-1 drop-shadow-md">
+                        {selectedProfile.groomName} & {selectedProfile.brideName}
+                      </div>
+                      <div className="text-[9px] font-mono text-amber-300 mt-1">
+                        {selectedProfile.eventDate} • GOLDEN PALACE {selectedProfile.venueName}
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
 
-              {/* SECTION 2: BẢNG PHÁT NHẠC VỚI NÚT MỞ YOUTUBE THẬT */}
+              {/* SECTION 2: BẢNG PHÁT NHẠC (Chỉ phần nhạc không chọn mới để Không có yêu cầu) */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-amber-400 font-bold uppercase tracking-wider text-xs">
@@ -465,7 +638,7 @@ export default function AdminPersonalizePage() {
 
                 {selectedProfile.musicStatus === 'Không có yêu cầu gì' && (!selectedProfile.selectedMusic || selectedProfile.selectedMusic.length === 0) ? (
                   <div className="p-4 bg-stone-950 rounded-xl border border-stone-800 text-gray-400 italic">
-                    Gia chủ không có yêu cầu chọn nhạc riêng (Đội kỹ thuật phát danh sách nhạc tiệc cưới tiêu chuẩn của nhà hàng).
+                    Gia chủ không chọn danh sách nhạc riêng (Đội kỹ thuật mở nhạc tiệc cưới tiêu chuẩn của sảnh).
                   </div>
                 ) : (
                   (() => {
@@ -487,7 +660,6 @@ export default function AdminPersonalizePage() {
                                 </div>
                               </div>
 
-                              {/* Custom YouTube Link */}
                               {ytUrl && (
                                 <div className="p-2.5 bg-red-950/50 border border-red-500/40 rounded-lg text-xs text-red-300 flex items-center justify-between gap-2">
                                   <div className="flex items-center gap-2 truncate">
@@ -504,11 +676,10 @@ export default function AdminPersonalizePage() {
                                 </div>
                               )}
 
-                              {/* Audio Tracks with Direct YouTube Buttons */}
                               <div className="space-y-2">
                                 {selectedCatTracks.length === 0 && !ytUrl ? (
                                   <div className="text-[11px] text-gray-500 italic py-1">
-                                    Gia chủ không có yêu cầu bài hát riêng cho giai đoạn này.
+                                    Không có bài chọn riêng cho giai đoạn này.
                                   </div>
                                 ) : (
                                   selectedCatTracks.map((track) => (
@@ -521,7 +692,6 @@ export default function AdminPersonalizePage() {
                                         <div className="text-[10px] text-gray-400">{track.artist} ({track.duration})</div>
                                       </div>
 
-                                      {/* Open YouTube Direct Link Button */}
                                       <div className="flex items-center gap-2 shrink-0">
                                         <a
                                           href={track.youtubeUrl || `https://www.youtube.com/results?search_query=${encodeURIComponent(track.title + ' ' + track.artist)}`}
@@ -546,12 +716,12 @@ export default function AdminPersonalizePage() {
                 )}
               </div>
 
-              {/* SECTION 3: GÓP Ý & PHẢN HỒI RIÊNG */}
+              {/* SECTION 3: GHI CHÚ KỊCH BẢN & YÊU CẦU RIÊNG */}
               {selectedProfile.customNotes && selectedProfile.customNotes !== 'Không có ghi chú thêm' && (
                 <div className="p-4 bg-stone-900 border border-blue-500/30 rounded-2xl space-y-1">
                   <div className="font-bold text-blue-400 text-xs uppercase flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-base">rate_review</span>
-                    Góp Ý & Phản Hồi Từ Gia Chủ
+                    <span className="material-symbols-outlined text-base">edit_note</span>
+                    Ghi Chú Kịch Bản & Yêu Cầu Riêng Từ Gia Chủ
                   </div>
                   <p className="text-xs text-stone-200 leading-relaxed italic bg-stone-950 p-3 rounded-xl border border-stone-800">
                     "{selectedProfile.customNotes}"

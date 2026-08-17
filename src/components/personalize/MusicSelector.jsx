@@ -1,35 +1,17 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { MUSIC_CATEGORIES, MUSIC_TRACKS } from '@/lib/personalize-data';
 
 export default function MusicSelector({
-  selectedTracks,
-  setSelectedTracks,
-  customNotes,
-  setCustomNotes,
+  selectedTracks = [],
+  setSelectedTracks = () => {},
+  customNotes = '',
+  setCustomNotes = () => {},
   youtubeLinks = {},
   setYoutubeLinks = () => {}
 }) {
   const [activeTab, setActiveTab] = useState('welcome');
-  const [playingTrackId, setPlayingTrackId] = useState(null);
-  const audioRef = useRef(null);
-
-  const handlePlayPause = (track) => {
-    if (playingTrackId === track.id) {
-      if (audioRef.current) audioRef.current.pause();
-      setPlayingTrackId(null);
-    } else {
-      if (audioRef.current) audioRef.current.pause();
-      audioRef.current = new Audio(track.audioUrl);
-      audioRef.current.play().catch(e => console.log('Audio playback info:', e));
-      setPlayingTrackId(track.id);
-
-      audioRef.current.onended = () => {
-        setPlayingTrackId(null);
-      };
-    }
-  };
 
   const toggleTrack = (trackId) => {
     if (selectedTracks.includes(trackId)) {
@@ -105,7 +87,6 @@ export default function MusicSelector({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredTracks.map((track) => {
           const isSelected = selectedTracks.includes(track.id);
-          const isPlaying = playingTrackId === track.id;
 
           return (
             <div
@@ -116,45 +97,36 @@ export default function MusicSelector({
                   : 'bg-[#161616] border-gray-800 hover:border-gray-700'
               }`}
             >
-              <button
-                type="button"
-                onClick={() => handlePlayPause(track)}
-                className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95 cursor-pointer ${
-                  isPlaying
-                    ? 'bg-amber-400 text-black shadow-[0_0_15px_rgba(251,191,36,0.6)] animate-pulse'
-                    : 'bg-[#242424] text-amber-400 hover:bg-[#303030]'
-                }`}
-                title={isPlaying ? 'Tạm dừng demo' : 'Nghe thử demo'}
-              >
-                <span className="material-symbols-outlined text-2xl">
-                  {isPlaying ? 'pause' : 'play_arrow'}
-                </span>
-              </button>
-
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-semibold text-white truncate flex items-center gap-2">
+                  <span className="material-symbols-outlined text-sm text-amber-400">music_note</span>
                   {track.title}
-                  {isPlaying && (
-                    <span className="text-[10px] bg-amber-400/20 text-amber-300 font-mono px-1.5 py-0.5 rounded uppercase">
-                      Đang phát
-                    </span>
-                  )}
                 </div>
-                <div className="text-xs text-gray-400 truncate mt-0.5">
-                  {track.artist} • <span className="font-mono text-gray-500">{track.duration}</span>
+                <div className="text-xs text-gray-400 truncate mt-0.5 flex items-center gap-2">
+                  <span>{track.artist} ({track.duration})</span>
+                  •
+                  <a
+                    href={track.youtubeUrl || `https://www.youtube.com/results?search_query=${encodeURIComponent(track.title + ' ' + track.artist)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-red-400 font-bold hover:underline flex items-center gap-1 text-[11px]"
+                  >
+                    <span className="material-symbols-outlined text-xs">play_circle</span>
+                    Nghe thử trên YouTube
+                  </a>
                 </div>
               </div>
 
               <button
                 type="button"
                 onClick={() => toggleTrack(track.id)}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all border cursor-pointer ${
+                className={`px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all border cursor-pointer shrink-0 ${
                   isSelected
-                    ? 'bg-amber-400 text-black border-amber-400 shadow-sm'
+                    ? 'bg-amber-400 text-black border-amber-400 shadow-sm font-bold'
                     : 'bg-[#222] text-gray-300 border-gray-700 hover:border-amber-400/60'
                 }`}
               >
-                {isSelected ? 'Đã Chọn ✓' : '+ Chọn'}
+                {isSelected ? 'Đã Chọn ✓' : '+ Chọn Bài'}
               </button>
             </div>
           );
@@ -179,11 +151,11 @@ export default function MusicSelector({
         </p>
       </div>
 
-      {/* Góp ý & Phản hồi riêng (Không bắt buộc) */}
+      {/* GHI CHÚ KỊCH BẢN & YÊU CẦU RIÊNG CHO ĐỘI KỸ THUẬT (Đã đổi tên đúng theo ảnh 2) */}
       <div className="bg-[#141414] border border-gray-800 rounded-2xl p-5">
         <label className="block text-gray-300 text-xs font-semibold mb-2 uppercase tracking-wider flex items-center gap-2">
-          <span className="material-symbols-outlined text-amber-400 text-base">rate_review</span>
-          Góp Ý & Phản Hồi Cho Tiệc Cưới (Không bắt buộc)
+          <span className="material-symbols-outlined text-amber-400 text-base">edit_note</span>
+          GHI CHÚ KỊCH BẢN & YÊU CẦU RIÊNG CHO ĐỘI KỸ THUẬT
         </label>
         <textarea
           rows={3}

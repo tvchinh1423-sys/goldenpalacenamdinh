@@ -33,8 +33,8 @@ function PersonalizePageContent() {
   const [ledModified, setLedModified] = useState(false);
   const [musicModified, setMusicModified] = useState(false);
 
-  // Music selector state
-  const [selectedTracks, setSelectedTracks] = useState(['w1', 'e1', 't1', 'd1']);
+  // Music selector state (Empty by default per user request)
+  const [selectedTracks, setSelectedTracks] = useState([]);
   const [youtubeLinks, setYoutubeLinks] = useState({ welcome: '', entrance: '', toast: '', dining: '' });
   const [customNotes, setCustomNotes] = useState('');
 
