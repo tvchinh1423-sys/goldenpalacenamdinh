@@ -177,6 +177,73 @@ export async function POST(request) {
 
 function generateSmartResponse(msg) {
 
+  // ══════════════════════════════════════════════════════════════
+  // PRIORITY 0: Smart Number Detection — "280 khách nên chọn tầng nào"
+  // Catches ANY number + context about guests/venue selection
+  // ══════════════════════════════════════════════════════════════
+  const guestNumberMatch = msg.match(/(\d+)\s*(khách|người|mâm|bàn)/);
+  const venueQuestionKeywords = ['chọn tầng', 'nên chọn', 'chọn sảnh', 'phù hợp', 'chọn hội trường', 'nên đặt', 'tầng nào', 'sảnh nào', 'hội trường nào', 'đặt ở đâu', 'nên tổ chức', 'khách nên', 'khách chọn', 'khách thì'];
+  
+  if (guestNumberMatch) {
+    let guestCount = parseInt(guestNumberMatch[1]);
+    // If they said "mâm" or "bàn", multiply by 10
+    if (guestNumberMatch[2] === 'mâm' || guestNumberMatch[2] === 'bàn') {
+      guestCount = guestCount * 10;
+    }
+
+    // Route based on guest count
+    if (guestCount <= 50) {
+      return {
+        reply: `Dạ, với quy mô khoảng **${guestCount} khách**, em gợi ý Quý khách tham khảo:\n\n👑 **Phòng VIP** — sức chứa 10 – 50 khách, không gian riêng tư, đẳng cấp. Rất phù hợp cho tiệc gia đình, gặp mặt đối tác.\n\nNếu Quý khách muốn không gian rộng hơn một chút, có thể tham khảo thêm **Quầy Bar Tầng 1** (50 – 100 khách) với phong cách lounge hiện đại.\n\n📸 Xem ảnh: **[Phòng VIP](/khong-gian/phong-vip)**\n📞 Hotline tư vấn: **0228 659 5959**`,
+        suggestions: [
+          "🖼️ Xem ảnh Phòng VIP",
+          "🍸 Xem Quầy Bar Tầng 1",
+          "📝 Lập dự toán chi phí",
+          "📞 Hotline 0228 659 5959"
+        ]
+      };
+    } else if (guestCount <= 100) {
+      return {
+        reply: `Dạ, với khoảng **${guestCount} khách**, em gợi ý Quý khách tham khảo:\n\n🍸 **Quầy Bar Tầng 1** — sức chứa 50 – 100 khách, phong cách lounge hiện đại, lý tưởng cho tiệc sinh nhật, báo hỷ, cocktail.\n\nNếu quy mô có thể tăng thêm, Quý khách cũng có thể xem **Hội trường Tầng 4** (100 – 300 khách) — ấm cúng, sang trọng, phí hội trường chỉ **2.000.000 VNĐ** trọn gói.\n\n📸 Xem ảnh: **[Quầy Bar Tầng 1](/khong-gian/quay-bar)**\n📞 Hotline: **0228 659 5959**`,
+        suggestions: [
+          "🖼️ Xem ảnh Quầy Bar Tầng 1",
+          "🏛️ Xem Hội trường Tầng 4",
+          "📝 Lập dự toán chi phí",
+          "📞 Hotline 0228 659 5959"
+        ]
+      };
+    } else if (guestCount <= 300) {
+      return {
+        reply: `Dạ, với khoảng **${guestCount} khách**, em gợi ý Quý khách **Hội trường Tầng 4** ạ!\n\n🏛️ **Hội trường Tầng 4:**\n• Sức chứa: 100 – 300 khách\n• Không gian ấm cúng, sang trọng\n• Màn hình LED, âm thanh ánh sáng hiện đại\n• Phí hội trường: chỉ **2.000.000 VNĐ** trọn gói\n• Không ràng buộc số mâm tối thiểu\n\n📸 Xem ảnh thực tế: **[Hội trường Tầng 4](/khong-gian/tang-4)**\n📝 Tính chi phí: **[Dự toán Chi phí](/du-toan-chi-phi)**\n\nQuý khách có thể đến tham quan trực tiếp từ 8h – 21h hàng ngày hoặc gọi **Hotline 0228 659 5959** ạ!`,
+        suggestions: [
+          "🖼️ Xem ảnh Hội trường Tầng 4",
+          "📝 Tính dự toán chi phí",
+          "📅 Đặt lịch tham quan sảnh",
+          "📞 Gọi Hotline 0228 659 5959"
+        ]
+      };
+    } else if (guestCount <= 650) {
+      return {
+        reply: `Dạ, với khoảng **${guestCount} khách**, em gợi ý Quý khách tham khảo:\n\n🏛️ **Hội trường Tầng 3** — sức chứa 300 – 650 khách, phong cách hoàng gia, màn hình LED 30m², giàn đèn bướm lộng lẫy.\n${guestCount >= 350 ? '🏛️ **Hội trường Tầng 2** — sức chứa 350 – 750 khách, không gian rộng rãi và hoành tráng nhất.\n' : ''}\n📸 Xem ảnh thực tế:\n- [Hội trường Tầng 3](/khong-gian/tang-3)\n${guestCount >= 350 ? '- [Hội trường Tầng 2](/khong-gian/tang-2)\n' : ''}\n📞 Liên hệ **Hotline 0228 659 5959** để kiểm tra lịch sảnh trống ạ!`,
+        suggestions: [
+          "🖼️ Xem ảnh Hội trường Tầng 3",
+          guestCount >= 350 ? "🖼️ Xem ảnh Hội trường Tầng 2" : "📝 Tính dự toán chi phí",
+          "📝 Lập dự toán chi phí",
+          "📞 Hotline 0228 659 5959"
+        ]
+      };
+    } else {
+      return {
+        reply: `Dạ, với quy mô **${guestCount} khách**, em gợi ý Quý khách **Hội trường Tầng 2** — không gian lớn nhất và hoành tráng nhất tại Golden Palace:\n\n🏛️ **Hội trường Tầng 2:**\n• Sức chứa: 350 – **750 khách**\n• Màn hình LED cỡ lớn, giàn đèn pha lê hoàng gia\n• Sân khấu rộng, trang trí đường dẫn hoa lụa\n\n📸 Xem ảnh: **[Hội trường Tầng 2](/khong-gian/tang-2)**\n📝 Tính chi phí: **[Dự toán Chi phí](/du-toan-chi-phi)**\n📞 Hotline: **0228 659 5959**`,
+        suggestions: [
+          "🖼️ Xem ảnh Hội trường Tầng 2",
+          "📝 Tính dự toán chi phí",
+          "📞 Gọi Hotline 0228 659 5959"
+        ]
+      };
+    }
+  }
+
   // ──── 1. Chào hỏi / Lời mở đầu ────
   if (matchAny(msg, ['xin chào', 'hello', 'hi ', 'chào bạn', 'chào em', 'alo', 'hey'])) {
     return {
@@ -190,8 +257,8 @@ function generateSmartResponse(msg) {
     };
   }
 
-  // ──── 2. Sức chứa / Số lượng khách / Sảnh nào phù hợp ────
-  if (matchAny(msg, ['sức chứa', 'chứa được', 'bao nhiêu khách', 'tối đa', 'sảnh chứa', 'quy mô', 'sảnh nào', 'hội trường nào', 'mấy sảnh', 'có những sảnh', 'loại sảnh'])) {
+  // ──── 2. Sức chứa / Sảnh nào phù hợp (câu hỏi chung, không có số cụ thể) ────
+  if (matchAny(msg, ['sức chứa', 'chứa được', 'bao nhiêu khách', 'tối đa', 'sảnh chứa', 'quy mô', 'sảnh nào', 'hội trường nào', 'mấy sảnh', 'có những sảnh', 'loại sảnh', 'chọn tầng', 'nên chọn', 'chọn sảnh', 'tầng nào', 'đặt ở đâu'])) {
     return {
       reply: 'Dạ, **Golden Palace Nam Định** có 5 không gian phù hợp cho mọi quy mô tiệc:\n\n🏛️ **Hội trường Tầng 2:** 350 – 750 khách *(Không gian hoành tráng nhất)*\n🏛️ **Hội trường Tầng 3:** 300 – 650 khách *(Phong cách hoàng gia)*\n🏛️ **Hội trường Tầng 4:** 100 – 300 khách *(Ấm cúng, sang trọng, phí chỉ 2 triệu)*\n🍸 **Quầy Bar Tầng 1:** 50 – 100 khách *(Sinh nhật, báo hỷ, cocktail)*\n👑 **Phòng VIP:** 10 – 50 khách *(Gia đình, đối tác)*\n\nQuý khách dự kiến bao nhiêu khách để em gợi ý sảnh phù hợp nhất ạ?',
       suggestions: [
@@ -203,26 +270,26 @@ function generateSmartResponse(msg) {
     };
   }
 
-  // ──── 3. Tiệc nhỏ / vừa (dưới 300 khách) ────
-  if (matchAny(msg, ['200 khách', '150 khách', '100 khách', '250 khách', '180 khách', '300 khách', 'tiệc nhỏ', 'tiệc vừa', 'ít khách', 'không nhiều khách', 'dưới 300'])) {
+  // ──── 3. Tiệc nhỏ / vừa (từ khóa không có số cụ thể) ────
+  if (matchAny(msg, ['tiệc nhỏ', 'tiệc vừa', 'ít khách', 'không nhiều khách', 'dưới 300', 'dưới 200'])) {
     return {
-      reply: 'Dạ, với quy mô tiệc này, em gợi ý Quý khách tham khảo **Hội trường Tầng 4** ạ!\n\n🏛️ **Hội trường Tầng 4:**\n• Sức chứa: 100 – 300 khách\n• Không gian ấm cúng, sang trọng\n• Trang bị màn hình LED, âm thanh ánh sáng hiện đại\n• Phí hội trường: chỉ **2.000.000 VNĐ** trọn gói\n\nQuý khách có thể xem ảnh thực tế tại: **[Xem Hội trường Tầng 4](/khong-gian/tang-4)** hoặc đến trực tiếp tham quan từ 8h – 21h hàng ngày ạ!',
+      reply: 'Dạ, với tiệc quy mô vừa, em gợi ý Quý khách tham khảo **Hội trường Tầng 4** ạ!\n\n🏛️ **Hội trường Tầng 4:**\n• Sức chứa: 100 – 300 khách\n• Không gian ấm cúng, sang trọng\n• Trang bị màn hình LED, âm thanh ánh sáng hiện đại\n• Phí hội trường: chỉ **2.000.000 VNĐ** trọn gói\n\nQuý khách có thể xem ảnh thực tế tại: **[Xem Hội trường Tầng 4](/khong-gian/tang-4)** hoặc đến trực tiếp tham quan từ 8h – 21h hàng ngày ạ!',
       suggestions: [
         "🖼️ Xem ảnh Hội trường Tầng 4",
-        "📝 Tính dự toán cho 200 khách",
+        "📝 Tính dự toán chi phí",
         "📅 Đặt lịch tham quan sảnh",
         "📞 Gọi Hotline 0228 659 5959"
       ]
     };
   }
 
-  // ──── 4. Tiệc lớn (trên 400 khách) ────
-  if (matchAny(msg, ['500 khách', '600 khách', '700 khách', '400 khách', '450 khách', 'tiệc lớn', 'nhiều khách', 'trên 400', 'trên 500'])) {
+  // ──── 4. Tiệc lớn (từ khóa không có số cụ thể) ────
+  if (matchAny(msg, ['tiệc lớn', 'nhiều khách', 'trên 400', 'trên 500', 'trên 600'])) {
     return {
       reply: 'Dạ, với quy mô tiệc lớn, em gợi ý Quý khách tham khảo:\n\n🏛️ **Hội trường Tầng 2** — tối đa **750 khách**, không gian rộng rãi, hoành tráng nhất Golden Palace.\n🏛️ **Hội trường Tầng 3** — tối đa **650 khách**, phong cách hoàng gia, LED 30m².\n\nQuý khách có thể xem chi tiết & ảnh thực tế:\n- [Hội trường Tầng 2](/khong-gian/tang-2)\n- [Hội trường Tầng 3](/khong-gian/tang-3)\n\nHoặc liên hệ **Hotline 0228 659 5959** để được hỗ trợ trực tiếp ạ!',
       suggestions: [
         "🖼️ Xem ảnh Hội trường Tầng 2",
-        "📝 Tính dự toán cho 500 khách",
+        "📝 Tính dự toán chi phí",
         "📞 Gọi Hotline 0228 659 5959"
       ]
     };
