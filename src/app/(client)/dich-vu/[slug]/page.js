@@ -1,5 +1,13 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import prisma from '@/lib/prisma';
+
+const SERVICE_VENUE_MAP = {
+  'tiec-cuoi': 'Hội trường Tầng 3',
+  'to-chuc-su-kien': 'Hội trường Tầng 2',
+  'sinh-nhat-ky-niem': 'Quầy Bar Tầng 1',
+  'phong-an-rieng': 'Phòng VIP'
+};
 
 const SERVICES_DATA = {
   'tiec-cuoi': {
@@ -59,16 +67,16 @@ const SERVICES_DATA = {
       'Hệ thống âm thanh karaoke & màn hình trình chiếu kỷ niệm',
       'Dịch vụ máy chụp ảnh Photobooth lấy liền làm quà tặng lưu niệm'
     ],
-    heroImage: '/images/hd-venues/quay-bar-hd-1.jpg',
+    heroImage: '/images/hd-venues/quay-bar-hd-7.jpg',
     gallery: [
+      '/images/hd-venues/quay-bar-hd-7.jpg',
+      '/images/hd-venues/quay-bar-hd-8.jpg',
       '/images/hd-venues/quay-bar-hd-1.jpg',
       '/images/hd-venues/quay-bar-hd-2.jpg',
       '/images/hd-venues/quay-bar-hd-3.jpg',
       '/images/hd-venues/quay-bar-hd-4.jpg',
       '/images/hd-venues/quay-bar-hd-5.jpg',
-      '/images/hd-venues/quay-bar-hd-6.jpg',
-      '/images/hd-venues/quay-bar-hd-7.jpg',
-      '/images/hd-venues/quay-bar-hd-8.jpg'
+      '/images/hd-venues/quay-bar-hd-6.jpg'
     ]
   },
   'phong-an-rieng': {
@@ -98,11 +106,35 @@ const SERVICES_DATA = {
 
 export default async function DichVuDetailPage({ params }) {
   const { slug } = await params;
-  const service = SERVICES_DATA[slug];
+  const staticService = SERVICES_DATA[slug];
 
-  if (!service) {
+  if (!staticService) {
     notFound();
   }
+
+  // Fetch dynamic venue images from DB for this service
+  let dbImages = [];
+  try {
+    const venueSearchName = SERVICE_VENUE_MAP[slug];
+    if (venueSearchName) {
+      const venueRecord = await prisma.venue.findFirst({
+        where: {
+          name: { contains: venueSearchName, mode: 'insensitive' }
+        }
+      });
+      if (venueRecord && venueRecord.images) {
+        const parsed = JSON.parse(venueRecord.images || '[]');
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          dbImages = parsed;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error loading service venue images from DB:', err);
+  }
+
+  const gallery = (dbImages && dbImages.length > 0) ? dbImages : staticService.gallery;
+  const heroImage = (gallery && gallery.length > 0) ? gallery[0] : staticService.heroImage;
 
   return (
     <div className="min-h-screen bg-[#fcf9f2] font-montserrat text-gray-900 pt-20 pb-28">
@@ -112,7 +144,7 @@ export default async function DichVuDetailPage({ params }) {
           <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-[#fcf9f2] z-10" />
           <div 
             className="w-full h-full bg-cover bg-center transition-transform duration-1000 scale-105"
-            style={{ backgroundImage: `url('${service.heroImage}')` }}
+            style={{ backgroundImage: `url('${heroImage}')` }}
           />
         </div>
 
@@ -121,10 +153,10 @@ export default async function DichVuDetailPage({ params }) {
             Dịch vụ chuyên nghiệp
           </span>
           <h1 className="text-4xl sm:text-6xl font-playfair font-semibold text-white mb-3 drop-shadow-lg">
-            {service.name}
+            {staticService.name}
           </h1>
           <p className="text-amber-200 text-lg sm:text-xl font-light font-playfair tracking-wide">
-            {service.subTitle}
+            {staticService.subTitle}
           </p>
         </div>
       </section>
@@ -135,14 +167,14 @@ export default async function DichVuDetailPage({ params }) {
           <div className="lg:col-span-7">
             <h2 className="text-3xl font-playfair text-[#a66a3a] mb-6 font-semibold">Giới thiệu dịch vụ</h2>
             <p className="text-gray-700 font-light text-base leading-relaxed mb-8">
-              {service.description}
+              {staticService.description}
             </p>
 
             <h3 className="text-lg font-semibold text-gray-900 mb-4 uppercase tracking-wider text-xs text-[#a66a3a]">
               Điểm nổi bật dịch vụ:
             </h3>
             <ul className="space-y-3">
-              {service.highlights.map((item, idx) => (
+              {staticService.highlights.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3 text-sm text-gray-700 font-light">
                   <span className="material-symbols-outlined text-[#e3a638] text-lg mt-0.5">star</span>
                   <span>{item}</span>
@@ -181,23 +213,28 @@ export default async function DichVuDetailPage({ params }) {
       {/* Gallery */}
       <section className="max-w-7xl mx-auto px-6 py-12 border-t border-[#e3a638]/20">
         <div className="text-center mb-12">
-          <h3 className="text-[#a66a3a] font-montserrat uppercase tracking-[0.2em] text-xs font-semibold mb-2">Thư viện ảnh thực tế</h3>
-          <h2 className="text-3xl sm:text-4xl font-playfair text-gray-900">Không gian & Không khí {service.name}</h2>
+          <h3 className="text-[#a66a3a] font-montserrat uppercase tracking-[0.2em] text-xs font-semibold mb-2">Thư viện ảnh thực tế ({gallery.length} ảnh)</h3>
+          <h2 className="text-3xl sm:text-4xl font-playfair text-gray-900">Không gian & Không khí {staticService.name}</h2>
           <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-4" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {service.gallery.map((imgUrl, gIdx) => (
-            <div key={gIdx} className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-[#e3a638]/20 cursor-pointer">
+          {gallery.map((imgUrl, gIdx) => (
+            <div key={gIdx} className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-[#e3a638]/20 cursor-pointer font-montserrat">
               <div 
                 className="w-full h-full bg-cover bg-center group-hover:scale-108 transition-transform duration-700"
                 style={{ backgroundImage: `url('${imgUrl}')` }}
               />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-all duration-300" />
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                <span className="text-white text-xs font-medium bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm">
+                  Vị trí #{gIdx + 1}
+                </span>
+              </div>
             </div>
           ))}
         </div>
       </section>
+
     </div>
   );
 }

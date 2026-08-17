@@ -1,5 +1,14 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import prisma from '@/lib/prisma';
+
+const SLUG_MAP = {
+  'tang-2': 'Hội trường Tầng 2',
+  'tang-3': 'Hội trường Tầng 3',
+  'tang-4': 'Hội trường Tầng 4',
+  'quay-bar': 'Quầy Bar Tầng 1',
+  'phong-vip': 'Phòng VIP'
+};
 
 const makeHdList = (prefix, count = 12) => {
   const list = [];
@@ -9,7 +18,7 @@ const makeHdList = (prefix, count = 12) => {
   return list;
 };
 
-const VENUES_DATA = {
+const DEFAULT_VENUES_DATA = {
   'tang-2': {
     name: 'Hội trường Tầng 2',
     subTitle: 'Đại Cung Điện Hoàng Gia Sang Trọng',
@@ -66,8 +75,8 @@ const VENUES_DATA = {
       'Hệ thống âm thanh Lounge & ánh sáng ấm áp',
       'Thích hợp cho tiệc sinh nhật, tiệc cocktail & kỷ niệm'
     ],
-    heroImage: '/images/hd-venues/quay-bar-hd-1.jpg',
-    gallery: makeHdList('quay-bar', 12)
+    heroImage: '/images/hd-venues/quay-bar-hd-7.jpg',
+    gallery: ['/images/hd-venues/quay-bar-hd-7.jpg', '/images/hd-venues/quay-bar-hd-8.jpg', ...makeHdList('quay-bar', 10)]
   },
   'phong-vip': {
     name: 'Không Gian Phòng VIP',
@@ -87,11 +96,43 @@ const VENUES_DATA = {
 
 export default async function KhongGianPage({ params }) {
   const { slug } = await params;
-  const venue = VENUES_DATA[slug];
+  const staticData = DEFAULT_VENUES_DATA[slug];
 
-  if (!venue) {
+  if (!staticData) {
     notFound();
   }
+
+  // Fetch dynamic venue data from Prisma DB to reflect Admin sorting & Drive photos
+  let dbImages = [];
+  let dbCapacity = staticData.capacity;
+  let dbDescription = staticData.description;
+
+  try {
+    const searchName = SLUG_MAP[slug];
+    if (searchName) {
+      const venueRecord = await prisma.venue.findFirst({
+        where: {
+          name: { contains: searchName, mode: 'insensitive' }
+        }
+      });
+
+      if (venueRecord) {
+        if (venueRecord.description) dbDescription = venueRecord.description;
+        if (venueRecord.maxGuests) dbCapacity = `${venueRecord.minGuests || 10} - ${venueRecord.maxGuests} khách`;
+        try {
+          const parsed = JSON.parse(venueRecord.images || '[]');
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            dbImages = parsed;
+          }
+        } catch (e) {}
+      }
+    }
+  } catch (err) {
+    console.error('Error fetching venue from database:', err);
+  }
+
+  const gallery = (dbImages && dbImages.length > 0) ? dbImages : staticData.gallery;
+  const heroImage = (gallery && gallery.length > 0) ? gallery[0] : staticData.heroImage;
 
   return (
     <div className="min-h-screen bg-[#fcf9f2] font-montserrat text-gray-900 pt-20 pb-28">
@@ -101,7 +142,7 @@ export default async function KhongGianPage({ params }) {
           <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-[#fcf9f2] z-10" />
           <div 
             className="w-full h-full bg-cover bg-center transition-transform duration-1000 scale-105"
-            style={{ backgroundImage: `url('${venue.heroImage}')` }}
+            style={{ backgroundImage: `url('${heroImage}')` }}
           />
         </div>
 
@@ -110,14 +151,14 @@ export default async function KhongGianPage({ params }) {
             Khám phá không gian thực tế
           </span>
           <h1 className="text-4xl sm:text-6xl font-playfair font-semibold text-white mb-3 drop-shadow-lg">
-            {venue.name}
+            {staticData.name}
           </h1>
           <p className="text-amber-200 text-lg sm:text-xl font-light font-playfair tracking-wide mb-6">
-            {venue.subTitle}
+            {staticData.subTitle}
           </p>
           <div className="flex items-center gap-2 bg-black/70 text-[#fcf9f2] px-6 py-2.5 rounded-full border border-white/30 text-sm backdrop-blur-md shadow-xl font-medium">
             <span className="material-symbols-outlined text-[#e3a638] text-xl">groups</span>
-            <span>Sức chứa: <strong className="text-[#e3a638] font-semibold">{venue.capacity}</strong></span>
+            <span>Sức chứa: <strong className="text-[#e3a638] font-semibold">{dbCapacity}</strong></span>
           </div>
         </div>
       </section>
@@ -128,14 +169,14 @@ export default async function KhongGianPage({ params }) {
           <div className="lg:col-span-7">
             <h2 className="text-3xl font-playfair text-[#a66a3a] mb-6 font-semibold">Giới thiệu không gian</h2>
             <p className="text-gray-700 font-light text-base leading-relaxed mb-8">
-              {venue.description}
+              {dbDescription}
             </p>
 
             <h3 className="text-lg font-semibold text-gray-900 mb-4 uppercase tracking-wider text-xs text-[#a66a3a]">
               Trang thiết bị & Tiện ích nổi bật:
             </h3>
             <ul className="space-y-3">
-              {venue.features.map((feat, idx) => (
+              {staticData.features.map((feat, idx) => (
                 <li key={idx} className="flex items-start gap-3 text-sm text-gray-700 font-light">
                   <span className="material-symbols-outlined text-[#e3a638] text-lg mt-0.5">check_circle</span>
                   <span>{feat}</span>
@@ -162,19 +203,19 @@ export default async function KhongGianPage({ params }) {
         </div>
       </section>
 
-      {/* Full 12 HD Photographer Photos Gallery */}
+      {/* Gallery showing Admin-ordered images */}
       <section className="max-w-7xl mx-auto px-6 py-16 border-t border-[#e3a638]/20">
         <div className="text-center mb-12">
           <span className="px-3 py-1 bg-[#e3a638]/10 text-[#a66a3a] text-[11px] font-semibold uppercase tracking-widest rounded-full">
-            Bộ sưu tập nhiếp ảnh chất lượng cao
+            Bộ sưu tập nhiếp ảnh chất lượng cao ({gallery.length} ảnh)
           </span>
-          <h2 className="text-3xl sm:text-4xl font-playfair text-gray-900 mt-3 mb-2">Thư Viện Ảnh Thực Tế {venue.name}</h2>
-          <p className="text-gray-500 text-xs font-light">Hình ảnh thực tế nhiếp ảnh gia chụp trực tiếp không gian {venue.name}</p>
+          <h2 className="text-3xl sm:text-4xl font-playfair text-gray-900 mt-3 mb-2">Thư Viện Ảnh Thực Tế {staticData.name}</h2>
+          <p className="text-gray-500 text-xs font-light">Hình ảnh thực tế sắp xếp theo trang quản trị Admin</p>
           <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-4" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {venue.gallery.map((imgUrl, gIdx) => (
+          {gallery.map((imgUrl, gIdx) => (
             <div key={gIdx} className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-[#e3a638]/20 cursor-pointer">
               <div 
                 className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
@@ -182,7 +223,7 @@ export default async function KhongGianPage({ params }) {
               />
               <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                 <span className="text-white text-xs font-medium bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm">
-                  Hình ảnh thực tế #{gIdx + 1}
+                  Vị trí #{gIdx + 1}
                 </span>
               </div>
             </div>

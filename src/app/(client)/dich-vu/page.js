@@ -1,33 +1,63 @@
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
 
-export default function DichVuPage() {
+export default async function DichVuPage() {
+  const serviceVenueMap = {
+    'tiec-cuoi': { search: 'Tầng 3', defaultImg: '/images/hd-venues/tang-3-hd-1.jpg' },
+    'to-chuc-su-kien': { search: 'Tầng 2', defaultImg: '/images/hd-venues/tang-2-hd-1.jpg' },
+    'sinh-nhat-ky-niem': { search: 'Bar', defaultImg: '/images/hd-venues/quay-bar-hd-7.jpg' },
+    'phong-an-rieng': { search: 'VIP', defaultImg: '/images/hd-venues/phong-vip-hd-1.jpg' }
+  };
+
+  let venues = [];
+  try {
+    venues = await prisma.venue.findMany();
+  } catch (err) {
+    console.error('Error loading venues for dich-vu listing:', err);
+  }
+
+  const getServiceImage = (slug, fallback) => {
+    const config = serviceVenueMap[slug];
+    if (!config) return fallback;
+    const v = venues.find(item => item.name.toLowerCase().includes(config.search.toLowerCase()));
+    if (v && v.images) {
+      try {
+        const parsed = JSON.parse(v.images);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed[0]) {
+          return parsed[0];
+        }
+      } catch (e) {}
+    }
+    return config.defaultImg;
+  };
+
   const services = [
     {
       title: 'Tiệc Cưới',
       subTitle: 'Nơi Khởi Đầu Hạnh Phúc Trọn Vẹn',
       desc: 'Không gian lãng mạn, hệ thống âm thanh ánh sáng hiện đại, lưu giữ khoảnh khắc thiêng liêng.',
-      image: '/images/hd-venues/tang-3-hd-1.jpg',
+      image: getServiceImage('tiec-cuoi', '/images/hd-venues/tang-3-hd-1.jpg'),
       link: '/dich-vu/tiec-cuoi'
     },
     {
       title: 'Tổ Chức Sự Kiện',
       subTitle: 'Nâng Tầm Đẳng Cấp & Vị Thế Thương Hiệu',
       desc: 'Trang thiết bị màn hình LED 30m² tiêu chuẩn, hội trường quy mô lớn, nâng tầm đẳng cấp doanh nghiệp.',
-      image: '/images/hd-venues/tang-2-hd-1.jpg',
+      image: getServiceImage('to-chuc-su-kien', '/images/hd-venues/tang-2-hd-1.jpg'),
       link: '/dich-vu/to-chuc-su-kien'
     },
     {
       title: 'Tiệc Sinh Nhật & Kỷ Niệm',
       subTitle: 'Trọn Vẹn Niềm Vui & Khoảnh Khắc Ấm Cúng',
       desc: 'Không gian ấm cúng tại Quầy Bar Tầng 1 hoặc Phòng VIP, decor theo chủ đề trọn vẹn niềm vui.',
-      image: '/images/hd-venues/quay-bar-hd-1.jpg',
+      image: getServiceImage('sinh-nhat-ky-niem', '/images/hd-venues/quay-bar-hd-7.jpg'),
       link: '/dich-vu/sinh-nhat-ky-niem'
     },
     {
       title: 'Phòng Ăn Riêng',
       subTitle: 'Không Gian Sang Trọng & Riêng Tư Tuyệt Đối',
       desc: 'Không gian phòng VIP riêng tư đẳng cấp, thực đơn tinh hoa dành cho đối tác & gia đình.',
-      image: '/images/hd-venues/phong-vip-hd-1.jpg',
+      image: getServiceImage('phong-an-rieng', '/images/hd-venues/phong-vip-hd-1.jpg'),
       link: '/dich-vu/phong-an-rieng'
     }
   ];
