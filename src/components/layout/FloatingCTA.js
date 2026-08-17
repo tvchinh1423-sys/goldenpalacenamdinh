@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AIChatModal from './AIChatModal';
 import BookingConsultationModal from './BookingConsultationModal';
+import { FeedbackModal } from './FeedbackWidget';
 
 export default function FloatingCTA() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   
   // State for Mobile / Desktop collapse toggle
   const [isExpanded, setIsExpanded] = useState(false);
@@ -33,7 +35,7 @@ export default function FloatingCTA() {
       {/* Floating Action Container with Auto-Collapse on Idle */}
       <aside 
         aria-label="Kênh hỗ trợ & Liên hệ cao cấp" 
-        className="fixed right-4 bottom-[88px] sm:bottom-6 z-50 flex flex-col items-end gap-3 font-montserrat"
+        className="fixed right-4 bottom-6 z-50 flex flex-col items-end gap-3 font-montserrat"
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
       >
@@ -74,7 +76,19 @@ export default function FloatingCTA() {
             </span>
           </button>
 
-          {/* 3. Dự toán chi phí */}
+          {/* 3. NÚT GÓP Ý & BÁO LỖI WEBSITE */}
+          <button
+            onClick={() => setIsFeedbackModalOpen(true)}
+            className="group/item relative flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-lg hover:scale-110 transition-all duration-300 border border-amber-300/40 cursor-pointer"
+            title="Góp ý chất lượng & Báo lỗi website"
+          >
+            <span className="material-symbols-outlined text-xl drop-shadow-sm">rate_review</span>
+            <span className="absolute right-14 bg-black/95 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-all duration-200 pointer-events-none shadow-xl border border-[#e3a638]/40 backdrop-blur-md font-medium">
+              ✍️ Góp ý dịch vụ & <strong className="text-[#e3a638]">Báo lỗi Web</strong>
+            </span>
+          </button>
+
+          {/* 4. Dự toán chi phí */}
           <Link 
             href="/du-toan-chi-phi" 
             className="group/item relative flex items-center justify-center w-11 h-11 rounded-full bg-[#1c1917] text-[#e3a638] shadow-lg hover:scale-108 transition-all duration-300 border border-[#e3a638]/40"
@@ -86,7 +100,7 @@ export default function FloatingCTA() {
             </span>
           </Link>
 
-          {/* 4. Hotline Trực tiếp */}
+          {/* 5. Hotline Trực tiếp */}
           <a 
             href="tel:02286595959" 
             className="group/item relative flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-amber-950 to-gray-900 text-[#e3a638] shadow-lg hover:scale-108 transition-all duration-300 border border-[#e3a638]/40"
@@ -98,7 +112,7 @@ export default function FloatingCTA() {
             </span>
           </a>
 
-          {/* 5. Facebook Messenger */}
+          {/* 6. Facebook Messenger */}
           <a 
             href="https://m.me/goldenpalaceweddingnamdinh" 
             target="_blank" 
@@ -114,7 +128,7 @@ export default function FloatingCTA() {
             </span>
           </a>
 
-          {/* 6. Chỉ đường Maps */}
+          {/* 7. Chỉ đường Maps */}
           <a 
             href="https://www.google.com/maps/search/?api=1&query=98+Đông+A,+KĐT+Hòa+Vượng,+Nam+Định" 
             target="_blank" 
@@ -128,7 +142,7 @@ export default function FloatingCTA() {
             </span>
           </a>
 
-          {/* 7. Nút cuộn lên đầu trang */}
+          {/* 8. Nút cuộn lên đầu trang */}
           {showBackToTop && (
             <button
               onClick={scrollToTop}
@@ -141,7 +155,7 @@ export default function FloatingCTA() {
 
         </div>
 
-        {/* COMPACT MAIN TRIGGER BUTTON (Visible when collapsed, toggles on click / hover) */}
+        {/* COMPACT MAIN TRIGGER BUTTON */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className={`group/main relative flex items-center gap-2 px-3.5 py-2.5 rounded-full shadow-2xl border transition-all duration-300 cursor-pointer ${
@@ -180,6 +194,12 @@ export default function FloatingCTA() {
       <BookingConsultationModal
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
+      />
+
+      {/* Feedback & Bug Report Modal */}
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
       />
     </>
   );
