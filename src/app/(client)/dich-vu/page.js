@@ -6,28 +6,28 @@ export default function DichVuPage() {
       title: 'Tiệc Cưới',
       subTitle: 'Nơi Khởi Đầu Hạnh Phúc Trọn Vẹn',
       desc: 'Không gian lãng mạn, hệ thống âm thanh ánh sáng hiện đại, lưu giữ khoảnh khắc thiêng liêng.',
-      image: '/images/venues/tang-2-4.jpg',
+      image: '/images/hd-venues/tang-3-hd-1.jpg',
       link: '/dich-vu/tiec-cuoi'
     },
     {
       title: 'Tổ Chức Sự Kiện',
       subTitle: 'Nâng Tầm Đẳng Cấp & Vị Thế Thương Hiệu',
       desc: 'Trang thiết bị màn hình LED 30m² tiêu chuẩn, hội trường quy mô lớn, nâng tầm đẳng cấp doanh nghiệp.',
-      image: '/images/venues/tang-3-2.jpg',
+      image: '/images/hd-venues/tang-2-hd-1.jpg',
       link: '/dich-vu/to-chuc-su-kien'
     },
     {
       title: 'Tiệc Sinh Nhật & Kỷ Niệm',
       subTitle: 'Trọn Vẹn Niềm Vui & Khoảnh Khắc Ấm Cúng',
       desc: 'Không gian ấm cúng tại Quầy Bar Tầng 1 hoặc Phòng VIP, decor theo chủ đề trọn vẹn niềm vui.',
-      image: '/images/venues/quay-bar-2.jpg',
+      image: '/images/hd-venues/quay-bar-hd-1.jpg',
       link: '/dich-vu/sinh-nhat-ky-niem'
     },
     {
       title: 'Phòng Ăn Riêng',
       subTitle: 'Không Gian Sang Trọng & Riêng Tư Tuyệt Đối',
       desc: 'Không gian phòng VIP riêng tư đẳng cấp, thực đơn tinh hoa dành cho đối tác & gia đình.',
-      image: '/images/venues/phong-vip-2.jpg',
+      image: '/images/hd-venues/phong-vip-hd-1.jpg',
       link: '/dich-vu/phong-an-rieng'
     }
   ];

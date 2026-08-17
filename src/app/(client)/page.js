@@ -9,7 +9,7 @@ export default function Home() {
         {/* Background Image / Gradient */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/50 to-[#fcf9f2] z-10"></div>
-          <div className="w-full h-full bg-[url('/images/hd-venues/tang-2-hd-1.jpg')] bg-cover bg-center" />
+          <div className="w-full h-full bg-[url('/images/hero-banner.jpg')] bg-cover bg-center" />
         </div>
         
         {/* Hero Content */}
@@ -58,25 +58,25 @@ export default function Home() {
             <div className="w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-[#e3a638]/10 group-hover:bg-[#e3a638]/20 transition-colors">
               <span className="material-symbols-outlined text-4xl text-[#a66a3a]">diamond</span>
             </div>
-            <h4 className="text-2xl font-playfair text-[#a66a3a] mb-4">Sự Chỉn Chu & Thể Diện</h4>
+            <h4 className="text-2xl font-playfair text-[#a66a3a] mb-4">Đẳng Cấp Không Gian</h4>
             <p className="text-gray-600 font-montserrat text-sm font-light leading-relaxed">
-              Thể diện của khách hàng là danh dự của Golden Palace. Chúng tôi luôn duy trì tiêu chuẩn ẩm thực truyền thống cao cấp.
+              Hệ thống hội trường trần cao 7m hoàn toàn không cột chắn, trang bị công nghệ màn hình LED sắc nét & âm thanh biểu diễn tiêu chuẩn.
             </p>
           </div>
           <div className="text-center group">
             <div className="w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-[#e3a638]/10 group-hover:bg-[#e3a638]/20 transition-colors">
-              <span className="material-symbols-outlined text-4xl text-[#a66a3a]">handshake</span>
+              <span className="material-symbols-outlined text-4xl text-[#a66a3a]">restaurant</span>
             </div>
-            <h4 className="text-2xl font-playfair text-[#a66a3a] mb-4">Minh Bạch Giá Trị Thực</h4>
+            <h4 className="text-2xl font-playfair text-[#a66a3a] mb-4">Ẩm Thực Tinh Hoa</h4>
             <p className="text-gray-600 font-montserrat text-sm font-light leading-relaxed">
-              Tuyệt đối nói không với chiêu trò ép sale, chi phí ẩn. Tư vấn chân thành, đóng gói Combo rõ ràng phù hợp mức thu nhập địa phương.
+              18 Set Menu đa dạng được chế biến chỉn chu từ nguồn nguyên liệu tươi ngon, kết hợp nét ẩm thực truyền thống và hiện đại.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Services Overview Section (4 Cards with Crisp HD Photos) */}
-      <section className="py-24 px-6 max-w-7xl mx-auto relative z-10">
+      {/* Services Overview Section */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h3 className="text-[#a66a3a] font-montserrat uppercase tracking-[0.2em] text-sm mb-2 font-semibold">Dịch vụ</h3>
           <h2 className="text-4xl md:text-5xl font-playfair text-gray-900">Dấu ấn đẳng cấp</h2>
@@ -88,13 +88,13 @@ export default function Home() {
             {
               title: 'Tiệc Cưới',
               desc: 'Không gian lãng mạn, hệ thống âm thanh ánh sáng hiện đại, lưu giữ khoảnh khắc thiêng liêng.',
-              image: '/images/hd-venues/tang-2-hd-1.jpg',
+              image: '/images/hd-venues/tang-3-hd-1.jpg',
               link: '/dich-vu/tiec-cuoi'
             },
             {
               title: 'Tổ Chức Sự Kiện',
               desc: 'Trang thiết bị màn hình LED 30m² tiêu chuẩn, hội trường quy mô lớn, nâng tầm đẳng cấp doanh nghiệp.',
-              image: '/images/hd-venues/tang-3-hd-1.jpg',
+              image: '/images/hd-venues/tang-2-hd-1.jpg',
               link: '/dich-vu/to-chuc-su-kien'
             },
             {

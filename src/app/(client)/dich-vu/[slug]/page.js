@@ -13,16 +13,16 @@ const SERVICES_DATA = {
       'Thực đơn mâm cỗ 10 món truyền thống kết hợp hiện đại chỉn chu',
       'Đội ngũ phục vụ chuyên nghiệp, tận tâm đồng hành suốt buổi lễ'
     ],
-    heroImage: '/images/hd-venues/tang-2-hd-1.jpg',
+    heroImage: '/images/hd-venues/tang-3-hd-1.jpg',
     gallery: [
-      '/images/hd-venues/tang-2-hd-1.jpg',
-      '/images/hd-venues/tang-2-hd-2.jpg',
-      '/images/hd-venues/tang-2-hd-3.jpg',
-      '/images/hd-venues/tang-2-hd-4.jpg',
       '/images/hd-venues/tang-3-hd-1.jpg',
       '/images/hd-venues/tang-3-hd-2.jpg',
       '/images/hd-venues/tang-3-hd-3.jpg',
-      '/images/hd-venues/tang-3-hd-4.jpg'
+      '/images/hd-venues/tang-3-hd-4.jpg',
+      '/images/hd-venues/tang-3-hd-5.jpg',
+      '/images/hd-venues/tang-3-hd-6.jpg',
+      '/images/hd-venues/tang-3-hd-7.jpg',
+      '/images/hd-venues/tang-3-hd-8.jpg'
     ]
   },
   'to-chuc-su-kien': {
@@ -36,16 +36,16 @@ const SERVICES_DATA = {
       'Thực đơn tiệc đứng (Buffet/Finger Food) hoặc tiệc bàn linh hoạt',
       'Hỗ trợ trọn gói âm thanh, ánh sáng, MC và kỹ thuật viên vận hành'
     ],
-    heroImage: '/images/hd-venues/tang-3-hd-1.jpg',
+    heroImage: '/images/hd-venues/tang-2-hd-1.jpg',
     gallery: [
-      '/images/hd-venues/tang-3-hd-5.jpg',
-      '/images/hd-venues/tang-3-hd-6.jpg',
-      '/images/hd-venues/tang-3-hd-7.jpg',
-      '/images/hd-venues/tang-3-hd-8.jpg',
-      '/images/hd-venues/tang-4-hd-7.jpg',
-      '/images/hd-venues/tang-4-hd-8.jpg',
-      '/images/hd-venues/tang-4-hd-9.jpg',
-      '/images/hd-venues/tang-4-hd-10.jpg'
+      '/images/hd-venues/tang-2-hd-1.jpg',
+      '/images/hd-venues/tang-2-hd-2.jpg',
+      '/images/hd-venues/tang-2-hd-3.jpg',
+      '/images/hd-venues/tang-2-hd-4.jpg',
+      '/images/hd-venues/tang-2-hd-5.jpg',
+      '/images/hd-venues/tang-2-hd-6.jpg',
+      '/images/hd-venues/tang-2-hd-7.jpg',
+      '/images/hd-venues/tang-2-hd-8.jpg'
     ]
   },
   'sinh-nhat-ky-niem': {
