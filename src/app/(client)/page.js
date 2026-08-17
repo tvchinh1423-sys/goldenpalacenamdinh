@@ -88,6 +88,79 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Personalization Highlight Section (Cá Nhân Hóa Tiệc Cưới) */}
+      <section className="py-20 px-6 bg-gradient-to-b from-[#1c1917] to-[#2a2419] text-white relative overflow-hidden border-y border-[#e3a638]/30">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <span className="text-[#e3a638] uppercase tracking-[0.3em] text-xs font-bold block mb-2 font-montserrat">
+              Đặc quyền riêng cho dâu rể
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-playfair font-bold text-white mb-4">
+              Cá Nhân Hóa Tiệc Cưới Miễn Phí
+            </h2>
+            <p className="text-gray-300 font-light text-sm max-w-2xl mx-auto">
+              Chỉ có tại Golden Palace — Bộ công cụ công nghệ độc quyền hỗ trợ hai bạn tự tạo dấu ấn riêng cho ngày trọng đại
+            </p>
+            <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-6"></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* Feature 1: Thiệp Cưới Online */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-[#e3a638]/60 transition-all duration-300 group flex flex-col justify-between">
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#e3a638] to-[#a66a3a] text-white flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined text-3xl">mail</span>
+                </div>
+                <h3 className="text-2xl font-playfair font-bold text-white mb-3">Thiệp Cưới Online</h3>
+                <p className="text-gray-300 text-xs font-light leading-relaxed mb-6">
+                  Tự thiết kế thiệp cưới điện tử sang trọng với ảnh cưới HD, bản đồ chỉ đường & form xác nhận tham dự (RSVP) gửi trực tiếp tới bạn bè qua Zalo, Messenger.
+                </p>
+              </div>
+              <Link href="/ca-nhan-hoa" className="inline-flex items-center gap-2 text-[#e3a638] text-xs font-bold uppercase tracking-wider group-hover:underline">
+                <span>Tạo thiệp cưới miễn phí</span>
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </Link>
+            </div>
+
+            {/* Feature 2: Phông LED Sân Khấu */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-[#e3a638]/60 transition-all duration-300 group flex flex-col justify-between">
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#e3a638] to-[#a66a3a] text-white flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined text-3xl">desktop_windows</span>
+                </div>
+                <h3 className="text-2xl font-playfair font-bold text-white mb-3">Phông LED Sân Khấu</h3>
+                <p className="text-gray-300 text-xs font-light leading-relaxed mb-6">
+                  Tùy chỉnh phông nền LED sân khấu với tên chú rể - cô dâu, ngày cưới, chọn hiệu ứng hoàng gia và tải file 4K phát trực tiếp lên màn hình LED 30m².
+                </p>
+              </div>
+              <Link href="/ca-nhan-hoa?tab=led" className="inline-flex items-center gap-2 text-[#e3a638] text-xs font-bold uppercase tracking-wider group-hover:underline">
+                <span>Thiết kế phông LED</span>
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </Link>
+            </div>
+
+            {/* Feature 3: Kịch Bản Âm Nhạc */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-[#e3a638]/60 transition-all duration-300 group flex flex-col justify-between">
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#e3a638] to-[#a66a3a] text-white flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined text-3xl">library_music</span>
+                </div>
+                <h3 className="text-2xl font-playfair font-bold text-white mb-3">Kịch Bản Âm Nhạc</h3>
+                <p className="text-gray-300 text-xs font-light leading-relaxed mb-6">
+                  Tự làm đạo diễn âm nhạc cho tiệc cưới của mình. Lựa chọn danh sách bản nhạc yêu thích cho 4 thời điểm: Đón khách, Lễ cưới, Tiệc chính và Tiễn khách.
+                </p>
+              </div>
+              <Link href="/ca-nhan-hoa?tab=music" className="inline-flex items-center gap-2 text-[#e3a638] text-xs font-bold uppercase tracking-wider group-hover:underline">
+                <span>Chọn kịch bản nhạc</span>
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* Core Values Section */}
       <section className="py-24 px-6 max-w-7xl mx-auto relative z-10 border-b border-[#e3a638]/20">
         <div className="text-center mb-16">
