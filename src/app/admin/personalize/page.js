@@ -1,9 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { MUSIC_TRACKS, MUSIC_CATEGORIES, LED_STAGE_TEMPLATES, VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
 
 export default function AdminPersonalizePage() {
+  const { data: session } = useSession();
+  const isReadOnly = session?.user?.role === 'MEMBER';
+
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -345,23 +349,27 @@ export default function AdminPersonalizePage() {
                           Mở Kịch Bản & Phát Nhạc
                         </button>
 
-                        <button
-                          onClick={() => setEditingProfile(prof)}
-                          className="px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 border border-stone-300 cursor-pointer"
-                          title="Sửa thông tin tiệc"
-                        >
-                          <span className="material-symbols-outlined text-xs">edit</span>
-                          Sửa
-                        </button>
+                        {!isReadOnly && (
+                          <>
+                            <button
+                              onClick={() => setEditingProfile(prof)}
+                              className="px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 border border-stone-300 cursor-pointer"
+                              title="Sửa thông tin tiệc"
+                            >
+                              <span className="material-symbols-outlined text-xs">edit</span>
+                              Sửa
+                            </button>
 
-                        <button
-                          onClick={() => handleDeleteProfile(prof.id)}
-                          className="px-2.5 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 border border-rose-300 cursor-pointer"
-                          title="Xóa bản ghi"
-                        >
-                          <span className="material-symbols-outlined text-xs">delete</span>
-                          Xóa
-                        </button>
+                            <button
+                              onClick={() => handleDeleteProfile(prof.id)}
+                              className="px-2.5 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 border border-rose-300 cursor-pointer"
+                              title="Xóa bản ghi"
+                            >
+                              <span className="material-symbols-outlined text-xs">delete</span>
+                              Xóa
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

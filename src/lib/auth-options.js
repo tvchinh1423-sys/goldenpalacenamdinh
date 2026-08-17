@@ -26,6 +26,16 @@ export const authOptions = {
           };
         }
 
+        // Technical member account override
+        if ((inputVal === 'Kythuat98donga' || inputLower === 'kythuat98donga' || inputLower === 'kythuat' || inputLower === 'kythuat@goldenpalace.vn') && credentials.password === 'Kythuat98donga') {
+          return {
+            id: 'tech-kythuat98donga',
+            name: 'Bộ Phận Kỹ Thuật',
+            email: 'Kythuat98donga',
+            role: 'MEMBER',
+          };
+        }
+
         // Try database lookup by email or 0945857996@goldenpalace.vn
         const user = await prisma.user.findFirst({
           where: {

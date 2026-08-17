@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth-options';
 import fs from 'fs';
 import path from 'path';
 
@@ -137,6 +139,11 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
+    const session = await getServerSession(authOptions);
+    if (session && session.user.role === 'MEMBER') {
+      return NextResponse.json({ success: false, message: 'Tài khoản Kỹ Thuật không có quyền sửa bản ghi!' }, { status: 403 });
+    }
+
     const body = await req.json();
     const { id, ...updates } = body;
 
@@ -167,6 +174,11 @@ export async function PUT(req) {
 
 export async function DELETE(req) {
   try {
+    const session = await getServerSession(authOptions);
+    if (session && session.user.role === 'MEMBER') {
+      return NextResponse.json({ success: false, message: 'Tài khoản Kỹ Thuật không có quyền xóa bản ghi!' }, { status: 403 });
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
