@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { MUSIC_TRACKS, MUSIC_CATEGORIES, LED_STAGE_TEMPLATES } from '@/lib/personalize-data';
 
 export default function AdminPersonalizePage() {
@@ -110,11 +109,11 @@ export default function AdminPersonalizePage() {
         <div>
           <div className="flex items-center gap-2 text-amber-400 text-xs uppercase tracking-widest font-bold mb-1">
             <span className="material-symbols-outlined text-sm">construction</span>
-            Bảng Điều Khiển Đội Kỹ Thuật Golden Palace
+            Bảng Điều Khiển Đội Kỹ Thuật Sân Khấu Golden Palace
           </div>
-          <h1 className="text-2xl font-playfair font-bold text-white">Quản Lý Cá Nhân Hóa & Trình Chiếu Sân Khấu</h1>
+          <h1 className="text-2xl font-playfair font-bold text-white">Quản Lý Phông Màn LED & Kịch Bản Âm Nhạc</h1>
           <p className="text-xs text-stone-400 mt-1">
-            Phát nhạc tiệc cưới chọn lọc, tải phông LED P3 Full HD và xuất kịch bản âm thanh.
+            Phát nhạc tiệc cưới chọn lọc, tải phông LED P3 Full HD và theo dõi yêu cầu kỹ thuật từng tiệc.
           </p>
         </div>
         <button
@@ -143,7 +142,7 @@ export default function AdminPersonalizePage() {
         {loading ? (
           <div className="p-12 text-center text-gray-500 text-sm">Đang tải dữ liệu hồ sơ cá nhân hóa...</div>
         ) : filteredProfiles.length === 0 ? (
-          <div className="p-12 text-center text-gray-500 text-sm">Chưa có hồ sơ cá nhân hóa nào được đăng ký.</div>
+          <div className="p-12 text-center text-gray-500 text-sm">Chưa có hồ sơ kỹ thuật nào được đăng ký.</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
@@ -153,7 +152,7 @@ export default function AdminPersonalizePage() {
                   <th className="p-4">Ngày Cưới & Giờ</th>
                   <th className="p-4">Địa Điểm Sảnh</th>
                   <th className="p-4">SĐT Liên Hệ</th>
-                  <th className="p-4">Phông LED & Nhạc</th>
+                  <th className="p-4">Yêu Cầu LED & Nhạc</th>
                   <th className="p-4 text-center">Thao Tác Kỹ Thuật</th>
                 </tr>
               </thead>
@@ -180,34 +179,26 @@ export default function AdminPersonalizePage() {
                     </td>
                     <td className="p-4">
                       <div className="flex flex-wrap gap-1">
-                        <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[10px] font-semibold">
-                          LED: {prof.ledTemplateId || 'Standard'}
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                          prof.ledStatus === 'Không có yêu cầu gì' ? 'bg-gray-100 text-gray-600' : 'bg-amber-100 text-amber-800'
+                        }`}>
+                          LED: {prof.ledStatus || 'Không có yêu cầu gì'}
                         </span>
-                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-semibold">
-                          Bài Hát Chọn Lọc
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                          prof.musicStatus === 'Không có yêu cầu gì' ? 'bg-gray-100 text-gray-600' : 'bg-emerald-100 text-emerald-800'
+                        }`}>
+                          Nhạc: {prof.musicStatus || 'Không có yêu cầu gì'}
                         </span>
                       </div>
                     </td>
                     <td className="p-4 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <button
-                          onClick={() => setSelectedProfile(prof)}
-                          className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-lg text-[11px] hover:brightness-110 transition-colors flex items-center gap-1 shadow-xs cursor-pointer"
-                        >
-                          <span className="material-symbols-outlined text-xs">play_circle</span>
-                          Mở Kịch Bản & Phát Nhạc
-                        </button>
-                        {prof.invitationSlug && (
-                          <Link
-                            href={`/thiep/${prof.invitationSlug}`}
-                            target="_blank"
-                            className="px-3 py-1.5 bg-stone-800 text-white font-medium rounded-lg text-[11px] hover:bg-stone-700 transition-colors flex items-center gap-1"
-                          >
-                            <span className="material-symbols-outlined text-xs">open_in_new</span>
-                            Thiệp
-                          </Link>
-                        )}
-                      </div>
+                      <button
+                        onClick={() => setSelectedProfile(prof)}
+                        className="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold rounded-lg text-[11px] hover:brightness-110 transition-colors flex items-center gap-1 shadow-xs cursor-pointer mx-auto"
+                      >
+                        <span className="material-symbols-outlined text-xs">tune</span>
+                        Mở Kịch Bản & Phát Nhạc
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -266,138 +257,174 @@ export default function AdminPersonalizePage() {
                 </div>
               </div>
 
-              {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU (LIVE PREVIEW, DOWNLOAD IMAGE & FULLSCREEN BUTTON) */}
+              {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2 text-amber-400 font-bold uppercase tracking-wider text-xs">
                     <span className="material-symbols-outlined text-base">live_tv</span>
                     Phông Màn LED Sân Khấu P3 Full HD
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleDownloadLedBackdrop}
-                      className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs hover:bg-emerald-500 transition-colors flex items-center gap-1 cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-sm">download</span>
-                      Tải File Ảnh Phông LED (1920x1080)
-                    </button>
-                    <button
-                      onClick={() => setFullscreenLed(true)}
-                      className="px-3 py-1.5 bg-amber-500 text-black font-bold rounded-lg text-xs hover:bg-amber-400 transition-colors flex items-center gap-1 cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-sm">fullscreen</span>
-                      Mở Trình Chiếu LED Fullscreen
-                    </button>
-                  </div>
+                  {selectedProfile.ledStatus !== 'Không có yêu cầu gì' && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleDownloadLedBackdrop}
+                        className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs hover:bg-emerald-500 transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-sm">download</span>
+                        Tải File Ảnh Phông LED (1920x1080)
+                      </button>
+                      <button
+                        onClick={() => setFullscreenLed(true)}
+                        className="px-3 py-1.5 bg-amber-500 text-black font-bold rounded-lg text-xs hover:bg-amber-400 transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-sm">fullscreen</span>
+                        Mở Trình Chiếu LED Fullscreen
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {/* Mini LED Canvas Visualizer */}
-                <div className="relative aspect-video w-full rounded-xl overflow-hidden border-2 border-amber-500/40 shadow-inner bg-black flex items-center justify-center">
-                  <div className={`w-full h-full bg-gradient-to-br ${currentLedTemplate.bgGradient} relative flex flex-col items-center justify-center p-4 text-center`}>
-                    
-                    {/* Logo Golden Palace Top-Left */}
-                    <div className="absolute top-2 left-3 flex items-center gap-1 z-20">
-                      <img src="/logo-icon.png" alt="Golden Palace" className="h-5 w-auto object-contain" />
-                      <span className="text-[8px] tracking-widest font-playfair uppercase text-amber-300 font-bold">
-                        GOLDEN PALACE
-                      </span>
-                    </div>
-
-                    {/* LED Inner Frame */}
-                    <div className={`w-[90%] h-[80%] rounded-lg flex flex-col items-center justify-center p-4 relative ${currentLedTemplate.frameStyle}`}>
-                      <div className="text-[8px] tracking-widest uppercase text-amber-200 font-semibold mb-1">
-                        LỄ THÀNH HÔN • WEDDING CEREMONY
+                {selectedProfile.ledStatus === 'Không có yêu cầu gì' ? (
+                  <div className="p-4 bg-stone-950 rounded-xl border border-stone-800 text-gray-400 italic">
+                    Gia chủ không có yêu cầu tùy chỉnh phông LED riêng (Sử dụng màn phông tiêu chuẩn của sảnh).
+                  </div>
+                ) : (
+                  /* Mini LED Canvas Visualizer */
+                  <div className="relative aspect-video w-full rounded-xl overflow-hidden border-2 border-amber-500/40 shadow-inner bg-black flex items-center justify-center">
+                    <div className={`w-full h-full bg-gradient-to-br ${currentLedTemplate.bgGradient} relative flex flex-col items-center justify-center p-4 text-center`}>
+                      <div className="absolute top-2 left-3 flex items-center gap-1 z-20">
+                        <img src="/logo-icon.png" alt="Golden Palace" className="h-5 w-auto object-contain" />
+                        <span className="text-[8px] tracking-widest font-playfair uppercase text-amber-300 font-bold">
+                          GOLDEN PALACE
+                        </span>
                       </div>
-                      <div className="font-playfair text-xl sm:text-2xl font-bold text-white tracking-wider my-1 drop-shadow-md">
-                        {selectedProfile.groomName} & {selectedProfile.brideName}
-                      </div>
-                      <div className="text-[9px] font-mono text-amber-300 mt-1">
-                        {selectedProfile.eventDate} • GOLDEN PALACE {selectedProfile.venueName}
+                      <div className={`w-[90%] h-[80%] rounded-lg flex flex-col items-center justify-center p-4 relative ${currentLedTemplate.frameStyle}`}>
+                        <div className="text-[8px] tracking-widest uppercase text-amber-200 font-semibold mb-1">
+                          LỄ THÀNH HÔN • WEDDING CEREMONY
+                        </div>
+                        <div className="font-playfair text-xl sm:text-2xl font-bold text-white tracking-wider my-1 drop-shadow-md">
+                          {selectedProfile.groomName} & {selectedProfile.brideName}
+                        </div>
+                        <div className="text-[9px] font-mono text-amber-300 mt-1">
+                          {selectedProfile.eventDate} • GOLDEN PALACE {selectedProfile.venueName}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
-              {/* SECTION 2: BẢNG PHÁT NHẠC CHỈ HIỆN CÁC BÀI ĐÃ CHỌN */}
+              {/* SECTION 2: BẢNG PHÁT NHẠC CHỈ HIỆN CÁC BÀI ĐÃ CHỌN HOẶC YOUTUBE LINK */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-amber-400 font-bold uppercase tracking-wider text-xs">
                     <span className="material-symbols-outlined text-base">volume_up</span>
-                    Danh Sách Bài Hát Đã Chọn Trực Tiếp
+                    Danh Sách Bài Hát & Link YouTube Theo Yêu Cầu
                   </div>
                   <span className="text-[10px] text-[#e3a638] font-mono font-bold">
-                    Chỉ hiển thị bài hát khách hàng đã chọn
+                    Kịch Bản Âm Thanh Chi Tiết
                   </span>
                 </div>
 
-                {/* Filter user selected track IDs strictly */}
-                {(() => {
-                  const userSelectedIds = Array.isArray(selectedProfile.selectedMusic) 
-                    ? selectedProfile.selectedMusic 
-                    : ['m1', 'm5', 'm10', 'm12'];
+                {selectedProfile.musicStatus === 'Không có yêu cầu gì' && (!selectedProfile.selectedMusic || selectedProfile.selectedMusic.length === 0) ? (
+                  <div className="p-4 bg-stone-950 rounded-xl border border-stone-800 text-gray-400 italic">
+                    Gia chủ không có yêu cầu chọn nhạc riêng (Đội kỹ thuật phát danh sách nhạc tiệc cưới tiêu chuẩn của nhà hàng).
+                  </div>
+                ) : (
+                  (() => {
+                    const userSelectedIds = Array.isArray(selectedProfile.selectedMusic) ? selectedProfile.selectedMusic : [];
+                    const ytLinks = selectedProfile.youtubeLinks || {};
 
-                  return (
-                    <div className="space-y-4">
-                      {MUSIC_CATEGORIES.map((cat) => {
-                        const selectedCatTracks = MUSIC_TRACKS.filter(t => t.catId === cat.id && userSelectedIds.includes(t.id));
-                        return (
-                          <div key={cat.id} className="p-4 bg-stone-950 border border-stone-800 rounded-xl space-y-3">
-                            <div className="flex items-center justify-between border-b border-stone-800 pb-2">
-                              <div className="font-bold text-amber-300 text-xs flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                                {cat.label}
-                              </div>
-                              <span className="text-[10px] text-emerald-400 font-mono font-semibold">
-                                {selectedCatTracks.length > 0 ? `${selectedCatTracks.length} bài hát chọn` : 'Chưa chọn bài riêng'}
-                              </span>
-                            </div>
+                    return (
+                      <div className="space-y-4">
+                        {MUSIC_CATEGORIES.map((cat) => {
+                          const selectedCatTracks = MUSIC_TRACKS.filter(t => t.catId === cat.id && userSelectedIds.includes(t.id));
+                          const ytUrl = ytLinks[cat.id];
 
-                            {/* Tracks List with HTML5 Audio Player */}
-                            <div className="space-y-2">
-                              {selectedCatTracks.length === 0 ? (
-                                <div className="text-[11px] text-gray-500 italic py-1">
-                                  Gia chủ sử dụng playlist mặc định của nhà hàng cho giai đoạn này.
+                          return (
+                            <div key={cat.id} className="p-4 bg-stone-950 border border-stone-800 rounded-xl space-y-3">
+                              <div className="flex items-center justify-between border-b border-stone-800 pb-2">
+                                <div className="font-bold text-amber-300 text-xs flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                                  {cat.label}
                                 </div>
-                              ) : (
-                                selectedCatTracks.map((track) => (
-                                  <div key={track.id} className="p-2.5 bg-stone-900 rounded-lg border border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                    <div>
-                                      <div className="font-bold text-white text-xs flex items-center gap-1.5">
-                                        <span className="material-symbols-outlined text-xs text-amber-400">music_note</span>
-                                        {track.title}
-                                      </div>
-                                      <div className="text-[10px] text-gray-400">{track.artist} ({track.duration})</div>
-                                    </div>
+                              </div>
 
-                                    {/* Interactive Audio Player Component */}
-                                    <div className="flex items-center gap-2 shrink-0">
-                                      <audio controls className="h-8 max-w-[200px] sm:max-w-[240px] opacity-90">
-                                        <source src={track.audioUrl} type="audio/mpeg" />
-                                        Trình duyệt không hỗ trợ phát audio
-                                      </audio>
-                                      <a
-                                        href={track.audioUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        download
-                                        className="px-2.5 py-1 bg-stone-800 hover:bg-stone-700 text-amber-300 rounded text-[10px] font-bold flex items-center gap-1"
-                                      >
-                                        <span className="material-symbols-outlined text-xs">download</span>
-                                        Tải MP3
-                                      </a>
-                                    </div>
+                              {/* YouTube Custom Link if provided */}
+                              {ytUrl && (
+                                <div className="p-2.5 bg-red-950/40 border border-red-500/40 rounded-lg text-xs text-red-300 flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-2 truncate">
+                                    <span className="material-symbols-outlined text-red-400 text-sm">smart_display</span>
+                                    <span className="font-bold">Link YouTube yêu cầu:</span>
+                                    <a href={ytUrl} target="_blank" rel="noopener noreferrer" className="underline truncate font-mono text-red-200">
+                                      {ytUrl}
+                                    </a>
                                   </div>
-                                ))
+                                  <a href={ytUrl} target="_blank" rel="noopener noreferrer" className="px-2.5 py-1 bg-red-600 text-white rounded font-bold text-[10px] shrink-0 hover:bg-red-500">
+                                    Mở YouTube
+                                  </a>
+                                </div>
                               )}
+
+                              {/* Audio Tracks List */}
+                              <div className="space-y-2">
+                                {selectedCatTracks.length === 0 && !ytUrl ? (
+                                  <div className="text-[11px] text-gray-500 italic py-1">
+                                    Gia chủ không có yêu cầu bài hát riêng cho giai đoạn này.
+                                  </div>
+                                ) : (
+                                  selectedCatTracks.map((track) => (
+                                    <div key={track.id} className="p-2.5 bg-stone-900 rounded-lg border border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                      <div>
+                                        <div className="font-bold text-white text-xs flex items-center gap-1.5">
+                                          <span className="material-symbols-outlined text-xs text-amber-400">music_note</span>
+                                          {track.title}
+                                        </div>
+                                        <div className="text-[10px] text-gray-400">{track.artist} ({track.duration})</div>
+                                      </div>
+
+                                      {/* Audio Player Component */}
+                                      <div className="flex items-center gap-2 shrink-0">
+                                        <audio controls className="h-8 max-w-[200px] sm:max-w-[240px] opacity-90">
+                                          <source src={track.audioUrl} type="audio/mpeg" />
+                                          Trình duyệt không hỗ trợ audio
+                                        </audio>
+                                        <a
+                                          href={track.audioUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          download
+                                          className="px-2.5 py-1 bg-stone-800 hover:bg-stone-700 text-amber-300 rounded text-[10px] font-bold flex items-center gap-1"
+                                        >
+                                          <span className="material-symbols-outlined text-xs">download</span>
+                                          MP3
+                                        </a>
+                                      </div>
+                                    </div>
+                                  ))
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })()}
+                          );
+                        })}
+                      </div>
+                    );
+                  })()
+                )}
               </div>
+
+              {/* SECTION 3: GÓP Ý & PHẢN HỒI RIÊNG */}
+              {selectedProfile.customNotes && selectedProfile.customNotes !== 'Không có ghi chú thêm' && (
+                <div className="p-4 bg-stone-900 border border-blue-500/30 rounded-2xl space-y-1">
+                  <div className="font-bold text-blue-400 text-xs uppercase flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-base">rate_review</span>
+                    Góp Ý & Phản Hồi Từ Gia Chủ
+                  </div>
+                  <p className="text-xs text-stone-200 leading-relaxed italic bg-stone-950 p-3 rounded-xl border border-stone-800">
+                    "{selectedProfile.customNotes}"
+                  </p>
+                </div>
+              )}
 
             </div>
 
@@ -427,7 +454,7 @@ export default function AdminPersonalizePage() {
         </div>
       )}
 
-      {/* FULLSCREEN STAGE LED SCREEN MODAL FOR STAGE PROJECTOR / DISPLAY COMPUTER */}
+      {/* FULLSCREEN STAGE LED SCREEN MODAL FOR STAGE PROJECTOR */}
       {fullscreenLed && selectedProfile && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-4">
           <div className="absolute top-6 right-6 z-50 flex items-center gap-3">
@@ -449,12 +476,6 @@ export default function AdminPersonalizePage() {
 
           {/* Fullscreen LED Canvas */}
           <div className={`w-full max-w-6xl aspect-video rounded-3xl border-4 border-amber-500/60 shadow-[0_0_80px_rgba(227,166,56,0.3)] bg-gradient-to-br ${currentLedTemplate.bgGradient} relative flex flex-col items-center justify-center p-8 text-center`}>
-            
-            {/* Spotlight Lighting FX */}
-            <div className="absolute top-0 left-1/4 w-48 h-96 bg-gradient-to-b from-white/20 to-transparent blur-3xl transform -rotate-12 pointer-events-none"></div>
-            <div className="absolute top-0 right-1/4 w-48 h-96 bg-gradient-to-b from-amber-300/20 to-transparent blur-3xl transform rotate-12 pointer-events-none"></div>
-
-            {/* Logo Top-Left */}
             <div className="absolute top-6 left-8 flex items-center gap-2 z-20">
               <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-12 w-auto object-contain drop-shadow-[0_0_15px_rgba(227,166,56,0.8)]" />
               <span className="text-xs sm:text-sm font-playfair tracking-[0.3em] uppercase text-amber-300 font-bold">
@@ -462,7 +483,6 @@ export default function AdminPersonalizePage() {
               </span>
             </div>
 
-            {/* Inner Frame */}
             <div className={`w-[92%] h-[85%] rounded-2xl flex flex-col items-center justify-center p-8 relative backdrop-blur-xs ${currentLedTemplate.frameStyle}`}>
               <div className="text-xs sm:text-sm tracking-[0.4em] uppercase text-amber-200 font-semibold mb-2 drop-shadow-md">
                 LỄ THÀNH HÔN • WEDDING CEREMONY
@@ -474,7 +494,6 @@ export default function AdminPersonalizePage() {
                 {selectedProfile.eventDate} • GOLDEN PALACE NAM ĐỊNH ({selectedProfile.venueName})
               </div>
             </div>
-
           </div>
         </div>
       )}

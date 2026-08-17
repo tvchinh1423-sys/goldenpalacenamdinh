@@ -20,7 +20,7 @@ function PersonalizePageContent() {
     }
   }, [tabParam]);
   
-  // Shared global state across all 3 personalization tools
+  // Shared global state across all personalization tools
   const [partyTitle, setPartyTitle] = useState('Tiệc cưới Anh Thư & Văn Mạnh');
   const [groomName, setGroomName] = useState('Văn Mạnh');
   const [brideName, setBrideName] = useState('Anh Thư');
@@ -29,8 +29,13 @@ function PersonalizePageContent() {
   const [eventTime, setEventTime] = useState('Buổi Trưa (11:00 AM)');
   const [selectedFloor, setSelectedFloor] = useState('FLOOR_3');
 
+  // Tracking section modifications
+  const [ledModified, setLedModified] = useState(false);
+  const [musicModified, setMusicModified] = useState(false);
+
   // Music selector state
-  const [selectedTracks, setSelectedTracks] = useState(['m1', 'm5', 'm10', 'm12']);
+  const [selectedTracks, setSelectedTracks] = useState(['w1', 'e1', 't1', 'd1']);
+  const [youtubeLinks, setYoutubeLinks] = useState({ welcome: '', entrance: '', toast: '', dining: '' });
   const [customNotes, setCustomNotes] = useState('');
 
   // Saving state & Notification
@@ -42,7 +47,6 @@ function PersonalizePageContent() {
     setPartyTitle(val);
     if (!val) return;
 
-    // Check for patterns like "Tiệc cưới [Cô Dâu] & [Chú Rể]" or "[Cô Dâu] và [Chú Rể]"
     const cleanStr = val.replace(/tiệc\s*cưới|đám\s*cưới|lễ\s*thành\s*hôn/gi, '').trim();
     if (cleanStr.includes('&')) {
       const parts = cleanStr.split('&');
@@ -66,7 +70,11 @@ function PersonalizePageContent() {
         eventDate,
         eventTime,
         floorId: selectedFloor,
+        ledStatus: ledModified ? 'Đã tùy chỉnh phông LED' : 'Không có yêu cầu gì',
+        musicStatus: (selectedTracks.length > 0 || Object.values(youtubeLinks).some(Boolean)) ? 'Đã chọn danh sách nhạc' : 'Không có yêu cầu gì',
         selectedMusic: selectedTracks,
+        youtubeLinks,
+        customNotes: customNotes || 'Không có ghi chú thêm',
         invitationSlug: `thiep-${(groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-${(brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-2026`
       };
 
@@ -121,7 +129,7 @@ function PersonalizePageContent() {
             Nhập thông tin tiệc một lần duy nhất – hệ thống tự động đồng bộ Phông Màn LED Sân Khấu, Kịch Bản Nhạc Tiệc và Thiệp Cưới Điện Tử.
           </p>
 
-          {/* Unified Global Registration Form (Đồng bộ cả 3 phần) */}
+          {/* Unified Global Registration Form (DUY NHẤT 1 FORM DÙNG CHUNG) */}
           <div className="w-full max-w-3xl mt-10 bg-[#161616] border border-[#e3a638]/30 rounded-3xl p-6 sm:p-8 text-left shadow-2xl backdrop-blur-md">
             <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-6">
               <div className="flex items-center gap-2 text-[#e3a638]">
@@ -305,16 +313,24 @@ function PersonalizePageContent() {
             setBrideName={setBrideName}
             eventDate={eventDate}
             setEventDate={setEventDate}
-            onSave={handleSaveProfile}
+            onSave={() => {
+              setLedModified(true);
+              handleSaveProfile();
+            }}
           />
         )}
 
         {activeTab === 'music' && (
           <MusicSelector
             selectedTracks={selectedTracks}
-            setSelectedTracks={setSelectedTracks}
+            setSelectedTracks={(tracks) => {
+              setSelectedTracks(tracks);
+              setMusicModified(true);
+            }}
             customNotes={customNotes}
             setCustomNotes={setCustomNotes}
+            youtubeLinks={youtubeLinks}
+            setYoutubeLinks={setYoutubeLinks}
           />
         )}
 

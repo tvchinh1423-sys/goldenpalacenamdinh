@@ -22,13 +22,15 @@ function readProfiles() {
       brideName: 'Anh Thư',
       phone: '0912345678',
       eventDate: '2026-11-20',
-      eventTime: '11:00 AM',
+      eventTime: 'Buổi Trưa (11:00 AM)',
       floorId: 'FLOOR_3',
       venueName: 'Tầng 3',
+      ledStatus: 'Đã chọn mẫu Hoàng Gia Ép Kim',
       ledTemplateId: 'led-golden-royal',
-      ledTemplateName: 'Hoàng Gia Sang Trọng',
-      musicTracks: ['Until I Found You', 'Beautiful In White', 'Sugar', 'Cưới Nhau Đi'],
-      invitationSlug: 'thiep-van-manh-anh-thu-2026',
+      musicStatus: 'Đã chọn 4 bài hát yêu thích',
+      selectedMusic: ['w1', 'e1', 't1', 'd1'],
+      youtubeLinks: { welcome: '', entrance: '', toast: '', dining: '' },
+      customNotes: 'Mở bài "Beautiful in White" khi Chú Rể dắt Cô Dâu vào sảnh sân khấu.',
       createdAt: new Date().toISOString()
     }
   ];
@@ -63,9 +65,12 @@ export async function POST(req) {
       eventDate,
       eventTime,
       floorId,
+      ledStatus,
+      musicStatus,
       ledTemplateId,
       selectedMusic,
-      invitationSlug
+      youtubeLinks,
+      customNotes
     } = body;
 
     if (!phone && !partyTitle) {
@@ -80,12 +85,15 @@ export async function POST(req) {
       brideName: brideName || 'Cô dâu',
       phone: phone || 'Chưa cung cấp',
       eventDate: eventDate || new Date().toISOString().split('T')[0],
-      eventTime: eventTime || '11:00 AM',
+      eventTime: eventTime || 'Buổi Trưa (11:00 AM)',
       floorId: floorId || 'FLOOR_3',
       venueName: floorId === 'FLOOR_1' ? 'Tầng 1' : floorId === 'FLOOR_2' ? 'Tầng 2' : floorId === 'FLOOR_4' ? 'Tầng 4' : 'Tầng 3',
+      ledStatus: ledStatus || 'Không có yêu cầu gì',
       ledTemplateId: ledTemplateId || 'led-golden-royal',
-      selectedMusic: selectedMusic || {},
-      invitationSlug: invitationSlug || '',
+      musicStatus: musicStatus || 'Không có yêu cầu gì',
+      selectedMusic: selectedMusic || [],
+      youtubeLinks: youtubeLinks || {},
+      customNotes: customNotes || 'Không có ghi chú thêm',
       createdAt: new Date().toISOString()
     };
 
