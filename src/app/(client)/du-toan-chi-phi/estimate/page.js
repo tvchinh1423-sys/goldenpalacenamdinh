@@ -4,22 +4,6 @@ import { useState, useEffect } from 'react';
 import { useEstimate } from '@/components/guest/EstimateContext';
 import { format } from 'date-fns';
 
-const ADDON_PRICING_MAP = {
-  'addon-mc': { name: 'MC Tiệc Cưới Chuyên Nghiệp', price: 1500000 },
-  'addon-liveband': { name: 'Nhóm Nhạc Liveband / Acoustic', price: 3500000 },
-  'addon-[#photobooth]': { name: 'PhotoBooth Chụp Ảnh Lấy Liền', price: 3000000 },
-  'addon-freshflower': { name: 'Cổng Hoa Tươi Thiết Kế', price: 4000000 },
-  'addon-car': { name: 'Xe Rước Dâu Hoàng Gia Luxury', price: 2500000 },
-  'addon-media': { name: 'Quay Phim & Chụp Hình Cưới HD', price: 4500000 },
-};
-
-const BEVERAGE_PRICING_MAP = {
-  'bev-hanoi': { name: 'Bia Hà Nội', price: 290000 },
-  'bev-heineken': { name: 'Bia Heineken', price: 450000 },
-  'bev-soft': { name: 'Nước ngọt Coca/Pepsi', price: 220000 },
-  'bev-water': { name: 'Nước suối chai', price: 120000 },
-};
-
 function calculateVenueFee(venueName, guestCount) {
   const name = venueName || '';
   const count = Number(guestCount) || 100;
@@ -37,11 +21,28 @@ function calculateVenueFee(venueName, guestCount) {
   return 2000000;
 }
 
+function parseAddonPrice(addon, guestCount) {
+  const raw = addon.description || '';
+  if (addon.name.includes('Vòng ánh sáng laser')) {
+    if (Number(guestCount) >= 400) return { price: 0, text: '0 VNĐ (Tặng miễn phí tiệc > 400 khách)' };
+    return { price: 700000, text: '700.000 VNĐ' };
+  }
+  if (raw.includes('800.000')) return { price: 800000, text: '800.000 VNĐ' };
+  if (raw.includes('1.000.000')) return { price: 1000000, text: '1.000.000 VNĐ' };
+  if (raw.includes('900.000')) return { price: 900000, text: '900.000 VNĐ' };
+  if (raw.includes('3.000.000')) return { price: 3000000, text: '3.000.000 VNĐ' };
+  if (raw.includes('3.400.000')) return { price: 3400000, text: '3.400.000 VNĐ' };
+  if (raw.includes('4.000.000')) return { price: 4000000, text: '4.000.000 VNĐ' };
+  if (raw.includes('5.000.000')) return { price: 5000000, text: '5.000.000 VNĐ' };
+  if (raw.includes('14.000.000')) return { price: 14000000, text: '14.000.000 VNĐ' };
+  return { price: 0, text: 'Báo giá: Liên hệ' };
+}
+
 export default function Step5Estimate() {
   const { estimateData } = useEstimate();
   const { 
     guestCount, budgetPerTable, session, date, 
-    selectedVenues, selectedAddOns, selectedBeverages,
+    selectedVenues, selectedAddOns,
     groomName, brideName, phone: initialPhone 
   } = estimateData;
 
@@ -63,6 +64,7 @@ export default function Step5Estimate() {
       let venueName = 'Hội trường Tầng 3';
       let fee = 10000000;
 
+      // 1. Fetch Venue Info
       if (selectedVenues && selectedVenues.length > 0) {
         try {
           const res = await fetch(`/api/guest/venues?guests=${guestCount}`);
@@ -79,33 +81,32 @@ export default function Step5Estimate() {
 
       setVenueInfo({ name: venueName, fee });
 
+      // 2. Fetch Database Add-on Services to calculate exact prices
+      let dbAddons = [];
+      try {
+        const addonRes = await fetch('/api/guest/add-ons');
+        dbAddons = await addonRes.json();
+      } catch (e) {
+        console.error('Failed to fetch DB add-ons:', e);
+      }
+
       const tableCount = Math.ceil(guestCount / 10);
       const safeBudget = Math.max(budgetPerTable || 3200000, 3200000);
       const menuBase = tableCount * safeBudget;
 
-      // Itemize Add-ons with prices
+      // 3. Match selectedAddOns UUIDs to dbAddons and calculate prices
       let addonTotal = 0;
       const addonItems = (selectedAddOns || []).map(id => {
-        const item = ADDON_PRICING_MAP[id] || { name: 'Dịch vụ nâng cao', price: 0 };
-        addonTotal += item.price;
-        return item;
+        const matched = dbAddons.find(a => a.id === id);
+        if (matched) {
+          const pInfo = parseAddonPrice(matched, guestCount);
+          addonTotal += pInfo.price;
+          return { name: matched.name, price: pInfo.price, text: pInfo.text };
+        }
+        return { name: 'Dịch vụ nâng cao', price: 0, text: 'Báo giá: Liên hệ' };
       });
 
-      // Itemize Beverages
-      let bevTotal = 0;
-      const bevItems = [];
-      if (selectedBeverages) {
-        Object.entries(selectedBeverages).forEach(([bevId, qty]) => {
-          if (qty > 0 && BEVERAGE_PRICING_MAP[bevId]) {
-            const b = BEVERAGE_PRICING_MAP[bevId];
-            const itemCost = b.price * qty;
-            bevTotal += itemCost;
-            bevItems.push({ name: b.name, qty, itemCost });
-          }
-        });
-      }
-
-      const grandTotal = menuBase + fee + addonTotal + bevTotal;
+      const grandTotal = menuBase + fee + addonTotal;
 
       setPricingBreakdown({
         tableCount,
@@ -114,14 +115,12 @@ export default function Step5Estimate() {
         venueFee: fee,
         addonItems,
         addonTotal,
-        bevItems,
-        bevTotal,
         grandTotal
       });
     }
 
     calculateSummary();
-  }, [guestCount, budgetPerTable, selectedVenues, selectedAddOns, selectedBeverages]);
+  }, [guestCount, budgetPerTable, selectedVenues, selectedAddOns]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -134,7 +133,7 @@ export default function Step5Estimate() {
           name: contactName, phone, notes,
           guestCount, budgetPerTable: Math.max(budgetPerTable || 3200000, 3200000), 
           session, date,
-          selectedVenues, selectedAddOns, selectedBeverages
+          selectedVenues, selectedAddOns
         }),
       });
       const data = await res.json();
@@ -221,7 +220,7 @@ export default function Step5Estimate() {
                   <span className="text-[#a66a3a] font-bold text-base">{formatCurrency(venueInfo.fee)}</span>
                 </div>
 
-                {/* 3. BẢNG CHI TIẾT TỪNG DỊCH VỤ NÂNG CAO */}
+                {/* 3. BẢNG CHI TIẾT TỪNG DỊCH VỤ NÂNG CAO (DYNAMICALLY CALCULATED FROM DB) */}
                 <div className="py-2.5 border-b border-gray-100 space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-900 font-bold">3. Chi Tiết Dịch Vụ Nâng Cao / Bổ Sung ({pricingBreakdown?.addonItems?.length || 0} dịch vụ)</span>
@@ -229,14 +228,16 @@ export default function Step5Estimate() {
                   </div>
 
                   {pricingBreakdown?.addonItems?.length > 0 ? (
-                    <div className="bg-[#fcf9f2] p-3 rounded-xl border border-amber-200/80 space-y-2 text-xs">
+                    <div className="bg-[#fcf9f2] p-3.5 rounded-xl border border-amber-200/80 space-y-2 text-xs">
                       {pricingBreakdown.addonItems.map((item, idx) => (
                         <div key={idx} className="flex justify-between items-center text-gray-700">
                           <span className="flex items-center gap-1.5 font-medium">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#e3a638]"></span>
                             {item.name}
                           </span>
-                          <span className="font-bold text-gray-900">{formatCurrency(item.price)}</span>
+                          <span className="font-bold text-gray-900">
+                            {item.price > 0 ? formatCurrency(item.price) : item.text}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -245,26 +246,7 @@ export default function Step5Estimate() {
                   )}
                 </div>
 
-                {/* 4. Chi tiết đồ uống */}
-                {pricingBreakdown?.bevItems?.length > 0 && (
-                  <div className="py-2.5 border-b border-gray-100 space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-900 font-bold">4. Đồ Uống Tiệc Chọn Thêm</span>
-                      <span className="text-[#a66a3a] font-bold">{formatCurrency(pricingBreakdown?.bevTotal || 0)}</span>
-                    </div>
-
-                    <div className="bg-[#fcf9f2] p-3 rounded-xl border border-amber-200/80 space-y-1 text-xs">
-                      {pricingBreakdown.bevItems.map((b, idx) => (
-                        <div key={idx} className="flex justify-between items-center text-gray-700">
-                          <span>{b.name} ({b.qty} thùng)</span>
-                          <span className="font-bold text-gray-900">{formatCurrency(b.itemCost)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* 5. TỔNG CỘNG */}
+                {/* 4. TỔNG CỘNG */}
                 <div className="flex justify-between items-center pt-4 text-base sm:text-lg font-bold text-gray-900 border-t-2 border-[#e3a638]">
                   <span>Tổng Chi Phí Dự Toán Trọn Gói:</span>
                   <span className="text-2xl sm:text-3xl font-playfair font-bold text-[#a66a3a]">
@@ -274,15 +256,15 @@ export default function Step5Estimate() {
 
               </div>
 
-              {/* VAT & NOTE */}
+              {/* VAT & NOTE (UPDATE 3RD BULLET AS REQUESTED IN ANH 3) */}
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-amber-950 text-xs leading-relaxed flex items-start gap-3">
                 <span className="material-symbols-outlined text-amber-700 text-lg flex-shrink-0 mt-0.5">info</span>
                 <div>
                   <p className="font-bold text-amber-950 mb-1">Lưu ý về bản báo giá:</p>
                   <p className="font-light text-amber-900/90 leading-relaxed">
                     • Giá trên là tổng dự toán tạm tính dựa trên các thông số đã chọn.<br />
-                    • <strong>Báo giá chưa bao gồm thuế VAT (8%).</strong><br />
-                    • Chuyên viên Golden Palace sẽ gửi bản mềm đính kèm chính sách tặng kèm ưu đãi đặc quyền theo mùa tiệc cưới.
+                    • Báo giá chưa bao gồm thuế VAT (8%).<br />
+                    • <strong>Với số lượng khách khác nhau thì sẽ có mức ưu đãi khác nhau, quý khách vui lòng liên hệ để nhận báo giá chính xác nhất.</strong>
                   </p>
                 </div>
               </div>
@@ -290,14 +272,14 @@ export default function Step5Estimate() {
             </div>
           </div>
 
-          {/* FORM NHẬN BÁO GIÁ ZALO */}
+          {/* FORM NHẬN BÁO GIÁ ZALO & TẢI FILE PDF NGAY */}
           <div className="lg:col-span-5">
             <div className="bg-white border border-[#e3a638]/40 rounded-3xl p-6 sm:p-8 shadow-xl sticky top-28">
               {!submitted ? (
                 <>
                   <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1">Nhận Báo Giá Bản Mềm Qua Zalo</h3>
                   <p className="text-gray-500 text-xs font-light mb-6">
-                    Điền số điện thoại Zalo để nhận bản PDF báo giá chi tiết kèm ưu đãi riêng.
+                    Điền số điện thoại Zalo để nhận file PDF báo giá chi tiết ngay lập tức.
                   </p>
                   
                   <form onSubmit={handleSubmit} className="space-y-4">
@@ -340,22 +322,40 @@ export default function Step5Estimate() {
                       className="w-full py-4 mt-2 rounded-xl bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold uppercase text-xs tracking-wider shadow-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-base">{isLoading ? 'hourglass_empty' : 'send'}</span> 
-                      {isLoading ? 'Đang gửi...' : 'Gửi Báo Giá Qua Zalo Ngay'}
+                      {isLoading ? 'Đang tạo báo giá...' : 'Tạo File Báo Giá PDF Ngay'}
                     </button>
                   </form>
                 </>
               ) : (
-                <div className="text-center py-6">
-                  <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="text-center py-6 space-y-6">
+                  <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2 shadow-inner">
                     <span className="material-symbols-outlined text-4xl">check_circle</span>
                   </div>
-                  <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-2">Đã Gửi Thành Công!</h3>
-                  <p className="text-gray-600 text-xs font-light mb-6 leading-relaxed">
-                    Cảm ơn bạn! Chuyên viên Golden Palace sẽ liên hệ và gửi file báo giá chi tiết qua Zalo ngay.
-                  </p>
-                  <Link href="/" className="inline-block w-full py-3.5 bg-gray-900 text-amber-300 font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-black transition-colors">
-                    Trở về Trang chủ
-                  </Link>
+                  
+                  <div>
+                    <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1">Gửi Báo Giá Thành Công!</h3>
+                    <p className="text-gray-600 text-xs font-light leading-relaxed">
+                      Bản báo giá chính thức đã được khởi tạo. Bạn có thể xem trực tuyến và tải file PDF báo giá lưu về máy ngay bên dưới.
+                    </p>
+                  </div>
+
+                  {/* PROMINENT PDF DOWNLOAD BUTTON (REQUESTED BY USER) */}
+                  <div className="space-y-3 pt-2">
+                    <a 
+                      href={`/du-toan-chi-phi/link/${linkToken}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-4 px-6 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold text-xs uppercase tracking-wider rounded-2xl shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2 block"
+                    >
+                      <span className="material-symbols-outlined text-xl">picture_as_pdf</span>
+                      <span>Xem & Tải File Báo Giá PDF Ngay</span>
+                    </a>
+
+                    <Link href="/" className="inline-block w-full py-3 bg-gray-100 text-gray-700 font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-gray-200 transition-colors">
+                      Trở về Trang chủ
+                    </Link>
+                  </div>
+
                 </div>
               )}
             </div>

@@ -5,7 +5,7 @@ import { useEstimate } from '@/components/guest/EstimateContext';
 
 const MIN_BUDGET_PER_TABLE = 3200000; // Minimum limit 3.200.000 VNĐ / mâm
 
-// FULL 18 SET MENUS
+// FULL 18 SET MENUS MATCHING /thuc-don
 const SET_MENUS_18 = [
   {
     title: 'SET MENU TIỆC 1',
@@ -114,11 +114,229 @@ const SET_MENUS_18 = [
       { type: 'Cơm / Xôi', name: 'Xôi chim câu' },
       { type: 'Tráng miệng', name: 'Nho Mỹ' },
     ]
+  },
+  {
+    title: 'SET MENU TIỆC 7',
+    price: '4.150.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp lươn nấm thả' },
+      { type: 'Khai vị', name: 'Salad trứng cá hồi' },
+      { type: 'Món chính', name: 'Gà rút xương sốt sâm nấm' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.5kg)' },
+      { type: 'Món chính', name: 'Dê hấp lá hương' },
+      { type: 'Món chính', name: 'Tôm 5 hoa chiên trứng muối' },
+      { type: 'Món chính', name: 'Hải sâm tôm nõn xào xốt X.O' },
+      { type: 'Món củ', name: 'Củ quả luộc' },
+      { type: 'Món ăn phụ', name: 'Bánh bí chiên' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi Hoàng Phố' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 8',
+    price: '4.400.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp gà hải sâm' },
+      { type: 'Khai vị', name: 'Salad cá hồi chiên giòn' },
+      { type: 'Món chính', name: 'Gà hấp rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Cá lăng nướng dân tộc' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Dê chiên riềng' },
+      { type: 'Món chính', name: 'Cồi điệp sốt nấm bông cải' },
+      { type: 'Món củ', name: 'Rau xào theo mùa' },
+      { type: 'Canh', name: 'Canh mọc bò viên' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi cốm dẻo' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 9',
+    price: '4.450.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp gà hải sâm' },
+      { type: 'Khai vị', name: 'Salad rau mầm bắp bò' },
+      { type: 'Món chính', name: 'Cá chình rang muối' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.3kg)' },
+      { type: 'Món chính', name: 'Gà rút xương sốt sen nấm' },
+      { type: 'Món chính', name: 'Cồi điệp xốt nấm đông trùng' },
+      { type: 'Món chính', name: 'Dê hấp lá thơm' },
+      { type: 'Món củ', name: 'Rau củ luộc' },
+      { type: 'Món ăn phụ', name: 'Bánh bí chiên' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám' },
+      { type: 'Cơm / Xôi', name: 'Xôi Hoàng Phố ruốc bông' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 10',
+    price: '4.650.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp cua gỡ rong biển' },
+      { type: 'Khai vị', name: 'Salad rau mầm bò chiên cay' },
+      { type: 'Món chính', name: 'Cá chình chiên riềng' },
+      { type: 'Món chính', name: 'Gà hấp rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Dê ủ trấu' },
+      { type: 'Món chính', name: 'Hải sản xào cần Mỹ' },
+      { type: 'Món củ', name: 'Rau xào theo mùa' },
+      { type: 'Canh', name: 'Cá chình om chuối đậu' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi cá rô' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 11',
+    price: '4.750.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp cua gỡ rong biển' },
+      { type: 'Khai vị', name: 'Salad cá hồi chiên giòn' },
+      { type: 'Món chính', name: 'Cá song hấp kiểu Thái' },
+      { type: 'Món chính', name: 'Chả cua bọc giấy bạc' },
+      { type: 'Món chính', name: 'Gà rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Dê ủ trấu' },
+      { type: 'Món chính', name: 'Bò Nhật xào hạnh nhân' },
+      { type: 'Món củ', name: 'Rau xào theo mùa' },
+      { type: 'Canh', name: 'Canh mọc hải sản' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi Hoàng Phố ruốc bông' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 12',
+    price: '5.100.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp hải sản bạch ngọc' },
+      { type: 'Khai vị', name: 'Salad trứng cá hồi' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.5kg)' },
+      { type: 'Món chính', name: 'Gà rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Bò Fuji nướng xốt tiêu + Bánh mì' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên trứng muối' },
+      { type: 'Món chính', name: 'Hải sản xào xốt X.O' },
+      { type: 'Món củ', name: 'Rau củ luộc chấm kho quẹt' },
+      { type: 'Món ăn phụ', name: 'Nem hải sản' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi chim câu' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 13',
+    price: '5.150.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp lươn nấm thả' },
+      { type: 'Khai vị', name: 'Nộm cổ hũ dừa tôm thịt' },
+      { type: 'Món chính', name: 'Cá hồi sốt chanh leo' },
+      { type: 'Món chính', name: 'Gà rút xương xốt nấm' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Dê hấp lá é' },
+      { type: 'Món chính', name: 'Cồi điệp hải sâm sốt nấm đông trùng' },
+      { type: 'Món củ', name: 'Củ quả luộc' },
+      { type: 'Canh', name: 'Lươn om chuối đậu' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi cốm vò' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 14',
+    price: '5.400.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp dê bát bảo' },
+      { type: 'Khai vị', name: 'Salad bắp bò muối' },
+      { type: 'Món chính', name: 'Cá chình nướng dân tộc' },
+      { type: 'Món chính', name: 'Tôm sú 1 lạng bỏ lò phomai' },
+      { type: 'Món chính', name: 'Chả ốc hương lá lốt' },
+      { type: 'Món chính', name: 'Cồi điệp xốt nấm đông trùng' },
+      { type: 'Món chính', name: 'Gà rút xương sốt lá é' },
+      { type: 'Món củ', name: 'Rau củ luộc' },
+      { type: 'Canh', name: 'Canh lươn hoa chuối' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi vò hạt sen' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 15',
+    price: '5.400.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp cua gỡ ngó xuân' },
+      { type: 'Khai vị', name: 'Salad trứng cá hồi' },
+      { type: 'Món chính', name: 'Cá hồi áp chảo xốt xì dầu' },
+      { type: 'Món chính', name: 'Tôm 7 hoa chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Gà rút xương sốt sâm nấm' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.3kg)' },
+      { type: 'Món chính', name: 'Mực một nắng xào ngồng tỏi' },
+      { type: 'Món củ', name: 'Rau củ luộc' },
+      { type: 'Món ăn phụ', name: 'Nem hải sản' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám thơm' },
+      { type: 'Cơm / Xôi', name: 'Xôi Hoàng Phố' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 16',
+    price: '5.900.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp bò ngó xuân' },
+      { type: 'Khai vị', name: 'Salad trứng cá hồi' },
+      { type: 'Món chính', name: 'Cá hồi chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Ba ba om chuối đậu (1.3kg)' },
+      { type: 'Món chính', name: 'Tôm 1 lạng bỏ lò phomai' },
+      { type: 'Món chính', name: 'Bò Nhật xào măng tây' },
+      { type: 'Món chính', name: 'Gà rút xương sốt bát bảo' },
+      { type: 'Món củ', name: 'Rau củ luộc chấm kho quẹt' },
+      { type: 'Món ăn phụ', name: 'Bánh bí chiên' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám' },
+      { type: 'Cơm / Xôi', name: 'Xôi chả mực Hạ Long' },
+      { type: 'Tráng miệng', name: 'Nho Mỹ' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 17',
+    price: '6.600.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp gà sâm tươi' },
+      { type: 'Khai vị', name: 'Salad rau má trứng cá hồi' },
+      { type: 'Món chính', name: 'Nem cua bể chiên giòn' },
+      { type: 'Món chính', name: 'Cá hồi xốt chanh leo' },
+      { type: 'Món chính', name: 'Ba ba nướng lá lốt (1.5kg)' },
+      { type: 'Món chính', name: 'Tôm sú chiên bơ tỏi (Tôm 1 lạng)' },
+      { type: 'Món chính', name: 'Vịt trời hấp lá thơm (rút xương)' },
+      { type: 'Món chính', name: 'Bò Fuji nướng xốt tiêu' },
+      { type: 'Món củ', name: 'Ngó xuân xào tỏi' },
+      { type: 'Canh', name: 'Canh mọc hải sản' },
+      { type: 'Cơm / Xôi', name: 'Xôi chim câu' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
+  },
+  {
+    title: 'SET MENU TIỆC 18',
+    price: '6.900.000 VNĐ / MÂM 10 KHÁCH',
+    dishes: [
+      { type: 'Khai vị', name: 'Súp nấm bào ngư' },
+      { type: 'Khai vị', name: 'Salad lườn ngỗng xông khói' },
+      { type: 'Món chính', name: 'Nem cá chiên giòn' },
+      { type: 'Món chính', name: 'Bò Fuji nướng xốt tiêu + Bánh mì' },
+      { type: 'Món chính', name: 'Cá hồi áp chảo xốt xì dầu Nhật' },
+      { type: 'Món chính', name: 'Tôm 1 lạng chiên hạnh nhân' },
+      { type: 'Món chính', name: 'Chim câu quay' },
+      { type: 'Món chính', name: 'Cồi điệp sốt X.O' },
+      { type: 'Món củ', name: 'Rau củ luộc ngũ sắc' },
+      { type: 'Canh', name: 'Canh nấm hải sản' },
+      { type: 'Cơm / Xôi', name: 'Xôi sen dừa' },
+      { type: 'Cơm / Xôi', name: 'Cơm tám' },
+      { type: 'Tráng miệng', name: 'Bưởi da xanh' },
+    ]
   }
 ];
 
 const DRINK_PRICES = [
-  { stt: 1, name: 'Coca', unitPrice: '15.000/lon' },
+  { stt: 1, name: 'Coca / Pepsi', unitPrice: '15.000/lon' },
   { stt: 2, name: 'Nước cam', unitPrice: '12.000/lon' },
   { stt: 3, name: '7 up', unitPrice: '12.000/lon' },
   { stt: 4, name: 'Bò húc', unitPrice: '18.000/lon' },
@@ -139,20 +357,11 @@ const BRING_DRINK_FEES = [
   { item: 'Bia, nước ngọt, nước lọc', fee: '30.000/người' }
 ];
 
-const BEVERAGE_PACKAGES = [
-  { id: 'bev-hanoi', name: 'Bia Hà Nội (24 lon/thùng)', priceText: '290.000 VNĐ / thùng', unitPrice: 290000 },
-  { id: 'bev-heineken', name: 'Bia Heineken (24 lon/thùng)', priceText: '450.000 VNĐ / thùng', unitPrice: 450000 },
-  { id: 'bev-soft', name: 'Nước ngọt Coca/Pepsi (24 lon/thùng)', priceText: '220.000 VNĐ / thùng', unitPrice: 220000 },
-  { id: 'bev-water', name: 'Nước suối chai (24 chai/thùng)', priceText: '120.000 VNĐ / thùng', unitPrice: 120000 },
-];
-
 export default function Step4Menu() {
   const { estimateData, updateEstimate } = useEstimate();
-  const { guestCount, budgetPerTable, selectedBeverages } = estimateData;
+  const { guestCount, budgetPerTable } = estimateData;
 
   const [currentBudget, setCurrentBudget] = useState(budgetPerTable || MIN_BUDGET_PER_TABLE);
-  const [beverageSelection, setBeverageSelection] = useState(selectedBeverages || {});
-  
   const [activeMenuTab, setActiveMenuTab] = useState('SETS');
   const [setMenuIndex, setSetMenuIndex] = useState(0);
 
@@ -170,12 +379,6 @@ export default function Step4Menu() {
       setCurrentBudget(MIN_BUDGET_PER_TABLE);
       updateEstimate({ budgetPerTable: MIN_BUDGET_PER_TABLE });
     }
-  };
-
-  const updateBeverageQty = (bevId, qty) => {
-    const newBev = { ...beverageSelection, [bevId]: Math.max(0, Number(qty)) };
-    setBeverageSelection(newBev);
-    updateEstimate({ selectedBeverages: newBev });
   };
 
   const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
@@ -203,7 +406,7 @@ export default function Step4Menu() {
             Ngân Sách Thực Đơn & Bảng Giá Đồ Uống
           </h2>
           <p className="text-gray-600 font-light text-xs sm:text-sm max-w-2xl mx-auto mt-1">
-            Điền mức ngân sách mâm mong muốn và tham khảo trực quan trọn bộ Set Menu tiệc cưới & Bảng giá đồ uống chính thức.
+            Điền mức ngân sách mâm mong muốn và tham khảo trực quan trọn bộ 18 Set Menu tiệc cưới & Bảng giá đồ uống chính thức.
           </p>
         </div>
 
@@ -316,7 +519,7 @@ export default function Step4Menu() {
             </div>
           </div>
 
-          {/* CONTENT 1: SET MENU TIỆC CƯỚI */}
+          {/* CONTENT 1: SET MENU TIỆC CƯỚI (ALL 18 SETS) */}
           {activeMenuTab === 'SETS' && (
             <div className="space-y-6">
               
@@ -329,8 +532,8 @@ export default function Step4Menu() {
                   ◄ Set Trước
                 </button>
 
-                <span className="text-xs font-bold text-gray-900 font-playfair uppercase">
-                  Đang xem: {SET_MENUS_18[setMenuIndex].title} ({setMenuIndex + 1} / 18)
+                <span className="text-xs font-bold text-gray-900 font-playfair uppercase text-center">
+                  Đang xem: {SET_MENUS_18[setMenuIndex].title} ({setMenuIndex + 1} / 18 SETS)
                 </span>
 
                 <button 
@@ -357,6 +560,26 @@ export default function Step4Menu() {
                       <span className="font-medium text-gray-800">{dIdx + 1}. {d.name}</span>
                       <span className="text-[10px] font-semibold text-[#a66a3a] bg-amber-50 px-2 py-0.5 rounded-full">{d.type}</span>
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* QUICK SELECT GRID FOR ALL 18 SET MENUS */}
+              <div className="pt-4 border-t border-gray-100">
+                <h4 className="text-center font-playfair font-bold text-sm text-gray-900 mb-3">Tất Cả 18 Set Menu (Bấm để xem nhanh)</h4>
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  {SET_MENUS_18.map((m, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSetMenuIndex(idx)}
+                      className={`p-2 rounded-xl border text-center transition-all cursor-pointer ${
+                        setMenuIndex === idx 
+                          ? 'bg-amber-900 text-amber-300 border-[#e3a638] shadow-md font-bold' 
+                          : 'bg-white text-gray-800 border-gray-200 hover:border-amber-400'
+                      }`}
+                    >
+                      <span className="block text-[10px] uppercase text-[#a66a3a] font-bold">SET {idx + 1}</span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -412,39 +635,14 @@ export default function Step4Menu() {
 
               </div>
 
-              {/* TÙY CHỌN ĐỒ UỐNG BỔ SUNG */}
-              <div className="pt-4 border-t border-gray-200 space-y-4">
-                <h4 className="font-bold text-sm text-gray-900">Tùy Chọn Đồ Uống Cho Báo Giá (Không Bắt Buộc):</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {BEVERAGE_PACKAGES.map(bev => {
-                    const currentQty = beverageSelection[bev.id] || 0;
-                    return (
-                      <div key={bev.id} className="p-4 rounded-2xl border border-gray-200 bg-[#fcf9f2] flex flex-col justify-between space-y-3">
-                        <div>
-                          <h4 className="font-bold text-xs text-gray-900">{bev.name}</h4>
-                          <span className="text-xs font-bold text-[#a66a3a] block mt-1">{bev.priceText}</span>
-                        </div>
-
-                        <div className="flex items-center justify-between bg-white rounded-xl p-1.5 border border-gray-200">
-                          <button 
-                            type="button" 
-                            onClick={() => updateBeverageQty(bev.id, currentQty - 1)}
-                            className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xs font-bold cursor-pointer"
-                          >
-                            -
-                          </button>
-                          <span className="text-xs font-bold text-gray-900">{currentQty} thùng</span>
-                          <button 
-                            type="button" 
-                            onClick={() => updateBeverageQty(bev.id, currentQty + 1)}
-                            className="w-7 h-7 rounded-lg bg-[#e3a638] text-white flex items-center justify-center text-xs font-bold cursor-pointer"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
+              {/* NOTICE ABOUT ACTUAL DRINK CONSUMPTION (REQUESTED BY USER IN ANH 1) */}
+              <div className="p-5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 flex items-start gap-3">
+                <span className="material-symbols-outlined text-amber-700 text-xl flex-shrink-0 mt-0.5">info</span>
+                <div>
+                  <strong className="block text-sm font-bold mb-1 text-amber-900">Lưu ý quan trọng về Đồ uống:</strong>
+                  <p className="font-light leading-relaxed text-amber-950">
+                    Nhà hàng Golden Palace không bán đồ uống theo thùng cố định. <strong>Tiền đồ uống sẽ được chốt theo số lượng thực tế sử dụng sau khi kết thúc tiệc cưới.</strong>
+                  </p>
                 </div>
               </div>
 
