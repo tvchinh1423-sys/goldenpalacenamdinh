@@ -37,6 +37,29 @@ function parseAddonNumericPrice(addon, guestCount) {
   return 0;
 }
 
+function generateProposalDiff(prevProposal, nextData) {
+  if (!prevProposal) return null;
+  const changes = [];
+
+  if (prevProposal.guestCount !== nextData.guestCount) {
+    changes.push(`Quy mô: ${prevProposal.guestCount} khách → ${nextData.guestCount} khách`);
+  }
+  if (prevProposal.budgetPerTable !== nextData.budgetPerTable) {
+    changes.push(`Mâm cỗ: ${new Intl.NumberFormat('vi-VN').format(prevProposal.budgetPerTable)}đ → ${new Intl.NumberFormat('vi-VN').format(nextData.budgetPerTable)}đ/mâm`);
+  }
+  const prevVenueName = prevProposal.venues?.[0]?.venueName || 'Chưa chọn';
+  if (prevVenueName !== nextData.venueName) {
+    changes.push(`Hội trường: ${prevVenueName} → ${nextData.venueName}`);
+  }
+  const diffTotal = nextData.totalBase - prevProposal.totalBase;
+  if (diffTotal !== 0) {
+    const sign = diffTotal > 0 ? '+' : '';
+    changes.push(`Dự toán: ${new Intl.NumberFormat('vi-VN').format(prevProposal.totalBase)}đ → ${new Intl.NumberFormat('vi-VN').format(nextData.totalBase)}đ (${sign}${new Intl.NumberFormat('vi-VN').format(diffTotal)}đ)`);
+  }
+
+  return changes.length > 0 ? changes.join(' | ') : 'Cập nhật lại phương án dự toán';
+}
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -46,14 +69,30 @@ export async function POST(request) {
       selectedVenues = [], selectedPackage = null, selectedAddOns = []
     } = body;
 
-    // Validate phone
     if (!phone) {
       return NextResponse.json({ error: 'Số điện thoại là bắt buộc' }, { status: 400 });
     }
 
-    // Generate unique code and token
-    const code = 'GP-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-    const linkToken = uuidv4();
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+
+    // Check if a Lead with this phone already exists
+    const existingLead = await prisma.lead.findFirst({
+      where: {
+        phone: {
+          contains: cleanPhone
+        }
+      },
+      include: {
+        proposals: {
+          orderBy: { version: 'desc' },
+          take: 1,
+          include: {
+            venues: true,
+            addOns: true
+          }
+        }
+      }
+    });
 
     // Safely parse numbers
     const parsedGuestCount = Math.max(10, parseInt(guestCount, 10) || 100);
@@ -62,9 +101,11 @@ export async function POST(request) {
     const mainTables = Math.ceil(parsedGuestCount / 10);
     const reserveTables = Math.ceil(mainTables * 0.1);
 
-    // Fetch venue pricing details
+    // Fetch venue details
     let venueTotal = 0;
+    let preferredVenueName = 'Tầng 3';
     const proposalVenues = [];
+
     if (selectedVenues && selectedVenues.length > 0) {
       const venues = await prisma.venue.findMany({
         where: { id: { in: selectedVenues } }
@@ -72,7 +113,10 @@ export async function POST(request) {
       
       venues.forEach((v, index) => {
         const fee = calculateVenueFee(v.name, parsedGuestCount);
-        if (index === 0) venueTotal = Number(fee);
+        if (index === 0) {
+          venueTotal = Number(fee);
+          preferredVenueName = v.name;
+        }
         proposalVenues.push({
           venueId: v.id,
           venueName: v.name,
@@ -83,23 +127,6 @@ export async function POST(request) {
     }
 
     let packagePrice = 0;
-    if (selectedPackage) {
-      const pkg = await prisma.servicePackage.findUnique({
-        where: { id: selectedPackage },
-        include: {
-          pricings: {
-            where: {
-              ...(selectedVenues?.[0] && { venueId: selectedVenues[0] }),
-              guestRangeMin: { lte: parsedGuestCount },
-              guestRangeMax: { gte: parsedGuestCount }
-            }
-          }
-        }
-      });
-      if (pkg) {
-        packagePrice = Number(pkg.pricings[0]?.price || 0);
-      }
-    }
 
     let addOnsTotal = 0;
     const proposalAddOns = [];
@@ -127,33 +154,67 @@ export async function POST(request) {
     const totalBase = Math.round(fixedTotal + menuBase);
     const totalMax = Math.round(fixedTotal + menuMax);
 
-    // Save lead in Prisma DB transaction
-    const lead = await prisma.$transaction(async (tx) => {
-      const newLead = await tx.lead.create({
-        data: {
-          code,
-          linkToken,
-          name: name.trim() || `Khách hàng ${phone}`,
-          phone,
-          notes: notes.trim(),
-          leadStatus: 'NEW'
-        }
+    // Calculate diff if updating an existing customer
+    let diffSummary = null;
+    let versionNumber = 1;
+
+    if (existingLead && existingLead.proposals.length > 0) {
+      const prev = existingLead.proposals[0];
+      versionNumber = (prev.version || 1) + 1;
+      diffSummary = generateProposalDiff(prev, {
+        guestCount: parsedGuestCount,
+        budgetPerTable: parsedBudgetPerTable,
+        venueName: preferredVenueName,
+        totalBase
       });
+    }
+
+    // Save or update lead in Prisma DB transaction
+    const lead = await prisma.$transaction(async (tx) => {
+      let targetLead;
+
+      if (existingLead) {
+        // OVERWRITE / UPSERT EXISTING LEAD RECORD WITH LATEST DATA
+        targetLead = await tx.lead.update({
+          where: { id: existingLead.id },
+          data: {
+            name: name.trim() || existingLead.name,
+            notes: notes.trim() ? (existingLead.notes ? `${existingLead.notes} | ${notes.trim()}` : notes.trim()) : existingLead.notes,
+            leadStatus: 'NEW',
+            updatedAt: new Date()
+          }
+        });
+      } else {
+        // CREATE NEW LEAD IF PHONE DOES NOT EXIST
+        const code = 'GP-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+        const linkToken = uuidv4();
+
+        targetLead = await tx.lead.create({
+          data: {
+            code,
+            linkToken,
+            name: name.trim() || `Khách hàng ${phone}`,
+            phone,
+            notes: notes.trim(),
+            leadStatus: 'NEW'
+          }
+        });
+      }
 
       const eventDate = date ? new Date(date) : new Date();
 
+      // Create new proposal version (version 1 for new lead, version N+1 for existing lead)
       await tx.proposal.create({
         data: {
-          leadId: newLead.id,
-          version: 1,
+          leadId: targetLead.id,
+          version: versionNumber,
           guestCount: parsedGuestCount,
           budgetPerTable: parsedBudgetPerTable,
           eventDate,
           eventSession: session || 'Tối',
           mainTables,
           reserveTables,
-          packageId: selectedPackage || null,
-          packagePrice,
+          packagePrice: 0,
           totalBase,
           totalMax,
           priceEffectiveDate: new Date(),
@@ -166,12 +227,18 @@ export async function POST(request) {
         }
       });
 
-      return newLead;
+      return targetLead;
     });
 
-    return NextResponse.json({ success: true, linkToken: lead.linkToken }, { status: 201 });
+    return NextResponse.json({ 
+      success: true, 
+      linkToken: lead.linkToken,
+      version: versionNumber,
+      diffSummary
+    }, { status: 201 });
+
   } catch (error) {
-    console.error('Error creating lead:', error);
+    console.error('Error creating/updating lead:', error);
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }

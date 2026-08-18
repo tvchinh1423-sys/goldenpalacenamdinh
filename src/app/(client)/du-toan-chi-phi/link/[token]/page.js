@@ -158,22 +158,20 @@ export default async function LinkView({ params }) {
           </ul>
         </div>
 
-        {/* Actions */}
+        {/* Actions (UPDATED: HOTLINE BUTTON AS REQUESTED IN ANH 1) */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <a
-            href="https://zalo.me/02286595959"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+            href="tel:02286595959"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
           >
-            <span className="material-symbols-outlined text-base">chat</span>
-            <span>Liên Hệ Zalo Tư Vấn Trực Tiếp</span>
+            <span className="material-symbols-outlined text-base">call</span>
+            <span>LIÊN HỆ HOTLINE TƯ VẤN TRỰC TIẾP</span>
           </a>
 
           <Link href="/du-toan-chi-phi">
-            <button className="w-full sm:w-auto px-6 py-3 rounded-xl bg-stone-100 text-stone-700 font-bold text-xs uppercase tracking-wider hover:bg-stone-200 transition-colors flex items-center justify-center gap-2">
+            <button className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-stone-100 text-stone-700 font-bold text-xs uppercase tracking-wider hover:bg-stone-200 transition-colors flex items-center justify-center gap-2 cursor-pointer">
               <span className="material-symbols-outlined text-base">refresh</span>
-              <span>Tạo Dự Toán Mới</span>
+              <span>TẠO DỰ TOÁN MỚI</span>
             </button>
           </Link>
         </div>

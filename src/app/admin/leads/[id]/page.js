@@ -29,6 +29,33 @@ const formatVietnamDateOnly = (dateVal) => {
   });
 };
 
+function calculateProposalDiff(current, older) {
+  if (!older) return null;
+  const diffs = [];
+
+  if (current.guestCount !== older.guestCount) {
+    diffs.push(`Quy mô khách: ${older.guestCount} khách → ${current.guestCount} khách`);
+  }
+  if (Number(current.budgetPerTable) !== Number(older.budgetPerTable)) {
+    diffs.push(`Mâm cỗ: ${new Intl.NumberFormat('vi-VN').format(older.budgetPerTable)}đ → ${new Intl.NumberFormat('vi-VN').format(current.budgetPerTable)}đ/mâm`);
+  }
+  const curVenue = current.venues?.[0]?.venueName || 'Chưa chọn';
+  const oldVenue = older.venues?.[0]?.venueName || 'Chưa chọn';
+  if (curVenue !== oldVenue) {
+    diffs.push(`Sảnh hội trường: ${oldVenue} → ${curVenue}`);
+  }
+  const diffTotal = Number(current.totalBase) - Number(older.totalBase);
+  if (diffTotal !== 0) {
+    const sign = diffTotal > 0 ? '+' : '';
+    diffs.push(`Dự toán chi phí: ${new Intl.NumberFormat('vi-VN').format(older.totalBase)}đ → ${new Intl.NumberFormat('vi-VN').format(current.totalBase)}đ (${sign}${new Intl.NumberFormat('vi-VN').format(diffTotal)}đ)`);
+  }
+  if ((current.addOns?.length || 0) !== (older.addOns?.length || 0)) {
+    diffs.push(`Số lượng dịch vụ nâng cao: ${older.addOns?.length || 0} → ${current.addOns?.length || 0} hạng mục`);
+  }
+
+  return diffs.length > 0 ? diffs : ['Cập nhật lại thông tin cùng cấu hình tiệc'];
+}
+
 export default async function LeadDetailPage({ params }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect('/admin/login');
@@ -126,8 +153,8 @@ export default async function LeadDetailPage({ params }) {
                 <p className="text-gray-900 font-bold text-sm font-mono">{lead.phone}</p>
               </div>
               <div>
-                <p className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-0.5">Thời gian nhận yêu cầu (Giờ Việt Nam)</p>
-                <p className="text-gray-900 font-bold text-sm text-emerald-700">{formatVietnamTime(lead.createdAt)}</p>
+                <p className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-0.5">Thời gian cập nhật mới nhất (Giờ VN)</p>
+                <p className="text-gray-900 font-bold text-sm text-emerald-700">{formatVietnamTime(lead.updatedAt || lead.createdAt)}</p>
               </div>
               <div>
                 <p className="text-gray-400 font-semibold uppercase text-[10px] tracking-wider mb-0.5">Ghi chú của khách hàng</p>
@@ -163,10 +190,11 @@ export default async function LeadDetailPage({ params }) {
           </div>
         </div>
 
-        {/* Right Column: Proposals History */}
+        {/* Right Column: Proposals History & Version Diffs */}
         <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h3 className="font-bold text-gray-900 text-base mb-6 border-b border-gray-100 pb-3 flex items-center gap-2">
-            <span>📋</span> Lịch sử Phương án Báo Giá (Proposals)
+          <h3 className="font-bold text-gray-900 text-base mb-6 border-b border-gray-100 pb-3 flex items-center justify-between">
+            <span className="flex items-center gap-2">📋 Lịch sử Thay Đổi Phương Án ({lead.proposals.length} phiên bản)</span>
+            <span className="text-xs font-normal text-gray-500">Mỗi lần khách nhập lại SĐT sẽ tự động tạo Version mới</span>
           </h3>
           
           <div className="space-y-8">
@@ -175,6 +203,9 @@ export default async function LeadDetailPage({ params }) {
             ) : (
               lead.proposals.map((proposal, index) => {
                 const isLatest = index === 0;
+                const olderProposal = lead.proposals[index + 1]; // Previous version in history array
+                const diffList = calculateProposalDiff(proposal, olderProposal);
+
                 return (
                   <div key={proposal.id} className={`relative pl-8 border-l-2 ${isLatest ? 'border-[#e3a638]' : 'border-gray-200'}`}>
                     <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 bg-white ${isLatest ? 'border-[#e3a638] bg-[#e3a638]' : 'border-gray-300'}`}></div>
@@ -191,6 +222,23 @@ export default async function LeadDetailPage({ params }) {
                         <p className={`text-base font-bold font-playfair ${isLatest ? 'text-emerald-700' : 'text-gray-500'}`}>{formatCurrency(proposal.totalBase)}</p>
                       </div>
                     </div>
+
+                    {/* DIFF HIGHLIGHT BOX IF VERSION > 1 */}
+                    {diffList && diffList.length > 0 && (
+                      <div className="mb-3 p-3 rounded-xl bg-amber-50/80 border border-amber-300 text-xs text-amber-950 space-y-1">
+                        <span className="font-bold flex items-center gap-1 text-amber-900">
+                          ⚡ Điểm Thay Đổi So Với Bản Cũ Gần Nhất (Version {olderProposal.version}):
+                        </span>
+                        <div className="space-y-0.5 pl-2 font-medium">
+                          {diffList.map((dItem, dIdx) => (
+                            <div key={dIdx} className="flex items-center gap-1.5">
+                              <span className="text-amber-600">•</span>
+                              <span>{dItem}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <div className={`grid grid-cols-2 gap-4 text-xs p-4 rounded-xl border ${isLatest ? 'bg-amber-50/40 border-amber-200' : 'bg-gray-50 border-gray-200'}`}>
                       <div>
@@ -213,9 +261,8 @@ export default async function LeadDetailPage({ params }) {
                       </div>
 
                       <div>
-                        <span className="text-gray-400 font-semibold block text-[10px] uppercase mb-0.5">Gói dịch vụ & Dịch vụ nâng cao</span>
-                        <p className="font-bold text-gray-900">{proposal.package ? proposal.package.name : 'Không chọn gói'}</p>
-                        <p className="text-[11px] text-gray-500">{proposal.addOns.length} hạng mục nâng cao</p>
+                        <span className="text-gray-400 font-semibold block text-[10px] uppercase mb-0.5">Dịch vụ nâng cao</span>
+                        <p className="font-bold text-gray-900">{proposal.addOns.length} hạng mục nâng cao</p>
                       </div>
                     </div>
                   </div>
