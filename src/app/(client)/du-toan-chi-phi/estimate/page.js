@@ -24,18 +24,18 @@ function calculateVenueFee(venueName, guestCount) {
 function parseAddonPrice(addon, guestCount) {
   const raw = addon.description || '';
   if (addon.name.includes('Vòng ánh sáng laser')) {
-    if (Number(guestCount) >= 400) return { price: 0, text: '0 VNĐ (Tặng miễn phí tiệc > 400 khách)' };
-    return { price: 700000, text: '700.000 VNĐ' };
+    if (Number(guestCount) >= 400) return { price: 0, text: '0 VNĐ (Tặng miễn phí tiệc > 400 khách)', valid: false };
+    return { price: 700000, text: '700.000 VNĐ', valid: true };
   }
-  if (raw.includes('800.000')) return { price: 800000, text: '800.000 VNĐ' };
-  if (raw.includes('1.000.000')) return { price: 1000000, text: '1.000.000 VNĐ' };
-  if (raw.includes('900.000')) return { price: 900000, text: '900.000 VNĐ' };
-  if (raw.includes('3.000.000')) return { price: 3000000, text: '3.000.000 VNĐ' };
-  if (raw.includes('3.400.000')) return { price: 3400000, text: '3.400.000 VNĐ' };
-  if (raw.includes('4.000.000')) return { price: 4000000, text: '4.000.000 VNĐ' };
-  if (raw.includes('5.000.000')) return { price: 5000000, text: '5.000.000 VNĐ' };
-  if (raw.includes('14.000.000')) return { price: 14000000, text: '14.000.000 VNĐ' };
-  return { price: 0, text: 'Báo giá: Liên hệ' };
+  if (raw.includes('800.000')) return { price: 800000, text: '800.000 VNĐ', valid: true };
+  if (raw.includes('1.000.000')) return { price: 1000000, text: '1.000.000 VNĐ', valid: true };
+  if (raw.includes('900.000')) return { price: 900000, text: '900.000 VNĐ', valid: true };
+  if (raw.includes('3.000.000')) return { price: 3000000, text: '3.000.000 VNĐ', valid: true };
+  if (raw.includes('3.400.000')) return { price: 3400000, text: '3.400.000 VNĐ', valid: true };
+  if (raw.includes('4.000.000')) return { price: 4000000, text: '4.000.000 VNĐ', valid: true };
+  if (raw.includes('5.000.000')) return { price: 5000000, text: '5.000.000 VNĐ', valid: true };
+  if (raw.includes('14.000.000')) return { price: 14000000, text: '14.000.000 VNĐ', valid: true };
+  return { price: 0, text: 'Báo giá: Liên hệ', valid: false };
 }
 
 export default function Step5Estimate() {
@@ -48,6 +48,7 @@ export default function Step5Estimate() {
 
   const [submitted, setSubmitted] = useState(false);
   const [linkToken, setLinkToken] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const [contactName, setContactName] = useState(
     groomName && brideName ? `Chú rể ${groomName} & Cô dâu ${brideName}` : (groomName || brideName || '')
@@ -81,7 +82,7 @@ export default function Step5Estimate() {
 
       setVenueInfo({ name: venueName, fee });
 
-      // 2. Fetch Database Add-on Services to calculate exact prices
+      // 2. Fetch Database Add-on Services
       let dbAddons = [];
       try {
         const addonRes = await fetch('/api/guest/add-ons');
@@ -94,16 +95,20 @@ export default function Step5Estimate() {
       const safeBudget = Math.max(budgetPerTable || 3200000, 3200000);
       const menuBase = tableCount * safeBudget;
 
-      // 3. Match selectedAddOns UUIDs to dbAddons and calculate prices
+      // 3. Match selectedAddOns UUIDs to dbAddons and FILTER OUT invalid / 0 VNĐ items!
       let addonTotal = 0;
-      const addonItems = (selectedAddOns || []).map(id => {
+      const validAddonItems = [];
+
+      (selectedAddOns || []).forEach(id => {
         const matched = dbAddons.find(a => a.id === id);
         if (matched) {
           const pInfo = parseAddonPrice(matched, guestCount);
-          addonTotal += pInfo.price;
-          return { name: matched.name, price: pInfo.price, text: pInfo.text };
+          // ONLY INCLUDE ITEMS WITH PRICE > 0 TO PREVENT 0đ ROWS IN IMAGE 1
+          if (pInfo.valid && pInfo.price > 0) {
+            addonTotal += pInfo.price;
+            validAddonItems.push({ name: matched.name, price: pInfo.price, text: pInfo.text });
+          }
         }
-        return { name: 'Dịch vụ nâng cao', price: 0, text: 'Báo giá: Liên hệ' };
       });
 
       const grandTotal = menuBase + fee + addonTotal;
@@ -113,7 +118,7 @@ export default function Step5Estimate() {
         safeBudget,
         menuBase,
         venueFee: fee,
-        addonItems,
+        addonItems: validAddonItems,
         addonTotal,
         grandTotal
       });
@@ -151,6 +156,13 @@ export default function Step5Estimate() {
     }
   };
 
+  const handleCopyLink = () => {
+    const fullUrl = `${window.location.origin}/du-toan-chi-phi/link/${linkToken}`;
+    navigator.clipboard.writeText(fullUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
+  };
+
   const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
 
   return (
@@ -164,7 +176,7 @@ export default function Step5Estimate() {
             <span>Quay lại chọn thực đơn & đồ uống</span>
           </Link>
           <span className="text-xs uppercase tracking-wider font-bold text-[#a66a3a]">
-            Bước 5 / 5: Báo Giá Tự Động Chi Tiết
+            Bước 5 / 5: Báo Giá Chi Tiết
           </span>
         </div>
       </div>
@@ -220,7 +232,7 @@ export default function Step5Estimate() {
                   <span className="text-[#a66a3a] font-bold text-base">{formatCurrency(venueInfo.fee)}</span>
                 </div>
 
-                {/* 3. BẢNG CHI TIẾT TỪNG DỊCH VỤ NÂNG CAO (DYNAMICALLY CALCULATED FROM DB) */}
+                {/* 3. BẢNG CHI TIẾT TỪNG DỊCH VỤ NÂNG CAO (FILTERED OUT 0đ / INVALID ITEMS FOR ANH 1) */}
                 <div className="py-2.5 border-b border-gray-100 space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-900 font-bold">3. Chi Tiết Dịch Vụ Nâng Cao / Bổ Sung ({pricingBreakdown?.addonItems?.length || 0} dịch vụ)</span>
@@ -236,13 +248,13 @@ export default function Step5Estimate() {
                             {item.name}
                           </span>
                           <span className="font-bold text-gray-900">
-                            {item.price > 0 ? formatCurrency(item.price) : item.text}
+                            {formatCurrency(item.price)}
                           </span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <span className="text-[11px] text-gray-400 italic block pl-2">Chưa chọn dịch vụ nâng cao</span>
+                    <span className="text-[11px] text-gray-400 italic block pl-2">Chưa chọn dịch vụ nâng cao có phí</span>
                   )}
                 </div>
 
@@ -256,7 +268,7 @@ export default function Step5Estimate() {
 
               </div>
 
-              {/* VAT & NOTE (UPDATE 3RD BULLET AS REQUESTED IN ANH 3) */}
+              {/* VAT & NOTE */}
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-amber-950 text-xs leading-relaxed flex items-start gap-3">
                 <span className="material-symbols-outlined text-amber-700 text-lg flex-shrink-0 mt-0.5">info</span>
                 <div>
@@ -272,14 +284,17 @@ export default function Step5Estimate() {
             </div>
           </div>
 
-          {/* FORM NHẬN BÁO GIÁ ZALO & TẢI FILE PDF NGAY */}
+          {/* FORM NHẬN BÁO GIÁ ZALO (TEXT MATCHING ANH 2 EXACTLY) */}
           <div className="lg:col-span-5">
             <div className="bg-white border border-[#e3a638]/40 rounded-3xl p-6 sm:p-8 shadow-xl sticky top-28">
               {!submitted ? (
                 <>
-                  <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1">Nhận Báo Giá Bản Mềm Qua Zalo</h3>
+                  {/* EXACT FORM TITLE REQUESTED IN ANH 2 */}
+                  <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1 leading-snug">
+                    Điền thông tin để nhận tư vấn và báo giá chi tiết từ nhà hàng
+                  </h3>
                   <p className="text-gray-500 text-xs font-light mb-6">
-                    Điền số điện thoại Zalo để nhận file PDF báo giá chi tiết ngay lập tức.
+                    Điền số điện thoại Zalo để chuyên viên Golden Palace gửi link báo giá chi tiết cho bạn.
                   </p>
                   
                   <form onSubmit={handleSubmit} className="space-y-4">
@@ -322,7 +337,7 @@ export default function Step5Estimate() {
                       className="w-full py-4 mt-2 rounded-xl bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold uppercase text-xs tracking-wider shadow-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-base">{isLoading ? 'hourglass_empty' : 'send'}</span> 
-                      {isLoading ? 'Đang tạo báo giá...' : 'Tạo File Báo Giá PDF Ngay'}
+                      {isLoading ? 'Đang khởi tạo...' : 'GỬI THÔNG TIN NHẬN BÁO GIÁ'}
                     </button>
                   </form>
                 </>
@@ -333,13 +348,13 @@ export default function Step5Estimate() {
                   </div>
                   
                   <div>
-                    <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1">Gửi Báo Giá Thành Công!</h3>
+                    <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1">Gửi Thông Tin Thành Công!</h3>
                     <p className="text-gray-600 text-xs font-light leading-relaxed">
-                      Bản báo giá chính thức đã được khởi tạo. Bạn có thể xem trực tuyến và tải file PDF báo giá lưu về máy ngay bên dưới.
+                      Cảm ơn bạn! Link bản báo giá trực tuyến đã được tạo (giống như Thiệp Cưới Online). Bạn có thể xem ngay hoặc sao chép gửi Zalo:
                     </p>
                   </div>
 
-                  {/* PROMINENT PDF DOWNLOAD BUTTON (REQUESTED BY USER) */}
+                  {/* WEB PROPOSAL LINK BUTTONS (MATCHING ONLINE WEDDING CARD STYLE AS REQUESTED) */}
                   <div className="space-y-3 pt-2">
                     <a 
                       href={`/du-toan-chi-phi/link/${linkToken}`}
@@ -347,9 +362,18 @@ export default function Step5Estimate() {
                       rel="noopener noreferrer"
                       className="w-full py-4 px-6 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold text-xs uppercase tracking-wider rounded-2xl shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2 block"
                     >
-                      <span className="material-symbols-outlined text-xl">picture_as_pdf</span>
-                      <span>Xem & Tải File Báo Giá PDF Ngay</span>
+                      <span className="material-symbols-outlined text-xl">language</span>
+                      <span>🌐 Xem Link Báo Giá Online Trực Tiếp</span>
                     </a>
+
+                    <button
+                      type="button"
+                      onClick={handleCopyLink}
+                      className="w-full py-3 px-4 bg-amber-50 text-[#a66a3a] border border-[#e3a638] font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-amber-100 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-base">content_copy</span>
+                      <span>{copied ? '✅ Đã Sao Chép Link Báo Giá!' : '📋 Sao Chép Link Báo Giá'}</span>
+                    </button>
 
                     <Link href="/" className="inline-block w-full py-3 bg-gray-100 text-gray-700 font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-gray-200 transition-colors">
                       Trở về Trang chủ

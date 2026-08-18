@@ -20,6 +20,23 @@ function calculateVenueFee(venueName, guestCount) {
   return 2000000; // Tầng 4, Quầy Bar, Phòng VIP
 }
 
+function parseAddonNumericPrice(addon, guestCount) {
+  const raw = addon.description || '';
+  if (addon.name.includes('Vòng ánh sáng laser')) {
+    if (Number(guestCount) >= 400) return 0;
+    return 700000;
+  }
+  if (raw.includes('800.000')) return 800000;
+  if (raw.includes('1.000.000')) return 1000000;
+  if (raw.includes('900.000')) return 900000;
+  if (raw.includes('3.000.000')) return 3000000;
+  if (raw.includes('3.400.000')) return 3400000;
+  if (raw.includes('4.000.000')) return 4000000;
+  if (raw.includes('5.000.000')) return 5000000;
+  if (raw.includes('14.000.000')) return 14000000;
+  return 0;
+}
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -40,12 +57,12 @@ export async function POST(request) {
 
     // Safely parse numbers
     const parsedGuestCount = Math.max(10, parseInt(guestCount, 10) || 100);
-    const parsedBudgetPerTable = Math.max(0, parseInt(budgetPerTable, 10) || 1850000);
+    const parsedBudgetPerTable = Math.max(3200000, parseInt(budgetPerTable, 10) || 3200000);
 
     const mainTables = Math.ceil(parsedGuestCount / 10);
     const reserveTables = Math.ceil(mainTables * 0.1);
 
-    // Fetch pricing details to freeze them
+    // Fetch venue pricing details
     let venueTotal = 0;
     const proposalVenues = [];
     if (selectedVenues && selectedVenues.length > 0) {
@@ -55,7 +72,7 @@ export async function POST(request) {
       
       venues.forEach((v, index) => {
         const fee = calculateVenueFee(v.name, parsedGuestCount);
-        if (index === 0) venueTotal = Number(fee); // Use preferred venue fee
+        if (index === 0) venueTotal = Number(fee);
         proposalVenues.push({
           venueId: v.id,
           venueName: v.name,
@@ -88,25 +105,18 @@ export async function POST(request) {
     const proposalAddOns = [];
     if (selectedAddOns && selectedAddOns.length > 0) {
       const addons = await prisma.addOnService.findMany({
-        where: { id: { in: selectedAddOns } },
-        include: {
-          pricings: {
-            where: {
-              ...(selectedVenues?.[0] && { venueId: selectedVenues[0] }),
-              guestRangeMin: { lte: parsedGuestCount },
-              guestRangeMax: { gte: parsedGuestCount }
-            }
-          }
-        }
+        where: { id: { in: selectedAddOns } }
       });
       addons.forEach(a => {
-        const fee = Number(a.pricings[0]?.price || 0);
-        addOnsTotal += fee;
-        proposalAddOns.push({
-          addOnId: a.id,
-          addOnName: a.name,
-          price: fee
-        });
+        const fee = parseAddonNumericPrice(a, parsedGuestCount);
+        if (fee > 0) {
+          addOnsTotal += fee;
+          proposalAddOns.push({
+            addOnId: a.id,
+            addOnName: a.name,
+            price: fee
+          });
+        }
       });
     }
 
@@ -158,30 +168,6 @@ export async function POST(request) {
 
       return newLead;
     });
-
-    // Real-time Automated Notification Trigger (Zalo / Telegram Webhook)
-    const webhookUrl = process.env.ZALO_WEBHOOK_URL || process.env.TELEGRAM_WEBHOOK_URL || 'http://localhost:4000/dispatch';
-    if (webhookUrl) {
-      try {
-        const notifyPayload = {
-          event: 'NEW_LEAD',
-          leadCode: code,
-          customerName: name.trim() || `Khách (${phone})`,
-          phone,
-          guestCount: parsedGuestCount,
-          estimatedTotal: totalBase,
-          zaloChatUrl: `https://zalo.me/${phone.replace(/[^0-9]/g, '')}`,
-          linkToken
-        };
-        fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(notifyPayload)
-        }).catch(e => console.error('Webhook notify error:', e));
-      } catch (err) {
-        console.error('Notification dispatch error:', err);
-      }
-    }
 
     return NextResponse.json({ success: true, linkToken: lead.linkToken }, { status: 201 });
   } catch (error) {
