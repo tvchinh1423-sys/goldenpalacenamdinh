@@ -4,8 +4,13 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 
 export default async function LinkView({ params }) {
-  const token = params.token;
+  const resolvedParams = await params;
+  const token = resolvedParams?.token;
   
+  if (!token) {
+    notFound();
+  }
+
   const lead = await prisma.lead.findUnique({
     where: { linkToken: token },
     include: {
@@ -21,7 +26,7 @@ export default async function LinkView({ params }) {
     }
   });
 
-  if (!lead || lead.proposals.length === 0) {
+  if (!lead || !lead.proposals || lead.proposals.length === 0) {
     notFound();
   }
 
@@ -31,120 +36,155 @@ export default async function LinkView({ params }) {
   const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(val));
 
   return (
-    <div className="bg-background text-on-surface font-body-md antialiased pt-32 pb-40 min-h-screen">
-      <header className="fixed top-0 w-full z-50 bg-surface/80 dark:bg-on-surface/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
-        <div className="flex justify-center items-center px-margin-mobile md:px-margin-desktop h-16 w-full max-w-container-max mx-auto">
-          <h1 className="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg font-display-lg text-primary-container bg-clip-text bg-gradient-to-r from-gold-gradient-start to-gold-gradient-end text-transparent text-center">
-            Golden Palace
+    <div className="min-h-screen bg-[#faf6f0] text-stone-800 font-montserrat flex flex-col items-center justify-center p-3 sm:p-6 relative selection:bg-[#e3a638] selection:text-white pt-24 pb-28">
+      
+      {/* Background Accent */}
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-amber-100/60 via-amber-50/20 to-[#faf6f0] pointer-events-none"></div>
+
+      {/* Main E-Card Envelope Frame (Matching Thiệp Cưới Online) */}
+      <div className="w-full max-w-2xl bg-[#faf6f0] border-2 border-[#d4af37]/60 rounded-3xl p-6 sm:p-10 shadow-[0_15px_60px_rgba(217,162,60,0.2)] relative z-10 my-6 flex flex-col">
+        
+        {/* SVG Floral Corner Ornaments */}
+        <svg className="absolute top-2 left-2 w-16 h-16 pointer-events-none opacity-80" viewBox="0 0 100 100" fill="none">
+          <path d="M10 30 C10 15, 25 10, 40 10 M10 45 C10 20, 30 10, 55 10 M10 10 Q35 10 10 35" stroke="#d4af37" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="20" cy="20" r="3" fill="#d4af37" />
+        </svg>
+        <svg className="absolute top-2 right-2 w-16 h-16 pointer-events-none opacity-80 transform scale-x-[-1]" viewBox="0 0 100 100" fill="none">
+          <path d="M10 30 C10 15, 25 10, 40 10 M10 45 C10 20, 30 10, 55 10 M10 10 Q35 10 10 35" stroke="#d4af37" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="20" cy="20" r="3" fill="#d4af37" />
+        </svg>
+
+        {/* Brand Header */}
+        <div className="flex justify-between items-center border-b border-amber-200/80 pb-4 mb-6">
+          <div className="flex items-center gap-2">
+            <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-8 w-auto object-contain" />
+            <div>
+              <span className="text-[10px] font-playfair tracking-[0.2em] text-[#a66a3a] font-bold uppercase block">GOLDEN PALACE</span>
+              <span className="text-[9px] text-stone-500 block">Nam Định • Wedding & Convention</span>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono font-bold bg-amber-100 text-[#a66a3a] px-3 py-1 rounded-full border border-amber-300">
+            {lead.code}
+          </span>
+        </div>
+
+        {/* Invoice Title */}
+        <div className="text-center mb-8">
+          <span className="text-[#a66a3a] uppercase tracking-[0.25em] text-[10px] font-bold block mb-1">
+            BẢN BÁO GIÁ TIỆC CƯỚI TRỰC TUYẾN
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-[#b8860b]">
+            Dự Toán Chi Phí Trọn Gói
           </h1>
         </div>
-      </header>
 
-      <main className="max-w-3xl mx-auto px-margin-mobile md:px-0 pt-8">
-        <div className="bg-surface-bright/95 backdrop-blur-xl border border-gold-gradient-start/30 shadow-[0_10px_40px_rgba(212,175,55,0.1)] p-8 md:p-12 relative overflow-hidden">
-          {/* Invoice Header */}
-          <div className="text-center mb-10 border-b border-outline-variant/50 pb-8">
-            <h2 className="font-display-lg text-primary mb-2">Bản Dự Trù Tiệc Cưới</h2>
-            <p className="font-body-md text-on-surface-variant">Mã KH: {lead.code} • Phiên bản: {proposal.version}</p>
+        {/* Customer & Event Overview */}
+        <div className="bg-[#fdfbf7] border border-[#e3a638]/40 rounded-2xl p-5 mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-serif shadow-xs">
+          <div>
+            <span className="text-[10px] font-bold text-[#a66a3a] uppercase tracking-wider block mb-1">Khách Hàng</span>
+            <p className="font-bold text-stone-900 text-sm">{lead.name}</p>
+            <p className="text-stone-600 font-mono mt-0.5">SĐT Zalo: {lead.phone}</p>
           </div>
-
-          {/* Customer Info */}
-          <div className="grid grid-cols-2 gap-6 mb-10 text-slate-text font-body-md">
-            <div>
-              <p className="text-on-surface-variant mb-1 font-label-md">Khách hàng</p>
-              <p className="font-bold">{lead.name}</p>
-              <p>{lead.phone}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-on-surface-variant mb-1 font-label-md">Thông tin tiệc</p>
-              <p className="font-bold">{format(new Date(proposal.eventDate), 'dd/MM/yyyy')} ({proposal.eventSession})</p>
-              <p>{proposal.guestCount} khách • {proposal.mainTables} mâm</p>
-            </div>
-          </div>
-
-          {/* Line Items */}
-          <div className="space-y-6">
-            <h3 className="font-headline-sm text-primary border-b border-gold-gradient-start/30 pb-2">Chi tiết chi phí</h3>
-            
-            {preferredVenue && (
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-bold text-slate-text">Phí Hội Trường: {preferredVenue.venueName}</p>
-                  <p className="text-sm text-on-surface-variant">Đã bao gồm các trang thiết bị cơ bản</p>
-                </div>
-                <span className="font-label-md">{formatCurrency(preferredVenue.venueFee)}</span>
-              </div>
-            )}
-
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-bold text-slate-text">Thực đơn (Dự kiến)</p>
-                <p className="text-sm text-on-surface-variant">{formatCurrency(proposal.budgetPerTable)}/mâm × {proposal.mainTables} mâm chính</p>
-                {proposal.reserveTables > 0 && <p className="text-sm text-on-surface-variant">+ {proposal.reserveTables} mâm dự phòng (thanh toán nếu phát sinh)</p>}
-              </div>
-              <div className="text-right">
-                <span className="font-label-md block">{formatCurrency(Number(proposal.budgetPerTable) * proposal.mainTables)}</span>
-                {proposal.reserveTables > 0 && <span className="text-sm text-on-surface-variant block mt-1">(Tối đa: +{formatCurrency(Number(proposal.budgetPerTable) * proposal.reserveTables)})</span>}
-              </div>
-            </div>
-
-            {proposal.package && (
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-bold text-slate-text">Gói Dịch Vụ: {proposal.package.name}</p>
-                </div>
-                <span className="font-label-md">{formatCurrency(proposal.packagePrice)}</span>
-              </div>
-            )}
-
-            {proposal.addOns.length > 0 && (
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-bold text-slate-text">Dịch vụ bổ sung</p>
-                  <ul className="text-sm text-on-surface-variant list-disc list-inside">
-                    {proposal.addOns.map(a => <li key={a.id}>{a.addOnName}</li>)}
-                  </ul>
-                </div>
-                <span className="font-label-md">{formatCurrency(proposal.addOns.reduce((sum, a) => sum + Number(a.price), 0))}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Totals */}
-          <div className="mt-10 pt-6 border-t-2 border-gold-gradient-start border-dashed">
-            <div className="flex justify-between items-end">
-              <span className="font-headline-md text-on-surface">Tổng Dự Trù</span>
-              <div className="text-right">
-                <span className="font-display-lg text-primary block">{formatCurrency(proposal.totalBase)}</span>
-                <span className="text-on-surface-variant text-sm mt-1 block">Tối đa (nếu dùng hết dự phòng): {formatCurrency(proposal.totalMax)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Disclaimer */}
-          <div className="mt-10 bg-surface-variant p-4 rounded-lg text-sm text-on-surface-variant">
-            <p className="font-bold mb-2">Lưu ý quan trọng:</p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>Bảng dự trù này chưa bao gồm 8% VAT và chi phí đồ uống tiêu thụ thực tế.</li>
-              <li>Giá trị có hiệu lực trong vòng 7 ngày kể từ ngày báo giá.</li>
-              <li>Để được tư vấn và giữ ưu đãi, quý khách vui lòng liên hệ hotline: 0900.xxx.xxx</li>
-            </ul>
-          </div>
-          
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href={`/api/pdf/proposal?token=${token}`} target="_blank">
-              <button className="w-full sm:w-auto px-8 py-3 rounded-lg bg-surface-variant text-primary font-label-md flex items-center justify-center gap-2 hover:bg-primary-container/20 border border-primary transition-colors">
-                <span className="material-symbols-outlined">download</span> Tải PDF
-              </button>
-            </Link>
-            <Link href="/">
-              <button className="w-full sm:w-auto px-8 py-3 rounded-lg bg-gradient-to-r from-gold-gradient-start to-gold-gradient-end text-white font-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
-                <span className="material-symbols-outlined">edit</span> Sửa yêu cầu mới
-              </button>
-            </Link>
+          <div className="sm:text-right border-t sm:border-t-0 pt-3 sm:pt-0 border-amber-200">
+            <span className="text-[10px] font-bold text-[#a66a3a] uppercase tracking-wider block mb-1">Thông Tin Tiệc</span>
+            <p className="font-bold text-stone-900 text-sm">
+              {proposal.eventDate ? format(new Date(proposal.eventDate), 'dd/MM/yyyy') : 'Chưa chọn'} ({proposal.eventSession})
+            </p>
+            <p className="text-stone-600 font-mono mt-0.5">{proposal.guestCount} Khách • {proposal.mainTables} mâm</p>
           </div>
         </div>
-      </main>
+
+        {/* Line Items */}
+        <div className="space-y-4 text-xs sm:text-sm mb-8">
+          <h3 className="font-playfair font-bold text-base text-[#b8860b] border-b border-amber-200/80 pb-2">
+            Chi Tiết Các Hạng Mục Dịch Vụ
+          </h3>
+
+          {/* 1. Mâm Cỗ */}
+          <div className="flex justify-between items-start py-2 border-b border-stone-100">
+            <div>
+              <span className="font-bold text-stone-900 block">1. Mâm Cỗ Tiệc Cưới</span>
+              <span className="text-xs text-stone-500">{proposal.mainTables} mâm x {formatCurrency(proposal.budgetPerTable)} / mâm</span>
+            </div>
+            <span className="font-bold text-stone-900">{formatCurrency(Number(proposal.budgetPerTable) * proposal.mainTables)}</span>
+          </div>
+
+          {/* 2. Sảnh Hội Trường */}
+          {preferredVenue && (
+            <div className="flex justify-between items-start py-2 border-b border-stone-100 bg-amber-50/50 p-2.5 rounded-xl">
+              <div>
+                <span className="font-bold text-stone-900 block">2. Phí Hội Trường ({preferredVenue.venueName})</span>
+                <span className="text-xs text-stone-500">Đã bao gồm đầy đủ trang thiết bị & sân khấu</span>
+              </div>
+              <span className="font-bold text-[#a66a3a]">{formatCurrency(preferredVenue.venueFee)}</span>
+            </div>
+          )}
+
+          {/* 3. Dịch Vụ Bổ Sung */}
+          {proposal.addOns && proposal.addOns.length > 0 && (
+            <div className="py-2 border-b border-stone-100 space-y-2">
+              <div className="flex justify-between items-center font-bold text-stone-900">
+                <span>3. Dịch Vụ Bổ Sung ({proposal.addOns.length} dịch vụ)</span>
+                <span className="text-[#a66a3a]">{formatCurrency(proposal.addOns.reduce((sum, a) => sum + Number(a.price), 0))}</span>
+              </div>
+              <div className="bg-[#fdfbf7] p-3 rounded-xl border border-amber-200/60 space-y-1.5 text-xs">
+                {proposal.addOns.map(a => (
+                  <div key={a.id} className="flex justify-between items-center text-stone-700">
+                    <span>• {a.addOnName}</span>
+                    <span className="font-bold text-stone-900">
+                      {Number(a.price) > 0 ? formatCurrency(a.price) : 'Báo giá: Liên hệ'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 4. Tổng Dự Trù */}
+          <div className="pt-4 border-t-2 border-[#b8860b] flex justify-between items-center text-base sm:text-lg font-bold">
+            <span className="text-stone-900 font-playfair">TỔNG CHI PHÍ DỰ TOÁN:</span>
+            <span className="text-2xl font-playfair font-bold text-[#b8860b]">
+              {formatCurrency(proposal.totalBase)}
+            </span>
+          </div>
+        </div>
+
+        {/* Disclaimer Note */}
+        <div className="bg-amber-50/80 border border-amber-200 p-4 rounded-xl text-xs text-amber-950 leading-relaxed font-serif mb-6">
+          <p className="font-bold text-amber-900 mb-1">Lưu ý quan trọng:</p>
+          <ul className="list-disc list-inside space-y-1 text-[11px] font-light">
+            <li>Báo giá tạm tính chưa bao gồm 8% thuế VAT và đồ uống chốt thực tế sau tiệc.</li>
+            <li><strong>Với số lượng khách khác nhau thì sẽ có mức ưu đãi khác nhau, quý khách vui lòng liên hệ để nhận báo giá chính xác nhất.</strong></li>
+          </ul>
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+          <a
+            href="https://zalo.me/02286595959"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold text-xs uppercase tracking-wider shadow-md hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+          >
+            <span className="material-symbols-outlined text-base">chat</span>
+            <span>Liên Hệ Zalo Tư Vấn Trực Tiếp</span>
+          </a>
+
+          <Link href="/du-toan-chi-phi">
+            <button className="w-full sm:w-auto px-6 py-3 rounded-xl bg-stone-100 text-stone-700 font-bold text-xs uppercase tracking-wider hover:bg-stone-200 transition-colors flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-base">refresh</span>
+              <span>Tạo Dự Toán Mới</span>
+            </button>
+          </Link>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 pt-4 border-t border-stone-200 text-center text-[10px] text-stone-500 font-serif">
+          Golden Palace Wedding & Convention Center • Hotline: 0228 659 5959
+        </div>
+
+      </div>
+
     </div>
   );
 }

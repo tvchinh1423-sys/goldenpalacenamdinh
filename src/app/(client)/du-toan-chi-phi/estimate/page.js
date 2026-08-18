@@ -24,18 +24,18 @@ function calculateVenueFee(venueName, guestCount) {
 function parseAddonPrice(addon, guestCount) {
   const raw = addon.description || '';
   if (addon.name.includes('Vòng ánh sáng laser')) {
-    if (Number(guestCount) >= 400) return { price: 0, text: '0 VNĐ (Tặng miễn phí tiệc > 400 khách)', valid: false };
-    return { price: 700000, text: '700.000 VNĐ', valid: true };
+    if (Number(guestCount) >= 400) return { price: 0, text: '0 VNĐ (Tặng miễn phí)' };
+    return { price: 700000, text: '700.000 VNĐ' };
   }
-  if (raw.includes('800.000')) return { price: 800000, text: '800.000 VNĐ', valid: true };
-  if (raw.includes('1.000.000')) return { price: 1000000, text: '1.000.000 VNĐ', valid: true };
-  if (raw.includes('900.000')) return { price: 900000, text: '900.000 VNĐ', valid: true };
-  if (raw.includes('3.000.000')) return { price: 3000000, text: '3.000.000 VNĐ', valid: true };
-  if (raw.includes('3.400.000')) return { price: 3400000, text: '3.400.000 VNĐ', valid: true };
-  if (raw.includes('4.000.000')) return { price: 4000000, text: '4.000.000 VNĐ', valid: true };
-  if (raw.includes('5.000.000')) return { price: 5000000, text: '5.000.000 VNĐ', valid: true };
-  if (raw.includes('14.000.000')) return { price: 14000000, text: '14.000.000 VNĐ', valid: true };
-  return { price: 0, text: 'Báo giá: Liên hệ', valid: false };
+  if (raw.includes('800.000')) return { price: 800000, text: '800.000 VNĐ' };
+  if (raw.includes('1.000.000')) return { price: 1000000, text: '1.000.000 VNĐ' };
+  if (raw.includes('900.000')) return { price: 900000, text: '900.000 VNĐ' };
+  if (raw.includes('3.000.000')) return { price: 3000000, text: '3.000.000 VNĐ' };
+  if (raw.includes('3.400.000')) return { price: 3400000, text: '3.400.000 VNĐ' };
+  if (raw.includes('4.000.000')) return { price: 4000000, text: '4.000.000 VNĐ' };
+  if (raw.includes('5.000.000')) return { price: 5000000, text: '5.000.000 VNĐ' };
+  if (raw.includes('14.000.000')) return { price: 14000000, text: '14.000.000 VNĐ' };
+  return { price: 0, text: 'Báo giá: Liên hệ' };
 }
 
 export default function Step5Estimate() {
@@ -95,19 +95,21 @@ export default function Step5Estimate() {
       const safeBudget = Math.max(budgetPerTable || 3200000, 3200000);
       const menuBase = tableCount * safeBudget;
 
-      // 3. Match selectedAddOns UUIDs to dbAddons and FILTER OUT invalid / 0 VNĐ items!
+      // 3. Match selectedAddOns UUIDs to dbAddons and ALWAYS USE REAL NAME (NEVER USE GENERIC PLACEHOLDER)
       let addonTotal = 0;
-      const validAddonItems = [];
+      const addonItems = [];
 
       (selectedAddOns || []).forEach(id => {
         const matched = dbAddons.find(a => a.id === id);
         if (matched) {
           const pInfo = parseAddonPrice(matched, guestCount);
-          // ONLY INCLUDE ITEMS WITH PRICE > 0 TO PREVENT 0đ ROWS IN IMAGE 1
-          if (pInfo.valid && pInfo.price > 0) {
-            addonTotal += pInfo.price;
-            validAddonItems.push({ name: matched.name, price: pInfo.price, text: pInfo.text });
-          }
+          addonTotal += pInfo.price;
+          // ALWAYS USE MATCHED.NAME - NEVER USE GENERIC "Dịch vụ nâng cao" PLACEHOLDER!
+          addonItems.push({ 
+            name: matched.name, 
+            price: pInfo.price, 
+            text: pInfo.text 
+          });
         }
       });
 
@@ -118,7 +120,7 @@ export default function Step5Estimate() {
         safeBudget,
         menuBase,
         venueFee: fee,
-        addonItems: validAddonItems,
+        addonItems,
         addonTotal,
         grandTotal
       });
@@ -232,7 +234,7 @@ export default function Step5Estimate() {
                   <span className="text-[#a66a3a] font-bold text-base">{formatCurrency(venueInfo.fee)}</span>
                 </div>
 
-                {/* 3. BẢNG CHI TIẾT TỪNG DỊCH VỤ NÂNG CAO (FILTERED OUT 0đ / INVALID ITEMS FOR ANH 1) */}
+                {/* 3. BẢNG CHI TIẾT TỪNG DỊCH VỤ NÂNG CAO (ALWAYS DISPLAYS REAL NAME, NEVER GENERIC PLACEHOLDER) */}
                 <div className="py-2.5 border-b border-gray-100 space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-900 font-bold">3. Chi Tiết Dịch Vụ Nâng Cao / Bổ Sung ({pricingBreakdown?.addonItems?.length || 0} dịch vụ)</span>
@@ -248,13 +250,13 @@ export default function Step5Estimate() {
                             {item.name}
                           </span>
                           <span className="font-bold text-gray-900">
-                            {formatCurrency(item.price)}
+                            {item.price > 0 ? formatCurrency(item.price) : item.text}
                           </span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <span className="text-[11px] text-gray-400 italic block pl-2">Chưa chọn dịch vụ nâng cao có phí</span>
+                    <span className="text-[11px] text-gray-400 italic block pl-2">Chưa chọn dịch vụ nâng cao</span>
                   )}
                 </div>
 
@@ -284,17 +286,18 @@ export default function Step5Estimate() {
             </div>
           </div>
 
-          {/* FORM NHẬN BÁO GIÁ ZALO (TEXT MATCHING ANH 2 EXACTLY) */}
+          {/* FORM NHẬN BÁO GIÁ ZALO (SHORT CONCISE HEADER + EXACT SUBTITLE TEXT) */}
           <div className="lg:col-span-5">
             <div className="bg-white border border-[#e3a638]/40 rounded-3xl p-6 sm:p-8 shadow-xl sticky top-28">
               {!submitted ? (
                 <>
-                  {/* EXACT FORM TITLE REQUESTED IN ANH 2 */}
-                  <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1 leading-snug">
-                    Điền thông tin để nhận tư vấn và báo giá chi tiết từ nhà hàng
+                  {/* SHORT & CONCISE FORM HEADER AS REQUESTED */}
+                  <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1">
+                    Nhận Báo Giá Chi Tiết
                   </h3>
+                  {/* EXACT DESCRIPTION TEXT REQUESTED BY USER */}
                   <p className="text-gray-500 text-xs font-light mb-6">
-                    Điền số điện thoại Zalo để chuyên viên Golden Palace gửi link báo giá chi tiết cho bạn.
+                    Điền số điện thoại Zalo để chuyên viên Golden Palace tư vấn chi tiết cho bạn.
                   </p>
                   
                   <form onSubmit={handleSubmit} className="space-y-4">
@@ -350,11 +353,11 @@ export default function Step5Estimate() {
                   <div>
                     <h3 className="text-2xl font-playfair font-bold text-gray-900 mb-1">Gửi Thông Tin Thành Công!</h3>
                     <p className="text-gray-600 text-xs font-light leading-relaxed">
-                      Cảm ơn bạn! Link bản báo giá trực tuyến đã được tạo (giống như Thiệp Cưới Online). Bạn có thể xem ngay hoặc sao chép gửi Zalo:
+                      Cảm ơn bạn! Link báo giá trực tuyến đã được tạo (giống như Thiệp Cưới Online). Bạn có thể xem ngay hoặc sao chép gửi Zalo:
                     </p>
                   </div>
 
-                  {/* WEB PROPOSAL LINK BUTTONS (MATCHING ONLINE WEDDING CARD STYLE AS REQUESTED) */}
+                  {/* WEB PROPOSAL LINK BUTTONS (MATCHING ONLINE WEDDING CARD STYLE) */}
                   <div className="space-y-3 pt-2">
                     <a 
                       href={`/du-toan-chi-phi/link/${linkToken}`}
