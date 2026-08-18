@@ -37,7 +37,7 @@ function calculateVenueFee(venueName, guestCount) {
   return 2000000;
 }
 
-export default function Step4Estimate() {
+export default function Step5Estimate() {
   const { estimateData } = useEstimate();
   const { 
     guestCount, budgetPerTable, session, date, 
@@ -160,12 +160,12 @@ export default function Step4Estimate() {
       {/* Sub-header Context */}
       <div className="bg-white border-b border-gray-200 shadow-xs py-3 px-6 mb-8">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link href="/du-toan-chi-phi/services" className="flex items-center gap-1 text-[#a66a3a] hover:underline text-xs uppercase font-bold">
+          <Link href="/du-toan-chi-phi/menu" className="flex items-center gap-1 text-[#a66a3a] hover:underline text-xs uppercase font-bold">
             <span className="material-symbols-outlined text-sm">arrow_back</span>
-            <span>Quay lại chọn thực đơn & dịch vụ</span>
+            <span>Quay lại chọn thực đơn & đồ uống</span>
           </Link>
           <span className="text-xs uppercase tracking-wider font-bold text-[#a66a3a]">
-            Bước 4 / 4: Báo Giá Tự Động Chi Tiết
+            Bước 5 / 5: Báo Giá Tự Động Chi Tiết
           </span>
         </div>
       </div>
@@ -216,12 +216,12 @@ export default function Step4Estimate() {
                 <div className="flex justify-between items-center py-2.5 border-b border-gray-100 bg-amber-50/60 p-3 rounded-xl">
                   <div>
                     <span className="text-gray-900 font-bold block">2. Phí Phục Vụ Hội Trường ({venueInfo.name})</span>
-                    <span className="text-[11px] text-gray-500 font-light">Bao gồm hệ thống LED, âm thanh, ánh sáng & 13 hạng mục trang trí</span>
+                    <span className="text-[11px] text-gray-500 font-light">Bao gồm hệ thống LED, âm thanh, ánh sáng & các hạng mục trang trí</span>
                   </div>
                   <span className="text-[#a66a3a] font-bold text-base">{formatCurrency(venueInfo.fee)}</span>
                 </div>
 
-                {/* 3. BẢNG CHI TIẾT TỪNG DỊCH VỤ NÂNG CAO (EXPLICITLY DISPLAYED) */}
+                {/* 3. BẢNG CHI TIẾT TỪNG DỊCH VỤ NÂNG CAO */}
                 <div className="py-2.5 border-b border-gray-100 space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-900 font-bold">3. Chi Tiết Dịch Vụ Nâng Cao / Bổ Sung ({pricingBreakdown?.addonItems?.length || 0} dịch vụ)</span>
