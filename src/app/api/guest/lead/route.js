@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
+import { sendTelegramNotification } from '@/lib/telegram';
 
 // Business Rule Venue Fee Calculator
 function calculateVenueFee(venueName, guestCount) {
@@ -203,7 +204,7 @@ export async function POST(request) {
 
       const eventDate = date ? new Date(date) : new Date();
 
-      // Create new proposal version (version 1 for new lead, version N+1 for existing lead)
+      // Create new proposal version
       await tx.proposal.create({
         data: {
           leadId: targetLead.id,
@@ -229,6 +230,25 @@ export async function POST(request) {
 
       return targetLead;
     });
+
+    // Fire Telegram Notification asynchronously
+    sendTelegramNotification({
+      code: lead.code,
+      name: lead.name,
+      phone: lead.phone,
+      eventDate: date,
+      eventSession: session,
+      guestCount: parsedGuestCount,
+      mainTables,
+      budgetPerTable: parsedBudgetPerTable,
+      preferredVenueName,
+      totalBase,
+      linkToken: lead.linkToken,
+      leadId: lead.id,
+      isUpdate: Boolean(existingLead),
+      versionNumber,
+      diffSummary
+    }).catch(err => console.error('[Telegram dispatch error]:', err));
 
     return NextResponse.json({ 
       success: true, 

@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth-options';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import ZaloHeaderButton from './ZaloHeaderButton';
+import TelegramHeaderButton from './TelegramHeaderButton';
 
 const formatVietnamTime = (dateVal) => {
   if (!dateVal) return 'N/A';
@@ -64,11 +65,12 @@ export default async function LeadsPage({ searchParams }) {
     <div className="space-y-6 font-inter">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Quản lý Khách hàng (Leads) & Thông báo Zalo</h2>
-          <p className="text-xs text-gray-500 mt-1">Đồng bộ yêu cầu đặt tiệc và gửi tin nhắn Zalo trực tiếp cho nhóm "Chốt tiền hàng"</p>
+          <h2 className="text-xl font-bold text-gray-900">Quản lý Khách hàng (Leads) & Thông báo Telegram / Zalo</h2>
+          <p className="text-xs text-gray-500 mt-1">Đồng bộ yêu cầu đặt tiệc và gửi thông báo tự động tới Telegram & Zalo</p>
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
+          <TelegramHeaderButton />
           <ZaloHeaderButton />
           <form className="flex gap-2">
             <input 
