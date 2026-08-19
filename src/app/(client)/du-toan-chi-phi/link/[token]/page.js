@@ -36,7 +36,7 @@ export default async function LinkView({ params }) {
   const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(val));
 
   return (
-    <div className="min-h-screen bg-[#faf6f0] text-stone-800 font-montserrat flex flex-col items-center justify-center p-3 sm:p-6 relative selection:bg-[#e3a638] selection:text-white pt-24 pb-28">
+    <div className="min-h-screen bg-[#faf6f0] text-stone-800 font-montserrat flex flex-col items-center justify-center p-3 sm:p-6 relative selection:bg-[#e3a638] selection:text-white py-12">
       
       {/* Background Accent */}
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-amber-100/60 via-amber-50/20 to-[#faf6f0] pointer-events-none"></div>
@@ -54,15 +54,16 @@ export default async function LinkView({ params }) {
           <circle cx="20" cy="20" r="3" fill="#d4af37" />
         </svg>
 
-        {/* Brand Header */}
+        {/* Brand Header — Gắn Link Web Trang Chủ Vào Logo */}
         <div className="flex justify-between items-center border-b border-amber-200/80 pb-4 mb-6">
-          <div className="flex items-center gap-2">
+          <Link href="/" target="_blank" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-8 w-auto object-contain" />
             <div>
               <span className="text-[10px] font-playfair tracking-[0.2em] text-[#a66a3a] font-bold uppercase block">GOLDEN PALACE</span>
               <span className="text-[9px] text-stone-500 block">Nam Định • Wedding & Convention</span>
             </div>
-          </div>
+          </Link>
+
           <span className="text-[10px] font-mono font-bold bg-amber-100 text-[#a66a3a] px-3 py-1 rounded-full border border-amber-300">
             {lead.code}
           </span>
@@ -158,7 +159,7 @@ export default async function LinkView({ params }) {
           </ul>
         </div>
 
-        {/* Actions (UPDATED: HOTLINE BUTTON AS REQUESTED IN ANH 1) */}
+        {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <a
             href="tel:02286595959"
@@ -176,9 +177,11 @@ export default async function LinkView({ params }) {
           </Link>
         </div>
 
-        {/* Footer */}
+        {/* Footer Branding — Gắn Link Trang Chủ Vào Dòng Cuối */}
         <div className="mt-8 pt-4 border-t border-stone-200 text-center text-[10px] text-stone-500 font-serif">
-          Golden Palace Wedding & Convention Center • Hotline: 0228 659 5959
+          <Link href="/" target="_blank" className="hover:text-[#a66a3a] transition-colors underline font-medium">
+            Golden Palace Wedding & Convention Center • Hotline: 0228 659 5959
+          </Link>
         </div>
 
       </div>

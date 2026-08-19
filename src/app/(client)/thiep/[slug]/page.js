@@ -36,13 +36,13 @@ export default function PublicInvitationPage({ params }) {
           <circle cx="20" cy="20" r="3" fill="#d4af37" />
         </svg>
 
-        {/* Logo Golden Palace ở góc trái trên cùng (Absolute Top-Left) */}
-        <div className="absolute top-4 left-5 flex items-center gap-1.5 z-20">
+        {/* Logo Golden Palace ở góc trái trên cùng (Gắn Link Trang Chủ) */}
+        <Link href="/" target="_blank" className="absolute top-4 left-5 flex items-center gap-1.5 z-20 hover:opacity-80 transition-opacity">
           <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-8 w-auto object-contain drop-shadow-xs" />
           <span className="text-[9px] font-playfair tracking-[0.2em] text-[#a66a3a] font-bold uppercase">
             GOLDEN PALACE
           </span>
-        </div>
+        </Link>
 
         {/* Header Spacing for Logo */}
         <div className="pt-6 w-full text-center relative z-10">
@@ -133,9 +133,11 @@ export default function PublicInvitationPage({ params }) {
           </p>
         </div>
 
-        {/* Footer Branding */}
+        {/* Footer Branding (Gắn Link Trang Chủ Mới) */}
         <div className="mt-6 pt-3 border-t border-stone-200 text-center text-[10px] text-stone-500 relative z-10">
-          Thiệp cưới điện tử độc quyền từ <strong className="text-[#a66a3a]">Golden Palace Nam Định</strong>
+          <Link href="/" target="_blank" className="hover:text-[#a66a3a] transition-colors underline font-medium">
+            Golden Palace Wedding & Convention Center • Hotline: 0228 659 5959
+          </Link>
         </div>
 
       </div>
