@@ -40,7 +40,7 @@ export default function Navbar() {
       </div>
 
       {/* Main Header Navbar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
         
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
@@ -60,9 +60,11 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-7 text-sm tracking-wider uppercase font-medium text-gray-700">
-          <Link href="/" className="hover:text-[#a66a3a] transition-colors py-2">Trang chủ</Link>
+        {/* Desktop Links (Thêm whitespace-nowrap để chữ KHÔNG BAO GIỜ bị xuống dòng) */}
+        <div className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-7 text-xs lg:text-sm tracking-wider uppercase font-medium text-gray-700">
+          <Link href="/" className="hover:text-[#a66a3a] transition-colors py-2 whitespace-nowrap">
+            Trang chủ
+          </Link>
           
           {/* Dropdown: KHÔNG GIAN */}
           <div 
@@ -70,8 +72,8 @@ export default function Navbar() {
             onMouseEnter={() => setKhongGianOpen(true)}
             onMouseLeave={() => setKhongGianOpen(false)}
           >
-            <button className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer">
-              Không gian
+            <button className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer whitespace-nowrap">
+              <span>Không gian</span>
               <span className="material-symbols-outlined text-base">expand_more</span>
             </button>
 
@@ -101,8 +103,8 @@ export default function Navbar() {
             onMouseEnter={() => setDichVuOpen(true)}
             onMouseLeave={() => setDichVuOpen(false)}
           >
-            <button className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer">
-              Dịch vụ
+            <button className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer whitespace-nowrap">
+              <span>Dịch vụ</span>
               <span className="material-symbols-outlined text-base">expand_more</span>
             </button>
 
@@ -128,8 +130,8 @@ export default function Navbar() {
             onMouseEnter={() => setThucDonOpen(true)}
             onMouseLeave={() => setThucDonOpen(false)}
           >
-            <Link href="/thuc-don" className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer">
-              Thực đơn
+            <Link href="/thuc-don" className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer whitespace-nowrap">
+              <span>Thực đơn</span>
               <span className="material-symbols-outlined text-base">expand_more</span>
             </Link>
 
@@ -159,7 +161,7 @@ export default function Navbar() {
             onMouseEnter={() => setCaNhanHoaOpen(true)}
             onMouseLeave={() => setCaNhanHoaOpen(false)}
           >
-            <Link href="/ca-nhan-hoa" className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer">
+            <Link href="/ca-nhan-hoa" className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer whitespace-nowrap">
               <span className="material-symbols-outlined text-base text-[#e3a638]">auto_awesome</span>
               <span>Cá Nhân Hóa</span>
               <span className="material-symbols-outlined text-base">expand_more</span>
@@ -182,13 +184,12 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Desktop CTA Pill */}
-        <div className="hidden md:flex items-center gap-4 shrink-0">
-          <Link href="/ca-nhan-hoa" className="px-4 py-2 border border-[#e3a638] text-[#a66a3a] hover:bg-[#e3a638]/10 font-montserrat text-xs tracking-wider uppercase transition-all font-semibold rounded-full flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm text-[#e3a638]">auto_awesome</span>
-            Cá Nhân Hóa
-          </Link>
-          <Link href="/du-toan-chi-phi" className="px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white hover:opacity-90 font-montserrat text-xs tracking-widest uppercase transition-all font-semibold rounded-full shadow-md">
+        {/* Desktop CTA Pill - Chỉ giữ duy nhất 1 Nút DỰ TOÁN CHI PHÍ (bỏ nút Cá Nhân Hóa lặp lại) */}
+        <div className="hidden md:flex items-center shrink-0">
+          <Link 
+            href="/du-toan-chi-phi" 
+            className="px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white hover:opacity-90 font-montserrat text-xs tracking-widest uppercase transition-all font-semibold rounded-full shadow-md whitespace-nowrap"
+          >
             Dự Toán Chi Phí
           </Link>
         </div>
