@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
+import ServiceGalleryClient from './ServiceGalleryClient';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -213,29 +214,16 @@ export default async function DichVuDetailPage({ params }) {
         </div>
       </section>
 
-      {/* Gallery */}
+      {/* Gallery with Lightbox Popup */}
       <section className="max-w-7xl mx-auto px-6 py-12 border-t border-[#e3a638]/20">
         <div className="text-center mb-12">
           <h3 className="text-[#a66a3a] font-montserrat uppercase tracking-[0.2em] text-xs font-semibold mb-2">Thư viện ảnh thực tế ({gallery.length} ảnh)</h3>
           <h2 className="text-3xl sm:text-4xl font-playfair text-gray-900">Không gian & Không khí {staticService.name}</h2>
+          <p className="text-gray-500 text-xs font-light mt-1">Nhấp vào bất kỳ ảnh nào để xem dạng Popup phóng to HD</p>
           <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-4" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {gallery.map((imgUrl, gIdx) => (
-            <div key={gIdx} className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-[#e3a638]/20 cursor-pointer font-montserrat">
-              <div 
-                className="w-full h-full bg-cover bg-center group-hover:scale-108 transition-transform duration-700"
-                style={{ backgroundImage: `url('${imgUrl}')` }}
-              />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-white text-xs font-medium bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm">
-                  Vị trí #{gIdx + 1}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+        <ServiceGalleryClient gallery={gallery} serviceName={staticService.name} />
       </section>
 
     </div>

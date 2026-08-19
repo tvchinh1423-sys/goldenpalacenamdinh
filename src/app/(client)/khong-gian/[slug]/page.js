@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
+import VenueGalleryClient from './VenueGalleryClient';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -105,7 +106,7 @@ export default async function KhongGianPage({ params }) {
     notFound();
   }
 
-  // Fetch dynamic venue data from Prisma DB to reflect Admin sorting & Drive photos
+  // Fetch dynamic venue data from Prisma DB
   let dbImages = [];
   let dbCapacity = staticData.capacity;
   let dbDescription = staticData.description;
@@ -206,32 +207,18 @@ export default async function KhongGianPage({ params }) {
         </div>
       </section>
 
-      {/* Gallery showing Admin-ordered images */}
+      {/* Gallery with Lightbox Popup */}
       <section className="max-w-7xl mx-auto px-6 py-16 border-t border-[#e3a638]/20">
         <div className="text-center mb-12">
           <span className="px-3 py-1 bg-[#e3a638]/10 text-[#a66a3a] text-[11px] font-semibold uppercase tracking-widest rounded-full">
             Bộ sưu tập nhiếp ảnh chất lượng cao ({gallery.length} ảnh)
           </span>
           <h2 className="text-3xl sm:text-4xl font-playfair text-gray-900 mt-3 mb-2">Thư Viện Ảnh Thực Tế {staticData.name}</h2>
-          <p className="text-gray-500 text-xs font-light">Hình ảnh thực tế sắp xếp theo trang quản trị Admin</p>
+          <p className="text-gray-500 text-xs font-light">Nhấp vào bất kỳ ảnh nào để xem dạng Popup phóng to HD</p>
           <div className="w-16 h-[1px] bg-[#e3a638] mx-auto mt-4" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {gallery.map((imgUrl, gIdx) => (
-            <div key={gIdx} className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-[#e3a638]/20 cursor-pointer">
-              <div 
-                className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
-                style={{ backgroundImage: `url('${imgUrl}')` }}
-              />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                <span className="text-white text-xs font-medium bg-black/60 px-3 py-1 rounded-full backdrop-blur-sm">
-                  Vị trí #{gIdx + 1}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+        <VenueGalleryClient gallery={gallery} venueName={staticData.name} />
       </section>
 
     </div>
