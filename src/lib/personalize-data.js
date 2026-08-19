@@ -76,39 +76,39 @@ export const MUSIC_CATEGORIES = [
 
 export const MUSIC_TRACKS = [
   // Giai đoạn 1: Đón khách
-  { id: 'w1', catId: 'welcome', title: 'Đi Tìm Tình Yêu', artist: 'MONO', duration: '3:15', youtubeUrl: 'https://www.youtube.com/results?search_query=Di+Tim+Tinh+Yeu+MONO' },
-  { id: 'w2', catId: 'welcome', title: 'Có Em Đời Bỗng Vui', artist: 'Chillies', duration: '3:40', youtubeUrl: 'https://www.youtube.com/results?search_query=Co+Em+Doi+Bong+Vui+Chillies' },
-  { id: 'w3', catId: 'welcome', title: 'Lễ Đường', artist: 'Kai Đinh', duration: '3:50', youtubeUrl: 'https://www.youtube.com/results?search_query=Le+Duong+Kai+Dinh' },
-  { id: 'w4', catId: 'welcome', title: 'Until I Found You', artist: 'Stephen Sanchez', duration: '2:57', youtubeUrl: 'https://www.youtube.com/results?search_query=Until+I+Found+You+Stephen+Sanchez' },
+  { id: 'w1', catId: 'welcome', title: 'Đi Tìm Tình Yêu', artist: 'MONO', duration: '3:15', youtubeUrl: 'https://www.youtube.com/watch?v=w2C6q7jC2yU' },
+  { id: 'w2', catId: 'welcome', title: 'Có Em Đời Bỗng Vui', artist: 'Chillies', duration: '3:40', youtubeUrl: 'https://www.youtube.com/watch?v=F5tS5scWefc' },
+  { id: 'w3', catId: 'welcome', title: 'Lễ Đường', artist: 'Kai Đinh', duration: '3:50', youtubeUrl: 'https://www.youtube.com/watch?v=s97vSIn5E0w' },
+  { id: 'w4', catId: 'welcome', title: 'Until I Found You', artist: 'Stephen Sanchez', duration: '2:57', youtubeUrl: 'https://www.youtube.com/watch?v=GxldQ9eX2fc' },
 
   // Giai đoạn 2: Nghi lễ chính
-  { id: 'e1', catId: 'entrance', title: 'Em Đồng Ý (I Do)', artist: 'Đức Phúc x 911', duration: '3:34', youtubeUrl: 'https://www.youtube.com/results?search_query=Em+Dong+Y+I+Do+Duc+Phuc+911' },
-  { id: 'e2', catId: 'entrance', title: 'Nắm Lấy Tay Anh', artist: 'Tuấn Hưng', duration: '4:10', youtubeUrl: 'https://www.youtube.com/results?search_query=Nam+Lay+Tay+Anh+Tuan+Hung' },
-  { id: 'e3', catId: 'entrance', title: 'Lover', artist: 'Taylor Swift', duration: '3:41', youtubeUrl: 'https://www.youtube.com/results?search_query=Lover+Taylor+Swift' },
-  { id: 'e4', catId: 'entrance', title: 'Yes I Do', artist: 'Only C x Lou Hoàng', duration: '3:55', youtubeUrl: 'https://www.youtube.com/results?search_query=Yes+I+Do+OnlyC+Lou+Hoang' },
-  { id: 'e5', catId: 'entrance', title: 'Beautiful in White', artist: 'Westlife', duration: '3:52', youtubeUrl: 'https://www.youtube.com/results?search_query=Beautiful+in+White+Westlife' },
-  { id: 'e6', catId: 'entrance', title: 'Ánh Nắng Của Anh', artist: 'Đức Phúc', duration: '4:20', youtubeUrl: 'https://www.youtube.com/results?search_query=Anh+Nang+Cua+Anh+Duc+Phuc' },
-  { id: 'e7', catId: 'entrance', title: 'Perfect', artist: 'Ed Sheeran', duration: '4:23', youtubeUrl: 'https://www.youtube.com/results?search_query=Perfect+Ed+Sheeran' },
-  { id: 'e8', catId: 'entrance', title: 'Hơn Cả Yêu', artist: 'Đức Phúc', duration: '4:05', youtubeUrl: 'https://www.youtube.com/results?search_query=Hon+Ca+Yeu+Duc+Phuc' },
+  { id: 'e1', catId: 'entrance', title: 'Em Đồng Ý (I Do)', artist: 'Đức Phúc x 911', duration: '3:34', youtubeUrl: 'https://www.youtube.com/watch?v=0A6QNUXn000' },
+  { id: 'e2', catId: 'entrance', title: 'Nắm Lấy Tay Anh', artist: 'Tuấn Hưng', duration: '4:10', youtubeUrl: 'https://www.youtube.com/watch?v=aG0g1rOIn7g' },
+  { id: 'e3', catId: 'entrance', title: 'Lover', artist: 'Taylor Swift', duration: '3:41', youtubeUrl: 'https://www.youtube.com/watch?v=-BjZmE2gtdo' },
+  { id: 'e4', catId: 'entrance', title: 'Yes I Do', artist: 'Only C x Lou Hoàng', duration: '3:55', youtubeUrl: 'https://www.youtube.com/watch?v=Zt_35B07X9Y' },
+  { id: 'e5', catId: 'entrance', title: 'Beautiful in White', artist: 'Westlife', duration: '3:52', youtubeUrl: 'https://www.youtube.com/watch?v=XRNL56lYc2E' },
+  { id: 'e6', catId: 'entrance', title: 'Ánh Nắng Của Anh', artist: 'Đức Phúc', duration: '4:20', youtubeUrl: 'https://www.youtube.com/watch?v=3-fV9gWc0Z4' },
+  { id: 'e7', catId: 'entrance', title: 'Perfect', artist: 'Ed Sheeran', duration: '4:23', youtubeUrl: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g' },
+  { id: 'e8', catId: 'entrance', title: 'Hơn Cả Yêu', artist: 'Đức Phúc', duration: '4:05', youtubeUrl: 'https://www.youtube.com/watch?v=Z7nQ2S1H1J0' },
 
   // Giai đoạn 3: Khai tiệc & Nâng ly
-  { id: 't1', catId: 'toast', title: 'Đừng Làm Trái Tim Anh Đau', artist: 'Sơn Tùng M-TP', duration: '3:50', youtubeUrl: 'https://www.youtube.com/results?search_query=Dung+Lam+Trai+Tim+Anh+Dau+Son+Tung+M-TP' },
-  { id: 't2', catId: 'toast', title: 'Love Paradise', artist: 'Kelly Chen', duration: '3:15', youtubeUrl: 'https://www.youtube.com/results?search_query=Love+Paradise+Kelly+Chen' },
-  { id: 't3', catId: 'toast', title: 'Ngày Mình Chung Đôi', artist: 'Hùng Min', duration: '3:45', youtubeUrl: 'https://www.youtube.com/results?search_query=Ngay+Minh+Chung+Doi+Hung+Min' },
-  { id: 't4', catId: 'toast', title: 'Ngày Hạnh Phúc', artist: 'Đan Trường', duration: '4:10', youtubeUrl: 'https://www.youtube.com/results?search_query=Ngay+Hanh+Phuc+Dan+Truong' },
-  { id: 't5', catId: 'toast', title: 'Sugar', artist: 'Maroon 5', duration: '3:55', youtubeUrl: 'https://www.youtube.com/results?search_query=Sugar+Maroon+5' },
-  { id: 't6', catId: 'toast', title: 'Cưới Thôi', artist: 'Masew x Masiu', duration: '3:05', youtubeUrl: 'https://www.youtube.com/results?search_query=Cuoi+Thoi+Masew+Masiu' },
-  { id: 't7', catId: 'toast', title: 'Marry You', artist: 'Bruno Mars', duration: '3:50', youtubeUrl: 'https://www.youtube.com/results?search_query=Marry+You+Bruno+Mars' },
-  { id: 't8', catId: 'toast', title: 'Dancing Queen', artist: 'ABBA', duration: '3:51', youtubeUrl: 'https://www.youtube.com/results?search_query=Dancing+Queen+ABBA' },
+  { id: 't1', catId: 'toast', title: 'Đừng Làm Trái Tim Anh Đau', artist: 'Sơn Tùng M-TP', duration: '3:50', youtubeUrl: 'https://www.youtube.com/watch?v=abPmZCZZrFA' },
+  { id: 't2', catId: 'toast', title: 'Love Paradise', artist: 'Kelly Chen', duration: '3:15', youtubeUrl: 'https://www.youtube.com/watch?v=YmD47R2w8Z8' },
+  { id: 't3', catId: 'toast', title: 'Ngày Mình Chung Đôi', artist: 'Hùng Min', duration: '3:45', youtubeUrl: 'https://www.youtube.com/watch?v=CqHj_dJ2A-M' },
+  { id: 't4', catId: 'toast', title: 'Ngày Hạnh Phúc', artist: 'Đan Trường', duration: '4:10', youtubeUrl: 'https://www.youtube.com/watch?v=Zk9gD18k-C8' },
+  { id: 't5', catId: 'toast', title: 'Sugar', artist: 'Maroon 5', duration: '3:55', youtubeUrl: 'https://www.youtube.com/watch?v=09R8_2nJtjg' },
+  { id: 't6', catId: 'toast', title: 'Cưới Thôi', artist: 'Masew x Masiu', duration: '3:05', youtubeUrl: 'https://www.youtube.com/watch?v=3R-zSgK2OQ0' },
+  { id: 't7', catId: 'toast', title: 'Marry You', artist: 'Bruno Mars', duration: '3:50', youtubeUrl: 'https://www.youtube.com/watch?v=8VqCqGz99mE' },
+  { id: 't8', catId: 'toast', title: 'Dancing Queen', artist: 'ABBA', duration: '3:51', youtubeUrl: 'https://www.youtube.com/watch?v=xFrGuyw1V8s' },
 
   // Giai đoạn 4: Giao lưu & Tiễn khách
-  { id: 'd1', catId: 'dining', title: 'Một Nhà', artist: 'Da LAB', duration: '3:15', youtubeUrl: 'https://www.youtube.com/results?search_query=Mot+Nha+Da+LAB' },
-  { id: 'd2', catId: 'dining', title: 'Pretty Boy', artist: 'M2M', duration: '4:40', youtubeUrl: 'https://www.youtube.com/results?search_query=Pretty+Boy+M2M' },
-  { id: 'd3', catId: 'dining', title: 'Túp Lều Vàng', artist: 'Nguyễn Đình Vũ x NBORO', duration: '3:20', youtubeUrl: 'https://www.youtube.com/results?search_query=Tup+Leu+Vang+Nguyen+Dinh+Vu' },
-  { id: 'd4', catId: 'dining', title: 'Chỉ Cần Có Nhau', artist: 'Vũ Cát Tường', duration: '3:35', youtubeUrl: 'https://www.youtube.com/results?search_query=Chi+Can+Co+Nhau+Vu+Cat+Tuong' },
-  { id: 'd5', catId: 'dining', title: 'You Are The Reason', artist: 'Calum Scott', duration: '3:24', youtubeUrl: 'https://www.youtube.com/results?search_query=You+Are+The+Reason+Calum+Scott' },
-  { id: 'd6', catId: 'dining', title: 'Vài Câu Nói Có Khiến Người Thay Đổi', artist: 'GREY D', duration: '3:45', youtubeUrl: 'https://www.youtube.com/results?search_query=Vai+Cau+Noi+Co+Khien+Nguoi+Thay+Doi+GREY+D' },
-  { id: 'd7', catId: 'dining', title: 'I Do', artist: '911', duration: '3:28', youtubeUrl: 'https://www.youtube.com/results?search_query=I+Do+911' }
+  { id: 'd1', catId: 'dining', title: 'Một Nhà', artist: 'Da LAB', duration: '3:15', youtubeUrl: 'https://www.youtube.com/watch?v=3v3-L6k_Kso' },
+  { id: 'd2', catId: 'dining', title: 'Pretty Boy', artist: 'M2M', duration: '4:40', youtubeUrl: 'https://www.youtube.com/watch?v=7YwZ1qF4S0s' },
+  { id: 'd3', catId: 'dining', title: 'Túp Lều Vàng', artist: 'Nguyễn Đình Vũ x NBORO', duration: '3:20', youtubeUrl: 'https://www.youtube.com/watch?v=2e6N21X2X78' },
+  { id: 'd4', catId: 'dining', title: 'Chỉ Cần Có Nhau', artist: 'Vũ Cát Tường', duration: '3:35', youtubeUrl: 'https://www.youtube.com/watch?v=7GqH1f1q-E8' },
+  { id: 'd5', catId: 'dining', title: 'You Are The Reason', artist: 'Calum Scott', duration: '3:24', youtubeUrl: 'https://www.youtube.com/watch?v=ShZ978fBl6Y' },
+  { id: 'd6', catId: 'dining', title: 'Vài Câu Nói Có Khiến Người Thay Đổi', artist: 'GREY D', duration: '3:45', youtubeUrl: 'https://www.youtube.com/watch?v=W0c00k2tVn4' },
+  { id: 'd7', catId: 'dining', title: 'I Do', artist: '911', duration: '3:28', youtubeUrl: 'https://www.youtube.com/watch?v=0A6QNUXn000' }
 ];
 
 // 6 Distinct Luxury Light-themed Wedding Invitation Templates

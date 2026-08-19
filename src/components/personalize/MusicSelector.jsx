@@ -3,6 +3,16 @@
 import { useState } from 'react';
 import { MUSIC_CATEGORIES, MUSIC_TRACKS } from '@/lib/personalize-data';
 
+function getYouTubeEmbedUrl(url) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  if (match && match[2] && match[2].length === 11) {
+    return `https://www.youtube.com/embed/${match[2]}?autoplay=1`;
+  }
+  return null;
+}
+
 export default function MusicSelector({
   selectedTracks = [],
   setSelectedTracks = () => {},
@@ -12,6 +22,7 @@ export default function MusicSelector({
   setYoutubeLinks = () => {}
 }) {
   const [activeTab, setActiveTab] = useState('welcome');
+  const [previewTrack, setPreviewTrack] = useState(null); // { title: string, embedUrl: string }
 
   const toggleTrack = (trackId) => {
     if (selectedTracks.includes(trackId)) {
@@ -26,6 +37,15 @@ export default function MusicSelector({
       ...youtubeLinks,
       [catId]: val
     });
+  };
+
+  const handleOpenPreview = (title, url) => {
+    const embedUrl = getYouTubeEmbedUrl(url);
+    if (embedUrl) {
+      setPreviewTrack({ title, embedUrl });
+    } else if (url) {
+      window.open(url, '_blank');
+    }
   };
 
   const filteredTracks = MUSIC_TRACKS.filter(t => t.catId === activeTab);
@@ -102,18 +122,17 @@ export default function MusicSelector({
                   <span className="material-symbols-outlined text-sm text-amber-400">music_note</span>
                   {track.title}
                 </div>
-                <div className="text-xs text-gray-400 truncate mt-0.5 flex items-center gap-2">
+                <div className="text-xs text-gray-400 truncate mt-1 flex items-center gap-2">
                   <span>{track.artist} ({track.duration})</span>
                   •
-                  <a
-                    href={track.youtubeUrl || `https://www.youtube.com/results?search_query=${encodeURIComponent(track.title + ' ' + track.artist)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-red-400 font-bold hover:underline flex items-center gap-1 text-[11px]"
+                  <button
+                    type="button"
+                    onClick={() => handleOpenPreview(`${track.title} - ${track.artist}`, track.youtubeUrl)}
+                    className="text-red-400 font-bold hover:text-red-300 transition-colors flex items-center gap-1 text-[11px] cursor-pointer"
                   >
-                    <span className="material-symbols-outlined text-xs">play_circle</span>
-                    Nghe thử trên YouTube
-                  </a>
+                    <span className="material-symbols-outlined text-sm">play_circle</span>
+                    Nghe thử Video YouTube
+                  </button>
                 </div>
               </div>
 
@@ -135,10 +154,23 @@ export default function MusicSelector({
 
       {/* Lựa Chọn Khác: Chèn Link YouTube cho Giai Đoạn này */}
       <div className="p-4 bg-[#181818] border border-amber-500/30 rounded-xl space-y-2">
-        <label className="block text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-2">
-          <span className="material-symbols-outlined text-base">link</span>
-          Lựa Chọn Khác (Chèn Link YouTube bài hát yêu thích cho giai đoạn này):
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-2">
+            <span className="material-symbols-outlined text-base">link</span>
+            Lựa Chọn Khác (Chèn Link YouTube bài hát yêu thích cho giai đoạn này):
+          </label>
+          {youtubeLinks[activeTab] && (
+            <button
+              type="button"
+              onClick={() => handleOpenPreview(`Nhạc yêu thích: ${currentCategory?.label}`, youtubeLinks[activeTab])}
+              className="text-xs text-red-400 font-bold hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-sm">play_circle</span>
+              Nghe thử link đã dán
+            </button>
+          )}
+        </div>
+        
         <input
           type="url"
           value={youtubeLinks[activeTab] || ''}
@@ -151,7 +183,7 @@ export default function MusicSelector({
         </p>
       </div>
 
-      {/* GHI CHÚ KỊCH BẢN & YÊU CẦU RIÊNG CHO ĐỘI KỸ THUẬT (Đã đổi tên đúng theo ảnh 2) */}
+      {/* GHI CHÚ KỊCH BẢN & YÊU CẦU RIÊNG CHO ĐỘI KỸ THUẬT */}
       <div className="bg-[#141414] border border-gray-800 rounded-2xl p-5">
         <label className="block text-gray-300 text-xs font-semibold mb-2 uppercase tracking-wider flex items-center gap-2">
           <span className="material-symbols-outlined text-amber-400 text-base">edit_note</span>
@@ -165,6 +197,53 @@ export default function MusicSelector({
           className="w-full bg-[#1c1c1c] border border-gray-700 focus:border-[#e3a638] rounded-xl p-3.5 text-xs text-white outline-none transition-colors leading-relaxed"
         />
       </div>
+
+      {/* EMBEDDED YOUTUBE VIDEO PLAYER POPUP MODAL */}
+      {previewTrack && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-3xl bg-[#141414] border border-amber-500/40 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+            
+            {/* Header */}
+            <div className="bg-gradient-to-r from-gray-900 to-black p-4 text-white flex items-center justify-between border-b border-gray-800">
+              <div className="flex items-center gap-2 min-w-0 pr-2">
+                <span className="material-symbols-outlined text-red-500 text-xl shrink-0">play_circle</span>
+                <h3 className="font-bold text-xs sm:text-sm text-amber-300 truncate">
+                  Đang nghe thử: {previewTrack.title}
+                </h3>
+              </div>
+              <button
+                onClick={() => setPreviewTrack(null)}
+                className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer shrink-0"
+              >
+                <span className="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+
+            {/* iFrame Player Aspect 16:9 */}
+            <div className="relative w-full aspect-video bg-black">
+              <iframe
+                src={previewTrack.embedUrl}
+                title={previewTrack.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3 bg-black/60 text-center text-xs text-gray-400 flex justify-between items-center">
+              <span>Đang phát video nhúng trực tiếp từ YouTube</span>
+              <button
+                onClick={() => setPreviewTrack(null)}
+                className="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-bold text-xs cursor-pointer transition-colors"
+              >
+                Đóng Video
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
