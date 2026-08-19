@@ -484,11 +484,11 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
             {/* Top Space for Logo */}
             <div className="pt-6"></div>
 
-            {/* Optional Guest Name Banner if typed */}
+            {/* Optional Guest Name Banner if typed - RE-DESIGNED HOÀN HẢO THEO PHONG CÁCH HOÀNG GIA */}
             {guestName.trim() && (
-              <div className="my-1.5 p-2 bg-[#b8860b]/10 border border-[#b8860b]/30 rounded-xl relative z-10 text-center">
-                <span className="text-[9px] uppercase tracking-widest text-[#a66a3a] font-bold block">TRÂN TRỌNG KÍNH MỜI</span>
-                <span className="text-xs font-bold text-stone-900 font-playfair">{guestName.trim()}</span>
+              <div className="my-2 p-3 bg-[#fdfbf7] border border-[#d4af37]/60 rounded-xl relative z-10 text-center shadow-xs">
+                <span className="text-[8px] tracking-[0.25em] uppercase text-[#a66a3a] font-serif font-bold block mb-0.5">KÍNH MỜI QUÝ KHÁCH</span>
+                <span className="text-sm font-bold text-[#b8860b] font-playfair">{guestName.trim()}</span>
               </div>
             )}
 

@@ -101,16 +101,20 @@ function PublicInvitationContent({ params }) {
           </div>
         </div>
 
-        {/* OPTIONAL GUEST NAME DISPLAY IF PASSED */}
+        {/* OPTIONAL GUEST NAME DISPLAY IF PASSED — RE-DESIGNED TO BE LUXURIOUS & HARMONIOUS */}
         {guestName && (
-          <div className="w-full bg-[#fdfbf7] border border-[#e3a638]/40 rounded-xl p-3 mb-6 text-center shadow-xs relative z-10">
-            <span className="text-[9px] uppercase tracking-widest text-[#a66a3a] font-bold block mb-0.5">KÍNH MỜI QUÝ KHÁCH</span>
-            <span className="text-base font-bold text-stone-900 font-playfair">{guestName}</span>
+          <div className="w-full bg-[#fdfbf7] border border-[#d4af37]/60 rounded-2xl p-4 my-2 text-center shadow-xs relative z-10">
+            <span className="text-[10px] tracking-[0.25em] uppercase text-[#a66a3a] font-serif font-bold block mb-1">
+              KÍNH MỜI QUÝ KHÁCH
+            </span>
+            <span className="text-xl sm:text-2xl font-playfair font-bold text-[#b8860b] drop-shadow-xs">
+              {guestName}
+            </span>
           </div>
         )}
 
         {/* Ceremony Header Title - WEDDING CEREMONY */}
-        <div className="text-center space-y-1 mb-6 relative z-10">
+        <div className="text-center space-y-1 my-4 relative z-10">
           <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-[#b8860b] tracking-wider uppercase">
             WEDDING CEREMONY
           </h1>
@@ -180,14 +184,14 @@ function PublicInvitationContent({ params }) {
           </div>
         </div>
 
-        {/* NÚT TÍNH NĂNG MỚI: THÊM VÀO LỊCH ĐIỆN THOẠI KHÁCH MỜI */}
+        {/* NÚT TÍNH NĂNG MỚI: THÊM VÀO LỊCH (Đã sửa 1 icon duy nhất + tên ngắn gọn) */}
         <div className="w-full mb-6 relative z-10">
           <button
             onClick={() => setShowCalendarModal(!showCalendarModal)}
-            className="w-full py-3 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3.5 px-6 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md hover:opacity-90 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-base">calendar_month</span>
-            <span>📅 THÊM VÀO LỊCH ĐIỆN THOẠI KHÁCH MỜI</span>
+            <span className="material-symbols-outlined text-lg">calendar_month</span>
+            <span>THÊM VÀO LỊCH</span>
           </button>
 
           {/* Calendar Option Modal Dropdown */}
@@ -230,7 +234,7 @@ function PublicInvitationContent({ params }) {
           </p>
         </div>
 
-        {/* Footer Branding */}
+        {/* Footer Branding (Gắn Link Trang Chủ Mới) */}
         <div className="mt-6 pt-3 border-t border-stone-200 text-center text-[10px] text-stone-500 relative z-10">
           <Link href="/" target="_blank" className="hover:text-[#a66a3a] transition-colors underline font-medium">
             Golden Palace Wedding & Convention Center • Hotline: 0228 659 5959
