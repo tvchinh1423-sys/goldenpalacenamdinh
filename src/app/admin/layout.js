@@ -23,6 +23,7 @@ function AdminLayoutContent({ children }) {
   const allNavItems = [
     { name: 'Bảng điều khiển', href: '/admin', icon: 'dashboard' },
     { name: 'Quản lý Khách hàng', href: '/admin/leads', icon: 'group' },
+    { name: 'Huấn Luyện AI Chat', href: '/admin/ai-training', icon: 'psychology' },
     { name: 'Quản lý Hội trường', href: '/admin/venues', icon: 'apartment' },
     { name: 'Gói Dịch vụ', href: '/admin/packages', icon: 'card_giftcard' },
     { name: 'Dịch vụ Bổ sung', href: '/admin/addons', icon: 'extension' },

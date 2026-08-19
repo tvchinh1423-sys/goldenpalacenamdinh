@@ -10,17 +10,43 @@ const SUGGESTED_QUESTIONS = [
   "📍 Địa chỉ và hotline liên hệ nhà hàng?"
 ];
 
+const INITIAL_WELCOME_MESSAGE = {
+  role: 'assistant',
+  content: 'Xin chào! Em là **Trợ lý AI Golden Palace**. Em có thể giúp Quý khách tư vấn về sảnh tiệc, giá mâm cỗ, thực đơn và lập dự toán chi phí tiệc cưới / sự kiện. Quý khách cần hỗ trợ thông tin gì ạ?',
+  suggestions: SUGGESTED_QUESTIONS
+};
+
 export default function AIChatModal({ isOpen, onClose }) {
-  const [messages, setMessages] = useState([
-    {
-      role: 'assistant',
-      content: 'Xin chào! Em là **Trợ lý AI Golden Palace**. Em có thể giúp Quý khách tư vấn về sảnh tiệc, giá mâm cỗ, thực đơn và lập dự toán chi phí tiệc cưới / sự kiện. Quý khách cần hỗ trợ thông tin gì ạ?',
-      suggestions: SUGGESTED_QUESTIONS
-    }
-  ]);
+  const [messages, setMessages] = useState([INITIAL_WELCOME_MESSAGE]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // 1. PERSISTENCE: LOAD CHAT HISTORY FROM LOCALSTORAGE ON MOUNT
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('gp_ai_chat_messages');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load chat history:', e);
+    }
+  }, []);
+
+  // 2. PERSISTENCE: SAVE CHAT HISTORY TO LOCALSTORAGE WHENEVER MESSAGES UPDATE
+  useEffect(() => {
+    try {
+      if (messages.length > 0) {
+        localStorage.setItem('gp_ai_chat_messages', JSON.stringify(messages));
+      }
+    } catch (e) {
+      console.error('Failed to save chat history:', e);
+    }
+  }, [messages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -31,6 +57,14 @@ export default function AIChatModal({ isOpen, onClose }) {
       scrollToBottom();
     }
   }, [messages, isOpen]);
+
+  const handleClearHistory = () => {
+    if (confirm('Bạn có muốn xóa toàn bộ lịch sử cuộc trò chuyện này?')) {
+      const reset = [INITIAL_WELCOME_MESSAGE];
+      setMessages(reset);
+      localStorage.setItem('gp_ai_chat_messages', JSON.stringify(reset));
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -92,7 +126,7 @@ export default function AIChatModal({ isOpen, onClose }) {
     <div className="fixed bottom-24 right-4 z-50 w-[92vw] sm:w-[420px] max-h-[80vh] h-[580px] bg-white rounded-2xl shadow-2xl border border-[#e3a638]/30 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300 font-montserrat">
       
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#1a1a1a] via-[#2a2a2a] to-[#1a1a1a] p-4 text-white flex items-center justify-between border-b border-[#e3a638]/40">
+      <div className="bg-gradient-to-r from-[#1a1a1a] via-[#2a2419] to-[#1a1a1a] p-4 text-white flex items-center justify-between border-b border-[#e3a638]/40">
         <div className="flex items-center gap-3">
           <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-[#e3a638] to-[#a66a3a] p-0.5 shadow-md">
             <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
@@ -107,13 +141,24 @@ export default function AIChatModal({ isOpen, onClose }) {
             <p className="text-[11px] text-gray-300 font-light">Tư vấn tiệc cưới & sự kiện 24/7</p>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-colors"
-          title="Đóng cửa sổ chat"
-        >
-          <span className="material-symbols-outlined text-xl">close</span>
-        </button>
+        
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handleClearHistory}
+            className="p-1.5 rounded-lg hover:bg-white/10 text-gray-400 hover:text-amber-300 transition-colors text-xs flex items-center gap-1 cursor-pointer"
+            title="Xóa lịch sử hội thoại"
+          >
+            <span className="material-symbols-outlined text-base">delete_sweep</span>
+          </button>
+
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-colors cursor-pointer"
+            title="Đóng cửa sổ chat"
+          >
+            <span className="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
       </div>
 
       {/* Messages Body */}
@@ -127,7 +172,7 @@ export default function AIChatModal({ isOpen, onClose }) {
                   : 'bg-white border border-[#e3a638]/20 text-gray-800 rounded-bl-none'
               }`}
             >
-              {/* Simple Markdown Formatting Render */}
+              {/* Markdown Formatting Render */}
               <div 
                 className="prose prose-sm max-w-none text-sm font-light space-y-2"
                 dangerouslySetInnerHTML={{
@@ -145,8 +190,8 @@ export default function AIChatModal({ isOpen, onClose }) {
                 {msg.suggestions.map((sug, sIdx) => (
                   <button
                     key={sIdx}
-                    onClick={() => handleSend(sug.replace(/^[💡🏛️🎁📝📍📞]\s*/, ''))}
-                    className="text-[11px] bg-white border border-[#e3a638]/40 hover:bg-[#e3a638]/10 text-[#a66a3a] px-3 py-1.5 rounded-full transition-all duration-200 shadow-2xs font-medium text-left"
+                    onClick={() => handleSend(sug.replace(/^[💡🏛️🎁📝📍📞🖼️🍸👑]\s*/, ''))}
+                    className="text-[11px] bg-white border border-[#e3a638]/40 hover:bg-[#e3a638]/10 text-[#a66a3a] px-3 py-1.5 rounded-full transition-all duration-200 shadow-2xs font-medium text-left cursor-pointer"
                   >
                     {sug}
                   </button>
@@ -187,7 +232,7 @@ export default function AIChatModal({ isOpen, onClose }) {
         <button
           type="submit"
           disabled={!input.trim() || loading}
-          className="w-10 h-10 rounded-full bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white flex items-center justify-center hover:opacity-90 disabled:opacity-50 transition-opacity shadow-md flex-shrink-0"
+          className="w-10 h-10 rounded-full bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white flex items-center justify-center hover:opacity-90 disabled:opacity-50 transition-opacity shadow-md flex-shrink-0 cursor-pointer"
           title="Gửi câu hỏi"
         >
           <span className="material-symbols-outlined text-lg">send</span>

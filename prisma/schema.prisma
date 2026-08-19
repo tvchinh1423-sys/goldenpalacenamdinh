@@ -15,25 +15,6 @@ datasource db {
 }
 
 // ==========================================
-// ENUMS
-// ==========================================
-
-/// Vai trò tài khoản quản trị
-
-
-/// Trạng thái nháp / đã xuất bản (khách chỉ thấy PUBLISHED)
-
-
-/// Vòng đời lead: Mới -> Đã tiếp nhận -> Đã đặt cọc -> Đã chốt BEO, Huỷ từ bất kỳ đâu
-
-
-/// Buổi tổ chức tiệc
-
-
-/// Phân loại bài viết
-
-
-// ==========================================
 // MODELS
 // ==========================================
 
@@ -159,7 +140,6 @@ model AddOnService {
   videos               String          @default("[]")
   displayOrder         Int           @default(0) @map("display_order")
   isAvailable          Boolean       @default(true) @map("is_available")
-  /// Mảng id gói dịch vụ đã bao gồm add-on này -> tránh tính trùng
   excludedFromPackages String          @default("[]") @map("excluded_from_packages")
   status               String @default("DRAFT")
   createdAt            DateTime      @default(now()) @map("created_at")
@@ -194,7 +174,7 @@ model AddOnServicePricing {
   @@map("add_on_service_pricings")
 }
 
-/// 9. Combo thực đơn mẫu — CHỈ THAM KHẢO, không tham gia phép tính tổng dự trù
+/// 9. Combo thực đơn mẫu
 model MenuCombo {
   id             String        @id @default(uuid())
   name           String
@@ -212,7 +192,7 @@ model MenuCombo {
   @@map("menu_combos")
 }
 
-/// 10. Danh mục đồ uống — CHỈ THAM KHẢO, tính theo thực tế sử dụng
+/// 10. Danh mục đồ uống
 model BeverageItem {
   id           String        @id @default(uuid())
   name         String
@@ -231,7 +211,6 @@ model BeverageItem {
 model Lead {
   id              String     @id @default(uuid())
   code            String     @unique
-  /// Token UUID cho link phương án riêng của khách
   linkToken       String     @unique @map("link_token")
   name            String
   phone           String
@@ -252,7 +231,7 @@ model Lead {
   @@map("leads")
 }
 
-/// 12. Phương án dự trù — mỗi lần khách sửa tạo version mới, KHÔNG ghi đè
+/// 12. Phương án dự trù
 model Proposal {
   id                 String       @id @default(uuid())
   leadId             String       @map("lead_id")
@@ -267,7 +246,6 @@ model Proposal {
   packagePrice       Decimal?     @map("package_price") 
   totalBase          Decimal      @map("total_base") 
   totalMax           Decimal      @map("total_max") 
-  /// Mốc đóng băng giá — giá giữ nguyên tại thời điểm tạo phương án
   priceEffectiveDate DateTime     @map("price_effective_date")
   createdAt          DateTime     @default(now()) @map("created_at")
 
@@ -282,7 +260,7 @@ model Proposal {
   @@map("proposals")
 }
 
-/// 13. Sảnh tiệc được chọn trong phương án (tên & giá đã đóng băng)
+/// 13. Sảnh tiệc được chọn
 model ProposalVenue {
   id          String  @id @default(uuid())
   proposalId  String  @map("proposal_id")
@@ -298,7 +276,7 @@ model ProposalVenue {
   @@map("proposal_venues")
 }
 
-/// 14. Dịch vụ bổ sung được lựa chọn trong phương án (tên & giá đã đóng băng)
+/// 14. Dịch vụ bổ sung
 model ProposalAddOn {
   id         String  @id @default(uuid())
   proposalId String  @map("proposal_id")
@@ -313,7 +291,7 @@ model ProposalAddOn {
   @@map("proposal_add_ons")
 }
 
-/// 15. Combo thực đơn yêu thích trong phương án (tên đã đóng băng)
+/// 15. Combo thực đơn yêu thích
 model ProposalFavoriteMenu {
   id          String @id @default(uuid())
   proposalId  String @map("proposal_id")
@@ -327,7 +305,7 @@ model ProposalFavoriteMenu {
   @@map("proposal_favorite_menus")
 }
 
-/// 16. Theo dõi phiên truy cập — phục vụ KPI tỷ lệ truy cập -> lead
+/// 16. Session Tracking
 model SessionTracking {
   id              String   @id @default(uuid())
   sessionId       String   @map("session_id")
@@ -354,4 +332,41 @@ model Post {
 
   @@index([published, createdAt])
   @@map("posts")
+}
+
+/// 18. Quy tắc Hỏi - Đáp mẫu cho AI Chatbot (Admin Huấn luyện)
+model AiRule {
+  id           String   @id @default(uuid())
+  keywords     String   /// Các từ khóa / câu hỏi kích hoạt (phân cách bằng dấu phẩy)
+  answer       String   /// Câu trả lời mẫu chuẩn
+  category     String   @default("CHUNG")
+  displayOrder Int      @default(0) @map("display_order")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([isActive])
+  @@map("ai_rules")
+}
+
+/// 19. Nhật ký câu hỏi chưa trả lời được của khách
+model AiUnansweredQuestion {
+  id         String   @id @default(uuid())
+  question   String
+  askCount   Int      @default(1) @map("ask_count")
+  isResolved Boolean  @default(false) @map("is_resolved")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@index([isResolved, createdAt])
+  @@map("ai_unanswered_questions")
+}
+
+/// 20. Cấu hình Prompt & Tri thức AI hệ thống
+model AiSystemConfig {
+  id           String   @id @default(uuid())
+  systemPrompt String   @map("system_prompt")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("ai_system_configs")
 }
