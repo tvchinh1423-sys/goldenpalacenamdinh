@@ -3,14 +3,21 @@
 import { useState } from 'react';
 import { MUSIC_CATEGORIES, MUSIC_TRACKS } from '@/lib/personalize-data';
 
-function getYouTubeEmbedUrl(url) {
+function getYouTubeEmbedInfo(url) {
   if (!url) return null;
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
   if (match && match[2] && match[2].length === 11) {
-    return `https://www.youtube.com/embed/${match[2]}?autoplay=1`;
+    const videoId = match[2];
+    return {
+      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`,
+      watchUrl: `https://www.youtube.com/watch?v=${videoId}`
+    };
   }
-  return null;
+  return {
+    embedUrl: null,
+    watchUrl: url
+  };
 }
 
 export default function MusicSelector({
@@ -22,7 +29,7 @@ export default function MusicSelector({
   setYoutubeLinks = () => {}
 }) {
   const [activeTab, setActiveTab] = useState('welcome');
-  const [previewTrack, setPreviewTrack] = useState(null); // { title: string, embedUrl: string }
+  const [previewTrack, setPreviewTrack] = useState(null); // { title: string, embedUrl: string, watchUrl: string }
 
   const toggleTrack = (trackId) => {
     if (selectedTracks.includes(trackId)) {
@@ -40,11 +47,9 @@ export default function MusicSelector({
   };
 
   const handleOpenPreview = (title, url) => {
-    const embedUrl = getYouTubeEmbedUrl(url);
-    if (embedUrl) {
-      setPreviewTrack({ title, embedUrl });
-    } else if (url) {
-      window.open(url, '_blank');
+    const info = getYouTubeEmbedInfo(url);
+    if (info) {
+      setPreviewTrack({ title, embedUrl: info.embedUrl, watchUrl: info.watchUrl });
     }
   };
 
@@ -221,24 +226,57 @@ export default function MusicSelector({
 
             {/* iFrame Player Aspect 16:9 */}
             <div className="relative w-full aspect-video bg-black">
-              <iframe
-                src={previewTrack.embedUrl}
-                title={previewTrack.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full border-0"
-              />
+              {previewTrack.embedUrl ? (
+                <iframe
+                  src={previewTrack.embedUrl}
+                  title={previewTrack.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full border-0"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-gray-300 space-y-3">
+                  <span className="material-symbols-outlined text-4xl text-amber-400">warning</span>
+                  <p className="text-xs">Link YouTube này không cho phép nhúng trực tiếp.</p>
+                  <a
+                    href={previewTrack.watchUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-red-600 text-white font-bold text-xs rounded-xl hover:bg-red-500 transition-colors flex items-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-base">open_in_new</span>
+                    Mở Xem Trực Tiếp Trên YouTube
+                  </a>
+                </div>
+              )}
             </div>
 
-            {/* Modal Footer */}
-            <div className="p-3 bg-black/60 text-center text-xs text-gray-400 flex justify-between items-center">
-              <span>Đang phát video nhúng trực tiếp từ YouTube</span>
-              <button
-                onClick={() => setPreviewTrack(null)}
-                className="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-bold text-xs cursor-pointer transition-colors"
-              >
-                Đóng Video
-              </button>
+            {/* Modal Footer with Direct YouTube Fallback Button */}
+            <div className="p-3 bg-black/60 text-center text-xs text-gray-400 flex flex-wrap justify-between items-center gap-2 border-t border-gray-800/60">
+              <span className="text-[11px] text-gray-400">
+                Nếu video bị giới hạn bản quyền phát nhúng:
+              </span>
+
+              <div className="flex items-center gap-2">
+                {previewTrack.watchUrl && (
+                  <a
+                    href={previewTrack.watchUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/40 rounded-lg font-bold text-xs transition-all flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-sm">open_in_new</span>
+                    Mở Trên App YouTube
+                  </a>
+                )}
+                
+                <button
+                  onClick={() => setPreviewTrack(null)}
+                  className="px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-bold text-xs cursor-pointer transition-colors"
+                >
+                  Đóng Video
+                </button>
+              </div>
             </div>
 
           </div>

@@ -76,8 +76,8 @@ export const MUSIC_CATEGORIES = [
 
 export const MUSIC_TRACKS = [
   // Giai đoạn 1: Đón khách
-  { id: 'w1', catId: 'welcome', title: 'Đi Tìm Tình Yêu', artist: 'MONO', duration: '3:15', youtubeUrl: 'https://www.youtube.com/watch?v=w2C6q7jC2yU' },
-  { id: 'w2', catId: 'welcome', title: 'Có Em Đời Bỗng Vui', artist: 'Chillies', duration: '3:40', youtubeUrl: 'https://www.youtube.com/watch?v=F5tS5scWefc' },
+  { id: 'w1', catId: 'welcome', title: 'Đi Tìm Tình Yêu', artist: 'MONO', duration: '3:15', youtubeUrl: 'https://www.youtube.com/watch?v=GOSiWQlZdVU' },
+  { id: 'w2', catId: 'welcome', title: 'Có Em Đời Bỗng Vui', artist: 'Chillies', duration: '3:40', youtubeUrl: 'https://www.youtube.com/watch?v=2O7U0uJ02V8' },
   { id: 'w3', catId: 'welcome', title: 'Lễ Đường', artist: 'Kai Đinh', duration: '3:50', youtubeUrl: 'https://www.youtube.com/watch?v=s97vSIn5E0w' },
   { id: 'w4', catId: 'welcome', title: 'Until I Found You', artist: 'Stephen Sanchez', duration: '2:57', youtubeUrl: 'https://www.youtube.com/watch?v=GxldQ9eX2fc' },
 
