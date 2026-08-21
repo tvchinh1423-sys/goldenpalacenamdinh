@@ -27,6 +27,7 @@ export default function RootLayout({ children }) {
     <html lang="vi" className={`${montserrat.variable} ${playfair.variable} ${greatVibes.variable} ${lora.variable}`}>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,400&family=Great+Vibes&display=swap" rel="stylesheet" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/logo-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
