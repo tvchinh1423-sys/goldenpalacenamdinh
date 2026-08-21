@@ -1,0 +1,25 @@
+{
+  "name": "Golden Palace - Trung Tâm Tiệc Cưới & Sự Kiện",
+  "short_name": "Golden Palace",
+  "description": "Dự toán chi phí tiệc cưới, chọn sảnh, thực đơn & tạo thiệp cưới online tại Golden Palace Nam Định",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F0E0C",
+  "theme_color": "#D4AF37",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/logo-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
