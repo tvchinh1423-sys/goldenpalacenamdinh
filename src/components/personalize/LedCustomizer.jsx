@@ -6,10 +6,10 @@ import { LED_STAGE_TEMPLATES, LED_SCREEN_FLOORS } from '@/lib/personalize-data';
 export default function LedCustomizer({ groomName, setGroomName, brideName, setBrideName, eventDate, setEventDate, onSave }) {
   const [selectedFloor, setSelectedFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3 (7.04x3.84m)
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
-  const [coupleFont, setCoupleFont] = useState("font-greatvibes"); // 100% Vietnamese Accent Calligraphy Font
+  const [fontChoice, setFontChoice] = useState('greatvibes'); // Great Vibes Calligraphy Script
   const [copied, setCopied] = useState(false);
 
-  // Extract initial letters for Monogram (e.g., "Anh Thư" & "Văn Mạnh" -> "T" and "M", or "Mỹ Duyên" & "Đức Minh" -> "D" and "M")
+  // Extract initial letters for Monogram (e.g. "Anh Thư" & "Văn Mạnh" -> "T" and "M")
   const getInitial = (name, fallback) => {
     if (!name || !name.trim()) return fallback;
     const parts = name.trim().split(' ');
@@ -24,10 +24,10 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.specText})
-Monogram Logo: Trắng bạc phát sáng (Luminescent Silver), Căn giữa 40% trên
-Typography: Calligraphy Script chuẩn Tiếng Việt, Ký tự & đồng màu trắng bạc
-Ánh sáng: Backlight Halo Glow + Hạt bụi sáng Antigravity (Bỏ viền bo góc)
-Không gian: Để trống hoàn toàn 1/3 chân màn hình (Bottom 35% empty space)
+Monogram Logo: Chrome Silver Interlocking Didone Monogram (${brideInitial}${groomInitial})
+Phông chữ Tên: Calligraphy Script (${fontChoice === 'greatvibes' ? 'Great Vibes' : 'Playfair Italic'})
+Ánh sáng: Dải sáng dọc Vertical Spotlight Stream + Hạt kim tuyến mịn Antigravity (Nền Deep Onyx)
+Không gian: Để trống 35% chân màn hình (Bottom 35% empty stage space)
 Chú Rể: ${groomName || 'Văn Mạnh'}
 Cô Dâu: ${brideName || 'Anh Thư'}
 Ngày cử hành: ${eventDate || '2026-11-20'}`;
@@ -46,7 +46,7 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
           Tùy Chỉnh Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Monogram lồng ghép trắng bạc phát sáng, ánh sáng Backlight Halo Glow 3D, hạt kim tuyến Antigravity và để trống 1/3 chân màn hình.
+          Phông Calligraphy Great Vibes uốn lượn mềm mại chuẩn 100% tiếng Việt, Monogram chữ lồng Chrome Bạc 3D, dải sáng Spotlight dọc và nền đen Deep Onyx.
         </p>
 
         {/* 1. Select Floor & LED Dimensions */}
@@ -127,28 +127,28 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={() => setCoupleFont("font-greatvibes")}
+                onClick={() => setFontChoice('greatvibes')}
                 className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all text-left ${
-                  coupleFont === "font-greatvibes"
+                  fontChoice === 'greatvibes'
                     ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
                     : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
                 }`}
               >
-                <div className="font-bold">Great Vibes ✒️</div>
-                <div className="text-[10px] opacity-75">Bay bổng mềm mại</div>
+                <div className="font-bold">Great Vibes Calligraphy ✒️</div>
+                <div className="text-[10px] opacity-75 font-serif italic">Nét uốn lượn bay bổng chuẩn 100% tiếng Việt</div>
               </button>
 
               <button
                 type="button"
-                onClick={() => setCoupleFont("font-playfair italic")}
+                onClick={() => setFontChoice('playfair')}
                 className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all text-left ${
-                  coupleFont === "font-playfair italic"
+                  fontChoice === 'playfair'
                     ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
                     : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
                 }`}
               >
-                <div className="font-bold">Playfair Script 👑</div>
-                <div className="text-[10px] opacity-75">Nghiêng sang trọng</div>
+                <div className="font-bold">Playfair Italic Script 👑</div>
+                <div className="text-[10px] opacity-75 font-serif italic">Nghiêng sang trọng chuẩn tiếng Việt</div>
               </button>
             </div>
           </div>
@@ -157,7 +157,7 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
         {/* 3. Background Selector */}
         <div className="mt-5 pt-4 border-t border-gray-800">
           <label className="block text-gray-300 text-xs font-semibold mb-2.5 uppercase tracking-wider">
-            Chọn Nền Bầu Trời Sao & Hào Quang Halo Glow
+            Chọn Phong Cách Ánh Sáng Màn LED
           </label>
           <div className="space-y-2.5">
             {LED_STAGE_TEMPLATES.map((tmpl) => {
@@ -205,63 +205,65 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
           </span>
         </div>
 
-        {/* LED Stage Screen Canvas Container (Bỏ hoàn toàn khung viền bo góc màu vàng bao quanh theo yêu cầu) */}
-        <div className={`w-full relative ${selectedFloor.aspectClass} rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.95)] bg-[#020308] transition-all duration-500`}>
+        {/* LED Stage Screen Canvas Container (Bỏ hoàn toàn viền bo màu vàng - Edge to edge Sleek LED Canvas) */}
+        <div className={`w-full relative ${selectedFloor.aspectClass} rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500`}>
           
-          {/* Real Background Image Overlay (Starry Night / Bokeh Stars) */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-            style={{ backgroundImage: `url(${selectedTemplate.bgImage})` }}
-          ></div>
-          <div className="absolute inset-0 bg-black/25"></div>
+          {/* DEEP ONYX CHARCOAL BLACK BACKGROUND WITH SOFT GRADIENT */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-[#050508] to-[#020204]"></div>
 
-          {/* BACKLIGHT HALO GLOW EFFECT: Tập trung ngay sau khối Monogram tạo độ tương phản nổi khối 3D */}
-          <div className="absolute top-1/12 left-1/2 -translate-x-1/2 w-64 h-64 sm:w-96 sm:h-96 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.35)_0%,_rgba(255,255,255,0.1)_40%,_transparent_70%)] blur-2xl pointer-events-none z-10"></div>
+          {/* VERTICAL SPOTLIGHT BACKLIGHT GLOW STREAM: Dải sáng dọc chiếu nhẹ từ đỉnh xuống làm nổi bật khối chữ */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.22)_0%,_rgba(255,255,255,0.06)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
-          {/* ANTIGRAVITY SILVER DUST PARTICLES EFFECT: Dải hạt bụi kim tuyến mịn rơi lơ lửng */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_transparent_60%)] pointer-events-none z-15"></div>
+          {/* GLITTER / DUST BOKEH PARTICLES RAIN: Màn mưa hạt bụi sáng mịn rơi nhẹ lơ lửng từ trần xuống */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.15)_0%,_transparent_50%),radial-gradient(circle_at_top_right,_rgba(255,255,255,0.15)_0%,_transparent_50%)] pointer-events-none z-15"></div>
 
-          {/* TOP-LEFT CORNER: Golden Palace Icon Logo ONLY (No text, No background frame) */}
+          {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY (No background oval frame) */}
           <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
             <img 
               src="/logo-icon.png" 
               alt="Golden Palace Icon Logo" 
-              className="h-6 sm:h-9 md:h-11 w-auto object-contain filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]" 
+              className="h-7 sm:h-10 md:h-12 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(227,166,56,0.85)]" 
             />
           </div>
 
-          {/* FOREGROUND CONTENT LAYER: GOM TẤT CẢ VÀO 40% PHẦN TRÊN CỦA MÀN HÌNH (DEEP BOTTOM 35%+ EMPTY) */}
-          <div className="relative z-30 w-full h-full flex flex-col items-center justify-start pt-3 sm:pt-6 md:pt-8 pb-[40%] text-center">
+          {/* FOREGROUND CONTENT LAYER: GOM 40% NỬA TRÊN - ĐỂ TRỐNG HOÀN TOÀN 35%+ NỬA DƯỚI */}
+          <div className="relative z-30 w-full h-full flex flex-col items-center justify-start pt-4 sm:pt-6 md:pt-8 pb-[38%] text-center">
 
-            {/* 1. MONOGRAM LOGO ("TM" / "MD"): Interlocked Didone Serif in Luminescent Silver (Trắng Bạc Phát Sáng Đồng Nhất) */}
+            {/* 1. MONOGRAM LOGO ("TM" / "MD"): True Interlocking Didone Serif in Luminescent Chrome Silver */}
             <div className="h-[28%] flex items-center justify-center my-0.5">
               <div className="relative h-full aspect-square flex items-center justify-center">
-                <div 
-                  className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter text-white select-none drop-shadow-[0_4px_20px_rgba(255,255,255,0.4)]"
-                  style={{ fontFamily: "'Cinzel Decorative', 'Bodoni Moda', Didot, serif" }}
-                >
-                  {/* First Initial (Bride "T" / "M") */}
-                  <span className="font-black transform -translate-x-2 sm:-translate-x-3 text-white italic drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+                {/* SVG Interlocked Monogram path & Didone Serif Typography */}
+                <div className="relative flex items-center justify-center font-didone-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter select-none">
+                  {/* First Initial (Bride "T" / "A" / "M") */}
+                  <span className="font-black italic chrome-silver-text transform -translate-x-1.5 sm:-translate-x-2.5 z-10 drop-shadow-[0_4px_15px_rgba(255,255,255,0.6)]">
                     {brideInitial}
                   </span>
-                  {/* Second Initial (Groom "M" / "D") Interlocked */}
-                  <span className="font-light transform translate-x-2 sm:translate-x-3 -ml-5 sm:-ml-8 md:-ml-10 text-slate-100 italic opacity-95 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
+                  {/* Second Initial (Groom "M" / "L" / "D") Interlocked & Weaved */}
+                  <span className="font-light italic chrome-silver-text transform translate-x-1.5 sm:translate-x-2.5 -ml-5 sm:-ml-8 md:-ml-10 z-20 opacity-95 drop-shadow-[0_0_20px_rgba(255,255,255,0.7)]">
                     {groomInitial}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* 2. MAIN COUPLE NAMES ("Anh Thư & Văn Mạnh"): Modern Calligraphy Script (100% Luminescent Silver / White including '&') */}
-            <div className="w-[90%] sm:w-[65%] h-[20%] flex items-center justify-center my-1">
-              <div className={`text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_3px_20px_rgba(0,0,0,0.95)] leading-tight whitespace-nowrap ${coupleFont}`}>
+            {/* 2. MAIN COUPLE NAMES ("Anh Thư & Văn Mạnh"): 100% Full Vietnamese Accent Calligraphy Script with White/Silver Ampersand */}
+            <div className="w-[90%] sm:w-[70%] h-[20%] flex items-center justify-center my-1">
+              <div 
+                className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)] leading-tight whitespace-nowrap"
+                style={{
+                  fontFamily: fontChoice === 'greatvibes' 
+                    ? "var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive" 
+                    : "var(--font-playfair), 'Playfair Display', serif",
+                  fontStyle: fontChoice === 'playfair' ? 'italic' : 'normal'
+                }}
+              >
                 {brideName || 'Anh Thư'} 
                 <span className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-2 sm:mx-3 font-serif italic font-light">&</span> 
                 {groomName || 'Văn Mạnh'}
               </div>
             </div>
 
-            {/* 3. SUBTEXT / DATE: Didone Old-style Serif (e.g. "20 / 11 / 2026" or "31 / 01 / 2026") */}
+            {/* 3. WEDDING DATE ("20 / 11 / 2026"): Minimalist Didone Old-style Serif */}
             <div 
               className="text-[10px] sm:text-xs md:text-sm text-slate-200 tracking-[0.3em] font-serif mt-1 drop-shadow-md border-t border-slate-400/30 pt-1.5 px-6"
               style={{ fontFamily: "'Bodoni Moda', 'Didot', 'Cinzel Decorative', serif" }}
@@ -273,10 +275,10 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
 
           </div>
 
-          {/* INDICATOR OVERLAY: Bottom 35%+ Completely Empty Space with Backlight Glow Transition */}
-          <div className="absolute bottom-0 inset-x-0 h-[38%] bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
-            <span className="text-[9px] text-slate-300/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-slate-500/20">
-              Khu Vực Để Trống Dưới Đáy Màn LED (Không có chữ hay họa tiết lớn che chắn)
+          {/* INDICATOR OVERLAY: Bottom 35%+ Completely Empty Space (Pure Deep Onyx + Soft Light) */}
+          <div className="absolute bottom-0 inset-x-0 h-[38%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
+            <span className="text-[9px] text-slate-400/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-slate-500/20">
+              Khu Vực Để Trống Dưới Đáy Màn LED (Cho Dâu Rể & MC đứng)
             </span>
           </div>
 

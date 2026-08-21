@@ -57,6 +57,21 @@
   }
 
   .font-script {
-    font-family: var(--font-greatvibes), 'Great Vibes', 'Playfair Display', cursive, serif;
+    font-family: var(--font-greatvibes), 'Great Vibes', 'Playfair Display', cursive, serif !important;
+  }
+
+  .font-calligraphy-script {
+    font-family: var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive !important;
+  }
+
+  .font-didone-serif {
+    font-family: 'Cinzel Decorative', 'Bodoni Moda', var(--font-playfair), Didot, serif !important;
+  }
+
+  .chrome-silver-text {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 45%, #CBD5E1 75%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 15px rgba(255, 255, 255, 0.5));
   }
 }
