@@ -1,69 +1,98 @@
 // Data & Preset Templates for Wedding Personalization Suite — Golden Palace
 
+export const LED_SCREEN_FLOORS = [
+  { 
+    id: 'tang-3', 
+    name: 'Tầng 3 (Sảnh Hoàng Gia)', 
+    shortName: 'Tầng 3', 
+    widthMeters: 7.04, 
+    heightMeters: 3.84, 
+    aspectRatio: '704 / 384', 
+    aspectClass: 'aspect-[704/384]',
+    specText: 'Kích thước Màn LED: 7.04m x 3.84m (Tỷ lệ 1.83:1)' 
+  },
+  { 
+    id: 'tang-2', 
+    name: 'Tầng 2 (Sảnh Ngọc Bích)', 
+    shortName: 'Tầng 2', 
+    widthMeters: 7.04, 
+    heightMeters: 3.36, 
+    aspectRatio: '704 / 336', 
+    aspectClass: 'aspect-[704/336]',
+    specText: 'Kích thước Màn LED: 7.04m x 3.36m (Tỷ lệ 2.10:1)' 
+  },
+  { 
+    id: 'tang-4', 
+    name: 'Tầng 4 (Sảnh Kim Cương)', 
+    shortName: 'Tầng 4', 
+    widthMeters: 5.12, 
+    heightMeters: 2.72, 
+    aspectRatio: '512 / 272', 
+    aspectClass: 'aspect-[512/272]',
+    specText: 'Kích thước Màn LED: 5.12m x 2.72m (Tỷ lệ 1.88:1)' 
+  }
+];
+
 export const LED_STAGE_TEMPLATES = [
   {
+    id: 'led-stardust-curtain',
+    name: '1. Nhung Đen & Thảm Kim Tuyến Lấp Lánh',
+    slogan: 'Nền nhung đen bí ẩn, hạt bụi sao & thảm ánh kim lấp lánh (Mẫu hot)',
+    defaultVenueId: 'tang-3',
+    bgStyle: 'stardust-curtain',
+    bgGradient: 'from-[#050507] via-[#0d0d12] to-[#050507]',
+    borderColor: '#e3a638',
+    glowColor: 'rgba(255, 215, 0, 0.5)',
+    accentColor: '#ffffff',
+    subTextColor: '#e3a638',
+    monogramStyle: 'LUXURY_INTERLOCKED',
+    fontFamily: 'font-greatvibes',
+    badge: 'Mẫu 1 (Ảnh tham khảo 1)'
+  },
+  {
+    id: 'led-galaxy-starry',
+    name: '2. Bầu Trời Sao Đêm Galaxy',
+    slogan: 'Không gian vũ trụ sao đêm lấp lánh, logo chữ lồng tỏa sáng',
+    defaultVenueId: 'tang-2',
+    bgStyle: 'galaxy-starry',
+    bgGradient: 'from-[#020308] via-[#080d1a] to-[#020308]',
+    borderColor: '#ffffff',
+    glowColor: 'rgba(255, 255, 255, 0.6)',
+    accentColor: '#ffffff',
+    subTextColor: '#cbd5e1',
+    monogramStyle: 'LUXURY_INTERLOCKED',
+    fontFamily: 'font-greatvibes',
+    badge: 'Mẫu 2 (Ảnh tham khảo 2)'
+  },
+  {
     id: 'led-golden-royal',
-    name: 'Hoàng Gia Sang Trọng (Golden Royal)',
-    slogan: 'Tone Vàng Ánh Kim & Họa Tiết Cung Điện',
-    venue: 'Tầng 3',
+    name: '3. Hoàng Gia Ánh Kim 3D (Golden Royal)',
+    slogan: 'Tone Vàng Ánh Kim Cung Điện & Họa Tiết Hoàng Gia',
+    defaultVenueId: 'tang-3',
+    bgStyle: 'golden-royal',
     bgGradient: 'from-[#1a1200] via-[#3a2903] to-[#1a1200]',
     borderColor: '#e3a638',
     glowColor: 'rgba(227, 166, 56, 0.4)',
     accentColor: '#f3c969',
-    textColor: '#ffffff',
     subTextColor: '#e3a638',
-    pattern: 'radial-gradient(circle at 50% 50%, rgba(227,166,56,0.15) 0%, transparent 70%)',
-    overlayBg: '/images/hd-venues/tang-3-hd-1.jpg',
+    monogramStyle: 'ROYAL_CREST',
     fontFamily: 'font-playfair',
-    frameStyle: 'border-2 border-[#e3a638] shadow-[0_0_35px_rgba(227,166,56,0.3)]',
+    badge: 'Hoàng Gia Sang Trọng'
   },
   {
-    id: 'led-floral-emerald',
-    name: 'Hoa Tươi Ngọc Bích (Emerald Floral)',
-    slogan: 'Tone Xanh Ngọc & Hoa Hồng Trắng Thượng Uyển',
-    venue: 'Tầng 2',
-    bgGradient: 'from-[#051f15] via-[#0d3b2b] to-[#051f15]',
-    borderColor: '#34d399',
-    glowColor: 'rgba(52, 211, 153, 0.3)',
-    accentColor: '#a7f3d0',
-    textColor: '#ffffff',
-    subTextColor: '#34d399',
-    pattern: 'radial-gradient(circle at 50% 50%, rgba(52,211,153,0.15) 0%, transparent 70%)',
-    overlayBg: '/images/hd-venues/tang-2-hd-1.jpg',
-    fontFamily: 'font-serif',
-    frameStyle: 'border-2 border-emerald-400/60 shadow-[0_0_35px_rgba(52,211,153,0.25)]',
-  },
-  {
-    id: 'led-crystal-diamond',
-    name: 'Pha Lê Kim Cương (Crystal Diamond)',
-    slogan: 'Tone Trắng Bạc & Đèn Chùm Pha Lê Lộng Lẫy',
-    venue: 'Tầng 4',
+    id: 'led-crystal-white',
+    name: '4. Pha Lê & Hoa Hồng Trắng Thượng Uyển',
+    slogan: 'Tone Trắng Pha Lê Tinh Khôi & Khung Hoa Thần Thái',
+    defaultVenueId: 'tang-4',
+    bgStyle: 'crystal-white',
     bgGradient: 'from-[#0f172a] via-[#1e293b] to-[#0f172a]',
     borderColor: '#38bdf8',
     glowColor: 'rgba(56, 189, 248, 0.35)',
-    accentColor: '#bae6fd',
-    textColor: '#ffffff',
+    accentColor: '#ffffff',
     subTextColor: '#7dd3fc',
-    pattern: 'radial-gradient(circle at 50% 50%, rgba(56,189,248,0.15) 0%, transparent 70%)',
-    overlayBg: '/images/hd-venues/tang-4-hd-1.jpg',
-    fontFamily: 'font-sans',
-    frameStyle: 'border-2 border-sky-400/60 shadow-[0_0_35px_rgba(56,189,248,0.3)]',
-  },
-  {
-    id: 'led-rose-dream',
-    name: 'Giấc Mơ Hồng (Rose Pink Dream)',
-    slogan: 'Tone Hồng Pastel & Ánh Nến Lãng Mạn',
-    venue: 'Tầng 1',
-    bgGradient: 'from-[#2e0c18] via-[#50132b] to-[#2e0c18]',
-    borderColor: '#f472b6',
-    glowColor: 'rgba(244, 114, 182, 0.35)',
-    accentColor: '#fbcfe8',
-    textColor: '#ffffff',
-    subTextColor: '#f472b6',
-    pattern: 'radial-gradient(circle at 50% 50%, rgba(244,114,182,0.15) 0%, transparent 70%)',
-    overlayBg: '/images/hd-venues/tang-3-hd-2.jpg',
+    monogramStyle: 'GOLD_EMBLEM_CIRCLE',
     fontFamily: 'font-serif',
-    frameStyle: 'border-2 border-pink-400/60 shadow-[0_0_35px_rgba(244,114,182,0.3)]',
+    badge: 'Pha Lê Bạch Kim'
   }
 ];
 
@@ -193,7 +222,6 @@ export const INVITATION_TEMPLATES = [
   }
 ];
 
-// Simple Floor options
 export const VENUE_FLOOR_OPTIONS = [
   { id: 'FLOOR_1', name: 'Tầng 1', shortName: 'Tầng 1' },
   { id: 'FLOOR_2', name: 'Tầng 2', shortName: 'Tầng 2' },
