@@ -5,11 +5,7 @@ import prisma from '@/lib/prisma';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-
-    if (!botToken) {
-      return NextResponse.json({ ok: true });
-    }
+    const botToken = process.env.TELEGRAM_BOT_TOKEN || '8823349428:AAFi4_32hjVY8Sbb73Iqj2bjnzvO9Ffjg5o';
 
     const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(val));
     const formatVietnamDateOnly = (dateVal) => dateVal ? new Date(dateVal).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }) : 'Chưa chọn';
@@ -17,7 +13,7 @@ export async function POST(request) {
     // Helper to send message back to Telegram
     const sendMessage = async (chatId, text, replyToMsgId = null, replyMarkup = null) => {
       try {
-        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -28,6 +24,8 @@ export async function POST(request) {
             reply_markup: replyMarkup
           })
         });
+        const resData = await res.json();
+        console.log('Telegram API sendMessage result:', resData);
       } catch (err) {
         console.error('Error sending message:', err);
       }
@@ -85,18 +83,19 @@ export async function POST(request) {
     const chatId = message.chat.id;
     const msgId = message.message_id;
     const rawText = message.text.trim();
-    const textLower = rawText.toLowerCase();
+    // Normalize text: convert to lowercase and strip bot mention `@goldenpalacenamdinh_bot`
+    const cleanText = rawText.toLowerCase().replace('@goldenpalacenamdinh_bot', '').trim();
 
     // Command 1: Get latest customer ("khách gần nhất" / "khách mới nhất" / "/khach" / "/start")
     if (
-      textLower.includes('khách gần nhất') || 
-      textLower.includes('khách mới nhất') || 
-      textLower.includes('khách vừa rồi') ||
-      textLower.includes('khach gan nhat') ||
-      textLower.includes('khach moi nhat') ||
-      textLower.startsWith('/khach') ||
-      textLower.startsWith('/lead') ||
-      textLower.startsWith('/start')
+      cleanText.includes('khách gần nhất') || 
+      cleanText.includes('khách mới nhất') || 
+      cleanText.includes('khách vừa rồi') ||
+      cleanText.includes('khach gan nhat') ||
+      cleanText.includes('khach moi nhat') ||
+      cleanText.startsWith('/khach') ||
+      cleanText.startsWith('/lead') ||
+      cleanText.startsWith('/start')
     ) {
       const latestLead = await prisma.lead.findFirst({
         orderBy: { createdAt: 'desc' },
@@ -157,16 +156,16 @@ export async function POST(request) {
         let newStatus = null;
         let statusLabel = '';
 
-        if (textLower.includes('đã liên hệ') || textLower.includes('da lien he') || textLower.includes('gọi rồi') || textLower.includes('/lienhe')) {
+        if (cleanText.includes('đã liên hệ') || cleanText.includes('da lien he') || cleanText.includes('gọi rồi') || cleanText.includes('/lienhe')) {
           newStatus = 'CONTACTED';
           statusLabel = 'ĐÃ LIÊN HỆ 📞';
-        } else if (textLower.includes('chốt') || textLower.includes('chot') || textLower.includes('đặt cọc') || textLower.includes('won') || textLower.includes('/chot')) {
+        } else if (cleanText.includes('chốt') || cleanText.includes('chot') || cleanText.includes('đặt cọc') || cleanText.includes('won') || cleanText.includes('/chot')) {
           newStatus = 'WON';
           statusLabel = 'CHỐT HỢP ĐỒNG 🤝';
-        } else if (textLower.includes('báo giá') || textLower.includes('bao gia') || textLower.includes('gửi mail') || textLower.includes('/baogia')) {
+        } else if (cleanText.includes('báo giá') || cleanText.includes('bao gia') || cleanText.includes('gửi mail') || cleanText.includes('/baogia')) {
           newStatus = 'QUOTED';
           statusLabel = 'ĐÃ BÁO GIÁ 📝';
-        } else if (textLower.includes('hủy') || textLower.includes('huy') || textLower.includes('không đặt') || textLower.includes('/huy')) {
+        } else if (cleanText.includes('hủy') || cleanText.includes('huy') || cleanText.includes('không đặt') || cleanText.includes('/huy')) {
           newStatus = 'LOST';
           statusLabel = 'HỦY / BỎ CỘC ❌';
         }
@@ -184,7 +183,14 @@ export async function POST(request) {
     }
 
     // Command 3: General Bot Help or Greeting
-    if (textLower.includes('xin chào') || textLower.includes('chào bot') || textLower.includes('/help') || textLower.includes('hướng dẫn')) {
+    if (
+      cleanText.includes('xin chào') || 
+      cleanText.includes('chào bot') || 
+      cleanText.includes('hướng dẫn') || 
+      cleanText.startsWith('/help') || 
+      cleanText === 'help' ||
+      cleanText === ''
+    ) {
       const helpText = [
         `🤖 <b>TRỢ LÝ TỰ ĐỘNG GOLDEN PALACE BOT</b>`,
         `━━━━━━━━━━━━━━━━━━`,
