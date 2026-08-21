@@ -53,7 +53,7 @@ export async function POST(request) {
     // 1. HANDLE INLINE KEYBOARD BUTTON CLICKS (Callback Queries)
     if (body.callback_query) {
       const cb = body.callback_query;
-      const callbackData = cb.data; // e.g. "STATUS:CONTACTED:leadId" or "STATUS:WON:leadId"
+      const callbackData = cb.data;
       const chatId = cb.message.chat.id;
 
       if (callbackData && callbackData.startsWith('STATUS:')) {
@@ -63,7 +63,7 @@ export async function POST(request) {
 
         const targetLead = await prisma.lead.findUnique({ where: { id: leadId } });
         if (targetLead) {
-          const updatedLead = await txStatusUpdate(leadId, newStatus);
+          await txStatusUpdate(leadId, newStatus);
           const statusText = newStatus === 'CONTACTED' ? 'ĐÃ LIÊN HỆ 📞' :
                              newStatus === 'WON' ? 'CHỐT HỢP ĐỒNG 🤝' :
                              newStatus === 'QUOTED' ? 'ĐÃ BÁO GIÁ 📝' : newStatus;
@@ -87,13 +87,16 @@ export async function POST(request) {
     const rawText = message.text.trim();
     const textLower = rawText.toLowerCase();
 
-    // Command 1: Get latest customer ("khách gần nhất" / "khách mới nhất")
+    // Command 1: Get latest customer ("khách gần nhất" / "khách mới nhất" / "/khach" / "/start")
     if (
       textLower.includes('khách gần nhất') || 
       textLower.includes('khách mới nhất') || 
       textLower.includes('khách vừa rồi') ||
       textLower.includes('khach gan nhat') ||
-      textLower.includes('khach moi nhat')
+      textLower.includes('khach moi nhat') ||
+      textLower.startsWith('/khach') ||
+      textLower.startsWith('/lead') ||
+      textLower.startsWith('/start')
     ) {
       const latestLead = await prisma.lead.findFirst({
         orderBy: { createdAt: 'desc' },
@@ -112,7 +115,7 @@ export async function POST(request) {
 
       const p = latestLead.proposals[0];
       const cleanPhone = latestLead.phone.replace(/[^0-9]/g, '');
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://goldenpalacenamdinh.com';
+      const baseUrl = 'https://goldenpalacenamdinh.com';
 
       const replyText = [
         `📋 <b>THÔNG TIN KHÁCH HÀNG MỚI NHẤT TRÊN ADMIN</b>`,
@@ -142,7 +145,7 @@ export async function POST(request) {
       return NextResponse.json({ ok: true });
     }
 
-    // Command 2: Update status by phone number e.g. "0945857996 đã liên hệ" or "0945857996 chốt"
+    // Command 2: Update status by phone number e.g. "0945857996 đã liên hệ" or "0945857996 chốt" or "/chot 0945857996"
     const phoneMatch = rawText.match(/(0[3|5|7|8|9][0-9]{8})/);
     if (phoneMatch) {
       const targetPhone = phoneMatch[1];
@@ -154,16 +157,16 @@ export async function POST(request) {
         let newStatus = null;
         let statusLabel = '';
 
-        if (textLower.includes('đã liên hệ') || textLower.includes('da lien he') || textLower.includes('gọi rồi')) {
+        if (textLower.includes('đã liên hệ') || textLower.includes('da lien he') || textLower.includes('gọi rồi') || textLower.includes('/lienhe')) {
           newStatus = 'CONTACTED';
           statusLabel = 'ĐÃ LIÊN HỆ 📞';
-        } else if (textLower.includes('chốt') || textLower.includes('chot') || textLower.includes('đặt cọc') || textLower.includes('won')) {
+        } else if (textLower.includes('chốt') || textLower.includes('chot') || textLower.includes('đặt cọc') || textLower.includes('won') || textLower.includes('/chot')) {
           newStatus = 'WON';
           statusLabel = 'CHỐT HỢP ĐỒNG 🤝';
-        } else if (textLower.includes('báo giá') || textLower.includes('bao gia') || textLower.includes('gửi mail')) {
+        } else if (textLower.includes('báo giá') || textLower.includes('bao gia') || textLower.includes('gửi mail') || textLower.includes('/baogia')) {
           newStatus = 'QUOTED';
           statusLabel = 'ĐÃ BÁO GIÁ 📝';
-        } else if (textLower.includes('hủy') || textLower.includes('huy') || textLower.includes('không đặt')) {
+        } else if (textLower.includes('hủy') || textLower.includes('huy') || textLower.includes('không đặt') || textLower.includes('/huy')) {
           newStatus = 'LOST';
           statusLabel = 'HỦY / BỎ CỘC ❌';
         }
@@ -191,8 +194,8 @@ export async function POST(request) {
         `   • Gõ: <code>0945857996 chốt hợp đồng</code>`,
         `   • Gõ: <code>0945857996 báo giá</code>`,
         `2️⃣ <b>Tra cứu thông tin:</b>`,
-        `   • Gõ: <code>Thông báo thông tin của khách gần nhất</code>`,
-        `   • Gõ: <code>tìm 0945857996</code>`,
+        `   • Gõ: <code>/khach</code> hoặc <code>Thông báo thông tin của khách gần nhất</code>`,
+        `   • Gõ: <code>0945857996</code>`,
         `━━━━━━━━━━━━━━━━━━`,
         `📌 Trạng thái trên trang Admin sẽ được tự động đổi tức thì!`
       ].join('\n');
