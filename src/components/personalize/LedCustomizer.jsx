@@ -4,26 +4,28 @@ import { useState } from 'react';
 import { LED_STAGE_TEMPLATES, LED_SCREEN_FLOORS } from '@/lib/personalize-data';
 
 export default function LedCustomizer({ groomName, setGroomName, brideName, setBrideName, eventDate, setEventDate, onSave }) {
-  const [selectedFloor, setSelectedFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3
+  const [selectedFloor, setSelectedFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3 (7.04x3.84m)
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
   const [fontOption, setFontOption] = useState('font-greatvibes'); // Calligraphy script default
   const [copied, setCopied] = useState(false);
 
-  // Extract initials for dynamic Interlocked Monogram (e.g. "Đức Minh" & "Mỹ Duyên" -> "D" and "M")
+  // Extract initial letters for Didone Monogram (e.g., "Mỹ Duyên" & "Đức Minh" -> "M" and "D")
   const getInitial = (name, fallback) => {
     if (!name || !name.trim()) return fallback;
     const parts = name.trim().split(' ');
     const lastWord = parts[parts.length - 1];
-    return lastWord.charAt(0).toUpperCase();
+    // Remove Vietnamese accents for clean Didone monogram initial
+    return lastWord.charAt(0).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
   };
 
-  const groomInitial = getInitial(groomName, 'M');
-  const brideInitial = getInitial(brideName, 'D');
+  const brideInitial = getInitial(brideName, 'M');
+  const groomInitial = getInitial(groomName, 'D');
 
   const handleCopyConfig = () => {
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
-Sảnh & Kích thước: ${selectedFloor.name} (${selectedFloor.specText})
+Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.specText})
+Bố cục Typography: Didone Monogram (35-40% Height), Calligraphy Couple Names (55-60% Width), Didone Date (1/4 Size)
 Chú Rể: ${groomName || 'Đức Minh'}
 Cô Dâu: ${brideName || 'Mỹ Duyên'}
 Ngày cử hành: ${eventDate || '2026-01-31'}`;
@@ -35,14 +37,14 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start font-montserrat">
       
-      {/* Left Column: Form Controls, Floor Selector & Template Selector */}
+      {/* Left Column: Controls, Floor Selector & Template Selector */}
       <div className="lg:col-span-5 bg-[#141414] border border-[#e3a638]/30 rounded-2xl p-6 shadow-2xl backdrop-blur-md">
         <h3 className="text-xl font-playfair text-[#e3a638] font-bold mb-2 flex items-center gap-2">
           <span className="material-symbols-outlined text-[#e3a638]">tune</span>
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Tùy chỉnh tên dâu rể, chọn tầng sảnh và phong cách phông LED sân khấu thiết kế chuẩn tỷ lệ kỹ thuật màn hình P3 Full HD.
+          Bố cục chuẩn Didone Monogram (35-40% chiều cao), Tên Calligraphy uốn lượn (55-60% chiều ngang) và Ngày cưới Old-style Serif.
         </p>
 
         {/* 1. Select Floor & LED Dimensions */}
@@ -59,7 +61,7 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
                   key={floor.id}
                   type="button"
                   onClick={() => setSelectedFloor(floor)}
-                  className={`py-2 px-2.5 rounded-lg text-xs font-semibold border transition-all text-center flex flex-col items-center justify-center cursor-pointer ${
+                  className={`py-2 px-2 rounded-lg text-xs font-semibold border transition-all text-center flex flex-col items-center justify-center cursor-pointer ${
                     active
                       ? 'border-[#e3a638] bg-[#e3a638]/20 text-amber-300 shadow-[0_0_10px_rgba(227,166,56,0.3)]'
                       : 'border-gray-800 bg-[#161616] text-gray-400 hover:text-white hover:border-gray-700'
@@ -76,21 +78,8 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
           </div>
         </div>
 
-        {/* 2. Names & Date */}
+        {/* 2. Couple Names & Date */}
         <div className="space-y-3.5 text-sm">
-          <div>
-            <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
-              Tên Chú Rể
-            </label>
-            <input
-              type="text"
-              value={groomName}
-              onChange={(e) => setGroomName(e.target.value)}
-              placeholder="VD: Đức Minh"
-              className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs transition-colors"
-            />
-          </div>
-
           <div>
             <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
               Tên Cô Dâu
@@ -100,6 +89,19 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
               value={brideName}
               onChange={(e) => setBrideName(e.target.value)}
               placeholder="VD: Mỹ Duyên"
+              className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
+              Tên Chú Rể
+            </label>
+            <input
+              type="text"
+              value={groomName}
+              onChange={(e) => setGroomName(e.target.value)}
+              placeholder="VD: Đức Minh"
               className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs transition-colors"
             />
           </div>
@@ -118,7 +120,7 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
 
           <div>
             <label className="block text-gray-300 text-xs font-semibold mb-1.5 uppercase tracking-wider">
-              Kiểu Phông Chữ Tên Dâu Rể
+              Phông Chữ Tên Dâu Rể
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -130,7 +132,7 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
                     : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
                 }`}
               >
-                Bay Bổng ✒️
+                Calligraphy ✒️
               </button>
               <button
                 type="button"
@@ -152,16 +154,16 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
                     : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
                 }`}
               >
-                Lãng Mạn ✨
+                Didone Serif ✨
               </button>
             </div>
           </div>
         </div>
 
-        {/* 3. Template Selector */}
+        {/* 3. Background Pattern Selector */}
         <div className="mt-5 pt-4 border-t border-gray-800">
           <label className="block text-gray-300 text-xs font-semibold mb-2.5 uppercase tracking-wider">
-            Chọn Phong Cách Phông Màn LED
+            Chọn Nền Bầu Trời Sao Lấp Lánh
           </label>
           <div className="space-y-2.5">
             {LED_STAGE_TEMPLATES.map((tmpl) => {
@@ -193,116 +195,78 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
         </div>
       </div>
 
-      {/* Right Column: Live Stage LED Visualizer */}
+      {/* Right Column: Live LED Screen Stage Visualizer */}
       <div className="lg:col-span-7 flex flex-col items-center">
         
-        {/* Stage Header Banner */}
+        {/* Stage Header Info Banner */}
         <div className="w-full flex items-center justify-between mb-3 px-1">
           <div className="flex items-center gap-2 text-white">
             <span className="material-symbols-outlined text-[#e3a638] animate-pulse text-base">live_tv</span>
             <span className="text-xs font-bold tracking-wider uppercase font-playfair text-amber-300">
-              Mô Phỏng Sân Khấu {selectedFloor.name}
+              Phông Màn LED Sân Khấu {selectedFloor.name}
             </span>
           </div>
           <span className="text-[10px] text-amber-300 font-mono bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30">
-            {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (P3 LED)
+            {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (P3 LED Full HD)
           </span>
         </div>
 
-        {/* LED Stage Screen Canvas Box */}
+        {/* LED Stage Screen Canvas Container (Dynamic Ratio based on Floor) */}
         <div className={`w-full relative ${selectedFloor.aspectClass} rounded-2xl overflow-hidden border-4 border-amber-500/40 shadow-[0_0_60px_rgba(0,0,0,0.95)] bg-black transition-all duration-500 flex items-center justify-center`}>
           
-          {/* Spotlight Effects */}
-          <div className="absolute top-0 left-1/5 w-40 h-80 bg-gradient-to-b from-amber-200/25 via-white/10 to-transparent blur-3xl transform -rotate-12 pointer-events-none z-10"></div>
-          <div className="absolute top-0 right-1/5 w-40 h-80 bg-gradient-to-b from-amber-200/25 via-white/10 to-transparent blur-3xl transform rotate-12 pointer-events-none z-10"></div>
+          {/* Real Background Image Overlay */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+            style={{ backgroundImage: `url(${selectedTemplate.bgImage})` }}
+          ></div>
+          <div className="absolute inset-0 bg-black/35 backdrop-blur-[0.5px]"></div>
 
-          {/* TEMPLATE DYNAMIC VISUAL BACKGROUNDS */}
-          
-          {/* Mẫu 1: Nhung Đen & Thảm Kim Tuyến (Matching Image 1) */}
-          {selectedTemplate.bgStyle === 'stardust-curtain' && (
-            <div className="absolute inset-0 bg-[#050508] overflow-hidden">
-              {/* Velvet Stage Curtain effect */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-stone-900/60 via-[#0a0a0f] to-black opacity-90"></div>
-              
-              {/* Top Sparkles Falling Dust */}
-              <div className="absolute top-0 inset-x-0 h-1/3 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.4)_0%,_transparent_75%)] blur-xs opacity-70"></div>
-              
-              {/* Bottom Glitter Stage Floor Particles */}
-              <div className="absolute bottom-0 inset-x-0 h-2/5 bg-[radial-gradient(ellipse_at_bottom,_rgba(255,255,255,0.5)_0%,_rgba(200,200,255,0.2)_40%,_transparent_80%)] blur-2xs opacity-90"></div>
-              <div className="absolute bottom-0 inset-x-0 h-1/4 bg-[radial-gradient(ellipse_at_center_bottom,_rgba(255,255,255,0.8)_0%,_transparent_70%)]"></div>
-            </div>
-          )}
+          {/* TOP-LEFT CORNER: Golden Palace Logo (Requirement: "logo biểu tượng ở góc trên bên trái") */}
+          <div className="absolute top-3 left-4 sm:top-5 sm:left-6 flex items-center gap-2 z-40 bg-black/40 px-3 py-1.5 rounded-full border border-amber-500/30 backdrop-blur-xs">
+            <img 
+              src="/logo-icon.png" 
+              alt="Golden Palace Logo" 
+              className="h-5 sm:h-7 w-auto object-contain drop-shadow-[0_0_12px_rgba(227,166,56,0.9)]" 
+            />
+            <span className="text-[9px] sm:text-[11px] tracking-[0.2em] font-playfair uppercase text-amber-300 font-bold drop-shadow">
+              GOLDEN PALACE
+            </span>
+          </div>
 
-          {/* Mẫu 2: Bầu Trời Sao Đêm Galaxy (Matching Image 2) */}
-          {selectedTemplate.bgStyle === 'galaxy-starry' && (
-            <div className="absolute inset-0 bg-[#020308] overflow-hidden">
-              {/* Cosmic Starry Night */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(30,41,59,0.5)_0%,_#020308_80%)]"></div>
-              
-              {/* Glowing Stars Field */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(255,255,255,0.6)_0%,_transparent_15%),radial-gradient(circle_at_70%_30%,_rgba(255,255,255,0.5)_0%,_transparent_10%),radial-gradient(circle_at_50%_70%,_rgba(255,255,255,0.7)_0%,_transparent_20%)] blur-2xs animate-pulse duration-1000"></div>
-            </div>
-          )}
+          {/* FOREGROUND CONTENT LAYER: STRICT TYPOGRAPHY & RATIO HIERARCHY */}
+          <div className="relative z-30 w-full h-full flex flex-col items-center justify-center p-4 sm:p-6 text-center">
 
-          {/* Mẫu 3: Hoàng Gia Vàng Ánh Kim 3D */}
-          {selectedTemplate.bgStyle === 'golden-royal' && (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1200] via-[#3a2903] to-[#1a1200] overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(227,166,56,0.3)_0%,_transparent_70%)]"></div>
-            </div>
-          )}
-
-          {/* Mẫu 4: Pha Lê Bạch Kim */}
-          {selectedTemplate.bgStyle === 'crystal-white' && (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(56,189,248,0.3)_0%,_transparent_70%)]"></div>
-            </div>
-          )}
-
-
-          {/* FOREGROUND CONTENT LAYER */}
-          <div className="relative z-20 w-full h-full flex flex-col items-center justify-center p-4 sm:p-6 text-center">
-            
-            {/* Top Branding: Golden Palace Official Logo */}
-            <div className="absolute top-2.5 sm:top-4 flex items-center justify-center gap-1.5 z-30">
-              <img 
-                src="/logo-icon.png" 
-                alt="Golden Palace Logo" 
-                className="h-5 sm:h-7 w-auto object-contain drop-shadow-[0_0_12px_rgba(227,166,56,0.9)]" 
-              />
-              <span className="text-[8px] sm:text-[10px] tracking-[0.25em] font-playfair uppercase text-amber-300 font-bold drop-shadow">
-                GOLDEN PALACE
-              </span>
-            </div>
-
-            {/* CENTER MONOGRAM LOGO (Interlocked Initials like Reference Image 1 & 2) */}
-            <div className="relative my-1 sm:my-2 flex items-center justify-center">
-              {/* Outer Monogram Glow Circle */}
-              <div className="relative w-16 h-16 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full border border-amber-300/40 shadow-[0_0_30px_rgba(255,215,0,0.4)] flex items-center justify-center backdrop-blur-2xs bg-black/20">
-                {/* Interlocked Monogram SVG / Typography */}
-                <div className="font-serif italic font-extrabold text-2xl sm:text-4xl md:text-5xl tracking-tighter text-amber-200 drop-shadow-[0_0_15px_rgba(255,255,255,0.9)] flex items-center justify-center">
-                  <span className="transform -translate-x-1 sm:-translate-x-2 text-white font-playfair">{groomInitial}</span>
-                  <span className="transform translate-x-1 sm:translate-x-2 -ml-3 sm:-ml-5 text-amber-300 font-serif font-light">{brideInitial}</span>
+            {/* 1. MONOGRAM LOGO ("DM" / "MD"): Didone Modern Serif, occupies 35% - 40% of container height */}
+            <div className="h-[38%] flex items-center justify-center my-1">
+              <div className="relative h-full aspect-square flex items-center justify-center">
+                {/* Interlocked Didone Monogram Letters */}
+                <div className="relative flex items-center justify-center font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.9)] select-none">
+                  {/* First Initial (Bride "M") */}
+                  <span className="font-playfair font-black transform -translate-x-2 sm:-translate-x-3 text-white italic drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+                    {brideInitial}
+                  </span>
+                  {/* Second Initial (Groom "D") Interlocked */}
+                  <span className="font-playfair font-light transform translate-x-2 sm:translate-x-3 -ml-5 sm:-ml-8 md:-ml-10 text-stone-100 italic opacity-95 drop-shadow-[0_0_20px_rgba(255,215,0,0.8)]">
+                    {groomInitial}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Couple Names (Stylized Calligraphy matching Reference Images) */}
-            <div className={`text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold my-1 sm:my-2 tracking-wide drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)] text-white ${fontOption} leading-tight`}>
-              {groomName || 'Đức Minh'} 
-              <span className="text-amber-300 text-lg sm:text-2xl md:text-3xl mx-2 sm:mx-3 font-serif italic font-light">&</span> 
-              {brideName || 'Mỹ Duyên'}
+            {/* 2. COUPLE NAMES ("Mỹ Duyên & Đức Minh"): Formal Calligraphy Script, 55% - 60% Width, Height ~ 1/3 of Monogram */}
+            <div className="w-[85%] sm:w-[60%] flex items-center justify-center my-1">
+              <div className={`text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide text-white drop-shadow-[0_4px_25px_rgba(0,0,0,0.9)] ${fontOption} whitespace-nowrap`}>
+                {brideName || 'Mỹ Duyên'} 
+                <span className="text-amber-300 text-xl sm:text-3xl md:text-4xl mx-2 sm:mx-3 font-serif italic font-light">&</span> 
+                {groomName || 'Đức Minh'}
+              </div>
             </div>
 
-            {/* Event Date (Formatted clean like 31/01/2026 or 26.01.2026) */}
-            <div className="text-[11px] sm:text-xs md:text-sm text-stone-200 tracking-[0.2em] font-mono mt-1 drop-shadow-md">
+            {/* 3. WEDDING DATE ("31/01/2026"): Old-style Didone Serif, approx 1/4 size of couple names */}
+            <div className="text-xs sm:text-sm md:text-base text-stone-200 tracking-[0.25em] font-serif mt-1 sm:mt-2 drop-shadow-md border-t border-amber-300/30 pt-1.5 px-6">
               {eventDate 
                 ? new Date(eventDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, ' / ') 
                 : '31 / 01 / 2026'}
-            </div>
-
-            {/* Bottom Subtext */}
-            <div className="text-[8px] sm:text-[10px] text-amber-300/80 uppercase tracking-[0.3em] font-medium mt-1">
-              TRUNG TÂM TIỆC CƯỚI & SỰ KIỆN GOLDEN PALACE
             </div>
 
           </div>

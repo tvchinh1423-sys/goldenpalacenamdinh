@@ -35,64 +35,46 @@ export const LED_SCREEN_FLOORS = [
 
 export const LED_STAGE_TEMPLATES = [
   {
-    id: 'led-stardust-curtain',
-    name: '1. Nhung Đen & Thảm Kim Tuyến Lấp Lánh',
-    slogan: 'Nền nhung đen bí ẩn, hạt bụi sao & thảm ánh kim lấp lánh (Mẫu hot)',
+    id: 'led-starry-diamond',
+    name: '1. Bầu Trời Sao Đêm Kim Cương (Didone Monogram)',
+    slogan: 'Nền bầu trời sao lấp lánh, Monogram Didone 35-40% & Logo góc trái',
     defaultVenueId: 'tang-3',
-    bgStyle: 'stardust-curtain',
-    bgGradient: 'from-[#050507] via-[#0d0d12] to-[#050507]',
-    borderColor: '#e3a638',
-    glowColor: 'rgba(255, 215, 0, 0.5)',
+    bgImage: '/images/led-bg/starry-night-1.jpg',
+    borderColor: '#ffffff',
+    glowColor: 'rgba(255, 255, 255, 0.7)',
     accentColor: '#ffffff',
-    subTextColor: '#e3a638',
-    monogramStyle: 'LUXURY_INTERLOCKED',
+    subTextColor: '#e2e8f0',
+    monogramStyle: 'DIDONE_INTERLOCKED',
     fontFamily: 'font-greatvibes',
-    badge: 'Mẫu 1 (Ảnh tham khảo 1)'
+    badge: 'Chuẩn Mẫu Tham Khảo 1'
   },
   {
-    id: 'led-galaxy-starry',
-    name: '2. Bầu Trời Sao Đêm Galaxy',
-    slogan: 'Không gian vũ trụ sao đêm lấp lánh, logo chữ lồng tỏa sáng',
+    id: 'led-cosmic-milkyway',
+    name: '2. Dải Ngân Hà Cosmic Galaxy',
+    slogan: 'Không gian vũ trụ dải ngân hà huyền bí, chữ lồng đan xen Didone',
     defaultVenueId: 'tang-2',
-    bgStyle: 'galaxy-starry',
-    bgGradient: 'from-[#020308] via-[#080d1a] to-[#020308]',
+    bgImage: '/images/led-bg/starry-night-2.jpg',
     borderColor: '#ffffff',
-    glowColor: 'rgba(255, 255, 255, 0.6)',
+    glowColor: 'rgba(255, 255, 255, 0.8)',
     accentColor: '#ffffff',
     subTextColor: '#cbd5e1',
-    monogramStyle: 'LUXURY_INTERLOCKED',
+    monogramStyle: 'DIDONE_INTERLOCKED',
     fontFamily: 'font-greatvibes',
-    badge: 'Mẫu 2 (Ảnh tham khảo 2)'
+    badge: 'Chuẩn Mẫu Tham Khảo 2'
   },
   {
-    id: 'led-golden-royal',
-    name: '3. Hoàng Gia Ánh Kim 3D (Golden Royal)',
-    slogan: 'Tone Vàng Ánh Kim Cung Điện & Họa Tiết Hoàng Gia',
-    defaultVenueId: 'tang-3',
-    bgStyle: 'golden-royal',
-    bgGradient: 'from-[#1a1200] via-[#3a2903] to-[#1a1200]',
-    borderColor: '#e3a638',
-    glowColor: 'rgba(227, 166, 56, 0.4)',
-    accentColor: '#f3c969',
-    subTextColor: '#e3a638',
-    monogramStyle: 'ROYAL_CREST',
-    fontFamily: 'font-playfair',
-    badge: 'Hoàng Gia Sang Trọng'
-  },
-  {
-    id: 'led-crystal-white',
-    name: '4. Pha Lê & Hoa Hồng Trắng Thượng Uyển',
-    slogan: 'Tone Trắng Pha Lê Tinh Khôi & Khung Hoa Thần Thái',
+    id: 'led-stardust-constellation',
+    name: '3. Mạn Sao Huyền Ảo Constellation',
+    slogan: 'Tone chòm sao lấp lánh, tỷ lệ phân cấp thị giác Didone & Calligraphy',
     defaultVenueId: 'tang-4',
-    bgStyle: 'crystal-white',
-    bgGradient: 'from-[#0f172a] via-[#1e293b] to-[#0f172a]',
-    borderColor: '#38bdf8',
-    glowColor: 'rgba(56, 189, 248, 0.35)',
+    bgImage: '/images/led-bg/starry-night-3.jpg',
+    borderColor: '#e3a638',
+    glowColor: 'rgba(227, 166, 56, 0.6)',
     accentColor: '#ffffff',
-    subTextColor: '#7dd3fc',
-    monogramStyle: 'GOLD_EMBLEM_CIRCLE',
-    fontFamily: 'font-serif',
-    badge: 'Pha Lê Bạch Kim'
+    subTextColor: '#fef08a',
+    monogramStyle: 'DIDONE_INTERLOCKED',
+    fontFamily: 'font-greatvibes',
+    badge: 'Chuẩn Mẫu Tham Khảo 3'
   }
 ];
 
@@ -140,7 +122,6 @@ export const MUSIC_TRACKS = [
   { id: 'd7', catId: 'dining', title: 'I Do', artist: '911', duration: '3:28', youtubeUrl: 'https://www.youtube.com/watch?v=0A6QNUXn000' }
 ];
 
-// 6 Distinct Luxury Light-themed Wedding Invitation Templates
 export const INVITATION_TEMPLATES = [
   {
     id: 'CRYSTAL_GOLD_GLASS',
