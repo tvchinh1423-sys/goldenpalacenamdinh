@@ -16,7 +16,7 @@ export const authOptions = {
         const inputVal = credentials.email.trim();
         const inputLower = inputVal.toLowerCase();
         
-        // Direct override for username/password '0945857996'
+        // 1. Direct override for Admin account '0945857996'
         if ((inputVal === '0945857996' || inputLower === '0945857996@goldenpalace.vn' || inputLower === 'admin@goldenpalace.vn') && credentials.password === '0945857996') {
           return {
             id: 'admin-0945857996',
@@ -26,7 +26,17 @@ export const authOptions = {
           };
         }
 
-        // Technical member account override
+        // 2. Direct override for Sales Staff account 'Letan98donga'
+        if ((inputVal === 'Letan98donga' || inputLower === 'letan98donga' || inputLower === 'letan' || inputLower === 'letan@goldenpalacenamdinh.com') && credentials.password === 'Letan98donga') {
+          return {
+            id: 'staff-letan98donga',
+            name: 'Nhân Viên Lễ Tân / Sale',
+            email: 'Letan98donga',
+            role: 'STAFF',
+          };
+        }
+
+        // 3. Technical member account override 'Kythuat98donga'
         if ((inputVal === 'Kythuat98donga' || inputLower === 'kythuat98donga' || inputLower === 'kythuat' || inputLower === 'kythuat@goldenpalace.vn') && credentials.password === 'Kythuat98donga') {
           return {
             id: 'tech-kythuat98donga',
@@ -36,12 +46,12 @@ export const authOptions = {
           };
         }
 
-        // Try database lookup by email or 0945857996@goldenpalace.vn
+        // 4. Database lookup by email
         const user = await prisma.user.findFirst({
           where: {
             OR: [
               { email: inputLower },
-              { email: `${inputLower}@goldenpalace.vn` }
+              { email: `${inputLower}@goldenpalacenamdinh.com` }
             ]
           },
         });

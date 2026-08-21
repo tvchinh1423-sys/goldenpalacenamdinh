@@ -10,15 +10,18 @@ function AdminLayoutContent({ children }) {
   const { data: session, status } = useSession();
 
   const isMember = session?.user?.role === 'MEMBER';
+  const isStaff = session?.user?.role === 'STAFF';
 
   // Route protection for MEMBER role: strictly only allow /admin/personalize
   useEffect(() => {
-    if (status === 'authenticated' && isMember) {
-      if (pathname !== '/admin/personalize') {
+    if (status === 'authenticated') {
+      if (isMember && pathname !== '/admin/personalize') {
         router.replace('/admin/personalize');
+      } else if (isStaff && !pathname.startsWith('/admin/leads')) {
+        router.replace('/admin/leads');
       }
     }
-  }, [status, isMember, pathname, router]);
+  }, [status, isMember, isStaff, pathname, router]);
 
   const allNavItems = [
     { name: 'Bảng điều khiển', href: '/admin', icon: 'dashboard' },
@@ -33,10 +36,28 @@ function AdminLayoutContent({ children }) {
     { name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' },
   ];
 
-  // MEMBER role (Kỹ thuật) only sees Kỹ Thuật & Cá Nhân Hóa
-  const navItems = isMember
-    ? [{ name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' }]
-    : allNavItems;
+  // Role-based sidebar menu items
+  let navItems = allNavItems;
+  if (isMember) {
+    navItems = [{ name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' }];
+  } else if (isStaff) {
+    navItems = [{ name: 'Quản lý Khách hàng', href: '/admin/leads', icon: 'group' }];
+  }
+
+  // Header Title & Badge
+  let brandTitle = 'GP ADMIN';
+  let roleLabel = session?.user?.email || 'admin@goldenpalacenamdinh.com';
+  let avatarInitial = 'A';
+
+  if (isMember) {
+    brandTitle = 'GP KĨ THUẬT';
+    roleLabel = 'Tài khoản Kỹ Thuật';
+    avatarInitial = 'KT';
+  } else if (isStaff) {
+    brandTitle = 'GP LỄ TÂN / SALE';
+    roleLabel = 'Tài khoản Lễ Tân / Sale (Chỉ xem Leads)';
+    avatarInitial = 'LT';
+  }
 
   return (
     <div className="min-h-screen bg-surface flex font-inter text-on-surface">
@@ -44,7 +65,7 @@ function AdminLayoutContent({ children }) {
       <aside className="w-64 bg-surface-bright border-r border-outline-variant/30 flex flex-col shadow-sm">
         <div className="h-16 flex items-center justify-center border-b border-outline-variant/30">
           <span className="font-display-lg font-bold text-xl text-primary bg-clip-text bg-gradient-to-r from-gold-gradient-start to-gold-gradient-end text-transparent">
-            {isMember ? 'GP KỸ THUẬT' : 'GP ADMIN'}
+            {brandTitle}
           </span>
         </div>
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -87,14 +108,14 @@ function AdminLayoutContent({ children }) {
           <div className="flex items-center gap-4">
             <div className="flex flex-col text-right">
               <span className="text-sm font-bold text-on-surface">
-                {session?.user?.name || (isMember ? 'Bộ Phận Kỹ Thuật' : 'Admin')}
+                {session?.user?.name || 'User'}
               </span>
               <span className="text-xs text-on-surface-variant">
-                {isMember ? 'Tài khoản Kỹ Thuật (Chỉ xem)' : (session?.user?.email || 'admin@goldenpalace.vn')}
+                {roleLabel}
               </span>
             </div>
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gold-gradient-start to-gold-gradient-end flex items-center justify-center text-white font-bold">
-              {isMember ? 'KT' : 'A'}
+              {avatarInitial}
             </div>
           </div>
         </header>
