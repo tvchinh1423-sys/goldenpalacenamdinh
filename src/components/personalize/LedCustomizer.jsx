@@ -6,11 +6,10 @@ import { LED_STAGE_TEMPLATES, LED_SCREEN_FLOORS } from '@/lib/personalize-data';
 export default function LedCustomizer({ groomName, setGroomName, brideName, setBrideName, eventDate, setEventDate, onSave }) {
   const [selectedFloor, setSelectedFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3 (7.04x3.84m)
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
-  const [monogramFont, setMonogramFont] = useState("'Cinzel Decorative', serif"); // Cinzel Decorative / Bodoni / Didot
-  const [coupleFont, setCoupleFont] = useState("'Great Vibes', cursive"); // Shelley Allegro / Bickham Script / Great Vibes
+  const [coupleFont, setCoupleFont] = useState("font-greatvibes"); // 100% Vietnamese Accent Calligraphy Font
   const [copied, setCopied] = useState(false);
 
-  // Extract initial letters for Didone Monogram (e.g., "Mỹ Duyên" & "Đức Minh" -> "M" and "D")
+  // Extract initial letters for Didone Monogram (e.g., "Ánh Dương" & "Lâm Tùng" -> "A" and "L", or "Mỹ Duyên" & "Đức Minh" -> "M" and "D")
   const getInitial = (name, fallback) => {
     if (!name || !name.trim()) return fallback;
     const parts = name.trim().split(' ');
@@ -18,19 +17,18 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     return lastWord.charAt(0).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
   };
 
-  const brideInitial = getInitial(brideName, 'M');
-  const groomInitial = getInitial(groomName, 'D');
+  const brideInitial = getInitial(brideName, 'A');
+  const groomInitial = getInitial(groomName, 'L');
 
   const handleCopyConfig = () => {
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.specText})
-Monogram Logo: Didone/Bodoni/Cinzel (${monogramFont})
-Tên Dâu Rể: Calligraphy Script (${coupleFont})
-Ngày Cưới: Didone Old-style Serif
-Chú Rể: ${groomName || 'Đức Minh'}
-Cô Dâu: ${brideName || 'Mỹ Duyên'}
-Ngày cử hành: ${eventDate || '2026-01-31'}`;
+Tỷ lệ bố cục: Didone Monogram (25% Height), Calligraphy Couple Names (20% Height), Date Didone Serif
+Không gian: Để trống hoàn toàn 35% chân màn hình (Bottom 35% empty bokeh space)
+Chú Rể: ${groomName || 'Lâm Tùng'}
+Cô Dâu: ${brideName || 'Ánh Dương'}
+Ngày cử hành: ${eventDate || '2025-10-15'}`;
     navigator.clipboard.writeText(info);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -43,10 +41,10 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
       <div className="lg:col-span-5 bg-[#141414] border border-[#e3a638]/30 rounded-2xl p-6 shadow-2xl backdrop-blur-md">
         <h3 className="text-xl font-playfair text-[#e3a638] font-bold mb-2 flex items-center gap-2">
           <span className="material-symbols-outlined text-[#e3a638]">tune</span>
-          Tùy Chỉnh Phông Màn LED
+          Thiết Kế Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã cài đặt chính xác các bộ phông chữ tiêu chuẩn: Cinzel Decorative / Bodoni / Didot cho Monogram, Great Vibes / Bickham cho tên Dâu Rể và Didone Serif cho ngày cưới.
+          Nội dung căn giữa ở nửa trên, Monogram 25% chiều cao, Tên Calligraphy 20% chiều cao (chuẩn 100% tiếng Việt) và để trống 35% chân màn hình.
         </p>
 
         {/* 1. Select Floor & LED Dimensions */}
@@ -90,7 +88,7 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
               type="text"
               value={brideName}
               onChange={(e) => setBrideName(e.target.value)}
-              placeholder="VD: Mỹ Duyên"
+              placeholder="VD: Ánh Dương"
               className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs transition-colors"
             />
           </div>
@@ -103,7 +101,7 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
               type="text"
               value={groomName}
               onChange={(e) => setGroomName(e.target.value)}
-              placeholder="VD: Đức Minh"
+              placeholder="VD: Lâm Tùng"
               className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs transition-colors"
             />
           </div>
@@ -120,80 +118,44 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
             />
           </div>
 
-          {/* 3. Font Selectors */}
-          <div className="space-y-3 pt-2 border-t border-gray-800">
-            <div>
-              <label className="block text-gray-300 text-xs font-semibold mb-1.5 uppercase tracking-wider">
-                1. Phông Monogram 2 Chữ Lồng
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setMonogramFont("'Cinzel Decorative', serif")}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-medium border transition-all text-left ${
-                    monogramFont === "'Cinzel Decorative', serif"
-                      ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
-                      : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <div className="font-bold">Cinzel Decorative 👑</div>
-                  <div className="text-[9px] opacity-75">Nét vương miện cao cấp</div>
-                </button>
+          <div>
+            <label className="block text-gray-300 text-xs font-semibold mb-1.5 uppercase tracking-wider">
+              Phông Chữ Calligraphy Chuẩn Dấu Tiếng Việt
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setCoupleFont("font-greatvibes")}
+                className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all text-left ${
+                  coupleFont === "font-greatvibes"
+                    ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
+                    : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
+                }`}
+              >
+                <div className="font-bold">Great Vibes ✒️</div>
+                <div className="text-[10px] opacity-75">Bay bổng mềm mại</div>
+              </button>
 
-                <button
-                  type="button"
-                  onClick={() => setMonogramFont("'Bodoni Moda', Didot, serif")}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-medium border transition-all text-left ${
-                    monogramFont === "'Bodoni Moda', Didot, serif"
-                      ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
-                      : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <div className="font-bold">Bodoni / Didot ✨</div>
-                  <div className="text-[9px] opacity-75">Chân mảnh tương phản cao</div>
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-gray-300 text-xs font-semibold mb-1.5 uppercase tracking-wider">
-                2. Phông Tên Cô Dâu Chú Rể (Calligraphy Script)
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setCoupleFont("'Great Vibes', cursive")}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-medium border transition-all text-left ${
-                    coupleFont === "'Great Vibes', cursive"
-                      ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
-                      : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <div className="font-bold">Shelley / Great Vibes ✒️</div>
-                  <div className="text-[9px] opacity-75">Bay bổng chuẩn 100% tiếng Việt</div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setCoupleFont("var(--font-playfair), serif")}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-medium border transition-all text-left ${
-                    coupleFont === "var(--font-playfair), serif"
-                      ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
-                      : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <div className="font-bold">Playfair Italic Script 🌹</div>
-                  <div className="text-[9px] opacity-75">Nghiêng sang trọng chuẩn tiếng Việt</div>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setCoupleFont("font-playfair italic")}
+                className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all text-left ${
+                  coupleFont === "font-playfair italic"
+                    ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
+                    : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
+                }`}
+              >
+                <div className="font-bold">Playfair Script 👑</div>
+                <div className="text-[10px] opacity-75">Nghiêng sang trọng</div>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* 4. Background Selector */}
+        {/* 3. Background Selector */}
         <div className="mt-5 pt-4 border-t border-gray-800">
           <label className="block text-gray-300 text-xs font-semibold mb-2.5 uppercase tracking-wider">
-            Chọn Nền Bầu Trời Sao Lấp Lánh
+            Chọn Nền Bầu Trời Sao Lấp Lánh (Bokeh Particles)
           </label>
           <div className="space-y-2.5">
             {LED_STAGE_TEMPLATES.map((tmpl) => {
@@ -244,72 +206,69 @@ Ngày cử hành: ${eventDate || '2026-01-31'}`;
         {/* LED Stage Screen Canvas Container (Dynamic Ratio based on Floor) */}
         <div className={`w-full relative ${selectedFloor.aspectClass} rounded-2xl overflow-hidden border-4 border-amber-500/40 shadow-[0_0_60px_rgba(0,0,0,0.95)] bg-black transition-all duration-500`}>
           
-          {/* Real Background Image Overlay */}
+          {/* Real Background Image Overlay (Starry Night / Bokeh Stars) */}
           <div 
             className="absolute inset-0 bg-cover bg-center transition-all duration-700"
             style={{ backgroundImage: `url(${selectedTemplate.bgImage})` }}
           ></div>
           <div className="absolute inset-0 bg-black/20"></div>
 
-          {/* TOP-LEFT CORNER: Golden Palace Logo Icon ONLY (NO text, NO background frame as requested) */}
+          {/* TOP-LEFT CORNER: Golden Palace Icon Logo ONLY (No text, No background box) */}
           <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
             <img 
               src="/logo-icon.png" 
               alt="Golden Palace Icon Logo" 
-              className="h-7 sm:h-10 md:h-12 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" 
+              className="h-6 sm:h-9 md:h-11 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]" 
             />
           </div>
 
-          {/* FOREGROUND CONTENT LAYER: PUSHED TO TOP 2/3, LEAVING BOTTOM 1/3 (35%) EMPTY FOR STAGE COUPLE */}
-          <div className="relative z-30 w-full h-full flex flex-col items-center justify-start pt-4 sm:pt-6 pb-[35%] text-center">
+          {/* FOREGROUND CONTENT LAYER: CENTER-ALIGNED IN TOP HALF (LEAVING BOTTOM 35% COMPLETELY EMPTY FOR BOKEH STAGE) */}
+          <div className="relative z-30 w-full h-full flex flex-col items-center justify-start pt-5 sm:pt-8 md:pt-10 pb-[35%] text-center">
 
-            {/* 1. MONOGRAM LOGO ("DM" / "MD"): Didot / Bodoni / Cinzel Decorative Serif Interlocked, NO fuzzy glow */}
-            <div className="h-[30%] flex items-center justify-center my-0.5">
+            {/* 1. MONOGRAM (25% HEIGHT): Didone Serif (Cinzel / Bodoni) Interlocked letters (e.g. "AD" or "LT") */}
+            <div className="h-[25%] flex items-center justify-center my-0.5">
               <div className="relative h-full aspect-square flex items-center justify-center">
                 <div 
-                  className="relative flex items-center justify-center text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tighter text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.9)] select-none"
-                  style={{ fontFamily: monogramFont }}
+                  className="relative flex items-center justify-center text-3xl sm:text-5xl md:text-6xl tracking-tighter text-white drop-shadow-[0_3px_10px_rgba(0,0,0,0.9)] select-none"
+                  style={{ fontFamily: "'Cinzel Decorative', 'Bodoni Moda', Didot, serif" }}
                 >
-                  {/* First Initial (Bride "M") */}
-                  <span className="font-black transform -translate-x-2 sm:-translate-x-3 text-white italic">
+                  {/* First Initial (Bride "A" / "M") */}
+                  <span className="font-black transform -translate-x-2 text-white italic">
                     {brideInitial}
                   </span>
-                  {/* Second Initial (Groom "D") Interlocked */}
-                  <span className="font-light transform translate-x-2 sm:translate-x-3 -ml-4 sm:-ml-7 md:-ml-9 text-amber-200/90 italic opacity-95">
+                  {/* Second Initial (Groom "L" / "D") Interlocked */}
+                  <span className="font-light transform translate-x-2 -ml-4 sm:-ml-6 md:-ml-8 text-amber-100/90 italic opacity-95">
                     {groomInitial}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* 2. COUPLE NAMES ("Mỹ Duyên & Đức Minh"): Shelley Allegro / Bickham / Great Vibes Calligraphy Script (100% Full Vietnamese Accent) */}
-            <div className="w-[90%] sm:w-[65%] flex items-center justify-center my-1">
-              <div 
-                className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-white drop-shadow-[0_3px_15px_rgba(0,0,0,0.95)] leading-tight whitespace-nowrap"
-                style={{ fontFamily: coupleFont }}
-              >
-                {brideName || 'Mỹ Duyên'} 
+            {/* 2. MAIN COUPLE NAMES (20% HEIGHT): Modern Calligraphy Script, 100% Full Vietnamese Accent support */}
+            <div className="w-[85%] sm:w-[65%] h-[20%] flex items-center justify-center my-1">
+              <div className={`text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-white drop-shadow-[0_3px_15px_rgba(0,0,0,0.95)] leading-tight whitespace-nowrap ${coupleFont}`}>
+                {brideName || 'Ánh Dương'} 
                 <span className="text-amber-300 text-lg sm:text-2xl md:text-3xl mx-2 sm:mx-3 font-serif italic font-light">&</span> 
-                {groomName || 'Đức Minh'}
+                {groomName || 'Lâm Tùng'}
               </div>
             </div>
 
-            {/* 3. WEDDING DATE ("31/01/2026"): Didone / Old-style Serif */}
+            {/* 3. SUBTEXT / DATE: Didone Old-style Serif (e.g. "15 | 10 | 2025" or "31 | 01 | 2026") */}
             <div 
-              className="text-[10px] sm:text-xs md:text-sm text-stone-200 tracking-[0.25em] font-serif mt-1 drop-shadow-md border-t border-amber-300/30 pt-1 px-6"
-              style={{ fontFamily: "'Bodoni Moda', 'Didot', 'Cinzel Decorative', 'Playfair Display', serif" }}
+              className="text-[10px] sm:text-xs md:text-sm text-stone-200 tracking-[0.25em] font-serif mt-1 drop-shadow-md border-t border-amber-300/30 pt-1.5 px-6"
+              style={{ fontFamily: "'Bodoni Moda', 'Didot', 'Cinzel Decorative', serif" }}
             >
               {eventDate 
-                ? new Date(eventDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, ' / ') 
-                : '31 / 01 / 2026'}
+                ? new Date(eventDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, ' | ') 
+                : '15 | 10 | 2025'}
             </div>
 
           </div>
 
-          {/* INDICATOR OVERLAY: Stage Floor Empty Area (Bottom 1/3 Empty Space) */}
-          <div className="absolute bottom-0 inset-x-0 h-[33%] border-t border-dashed border-amber-400/30 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
-            <span className="text-[9px] text-amber-200/60 uppercase font-mono tracking-widest bg-black/50 px-3 py-0.5 rounded-full border border-amber-400/20">
-              Khu Vực Sân Khấu (Để trống 1/3 bên dưới cho Dâu Rể & MC đứng)
+          {/* INDICATOR OVERLAY: Bottom 35% Completely Empty Space with Bokeh Stars */}
+          <div className="absolute bottom-0 inset-x-0 h-[35%] border-t border-dashed border-amber-400/30 bg-gradient-to-t from-black/50 via-black/20 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
+            <span className="text-[9px] text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-amber-400/20">
+              Khu Vực Để Trống 35% Chân Màn LED (Chỉ có nền tối & Bokeh lấp lánh)
             </span>
           </div>
 
