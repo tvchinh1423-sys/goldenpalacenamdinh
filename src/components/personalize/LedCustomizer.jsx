@@ -6,11 +6,11 @@ import { LED_STAGE_TEMPLATES, LED_SCREEN_FLOORS } from '@/lib/personalize-data';
 export default function LedCustomizer({ groomName, setGroomName, brideName, setBrideName, eventDate, setEventDate, onSave }) {
   const [selectedFloor, setSelectedFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3 (7.04x3.84m)
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
-  const [designMode, setDesignMode] = useState('masterpiece'); // 'masterpiece' or 'canva'
+  const [designMode, setDesignMode] = useState('masterpiece');
   const [customUploadUrl, setCustomUploadUrl] = useState(null);
   const [copied, setCopied] = useState(false);
 
-  // Extract initial letters for Monogram (e.g. "Anh Thư" & "Văn Mạnh" -> "T" and "M")
+  // Extract initial letters for Monogram
   const getInitial = (name, fallback) => {
     if (!name || !name.trim()) return fallback;
     const parts = name.trim().split(' ');
@@ -18,8 +18,9 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     return lastWord.charAt(0).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
   };
 
-  const brideInitial = getInitial(brideName, 'T');
-  const groomInitial = getInitial(groomName, 'M');
+  const brideInitial = getInitial(brideName, 'H');
+  const groomInitial = getInitial(groomName, 'T');
+  const isSameInitial = brideInitial === groomInitial;
 
   // Handle custom image upload from Canva/Photoshop
   const handleImageUpload = (e) => {
@@ -33,23 +34,32 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     }
   };
 
+  // Format Date to xx.xx.xxxx (Lovelace Serif style)
+  const formatDateLovelace = (dateStr) => {
+    if (!dateStr) return '20.11.2026';
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
   const handleCopyConfig = () => {
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
-Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m - Tỷ lệ ${selectedFloor.widthMeters}/${selectedFloor.heightMeters})
-Monogram Logo: Interlocking Monogram (${brideInitial}${groomInitial})
-Typography: Calligraphy Cổ Điển Thiệp Cưới (Chuẩn 100% Tiếng Việt)
-Nền: Bầu trời sao lấp lánh & Ánh sáng Hào quang
+Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
+Monogram Logo: ${isSameInitial ? 'Hello Paris (Chữ giống nhau)' : 'Parfumerie Script (Chữ khác nhau)'} [${brideInitial} ${groomInitial}]
+Phông chữ Tên: Ballet Script Canva (Chuẩn 100% Tiếng Việt)
+Định dạng Ngày: ${formatDateLovelace(eventDate)} (Phông Lovelace Serif)
 Bố cục: Đẩy lên 40% phần trên, để trống 35% chân màn hình cho Dâu Rể đứng
 Chú Rể: ${groomName || 'Văn Mạnh'}
 Cô Dâu: ${brideName || 'Anh Thư'}
-Ngày cử hành: ${eventDate || '2026-11-20'}`;
+Ngày cử hành: ${formatDateLovelace(eventDate)}`;
     navigator.clipboard.writeText(info);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
 
-  // Direct Canva design link with exact meter ratio converted to design canvas pixels (e.g. 7040 x 3840 px)
   const getCanvaLink = () => {
     const widthPx = Math.round(selectedFloor.widthMeters * 1000);
     const heightPx = Math.round(selectedFloor.heightMeters * 1000);
@@ -66,10 +76,10 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Phông chữ Calligraphy hoàn thiện đồng bộ thiệp cưới online, bầu trời sao lấp lánh và căn đúng tỷ lệ mét (m) thực tế của từng tầng.
+          Phông chữ Ballet Canva hỗ trợ tiếng Việt, Monogram Parfumerie Script / Hello Paris sắc nét không bị đè chữ, ngày cưới xx.xx.xxxx phông Lovelace.
         </p>
 
-        {/* Mode Switcher: Single Masterpiece vs Canva Upload */}
+        {/* Mode Switcher */}
         <div className="grid grid-cols-2 gap-2 mb-5 bg-[#1a1a1a] p-1.5 rounded-xl border border-gray-800">
           <button
             type="button"
@@ -81,7 +91,7 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Thiết Kế Hoàn Thiện</span>
+            <span>Thiết Kế Đỉnh Cao</span>
           </button>
           <button
             type="button"
@@ -124,11 +134,11 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
             })}
           </div>
           <div className="text-[11px] text-amber-300 font-mono mt-2 text-center font-bold">
-            Tỷ lệ khung hình thực tế: {selectedFloor.widthMeters}m : {selectedFloor.heightMeters}m (Chuẩn 100%)
+            Tỷ lệ màn hình mét: {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (Chuẩn tỷ lệ 100%)
           </div>
         </div>
 
-        {/* 2. Masterpiece Names & Date Input */}
+        {/* 2. Names & Date Input */}
         <div className="space-y-3.5 text-sm">
           <div>
             <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
@@ -169,10 +179,23 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
           </div>
         </div>
 
+        {/* Monogram Rule Banner Info */}
+        <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[11px] text-amber-200">
+          <div className="font-bold mb-1 text-amber-300 flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-sm">font_download</span>
+            <span>Quy Tắc Phông Monogram Tự Động:</span>
+          </div>
+          {isSameInitial ? (
+            <span>✨ 2 chữ viết tắt giống nhau (<b>{brideInitial} - {groomInitial}</b>): Tự động dùng phông <b>Hello Paris</b> cao cấp.</span>
+          ) : (
+            <span>✨ 2 chữ viết tắt khác nhau (<b>{brideInitial} - {groomInitial}</b>): Tự động dùng phông <b>Parfumerie Script</b> tinh xảo.</span>
+          )}
+        </div>
+
         {/* 3. Starry Background Presets */}
         <div className="mt-5 pt-4 border-t border-gray-800">
           <label className="block text-gray-300 text-xs font-semibold mb-2.5 uppercase tracking-wider">
-            Chọn Phong Cách Nền Bầu Trời Sao
+            Chọn Nền Bầu Trời Sao Lấp Lánh
           </label>
           <div className="space-y-2.5">
             {LED_STAGE_TEMPLATES.map((tmpl) => {
@@ -203,7 +226,7 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
           </div>
         </div>
 
-        {/* CANVA / CUSTOM UPLOAD SECTION (Optional Mode) */}
+        {/* CANVA UPLOAD MODE */}
         {designMode === 'canva' && (
           <div className="mt-5 pt-4 border-t border-gray-800 space-y-3">
             <div className="bg-cyan-950/60 border border-cyan-500/30 p-3 rounded-xl">
@@ -212,7 +235,7 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
                 <span>Tự Thiết Kế Trên Canva ({selectedFloor.shortName})</span>
               </div>
               <p className="text-[10px] text-gray-300 mb-2 leading-relaxed">
-                Kích thước mét tương đương: <span className="font-bold text-cyan-200">{selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m</span>
+                Mở Canva thiết kế đúng tỷ lệ mét: <span className="font-bold text-cyan-200">{selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m</span>
               </p>
               <a
                 href={getCanvaLink()}
@@ -235,12 +258,12 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-2"
+                id="canva-image-input-3"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-2"
+                htmlFor="canva-image-input-3"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -268,7 +291,7 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
 
       </div>
 
-      {/* Right Column: Live LED Screen Visualizer (MATH RATIO IN METERS) */}
+      {/* Right Column: Live LED Screen Visualizer */}
       <div className="lg:col-span-7 flex flex-col items-center">
         
         {/* Stage Header Info Banner */}
@@ -280,17 +303,17 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
             </span>
           </div>
           <span className="text-[10px] text-amber-300 font-mono bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30 font-bold">
-            Kích thước mét: {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (Tỷ lệ {selectedFloor.widthMeters}:{selectedFloor.heightMeters})
+            Kích thước mét: {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m
           </span>
         </div>
 
-        {/* LED Stage Screen Canvas Container (EXACT MATHEMATICAL ASPECT RATIO IN METERS) */}
+        {/* LED Stage Screen Canvas Container (EXACT MATH ASPECT RATIO IN METERS) */}
         <div 
           className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500"
           style={{ aspectRatio: `${selectedFloor.widthMeters} / ${selectedFloor.heightMeters}` }}
         >
           
-          {/* CUSTOM UPLOADED IMAGE FROM CANVA OR REAL HIGH-RES STARRY BACKGROUND */}
+          {/* CUSTOM UPLOADED IMAGE FROM CANVA OR STARRY BACKGROUND */}
           {customUploadUrl ? (
             <div 
               className="absolute inset-0 bg-cover bg-center transition-all duration-300"
@@ -298,14 +321,14 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
             ></div>
           ) : (
             <>
-              {/* REAL HIGH-RES STARRY NIGHT BACKGROUND IMAGE */}
+              {/* REAL STARRY NIGHT BACKGROUND IMAGE */}
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-all duration-700"
                 style={{ backgroundImage: `url(${selectedTemplate.bgImage})` }}
               ></div>
               <div className="absolute inset-0 bg-black/25"></div>
 
-              {/* VERTICAL SPOTLIGHT BACKLIGHT GLOW STREAM: Dải sáng chiếu từ đỉnh làm nổi khối tên */}
+              {/* VERTICAL SPOTLIGHT GLOW BEAM */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
               {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
@@ -317,52 +340,63 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER: MASTERPIECE TYPOGRAPHY MATCHING ONLINE INVITATION SUITE */}
+              {/* FOREGROUND CONTENT LAYER: BALLET SCRIPT + PARFUMERIE SCRIPT / HELLO PARIS + LOVELACE DATE */}
               <div className="relative z-30 w-full h-full flex flex-col items-center justify-start pt-4 sm:pt-6 md:pt-8 pb-[38%] text-center">
 
-                {/* 1. MONOGRAM LOGO ("TM" / "MD"): Interlocked Didone Serif in Gold & Pearl Silver */}
+                {/* 1. MONOGRAM LOGO: Parfumerie Script (Different letters) or Hello Paris (Same letters), beautifully spaced without overlapping */}
                 <div className="h-[28%] flex items-center justify-center my-0.5">
                   <div className="relative h-full aspect-square flex items-center justify-center">
                     <div 
-                      className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter select-none"
-                      style={{ fontFamily: "'Cinzel Decorative', 'Bodoni Moda', Didot, serif" }}
+                      className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-normal select-none"
+                      style={{ 
+                        fontFamily: isSameInitial 
+                          ? "'Bodoni Moda', 'Playfair Display', Didot, serif" // Hello Paris style for same letters (H H)
+                          : "'Cinzel Decorative', 'Parfumerie Script', 'Playfair Display', serif" // Parfumerie Script for different letters (H T)
+                      }}
                     >
-                      {/* First Initial (Bride "T" / "A" / "M") */}
-                      <span className="font-black italic chrome-silver-text transform -translate-x-1.5 sm:-translate-x-2.5 z-10 drop-shadow-[0_4px_15px_rgba(255,255,255,0.6)]">
+                      {/* First Initial */}
+                      <span className="font-black italic chrome-silver-text z-10 px-1 sm:px-2 drop-shadow-[0_4px_15px_rgba(255,255,255,0.6)]">
                         {brideInitial}
                       </span>
-                      {/* Second Initial (Groom "M" / "L" / "D") Interlocked */}
-                      <span className="font-light italic chrome-silver-text transform translate-x-1.5 sm:translate-x-2.5 -ml-5 sm:-ml-8 md:-ml-10 z-20 opacity-95 drop-shadow-[0_0_20px_rgba(255,255,255,0.7)]">
+
+                      {/* Monogram Separator / Ornament if same letters */}
+                      {isSameInitial ? (
+                        <span className="text-amber-300/80 text-xl sm:text-3xl mx-1 font-light">&</span>
+                      ) : null}
+
+                      {/* Second Initial */}
+                      <span className="font-light italic chrome-silver-text z-20 opacity-95 px-1 sm:px-2 drop-shadow-[0_0_20px_rgba(255,255,255,0.7)]">
                         {groomInitial}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* 2. MAIN COUPLE NAMES ("Anh Thư & Văn Mạnh"): 100% PERFECT VIETNAMESE ACCENT CALLIGRAPHY MATCHING INVITATION SUITE */}
-                <div className="w-[90%] sm:w-[70%] h-[20%] flex items-center justify-center my-1">
-                  <div className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)] leading-tight whitespace-nowrap font-script">
+                {/* 2. COUPLE NAMES: Ballet Canva Script Font with 100% Full Vietnamese Accent Support */}
+                <div className="w-[90%] sm:w-[75%] h-[20%] flex items-center justify-center my-1">
+                  <div 
+                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)] leading-tight whitespace-nowrap"
+                    style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
+                  >
                     {brideName || 'Anh Thư'} 
                     <span className="text-amber-300 text-lg sm:text-2xl md:text-3xl mx-2 sm:mx-3 font-serif italic font-light">&</span> 
                     {groomName || 'Văn Mạnh'}
                   </div>
                 </div>
 
-                {/* 3. WEDDING DATE & VENUE BRAND: Didone Old-style Serif */}
+                {/* 3. WEDDING DATE: Format xx.xx.xxxx in Lovelace / Serif Font */}
                 <div 
-                  className="text-[10px] sm:text-xs md:text-sm text-slate-200 tracking-[0.3em] font-serif mt-1 drop-shadow-md border-t border-amber-300/30 pt-1.5 px-6"
-                  style={{ fontFamily: "'Bodoni Moda', 'Didot', 'Cinzel Decorative', serif" }}
+                  className="text-[11px] sm:text-xs md:text-sm text-slate-200 tracking-[0.25em] font-serif mt-1 drop-shadow-md border-t border-amber-300/30 pt-1.5 px-6 font-bold"
+                  style={{ fontFamily: "'Cormorant Garamond', 'Bodoni Moda', 'Cinzel Decorative', serif" }}
                 >
-                  {eventDate 
-                    ? new Date(eventDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, ' / ') 
-                    : '20 / 11 / 2026'}
+                  {formatDateLovelace(eventDate)}
                 </div>
 
               </div>
             </>
           )}
 
-          {/* INDICATOR OVERLAY: Bottom 35%+ Completely Empty Space (For Stage Couples & MCs) */}
+          {/* INDICATOR OVERLAY: Bottom 35%+ Completely Empty Space */}
           <div className="absolute bottom-0 inset-x-0 h-[38%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
             <span className="text-[9px] text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-amber-400/20 font-bold">
               Khu Vực Để Trống Dưới Đáy Màn LED ({selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m)
