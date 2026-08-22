@@ -6,12 +6,11 @@ import { LED_STAGE_TEMPLATES, LED_SCREEN_FLOORS } from '@/lib/personalize-data';
 export default function LedCustomizer({ groomName, setGroomName, brideName, setBrideName, eventDate, setEventDate, onSave }) {
   const [selectedFloor, setSelectedFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3 (7.04x3.84m)
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
-  const [designMode, setDesignMode] = useState('canva'); // Default to Canva / Custom Upload mode as requested by user
+  const [designMode, setDesignMode] = useState('masterpiece'); // 'masterpiece' or 'canva'
   const [customUploadUrl, setCustomUploadUrl] = useState(null);
-  const [fontChoice, setFontChoice] = useState('greatvibes');
   const [copied, setCopied] = useState(false);
 
-  // Extract initial letters for Monogram
+  // Extract initial letters for Monogram (e.g. "Anh Thư" & "Văn Mạnh" -> "T" and "M")
   const getInitial = (name, fallback) => {
     if (!name || !name.trim()) return fallback;
     const parts = name.trim().split(' ');
@@ -36,8 +35,12 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
 
   const handleCopyConfig = () => {
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
-Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.specText})
-Chế độ thiết kế: ${designMode === 'canva' ? 'Tải ảnh từ Canva / Photoshop' : 'Tạo tự động trên Web'}
+Mẫu thiết kế: ${selectedTemplate.name}
+Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m - Tỷ lệ ${selectedFloor.widthMeters}/${selectedFloor.heightMeters})
+Monogram Logo: Interlocking Monogram (${brideInitial}${groomInitial})
+Typography: Calligraphy Cổ Điển Thiệp Cưới (Chuẩn 100% Tiếng Việt)
+Nền: Bầu trời sao lấp lánh & Ánh sáng Hào quang
+Bố cục: Đẩy lên 40% phần trên, để trống 35% chân màn hình cho Dâu Rể đứng
 Chú Rể: ${groomName || 'Văn Mạnh'}
 Cô Dâu: ${brideName || 'Anh Thư'}
 Ngày cử hành: ${eventDate || '2026-11-20'}`;
@@ -46,7 +49,7 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
     setTimeout(() => setCopied(false), 2500);
   };
 
-  // Direct Canva design link with pixel dimensions corresponding to screen size (e.g. 7040x3840px)
+  // Direct Canva design link with exact meter ratio converted to design canvas pixels (e.g. 7040 x 3840 px)
   const getCanvaLink = () => {
     const widthPx = Math.round(selectedFloor.widthMeters * 1000);
     const heightPx = Math.round(selectedFloor.heightMeters * 1000);
@@ -56,49 +59,49 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start font-montserrat">
       
-      {/* Left Column: Form Controls & Canva Mode Switcher */}
+      {/* Left Column: Form Controls */}
       <div className="lg:col-span-5 bg-[#141414] border border-[#e3a638]/30 rounded-2xl p-6 shadow-2xl backdrop-blur-md">
         <h3 className="text-xl font-playfair text-[#e3a638] font-bold mb-2 flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#e3a638]">palette</span>
-          Tùy Chỉnh Phông Màn LED
+          <span className="material-symbols-outlined text-[#e3a638]">stars</span>
+          Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Tự do kết nối Canva hoặc tải tệp ảnh thiết kế (PNG/JPG) lên màn LED chuẩn tỷ lệ thực tế.
+          Phông chữ Calligraphy hoàn thiện đồng bộ thiệp cưới online, bầu trời sao lấp lánh và căn đúng tỷ lệ mét (m) thực tế của từng tầng.
         </p>
 
-        {/* Mode Switcher: Canva Upload vs Auto Generator */}
-        <div className="grid grid-cols-2 gap-2 mb-6 bg-[#1a1a1a] p-1.5 rounded-xl border border-gray-800">
+        {/* Mode Switcher: Single Masterpiece vs Canva Upload */}
+        <div className="grid grid-cols-2 gap-2 mb-5 bg-[#1a1a1a] p-1.5 rounded-xl border border-gray-800">
+          <button
+            type="button"
+            onClick={() => setDesignMode('masterpiece')}
+            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+              designMode === 'masterpiece'
+                ? 'bg-gradient-to-r from-[#e3a638] to-[#b8860b] text-black shadow-md'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <span className="material-symbols-outlined text-sm">auto_awesome</span>
+            <span>Thiết Kế Hoàn Thiện</span>
+          </button>
           <button
             type="button"
             onClick={() => setDesignMode('canva')}
-            className={`py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               designMode === 'canva'
                 ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
             <span className="material-symbols-outlined text-sm">cloud_upload</span>
-            <span>Tải Ảnh Canva / File Sau Chỉnh Sửa</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setDesignMode('auto')}
-            className={`py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-              designMode === 'auto'
-                ? 'bg-[#e3a638] text-black shadow-md'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Tạo Tự Động Trên Web</span>
+            <span>Tải Ảnh Canva / File Riêng</span>
           </button>
         </div>
 
-        {/* 1. Select Floor & LED Dimensions */}
+        {/* 1. Select Floor & LED Dimensions (METERS RATIO) */}
         <div className="mb-5 bg-[#1f1f1f] p-3.5 rounded-xl border border-amber-500/20">
           <label className="block text-amber-300 text-xs font-bold mb-2 uppercase tracking-wider flex items-center gap-1.5">
             <span className="material-symbols-outlined text-sm">aspect_ratio</span>
-            <span>1. Chọn Sảnh & Kích Thước Màn LED</span>
+            <span>1. Kích Thước Màn LED Theo Tầng (Mét - m)</span>
           </label>
           <div className="grid grid-cols-3 gap-2">
             {LED_SCREEN_FLOORS.map((floor) => {
@@ -108,170 +111,164 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
                   key={floor.id}
                   type="button"
                   onClick={() => setSelectedFloor(floor)}
-                  className={`py-2 px-2 rounded-lg text-xs font-semibold border transition-all text-center flex flex-col items-center justify-center cursor-pointer ${
+                  className={`py-2.5 px-2 rounded-lg text-xs font-semibold border transition-all text-center flex flex-col items-center justify-center cursor-pointer ${
                     active
-                      ? 'border-[#e3a638] bg-[#e3a638]/20 text-amber-300 shadow-[0_0_10px_rgba(227,166,56,0.3)]'
+                      ? 'border-[#e3a638] bg-[#e3a638]/20 text-amber-300 shadow-[0_0_12px_rgba(227,166,56,0.35)]'
                       : 'border-gray-800 bg-[#161616] text-gray-400 hover:text-white hover:border-gray-700'
                   }`}
                 >
-                  <span className="font-bold text-[11px]">{floor.shortName}</span>
-                  <span className="text-[9px] font-mono text-gray-400 mt-0.5">{floor.widthMeters}x{floor.heightMeters}m</span>
+                  <span className="font-bold text-[12px]">{floor.shortName}</span>
+                  <span className="text-[10px] font-mono text-amber-200/90 font-bold mt-0.5">{floor.widthMeters}m × {floor.heightMeters}m</span>
                 </button>
               );
             })}
           </div>
-          <div className="text-[10px] text-amber-200/80 font-mono mt-2 text-center">
-            {selectedFloor.specText}
+          <div className="text-[11px] text-amber-300 font-mono mt-2 text-center font-bold">
+            Tỷ lệ khung hình thực tế: {selectedFloor.widthMeters}m : {selectedFloor.heightMeters}m (Chuẩn 100%)
           </div>
         </div>
 
-        {/* CANVA INTEGRATION MODE */}
+        {/* 2. Masterpiece Names & Date Input */}
+        <div className="space-y-3.5 text-sm">
+          <div>
+            <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
+              Tên Cô Dâu
+            </label>
+            <input
+              type="text"
+              value={brideName}
+              onChange={(e) => setBrideName(e.target.value)}
+              placeholder="VD: Anh Thư"
+              className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none text-xs transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
+              Tên Chú Rể
+            </label>
+            <input
+              type="text"
+              value={groomName}
+              onChange={(e) => setGroomName(e.target.value)}
+              placeholder="VD: Văn Mạnh"
+              className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none text-xs transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
+              Ngày Cử Hành Lễ
+            </label>
+            <input
+              type="date"
+              value={eventDate}
+              onChange={(e) => setEventDate(e.target.value)}
+              className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none text-xs transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* 3. Starry Background Presets */}
+        <div className="mt-5 pt-4 border-t border-gray-800">
+          <label className="block text-gray-300 text-xs font-semibold mb-2.5 uppercase tracking-wider">
+            Chọn Phong Cách Nền Bầu Trời Sao
+          </label>
+          <div className="space-y-2.5">
+            {LED_STAGE_TEMPLATES.map((tmpl) => {
+              const active = selectedTemplate.id === tmpl.id;
+              return (
+                <div
+                  key={tmpl.id}
+                  onClick={() => setSelectedTemplate(tmpl)}
+                  className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+                    active
+                      ? 'border-[#e3a638] bg-[#e3a638]/10 shadow-[0_0_15px_rgba(227,166,56,0.25)]'
+                      : 'border-gray-800 bg-[#161616] hover:border-gray-700'
+                  }`}
+                >
+                  <div>
+                    <div className="text-xs font-bold text-white flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"></span>
+                      {tmpl.name}
+                    </div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">{tmpl.slogan}</div>
+                  </div>
+                  <span className="text-[9px] text-amber-400 font-mono px-2 py-0.5 bg-amber-400/10 rounded border border-amber-400/30 whitespace-nowrap">
+                    {tmpl.badge}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* CANVA / CUSTOM UPLOAD SECTION (Optional Mode) */}
         {designMode === 'canva' && (
-          <div className="space-y-4">
-            
-            {/* Direct Canva Launch Button */}
-            <div className="bg-gradient-to-r from-cyan-950/80 to-blue-950/80 border border-cyan-500/40 p-4 rounded-xl">
-              <div className="flex items-center gap-2 text-cyan-300 font-bold text-xs mb-1.5">
-                <span className="material-symbols-outlined text-base">open_in_new</span>
-                <span>Mở Canva Với Đúng Tỷ Lệ Màn LED {selectedFloor.shortName}</span>
+          <div className="mt-5 pt-4 border-t border-gray-800 space-y-3">
+            <div className="bg-cyan-950/60 border border-cyan-500/30 p-3 rounded-xl">
+              <div className="flex items-center gap-2 text-cyan-300 font-bold text-xs mb-1">
+                <span className="material-symbols-outlined text-sm">open_in_new</span>
+                <span>Tự Thiết Kế Trên Canva ({selectedFloor.shortName})</span>
               </div>
-              <p className="text-[11px] text-gray-300 mb-3 leading-relaxed">
-                Tạo thiết kế chuẩn kích thước <span className="font-bold text-cyan-200">{selectedFloor.widthMeters * 1000} × {selectedFloor.heightMeters * 1000} px</span> trên Canva với đầy đủ phông chữ Calligraphy, Monogram và sticker phong phú.
+              <p className="text-[10px] text-gray-300 mb-2 leading-relaxed">
+                Kích thước mét tương đương: <span className="font-bold text-cyan-200">{selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m</span>
               </p>
               <a
                 href={getCanvaLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                className="w-full py-2 px-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-[11px] font-bold uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
               >
-                <span className="material-symbols-outlined text-base">design_services</span>
-                <span>Mở Canva Thiết Kế Màn LED ({selectedFloor.shortName})</span>
+                <span className="material-symbols-outlined text-sm">design_services</span>
+                <span>Mở Canva Tỷ Lệ {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m</span>
               </a>
             </div>
 
-            {/* Custom Image Upload Input */}
-            <div className="bg-[#1a1a1a] p-4 rounded-xl border border-gray-700">
-              <label className="block text-gray-200 text-xs font-bold mb-2 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="bg-[#1a1a1a] p-3 rounded-xl border border-gray-700">
+              <label className="block text-gray-200 text-xs font-bold mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-sm text-amber-400">upload_file</span>
-                <span>Tải Ảnh Phông LED Từ Canva / Máy Tính</span>
+                <span>Tải Tệp Ảnh Thiết Kế Đã Xuất</span>
               </label>
               
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input"
+                id="canva-image-input-2"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input"
-                className="w-full py-3 px-4 bg-[#252525] hover:bg-[#303030] border-2 border-dashed border-gray-600 hover:border-amber-400 rounded-xl text-xs text-gray-300 flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                htmlFor="canva-image-input-2"
+                className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
-                <span className="material-symbols-outlined text-2xl text-amber-400">add_photo_alternate</span>
-                <span className="font-semibold">Bấm vào đây để chọn tệp ảnh PNG / JPG</span>
-                <span className="text-[10px] text-gray-500">Khuyên dùng xuất ảnh PNG/JPG từ Canva độ phân giải cao</span>
+                <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
+                <span className="font-semibold text-[11px]">Bấm chọn tệp PNG / JPG từ Canva</span>
               </label>
 
               {customUploadUrl && (
-                <div className="mt-3 flex items-center justify-between bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-lg text-xs text-amber-300">
-                  <span className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-base text-emerald-400">check_circle</span>
-                    Đã tải ảnh Canva thành công!
+                <div className="mt-2 flex items-center justify-between bg-amber-500/10 border border-amber-500/30 p-2 rounded-lg text-[11px] text-amber-300">
+                  <span className="flex items-center gap-1">
+                    <span className="material-symbols-outlined text-sm text-emerald-400">check_circle</span>
+                    Đã tải ảnh thành công!
                   </span>
                   <button
                     type="button"
                     onClick={() => setCustomUploadUrl(null)}
-                    className="text-red-400 hover:text-red-300 text-[11px] underline cursor-pointer"
+                    className="text-red-400 hover:text-red-300 underline cursor-pointer"
                   >
                     Xóa ảnh
                   </button>
                 </div>
               )}
             </div>
-
-          </div>
-        )}
-
-        {/* AUTO GENERATOR MODE */}
-        {designMode === 'auto' && (
-          <div className="space-y-3.5 text-sm">
-            <div>
-              <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
-                Tên Cô Dâu
-              </label>
-              <input
-                type="text"
-                value={brideName}
-                onChange={(e) => setBrideName(e.target.value)}
-                placeholder="VD: Anh Thư"
-                className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
-                Tên Chú Rể
-              </label>
-              <input
-                type="text"
-                value={groomName}
-                onChange={(e) => setGroomName(e.target.value)}
-                placeholder="VD: Văn Mạnh"
-                className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
-                Ngày Cử Hành Lễ
-              </label>
-              <input
-                type="date"
-                value={eventDate}
-                onChange={(e) => setEventDate(e.target.value)}
-                className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-300 text-xs font-semibold mb-1.5 uppercase tracking-wider">
-                Phông Chữ Calligraphy Chuẩn Dấu Tiếng Việt
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setFontChoice('greatvibes')}
-                  className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all text-left ${
-                    fontChoice === 'greatvibes'
-                      ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
-                      : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <div className="font-bold">Great Vibes Calligraphy ✒️</div>
-                  <div className="text-[10px] opacity-75 font-serif italic">Nét uốn lượn bay bổng chuẩn 100% tiếng Việt</div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setFontChoice('playfair')}
-                  className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all text-left ${
-                    fontChoice === 'playfair'
-                      ? 'border-[#e3a638] bg-[#e3a638]/20 text-[#e3a638]'
-                      : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <div className="font-bold">Playfair Script 👑</div>
-                  <div className="text-[10px] opacity-75 font-serif italic">Nghiêng sang trọng chuẩn tiếng Việt</div>
-                </button>
-              </div>
-            </div>
           </div>
         )}
 
       </div>
 
-      {/* Right Column: Live LED Screen Visualizer */}
+      {/* Right Column: Live LED Screen Visualizer (MATH RATIO IN METERS) */}
       <div className="lg:col-span-7 flex flex-col items-center">
         
         {/* Stage Header Info Banner */}
@@ -282,15 +279,18 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
               Phông Màn LED Sân Khấu {selectedFloor.name}
             </span>
           </div>
-          <span className="text-[10px] text-amber-300 font-mono bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30">
-            {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (P3 LED Full HD)
+          <span className="text-[10px] text-amber-300 font-mono bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30 font-bold">
+            Kích thước mét: {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (Tỷ lệ {selectedFloor.widthMeters}:{selectedFloor.heightMeters})
           </span>
         </div>
 
-        {/* LED Stage Screen Canvas Container */}
-        <div className={`w-full relative ${selectedFloor.aspectClass} rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500`}>
+        {/* LED Stage Screen Canvas Container (EXACT MATHEMATICAL ASPECT RATIO IN METERS) */}
+        <div 
+          className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500"
+          style={{ aspectRatio: `${selectedFloor.widthMeters} / ${selectedFloor.heightMeters}` }}
+        >
           
-          {/* CUSTOM UPLOADED IMAGE FROM CANVA OR DEFAULT BACKGROUND */}
+          {/* CUSTOM UPLOADED IMAGE FROM CANVA OR REAL HIGH-RES STARRY BACKGROUND */}
           {customUploadUrl ? (
             <div 
               className="absolute inset-0 bg-cover bg-center transition-all duration-300"
@@ -298,14 +298,15 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
             ></div>
           ) : (
             <>
-              {/* DEEP ONYX CHARCOAL BLACK BACKGROUND WITH SOFT GRADIENT */}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-[#050508] to-[#020204]"></div>
+              {/* REAL HIGH-RES STARRY NIGHT BACKGROUND IMAGE */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+                style={{ backgroundImage: `url(${selectedTemplate.bgImage})` }}
+              ></div>
+              <div className="absolute inset-0 bg-black/25"></div>
 
-              {/* VERTICAL SPOTLIGHT BACKLIGHT GLOW STREAM */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.22)_0%,_rgba(255,255,255,0.06)_45%,_transparent_75%)] pointer-events-none z-10"></div>
-
-              {/* GLITTER / DUST BOKEH PARTICLES RAIN */}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.15)_0%,_transparent_50%),radial-gradient(circle_at_top_right,_rgba(255,255,255,0.15)_0%,_transparent_50%)] pointer-events-none z-15"></div>
+              {/* VERTICAL SPOTLIGHT BACKLIGHT GLOW STREAM: Dải sáng chiếu từ đỉnh làm nổi khối tên */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
               {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
               <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
@@ -316,16 +317,21 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER: GOM 40% NỬA TRÊN */}
+              {/* FOREGROUND CONTENT LAYER: MASTERPIECE TYPOGRAPHY MATCHING ONLINE INVITATION SUITE */}
               <div className="relative z-30 w-full h-full flex flex-col items-center justify-start pt-4 sm:pt-6 md:pt-8 pb-[38%] text-center">
 
-                {/* 1. MONOGRAM LOGO ("TM" / "MD"): True Interlocking Didone Serif in Luminescent Chrome Silver */}
+                {/* 1. MONOGRAM LOGO ("TM" / "MD"): Interlocked Didone Serif in Gold & Pearl Silver */}
                 <div className="h-[28%] flex items-center justify-center my-0.5">
                   <div className="relative h-full aspect-square flex items-center justify-center">
-                    <div className="relative flex items-center justify-center font-didone-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter select-none">
+                    <div 
+                      className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tighter select-none"
+                      style={{ fontFamily: "'Cinzel Decorative', 'Bodoni Moda', Didot, serif" }}
+                    >
+                      {/* First Initial (Bride "T" / "A" / "M") */}
                       <span className="font-black italic chrome-silver-text transform -translate-x-1.5 sm:-translate-x-2.5 z-10 drop-shadow-[0_4px_15px_rgba(255,255,255,0.6)]">
                         {brideInitial}
                       </span>
+                      {/* Second Initial (Groom "M" / "L" / "D") Interlocked */}
                       <span className="font-light italic chrome-silver-text transform translate-x-1.5 sm:translate-x-2.5 -ml-5 sm:-ml-8 md:-ml-10 z-20 opacity-95 drop-shadow-[0_0_20px_rgba(255,255,255,0.7)]">
                         {groomInitial}
                       </span>
@@ -333,26 +339,18 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
                   </div>
                 </div>
 
-                {/* 2. MAIN COUPLE NAMES ("Anh Thư & Văn Mạnh") */}
+                {/* 2. MAIN COUPLE NAMES ("Anh Thư & Văn Mạnh"): 100% PERFECT VIETNAMESE ACCENT CALLIGRAPHY MATCHING INVITATION SUITE */}
                 <div className="w-[90%] sm:w-[70%] h-[20%] flex items-center justify-center my-1">
-                  <div 
-                    className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)] leading-tight whitespace-nowrap"
-                    style={{
-                      fontFamily: fontChoice === 'greatvibes' 
-                        ? "var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive" 
-                        : "var(--font-playfair), 'Playfair Display', serif",
-                      fontStyle: fontChoice === 'playfair' ? 'italic' : 'normal'
-                    }}
-                  >
+                  <div className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)] leading-tight whitespace-nowrap font-script">
                     {brideName || 'Anh Thư'} 
-                    <span className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-2 sm:mx-3 font-serif italic font-light">&</span> 
+                    <span className="text-amber-300 text-lg sm:text-2xl md:text-3xl mx-2 sm:mx-3 font-serif italic font-light">&</span> 
                     {groomName || 'Văn Mạnh'}
                   </div>
                 </div>
 
-                {/* 3. WEDDING DATE ("20 / 11 / 2026") */}
+                {/* 3. WEDDING DATE & VENUE BRAND: Didone Old-style Serif */}
                 <div 
-                  className="text-[10px] sm:text-xs md:text-sm text-slate-200 tracking-[0.3em] font-serif mt-1 drop-shadow-md border-t border-slate-400/30 pt-1.5 px-6"
+                  className="text-[10px] sm:text-xs md:text-sm text-slate-200 tracking-[0.3em] font-serif mt-1 drop-shadow-md border-t border-amber-300/30 pt-1.5 px-6"
                   style={{ fontFamily: "'Bodoni Moda', 'Didot', 'Cinzel Decorative', serif" }}
                 >
                   {eventDate 
@@ -364,10 +362,10 @@ Ngày cử hành: ${eventDate || '2026-11-20'}`;
             </>
           )}
 
-          {/* INDICATOR OVERLAY: Bottom 35%+ Completely Empty Space (Pure Deep Onyx + Soft Light) */}
+          {/* INDICATOR OVERLAY: Bottom 35%+ Completely Empty Space (For Stage Couples & MCs) */}
           <div className="absolute bottom-0 inset-x-0 h-[38%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
-            <span className="text-[9px] text-slate-400/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-slate-500/20">
-              Khu Vực Để Trống Dưới Đáy Màn LED (Cho Dâu Rể & MC đứng)
+            <span className="text-[9px] text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-amber-400/20 font-bold">
+              Khu Vực Để Trống Dưới Đáy Màn LED ({selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m)
             </span>
           </div>
 
