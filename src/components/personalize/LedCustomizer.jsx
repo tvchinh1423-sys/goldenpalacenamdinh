@@ -8,6 +8,7 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
   const [designMode, setDesignMode] = useState('masterpiece');
   const [customUploadUrl, setCustomUploadUrl] = useState(null);
+  const [showRings, setShowRings] = useState(true); // Interlocking wedding rings option between names
   const [copied, setCopied] = useState(false);
 
   // Extract initial letters for Monogram
@@ -18,8 +19,8 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     return lastWord.charAt(0).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
   };
 
-  const brideInitial = getInitial(brideName, 'H');
-  const groomInitial = getInitial(groomName, 'T');
+  const brideInitial = getInitial(brideName, 'T');
+  const groomInitial = getInitial(groomName, 'M');
   const isSameInitial = brideInitial === groomInitial;
 
   // Handle custom image upload from Canva/Photoshop
@@ -34,24 +35,24 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     }
   };
 
-  // Format Date to xx.xx.xxxx (Lovelace Serif style)
+  // Format Date to xx / 11 / 2026 or xx.xx.xxxx
   const formatDateLovelace = (dateStr) => {
-    if (!dateStr) return '20.11.2026';
+    if (!dateStr) return '20 / 11 / 2026';
     const d = new Date(dateStr);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
-    return `${day}.${month}.${year}`;
+    return `${day} / ${month} / ${year}`;
   };
 
   const handleCopyConfig = () => {
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Monogram Logo: ${isSameInitial ? 'Hello Paris (Chữ giống nhau)' : 'Parfumerie Script (Chữ khác nhau)'} [${brideInitial} ${groomInitial}]
-Phông chữ Tên: Ballet Script Canva (Chuẩn 100% Tiếng Việt)
+Phân tầng 3 lớp dọc: Tầng 1 Monogram ${brideInitial}${groomInitial} -> Tầng 2 Ballet Calligraphy -> Tầng 3 Date
+Biểu tượng nối tên: ${showRings ? 'Cặp nhẫn đan xen mạ vàng' : 'Ký tự & Bạc phát sáng'}
 Định dạng Ngày: ${formatDateLovelace(eventDate)} (Phông Lovelace Serif)
-Bố cục: Đẩy lên 40% phần trên, để trống 35% chân màn hình cho Dâu Rể đứng
+Bố cục: Giữ Safe Margin 15% 2 bên, để trống 35% chân màn hình cho Dâu Rể đứng
 Chú Rể: ${groomName || 'Văn Mạnh'}
 Cô Dâu: ${brideName || 'Anh Thư'}
 Ngày cử hành: ${formatDateLovelace(eventDate)}`;
@@ -76,7 +77,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Phông chữ Ballet Canva hỗ trợ tiếng Việt, Monogram Parfumerie Script / Hello Paris sắc nét không bị đè chữ, ngày cưới xx.xx.xxxx phông Lovelace.
+          Tách 3 tầng dọc hoàn toàn không bị đè chữ, giữ lề an toàn 15% hai bên, phông Ballet sắc nét rõ ràng từ xa và tùy chọn Cặp Nhẫn Đan Xen.
         </p>
 
         {/* Mode Switcher */}
@@ -91,7 +92,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Thiết Kế Đỉnh Cao</span>
+            <span>Bố Cục 3 Tầng Chuẩn</span>
           </button>
           <button
             type="button"
@@ -134,7 +135,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
             })}
           </div>
           <div className="text-[11px] text-amber-300 font-mono mt-2 text-center font-bold">
-            Tỷ lệ màn hình mét: {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (Chuẩn tỷ lệ 100%)
+            Tỷ lệ màn hình mét: {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (Chuẩn 100%)
           </div>
         </div>
 
@@ -177,19 +178,38 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
               className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none text-xs transition-colors"
             />
           </div>
-        </div>
 
-        {/* Monogram Rule Banner Info */}
-        <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[11px] text-amber-200">
-          <div className="font-bold mb-1 text-amber-300 flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-sm">font_download</span>
-            <span>Quy Tắc Phông Monogram Tự Động:</span>
+          {/* Symbol Selector: Interlocking Wedding Rings vs Silver Ampersand */}
+          <div>
+            <label className="block text-gray-300 text-xs font-semibold mb-1.5 uppercase tracking-wider">
+              Biểu Tượng Nối Giữa 2 Tên
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setShowRings(true)}
+                className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  showRings
+                    ? 'border-amber-400 bg-amber-400/20 text-amber-300'
+                    : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
+                }`}
+              >
+                <span>💍 Cặp Nhẫn Đan Xen</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowRings(false)}
+                className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  !showRings
+                    ? 'border-amber-400 bg-amber-400/20 text-amber-300'
+                    : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
+                }`}
+              >
+                <span>& Ký Tự Trắng Bạc</span>
+              </button>
+            </div>
           </div>
-          {isSameInitial ? (
-            <span>✨ 2 chữ viết tắt giống nhau (<b>{brideInitial} - {groomInitial}</b>): Tự động dùng phông <b>Hello Paris</b> cao cấp.</span>
-          ) : (
-            <span>✨ 2 chữ viết tắt khác nhau (<b>{brideInitial} - {groomInitial}</b>): Tự động dùng phông <b>Parfumerie Script</b> tinh xảo.</span>
-          )}
         </div>
 
         {/* 3. Starry Background Presets */}
@@ -258,12 +278,12 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-3"
+                id="canva-image-input-4"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-3"
+                htmlFor="canva-image-input-4"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -321,7 +341,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
             ></div>
           ) : (
             <>
-              {/* REAL STARRY NIGHT BACKGROUND IMAGE */}
+              {/* REAL HIGH-RES STARRY NIGHT BACKGROUND IMAGE */}
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-all duration-700"
                 style={{ backgroundImage: `url(${selectedTemplate.bgImage})` }}
@@ -331,7 +351,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
               {/* VERTICAL SPOTLIGHT GLOW BEAM */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
-              {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
+              {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY (Safe Distance from Names) */}
               <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
                 <img 
                   src="/logo-icon.png" 
@@ -340,18 +360,18 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER: BALLET SCRIPT + PARFUMERIE SCRIPT / HELLO PARIS + LOVELACE DATE */}
+              {/* FOREGROUND CONTENT LAYER: STRICT VERTICAL STACKING IN 3 TIERS (NO OVERLAP) */}
               <div className="relative z-30 w-full h-full flex flex-col items-center justify-start pt-4 sm:pt-6 md:pt-8 pb-[38%] text-center">
 
-                {/* 1. MONOGRAM LOGO: Parfumerie Script (Different letters) or Hello Paris (Same letters), beautifully spaced without overlapping */}
-                <div className="h-[28%] flex items-center justify-center my-0.5">
+                {/* TẦNG 1 (TOP): MONOGRAM LOGO ONLY (Approx 28% Height) */}
+                <div className="h-[28%] flex items-center justify-center my-0.5 z-10">
                   <div className="relative h-full aspect-square flex items-center justify-center">
                     <div 
                       className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-normal select-none"
                       style={{ 
                         fontFamily: isSameInitial 
-                          ? "'Bodoni Moda', 'Playfair Display', Didot, serif" // Hello Paris style for same letters (H H)
-                          : "'Cinzel Decorative', 'Parfumerie Script', 'Playfair Display', serif" // Parfumerie Script for different letters (H T)
+                          ? "'Bodoni Moda', 'Playfair Display', Didot, serif"
+                          : "'Cinzel Decorative', 'Parfumerie Script', 'Playfair Display', serif"
                       }}
                     >
                       {/* First Initial */}
@@ -359,7 +379,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
                         {brideInitial}
                       </span>
 
-                      {/* Monogram Separator / Ornament if same letters */}
+                      {/* Monogram Separator if same letters */}
                       {isSameInitial ? (
                         <span className="text-amber-300/80 text-xl sm:text-3xl mx-1 font-light">&</span>
                       ) : null}
@@ -372,21 +392,32 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
                   </div>
                 </div>
 
-                {/* 2. COUPLE NAMES: Ballet Canva Script Font with 100% Full Vietnamese Accent Support */}
-                <div className="w-[90%] sm:w-[75%] h-[20%] flex items-center justify-center my-1">
+                {/* TẦNG 2 (MIDDLE): COUPLE NAMES (Strictly BELOW Monogram with Margin-Top, 70% Max Width for 15% Safe Margin) */}
+                <div className="w-[70%] max-w-[70%] flex items-center justify-center my-2.5 z-20">
                   <div 
-                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)] leading-tight whitespace-nowrap"
+                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap"
                     style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
                   >
                     {brideName || 'Anh Thư'} 
-                    <span className="text-amber-300 text-lg sm:text-2xl md:text-3xl mx-2 sm:mx-3 font-serif italic font-light">&</span> 
+                    
+                    {/* Interlocking Wedding Rings or Luminescent Silver Ampersand */}
+                    {showRings ? (
+                      <span className="inline-flex items-center mx-2 sm:mx-3 text-amber-300 align-middle">
+                        <svg className="w-5 h-5 sm:w-8 sm:h-8 text-amber-300 filter drop-shadow-[0_0_10px_rgba(227,166,56,0.85)]" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2a6 6 0 0 0-5.65 4.02A6 6 0 1 0 12 14a6 6 0 0 0 5.65-4.02A6 6 0 0 0 12 2zm-3.5 6a3.5 3.5 0 1 1 3.5 3.5A3.5 3.5 0 0 1 8.5 8zm7 0a3.5 3.5 0 0 1-3.1 3.46 5.48 5.48 0 0 0 0-6.92A3.5 3.5 0 0 1 15.5 8z"/>
+                        </svg>
+                      </span>
+                    ) : (
+                      <span className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-2 sm:mx-3 font-serif italic font-light">&</span>
+                    )}
+
                     {groomName || 'Văn Mạnh'}
                   </div>
                 </div>
 
-                {/* 3. WEDDING DATE: Format xx.xx.xxxx in Lovelace / Serif Font */}
+                {/* TẦNG 3 (BOTTOM): WEDDING DATE (Centered directly underneath Couple Names) */}
                 <div 
-                  className="text-[11px] sm:text-xs md:text-sm text-slate-200 tracking-[0.25em] font-serif mt-1 drop-shadow-md border-t border-amber-300/30 pt-1.5 px-6 font-bold"
+                  className="text-[11px] sm:text-xs md:text-sm text-slate-200 tracking-[0.3em] font-serif mt-2 drop-shadow-md border-t border-amber-300/30 pt-2 px-6 font-bold"
                   style={{ fontFamily: "'Cormorant Garamond', 'Bodoni Moda', 'Cinzel Decorative', serif" }}
                 >
                   {formatDateLovelace(eventDate)}
@@ -396,15 +427,13 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
             </>
           )}
 
-          {/* INDICATOR OVERLAY: Bottom 35%+ Completely Empty Space */}
+          {/* INDICATOR OVERLAY: Bottom 35%+ Completely Empty Space (For Stage Couples & MCs) */}
           <div className="absolute bottom-0 inset-x-0 h-[38%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
             <span className="text-[9px] text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-amber-400/20 font-bold">
               Khu Vực Để Trống Dưới Đáy Màn LED ({selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m)
             </span>
           </div>
 
-          {/* LED Grid Texture Overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] opacity-10 pointer-events-none z-30"></div>
         </div>
 
         {/* Action Buttons below Visualizer */}
