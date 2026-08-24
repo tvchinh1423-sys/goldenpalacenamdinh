@@ -35,7 +35,7 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     }
   };
 
-  // Format Date to xx.xx.xxxx with larger font size
+  // Format Date to xx.xx.xxxx
   const formatDateDot = (dateStr) => {
     if (!dateStr) return '20.11.2026';
     const d = new Date(dateStr);
@@ -49,7 +49,7 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Dàn đều 70% chiều cao trên, để trống 30% chân màn hình cho Dâu Rể đứng
+Bố cục: Dãn rộng 100% khung 70% chiều cao trên, dãn cách lớn giữa Monogram và Tên
 Monogram: ${brideInitial}${groomInitial}
 Tên Dâu Rể: Phông Ballet Canva (Chuẩn 100% Tiếng Việt)
 Ngày Cưới: ${formatDateDot(eventDate)} (Định dạng xx.xx.xxxx size lớn)
@@ -76,7 +76,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã dàn đều 70% không gian phía trên, đẩy lùi nội dung xuống dưới thoáng đãng, ngày cưới định dạng xx.xx.xxxx tăng kích thước nổi bật và để trống đúng 30% chân màn LED.
+          Đã phủ rộng 100% khu vực 70% chiều cao phía trên, giãn cách tối đa giữa Monogram TM và Tên dâu rể, ngày cưới size lớn và để trống 30% đáy màn hình.
         </p>
 
         {/* Mode Switcher */}
@@ -91,7 +91,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Dàn Đều 70% Không Gian</span>
+            <span>Dãn Rộng 70% Chiều Cao</span>
           </button>
           <button
             type="button"
@@ -178,7 +178,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             />
           </div>
 
-          {/* Symbol Selector: Interlocking Wedding Rings vs Silver Ampersand */}
+          {/* Symbol Selector */}
           <div>
             <label className="block text-gray-300 text-xs font-semibold mb-1.5 uppercase tracking-wider">
               Biểu Tượng Nối Giữa 2 Tên
@@ -277,12 +277,12 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-5"
+                id="canva-image-input-6"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-5"
+                htmlFor="canva-image-input-6"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -326,7 +326,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           </span>
         </div>
 
-        {/* LED Stage Screen Canvas Container (EXACT MATH ASPECT RATIO IN METERS) */}
+        {/* LED Stage Screen Canvas Container */}
         <div 
           className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500"
           style={{ aspectRatio: `${selectedFloor.widthMeters} / ${selectedFloor.heightMeters}` }}
@@ -359,11 +359,11 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER: DÀN ĐỀU 70% KHÔNG GIAN PHÍA TRÊN, CHỈ ĐỂ TRỐNG ĐÚNG 30% DƯỚI ĐÁY */}
-              <div className="relative z-30 w-full h-full flex flex-col items-center justify-between pt-6 sm:pt-10 md:pt-12 pb-[30%] text-center px-4">
+              {/* FOREGROUND CONTENT LAYER: STRICTLY EXPANDED TO FILL 100% OF TOP 70% HEIGHT (BOTTOM 30% ABSOLUTELY EMPTY) */}
+              <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between pt-6 sm:pt-10 md:pt-12 pb-2 text-center px-4">
 
-                {/* TẦNG 1: MONOGRAM LOGO (Pushed slightly down, well-spaced) */}
-                <div className="h-[25%] flex items-center justify-center z-10">
+                {/* TẦNG 1: MONOGRAM LOGO (Pushed slightly down, top of 70% zone) */}
+                <div className="h-[30%] flex items-center justify-center z-10">
                   <div className="relative h-full aspect-square flex items-center justify-center">
                     <div 
                       className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-normal select-none"
@@ -373,7 +373,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                           : "'Cinzel Decorative', 'Parfumerie Script', 'Playfair Display', serif"
                       }}
                     >
-                      <span className="font-black italic chrome-silver-text z-10 px-1 sm:px-2 drop-shadow-[0_4px_15px_rgba(255,255,255,0.6)]">
+                      <span className="font-black italic chrome-silver-text z-10 px-2 drop-shadow-[0_4px_15px_rgba(255,255,255,0.6)]">
                         {brideInitial}
                       </span>
 
@@ -381,15 +381,15 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                         <span className="text-amber-300/80 text-xl sm:text-3xl mx-1 font-light">&</span>
                       ) : null}
 
-                      <span className="font-light italic chrome-silver-text z-20 opacity-95 px-1 sm:px-2 drop-shadow-[0_0_20px_rgba(255,255,255,0.7)]">
+                      <span className="font-light italic chrome-silver-text z-20 opacity-95 px-2 drop-shadow-[0_0_20px_rgba(255,255,255,0.7)]">
                         {groomInitial}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* TẦNG 2: COUPLE NAMES (Pushed down & evenly spaced, 70% Max Width for Safe Side Margins) */}
-                <div className="w-[75%] max-w-[75%] flex items-center justify-center my-3 sm:my-4 z-20">
+                {/* TẦNG 2: COUPLE NAMES (Positioned in the middle of 70% zone, with HUGE vertical spacing from Monogram above) */}
+                <div className="w-[75%] max-w-[75%] flex items-center justify-center my-4 sm:my-6 z-20">
                   <div 
                     className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap"
                     style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
@@ -397,23 +397,23 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                     {brideName || 'Anh Thư'} 
                     
                     {showRings ? (
-                      <span className="inline-flex items-center mx-2 sm:mx-3 text-amber-300 align-middle">
-                        <svg className="w-5 h-5 sm:w-8 sm:h-8 text-amber-300 filter drop-shadow-[0_0_10px_rgba(227,166,56,0.85)]" viewBox="0 0 24 24" fill="currentColor">
+                      <span className="inline-flex items-center mx-3 sm:mx-4 text-amber-300 align-middle">
+                        <svg className="w-6 h-6 sm:w-9 sm:h-9 text-amber-300 filter drop-shadow-[0_0_10px_rgba(227,166,56,0.85)]" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 2a6 6 0 0 0-5.65 4.02A6 6 0 1 0 12 14a6 6 0 0 0 5.65-4.02A6 6 0 0 0 12 2zm-3.5 6a3.5 3.5 0 1 1 3.5 3.5A3.5 3.5 0 0 1 8.5 8zm7 0a3.5 3.5 0 0 1-3.1 3.46 5.48 5.48 0 0 0 0-6.92A3.5 3.5 0 0 1 15.5 8z"/>
                         </svg>
                       </span>
                     ) : (
-                      <span className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-2 sm:mx-3 font-serif italic font-light">&</span>
+                      <span className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-3 sm:mx-4 font-serif italic font-light">&</span>
                     )}
 
                     {groomName || 'Văn Mạnh'}
                   </div>
                 </div>
 
-                {/* TẦNG 3: WEDDING DATE (FORMAT xx.xx.xxxx - LARGER Prominent Font Size) */}
-                <div className="z-20 w-full flex flex-col items-center">
+                {/* TẦNG 3: WEDDING DATE (At the bottom of 70% zone, right above 30% empty floor space) */}
+                <div className="z-20 w-full flex flex-col items-center mb-1">
                   <div 
-                    className="text-sm sm:text-xl md:text-2xl lg:text-3xl text-amber-200 tracking-[0.25em] font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] border-t border-amber-300/40 pt-2 px-8 font-bold inline-block"
+                    className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-amber-200 tracking-[0.25em] font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] border-t border-amber-300/40 pt-2 px-8 font-bold inline-block"
                     style={{ fontFamily: "'Cormorant Garamond', 'Bodoni Moda', 'Cinzel Decorative', serif" }}
                   >
                     {formatDateDot(eventDate)}
