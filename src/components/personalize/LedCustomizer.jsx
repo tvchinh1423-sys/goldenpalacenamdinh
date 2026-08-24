@@ -8,7 +8,7 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
   const [designMode, setDesignMode] = useState('masterpiece');
   const [customUploadUrl, setCustomUploadUrl] = useState(null);
-  const [showRings, setShowRings] = useState(true); // Interlocking wedding rings option between names
+  const [showRings, setShowRings] = useState(true);
   const [copied, setCopied] = useState(false);
 
   // Extract initial letters for Monogram
@@ -35,27 +35,26 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     }
   };
 
-  // Format Date to xx / 11 / 2026 or xx.xx.xxxx
-  const formatDateLovelace = (dateStr) => {
-    if (!dateStr) return '20 / 11 / 2026';
+  // Format Date to xx.xx.xxxx with larger font size
+  const formatDateDot = (dateStr) => {
+    if (!dateStr) return '20.11.2026';
     const d = new Date(dateStr);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
-    return `${day} / ${month} / ${year}`;
+    return `${day}.${month}.${year}`;
   };
 
   const handleCopyConfig = () => {
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Phân tầng 3 lớp dọc: Tầng 1 Monogram ${brideInitial}${groomInitial} -> Tầng 2 Ballet Calligraphy -> Tầng 3 Date
-Biểu tượng nối tên: ${showRings ? 'Cặp nhẫn đan xen mạ vàng' : 'Ký tự & Bạc phát sáng'}
-Định dạng Ngày: ${formatDateLovelace(eventDate)} (Phông Lovelace Serif)
-Bố cục: Giữ Safe Margin 15% 2 bên, để trống 35% chân màn hình cho Dâu Rể đứng
+Dàn đều 70% chiều cao trên, để trống 30% chân màn hình cho Dâu Rể đứng
+Monogram: ${brideInitial}${groomInitial}
+Tên Dâu Rể: Phông Ballet Canva (Chuẩn 100% Tiếng Việt)
+Ngày Cưới: ${formatDateDot(eventDate)} (Định dạng xx.xx.xxxx size lớn)
 Chú Rể: ${groomName || 'Văn Mạnh'}
-Cô Dâu: ${brideName || 'Anh Thư'}
-Ngày cử hành: ${formatDateLovelace(eventDate)}`;
+Cô Dâu: ${brideName || 'Anh Thư'}`;
     navigator.clipboard.writeText(info);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -77,7 +76,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Tách 3 tầng dọc hoàn toàn không bị đè chữ, giữ lề an toàn 15% hai bên, phông Ballet sắc nét rõ ràng từ xa và tùy chọn Cặp Nhẫn Đan Xen.
+          Đã dàn đều 70% không gian phía trên, đẩy lùi nội dung xuống dưới thoáng đãng, ngày cưới định dạng xx.xx.xxxx tăng kích thước nổi bật và để trống đúng 30% chân màn LED.
         </p>
 
         {/* Mode Switcher */}
@@ -92,7 +91,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Bố Cục 3 Tầng Chuẩn</span>
+            <span>Dàn Đều 70% Không Gian</span>
           </button>
           <button
             type="button"
@@ -108,7 +107,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
           </button>
         </div>
 
-        {/* 1. Select Floor & LED Dimensions (METERS RATIO) */}
+        {/* 1. Select Floor & LED Dimensions */}
         <div className="mb-5 bg-[#1f1f1f] p-3.5 rounded-xl border border-amber-500/20">
           <label className="block text-amber-300 text-xs font-bold mb-2 uppercase tracking-wider flex items-center gap-1.5">
             <span className="material-symbols-outlined text-sm">aspect_ratio</span>
@@ -135,7 +134,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
             })}
           </div>
           <div className="text-[11px] text-amber-300 font-mono mt-2 text-center font-bold">
-            Tỷ lệ màn hình mét: {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (Chuẩn 100%)
+            Tỷ lệ màn hình mét: {selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m (Chuẩn tỷ lệ 100%)
           </div>
         </div>
 
@@ -278,12 +277,12 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-4"
+                id="canva-image-input-5"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-4"
+                htmlFor="canva-image-input-5"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -351,7 +350,7 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
               {/* VERTICAL SPOTLIGHT GLOW BEAM */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
-              {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY (Safe Distance from Names) */}
+              {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
               <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
                 <img 
                   src="/logo-icon.png" 
@@ -360,11 +359,11 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER: STRICT VERTICAL STACKING IN 3 TIERS (NO OVERLAP) */}
-              <div className="relative z-30 w-full h-full flex flex-col items-center justify-start pt-4 sm:pt-6 md:pt-8 pb-[38%] text-center">
+              {/* FOREGROUND CONTENT LAYER: DÀN ĐỀU 70% KHÔNG GIAN PHÍA TRÊN, CHỈ ĐỂ TRỐNG ĐÚNG 30% DƯỚI ĐÁY */}
+              <div className="relative z-30 w-full h-full flex flex-col items-center justify-between pt-6 sm:pt-10 md:pt-12 pb-[30%] text-center px-4">
 
-                {/* TẦNG 1 (TOP): MONOGRAM LOGO ONLY (Approx 28% Height) */}
-                <div className="h-[28%] flex items-center justify-center my-0.5 z-10">
+                {/* TẦNG 1: MONOGRAM LOGO (Pushed slightly down, well-spaced) */}
+                <div className="h-[25%] flex items-center justify-center z-10">
                   <div className="relative h-full aspect-square flex items-center justify-center">
                     <div 
                       className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-normal select-none"
@@ -374,17 +373,14 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
                           : "'Cinzel Decorative', 'Parfumerie Script', 'Playfair Display', serif"
                       }}
                     >
-                      {/* First Initial */}
                       <span className="font-black italic chrome-silver-text z-10 px-1 sm:px-2 drop-shadow-[0_4px_15px_rgba(255,255,255,0.6)]">
                         {brideInitial}
                       </span>
 
-                      {/* Monogram Separator if same letters */}
                       {isSameInitial ? (
                         <span className="text-amber-300/80 text-xl sm:text-3xl mx-1 font-light">&</span>
                       ) : null}
 
-                      {/* Second Initial */}
                       <span className="font-light italic chrome-silver-text z-20 opacity-95 px-1 sm:px-2 drop-shadow-[0_0_20px_rgba(255,255,255,0.7)]">
                         {groomInitial}
                       </span>
@@ -392,15 +388,14 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
                   </div>
                 </div>
 
-                {/* TẦNG 2 (MIDDLE): COUPLE NAMES (Strictly BELOW Monogram with Margin-Top, 70% Max Width for 15% Safe Margin) */}
-                <div className="w-[70%] max-w-[70%] flex items-center justify-center my-2.5 z-20">
+                {/* TẦNG 2: COUPLE NAMES (Pushed down & evenly spaced, 70% Max Width for Safe Side Margins) */}
+                <div className="w-[75%] max-w-[75%] flex items-center justify-center my-3 sm:my-4 z-20">
                   <div 
                     className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap"
                     style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
                   >
                     {brideName || 'Anh Thư'} 
                     
-                    {/* Interlocking Wedding Rings or Luminescent Silver Ampersand */}
                     {showRings ? (
                       <span className="inline-flex items-center mx-2 sm:mx-3 text-amber-300 align-middle">
                         <svg className="w-5 h-5 sm:w-8 sm:h-8 text-amber-300 filter drop-shadow-[0_0_10px_rgba(227,166,56,0.85)]" viewBox="0 0 24 24" fill="currentColor">
@@ -415,22 +410,24 @@ Ngày cử hành: ${formatDateLovelace(eventDate)}`;
                   </div>
                 </div>
 
-                {/* TẦNG 3 (BOTTOM): WEDDING DATE (Centered directly underneath Couple Names) */}
-                <div 
-                  className="text-[11px] sm:text-xs md:text-sm text-slate-200 tracking-[0.3em] font-serif mt-2 drop-shadow-md border-t border-amber-300/30 pt-2 px-6 font-bold"
-                  style={{ fontFamily: "'Cormorant Garamond', 'Bodoni Moda', 'Cinzel Decorative', serif" }}
-                >
-                  {formatDateLovelace(eventDate)}
+                {/* TẦNG 3: WEDDING DATE (FORMAT xx.xx.xxxx - LARGER Prominent Font Size) */}
+                <div className="z-20 w-full flex flex-col items-center">
+                  <div 
+                    className="text-sm sm:text-xl md:text-2xl lg:text-3xl text-amber-200 tracking-[0.25em] font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] border-t border-amber-300/40 pt-2 px-8 font-bold inline-block"
+                    style={{ fontFamily: "'Cormorant Garamond', 'Bodoni Moda', 'Cinzel Decorative', serif" }}
+                  >
+                    {formatDateDot(eventDate)}
+                  </div>
                 </div>
 
               </div>
             </>
           )}
 
-          {/* INDICATOR OVERLAY: Bottom 35%+ Completely Empty Space (For Stage Couples & MCs) */}
-          <div className="absolute bottom-0 inset-x-0 h-[38%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
+          {/* INDICATOR OVERLAY: EXACTLY Bottom 30% Empty Space */}
+          <div className="absolute bottom-0 inset-x-0 h-[30%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
             <span className="text-[9px] text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-amber-400/20 font-bold">
-              Khu Vực Để Trống Dưới Đáy Màn LED ({selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m)
+              Khu Vực Để Trống Đáy Màn LED (Đúng 30% cho Dâu Rể & MC đứng)
             </span>
           </div>
 
