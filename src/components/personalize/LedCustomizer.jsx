@@ -49,9 +49,9 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Tỷ lệ font chuẩn: Tên Dâu Rể = 2/3 size Monogram, Ngày Cưới = 1/2 size Tên Dâu Rể
+Tỷ lệ font chuẩn: Tên Dâu Rể = 4/5 size Monogram, Khoảng cách Monogram -> Tên x2
 Monogram: True Interlocking Crest (${brideInitial}${groomInitial})
-Phông chữ Tên: Ballet Script Canva (Chuẩn 100% Tiếng Việt)
+Phông chữ Tên: Ballet Script Canva (Bảo toàn nét thanh nét đậm nghệ thuật)
 Ngày Cưới: ${formatDateDots(eventDate)} (Số Ả Rập 11 chuẩn, phông Playfair Didone)
 Chú Rể: ${groomName || 'Văn Mạnh'}
 Cô Dâu: ${brideName || 'Anh Thư'}`;
@@ -76,7 +76,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã căn dãn đều 100% khoảng cách giữa 3 phần, tỷ lệ font: Tên dâu rể = 2/3 Monogram, Ngày cưới = 1/2 Tên dâu rể, số 11 Ả Rập chuẩn.
+          Tên dâu rể tăng lên 4/5 size Monogram, bảo toàn nét thanh nét đậm Calligraphy nghệ thuật, khoảng cách giữa Monogram và Tên nhân đôi (x2 gap) cực kỳ sang trọng.
         </p>
 
         {/* Mode Switcher */}
@@ -91,7 +91,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Tỷ Lệ Font Chuẩn 2/3 - 1/2</span>
+            <span>Tỷ Lệ 4/5 & Khoảng Cách x2</span>
           </button>
           <button
             type="button"
@@ -277,12 +277,12 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-9"
+                id="canva-image-input-10"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-9"
+                htmlFor="canva-image-input-10"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -326,7 +326,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           </span>
         </div>
 
-        {/* LED Stage Screen Canvas Container (EXACT MATH ASPECT RATIO IN METERS) */}
+        {/* LED Stage Screen Canvas Container */}
         <div 
           className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500"
           style={{ aspectRatio: `${selectedFloor.widthMeters} / ${selectedFloor.heightMeters}` }}
@@ -359,11 +359,11 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
-              <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
+              {/* FOREGROUND CONTENT LAYER: EXPANDED 70% HEIGHT WITH 2X GAP BETWEEN MONOGRAM AND NAMES */}
+              <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between text-center px-4 pt-4 pb-2">
 
                 {/* TẦNG 1: MONOGRAM LOGO (100% BASE REFERENCE SIZE) */}
-                <div className="h-[28%] flex items-center justify-center z-10">
+                <div className="h-[25%] flex items-center justify-center z-10">
                   <div className="relative h-full aspect-square flex items-center justify-center">
                     <div 
                       className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-normal select-none"
@@ -390,33 +390,35 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                   </div>
                 </div>
 
-                {/* TẦNG 2: COUPLE NAMES (EXACTLY 2/3 FONT SIZE OF MONOGRAM) */}
-                <div className="w-[65%] max-w-[65%] flex items-center justify-center z-20">
+                {/* DOUBLE VERTICAL GAP (x2 Khoảng Cách Giữa Monogram & Tên Dâu Rể) */}
+
+                {/* TẦNG 2: COUPLE NAMES (INCREASED TO 4/5 MONOGRAM SIZE, PRESERVING ARTISTIC THIN/THICK STROKES) */}
+                <div className="w-[70%] max-w-[70%] flex items-center justify-center mt-6 sm:mt-8 md:mt-10 mb-2 z-20">
                   <div 
-                    className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap"
+                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap font-script"
                     style={{ 
                       fontFamily: "'Ballet', 'Great Vibes', cursive",
-                      WebkitTextStroke: "0.4px rgba(255,255,255,0.85)"
+                      filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.95))"
                     }}
                   >
                     {brideName || 'Anh Thư'} 
                     
                     {showRings ? (
-                      <span className="inline-flex items-center mx-2.5 sm:mx-3 text-amber-300 align-middle">
-                        <svg className="w-5 h-5 sm:w-7 sm:h-7 text-amber-300 filter drop-shadow-[0_0_10px_rgba(227,166,56,0.85)]" viewBox="0 0 24 24" fill="currentColor">
+                      <span className="inline-flex items-center mx-3 sm:mx-4 text-amber-300 align-middle">
+                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-amber-300 filter drop-shadow-[0_0_10px_rgba(227,166,56,0.85)]" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 2a6 6 0 0 0-5.65 4.02A6 6 0 1 0 12 14a6 6 0 0 0 5.65-4.02A6 6 0 0 0 12 2zm-3.5 6a3.5 3.5 0 1 1 3.5 3.5A3.5 3.5 0 0 1 8.5 8zm7 0a3.5 3.5 0 0 1-3.1 3.46 5.48 5.48 0 0 0 0-6.92A3.5 3.5 0 0 1 15.5 8z"/>
                         </svg>
                       </span>
                     ) : (
-                      <span className="text-slate-100 text-base sm:text-xl md:text-2xl mx-2.5 sm:mx-3 font-serif italic font-light">&</span>
+                      <span className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-3 sm:mx-4 font-serif italic font-light">&</span>
                     )}
 
                     {groomName || 'Văn Mạnh'}
                   </div>
                 </div>
 
-                {/* TẦNG 3: WEDDING DATE (EXACTLY 1/2 FONT SIZE OF COUPLE NAMES = 1/3 MONOGRAM SIZE) */}
-                <div className="z-20 w-full flex flex-col items-center">
+                {/* TẦNG 3: WEDDING DATE (1/2 COUPLE NAMES SIZE) */}
+                <div className="z-20 w-full flex flex-col items-center mb-1">
                   <div 
                     className="text-xs sm:text-base md:text-lg lg:text-xl text-amber-200 font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] border-t border-amber-300/40 pt-1.5 px-6 font-bold inline-block"
                     style={{ 
@@ -446,7 +448,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
         <div className="w-full flex flex-wrap gap-3 mt-4">
           <button
             onClick={handleCopyConfig}
-            className="flex-1 px-5 py-3 bg-[#1e1e1e] hover:bg-[#2a2a2a] text-white text-xs uppercase font-bold tracking-wider rounded-xl border border-gray-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="flex-1 px-5 py-3 bg-[#1e1e1e] hover:bg-[#2a2a2a] text-[#ffffff] text-xs uppercase font-bold tracking-wider rounded-xl border border-gray-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span className="material-symbols-outlined text-base text-amber-400">
               {copied ? 'check_circle' : 'content_copy'}
