@@ -35,24 +35,23 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     }
   };
 
-  // Format Date to xx.xx.xxxx
-  const formatDateDot = (dateStr) => {
-    if (!dateStr) return '20.11.2026';
+  // Format Date strictly to Arabic digits 20 . 11 . 2026 (never Roman II)
+  const formatDateDots = (dateStr) => {
+    if (!dateStr) return '20 . 11 . 2026';
     const d = new Date(dateStr);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
-    return `${day}.${month}.${year}`;
+    return `${day} . ${month} . ${year}`;
   };
 
   const handleCopyConfig = () => {
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Bố cục: Khoảng cách giữa 3 phần bằng nhau 100% (Equal vertical gaps across 70% height)
-Monogram: ${brideInitial}${groomInitial}
-Tên Dâu Rể: Phông Ballet Canva (Chuẩn 100% Tiếng Việt)
-Ngày Cưới: ${formatDateDot(eventDate)} (Phông Lovelace Serif)
+Monogram: True Interlocking Crest (${brideInitial}${groomInitial})
+Tên Dâu Rể: Phông Ballet Canva (Thu hẹp 65% width, tăng stroke weight nét đậm)
+Ngày Cưới: ${formatDateDots(eventDate)} (Số Ả Rập 11 chuẩn, phông Playfair Didone)
 Chú Rể: ${groomName || 'Văn Mạnh'}
 Cô Dâu: ${brideName || 'Anh Thư'}`;
     navigator.clipboard.writeText(info);
@@ -76,7 +75,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã căn chỉnh khoảng cách giữa 3 phần (Monogram - Tên dâu rể - Ngày cưới) bằng nhau 100% chuẩn đối xứng.
+          Đã sửa lỗi số 11 Ả Rập chuẩn, tăng độ dày nét chữ Ballet từ xa, thu hẹp 65% khung tên giữ lề an toàn và Monogram TM lồng đan nghệ thuật.
         </p>
 
         {/* Mode Switcher */}
@@ -91,7 +90,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Khoảng Cách 3 Phần Bằng Nhau</span>
+            <span>Chuẩn Đồ Họa 3D</span>
           </button>
           <button
             type="button"
@@ -277,12 +276,12 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-7"
+                id="canva-image-input-8"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-7"
+                htmlFor="canva-image-input-8"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -359,10 +358,10 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
+              {/* FOREGROUND CONTENT LAYER: EQUAL VERTICAL SPACING ACROSS 70% HEIGHT (BOTTOM 30% EMPTY) */}
               <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
 
-                {/* TẦNG 1: MONOGRAM LOGO */}
+                {/* TẦNG 1: TRUE INTERLOCKING MONOGRAM CREST (Letter T Weaved Directly Through M) */}
                 <div className="h-[28%] flex items-center justify-center z-10">
                   <div className="relative h-full aspect-square flex items-center justify-center">
                     <div 
@@ -373,7 +372,8 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                           : "'Cinzel Decorative', 'Parfumerie Script', 'Playfair Display', serif"
                       }}
                     >
-                      <span className="font-black italic chrome-silver-text z-10 px-2 drop-shadow-[0_4px_15px_rgba(255,255,255,0.6)]">
+                      {/* First Initial (Bride Letter T) */}
+                      <span className="font-black italic chrome-silver-text z-20 transform -translate-x-2 sm:-translate-x-3 drop-shadow-[0_4px_15px_rgba(255,255,255,0.7)]">
                         {brideInitial}
                       </span>
 
@@ -381,18 +381,22 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                         <span className="text-amber-300/80 text-xl sm:text-3xl mx-1 font-light">&</span>
                       ) : null}
 
-                      <span className="font-light italic chrome-silver-text z-20 opacity-95 px-2 drop-shadow-[0_0_20px_rgba(255,255,255,0.7)]">
+                      {/* Second Initial (Groom Letter M) Interlocked & Weaved */}
+                      <span className="font-light italic chrome-silver-text z-10 transform translate-x-2 sm:translate-x-3 -ml-7 sm:-ml-11 md:-ml-14 opacity-90 drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
                         {groomInitial}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* TẦNG 2: COUPLE NAMES (Positioned with 100% EQUAL Vertical Gaps) */}
-                <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
+                {/* TẦNG 2: COUPLE NAMES (Ballet Script, Narrowed to 65% Max-Width for Rich Side Margins & Enhanced Stroke Weight) */}
+                <div className="w-[65%] max-w-[65%] flex items-center justify-center z-20">
                   <div 
-                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap"
-                    style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
+                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap"
+                    style={{ 
+                      fontFamily: "'Ballet', 'Great Vibes', cursive",
+                      WebkitTextStroke: "0.4px rgba(255,255,255,0.85)"
+                    }}
                   >
                     {brideName || 'Anh Thư'} 
                     
@@ -410,13 +414,17 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                   </div>
                 </div>
 
-                {/* TẦNG 3: WEDDING DATE (Positioned with 100% EQUAL Vertical Gaps) */}
+                {/* TẦNG 3: WEDDING DATE (STRICT ARABIC DIGITS 20 . 11 . 2026 - Didone Serif Font) */}
                 <div className="z-20 w-full flex flex-col items-center">
                   <div 
-                    className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-amber-200 tracking-[0.25em] font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] border-t border-amber-300/40 pt-2 px-8 font-bold inline-block"
-                    style={{ fontFamily: "'Cormorant Garamond', 'Bodoni Moda', 'Cinzel Decorative', serif" }}
+                    className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-amber-200 font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] border-t border-amber-300/40 pt-2 px-8 font-bold inline-block"
+                    style={{ 
+                      fontFamily: "'Playfair Display', Didot, 'Times New Roman', serif",
+                      fontVariantNumeric: "lining-nums tabular-nums",
+                      letterSpacing: "0.15em"
+                    }}
                   >
-                    {formatDateDot(eventDate)}
+                    {formatDateDots(eventDate)}
                   </div>
                 </div>
 
