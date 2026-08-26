@@ -49,6 +49,7 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
+Biểu tượng nối: ${showRings ? 'Cặp nhẫn đan đính kim cương (Chuẩn mẫu ảnh)' : 'Ký tự & đồng bộ phông Ballet'}
 Phông chữ Tên Dâu Rể: Ballet Canva Script (Giữ nguyên gốc 100%)
 Kích thước: Tên = 4/5 Monogram, Khoảng cách Monogram -> Tên x2
 Monogram: True Interlocking Crest (${brideInitial}${groomInitial})
@@ -76,7 +77,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Giữ nguyên 100% phông chữ Ballet nguyên bản của tên dâu rể, tỷ lệ 4/5 Monogram, khoảng cách x2 thoáng rộng và ngày cưới xx . 11 . 2026.
+          Ký tự & đồng bộ 100% phông Ballet với tên dâu rể, cặp nhẫn đan kim cương đính đá vẽ chuẩn nét theo mẫu ảnh tham khảo.
         </p>
 
         {/* Mode Switcher */}
@@ -91,7 +92,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Phông Ballet Nguyên Bản</span>
+            <span>Cặp Nhẫn Chuẩn Mẫu Ảnh</span>
           </button>
           <button
             type="button"
@@ -193,7 +194,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                     : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
                 }`}
               >
-                <span>💍 Cặp Nhẫn Đan Xen</span>
+                <span>💍 Cặp Nhẫn Mẫu Ảnh</span>
               </button>
 
               <button
@@ -205,7 +206,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                     : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
                 }`}
               >
-                <span>& Ký Tự Trắng Bạc</span>
+                <span>& Đồng Bộ Phông Ballet</span>
               </button>
             </div>
           </div>
@@ -277,12 +278,12 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-11"
+                id="canva-image-input-12"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-11"
+                htmlFor="canva-image-input-12"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -392,7 +393,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
 
                 {/* DOUBLE VERTICAL GAP (x2 Khoảng Cách Giữa Monogram & Tên Dâu Rể) */}
 
-                {/* TẦNG 2: COUPLE NAMES (100% PURE ORIGINAL UNTOUCHED BALLET FONT STYLING) */}
+                {/* TẦNG 2: COUPLE NAMES (Ballet Script with exact matching ampersand & reference image wedding rings) */}
                 <div className="w-[70%] max-w-[70%] flex items-center justify-center mt-6 sm:mt-8 md:mt-10 mb-2 z-20">
                   <div 
                     className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap"
@@ -401,20 +402,40 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                     {brideName || 'Anh Thư'} 
                     
                     {showRings ? (
-                      <span className="inline-flex items-center mx-3 sm:mx-4 text-amber-300 align-middle">
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-amber-300 filter drop-shadow-[0_0_10px_rgba(227,166,56,0.85)]" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2a6 6 0 0 0-5.65 4.02A6 6 0 1 0 12 14a6 6 0 0 0 5.65-4.02A6 6 0 0 0 12 2zm-3.5 6a3.5 3.5 0 1 1 3.5 3.5A3.5 3.5 0 0 1 8.5 8zm7 0a3.5 3.5 0 0 1-3.1 3.46 5.48 5.48 0 0 0 0-6.92A3.5 3.5 0 0 1 15.5 8z"/>
+                      /* Custom Interlocking Wedding Rings Icon Matching Reference Image */
+                      <span className="inline-flex items-center mx-2.5 sm:mx-4 align-middle">
+                        <svg 
+                          className="w-7 h-7 sm:w-10 sm:h-10 text-amber-300 filter drop-shadow-[0_0_12px_rgba(227,166,56,0.9)]" 
+                          viewBox="0 0 100 100" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          strokeWidth="4" 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round"
+                        >
+                          {/* Back Ring (Groom's Band) */}
+                          <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="currentColor" strokeWidth="5" fill="none" />
+                          <ellipse cx="38" cy="46" rx="21" ry="11" transform="rotate(-28 38 46)" stroke="currentColor" strokeWidth="3" fill="none" />
+                          {/* Diamond facet on back ring */}
+                          <polygon points="26,30 32,26 38,30 32,34" fill="#FFF" stroke="currentColor" strokeWidth="2" />
+
+                          {/* Front Interlocked Ring (Bride's Band) */}
+                          <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="currentColor" strokeWidth="5" fill="none" />
+                          <ellipse cx="60" cy="56" rx="21" ry="11" transform="rotate(18 60 56)" stroke="currentColor" strokeWidth="3" fill="none" />
+                          {/* Diamond facet on front ring */}
+                          <polygon points="68,62 74,58 80,62 74,66" fill="#FFF" stroke="currentColor" strokeWidth="2" />
                         </svg>
                       </span>
                     ) : (
-                      <span className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-3 sm:mx-4 font-serif italic font-light">&</span>
+                      /* Ampersand using 100% same Ballet font and color as couple names */
+                      <span className="mx-2 sm:mx-3 text-slate-50 font-normal" style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}>&</span>
                     )}
 
                     {groomName || 'Văn Mạnh'}
                   </div>
                 </div>
 
-                {/* TẦNG 3: WEDDING DATE (1/2 COUPLE NAMES SIZE - ARABIC DIGITS 20 . 11 . 2026) */}
+                {/* TẦNG 3: WEDDING DATE */}
                 <div className="z-20 w-full flex flex-col items-center mb-1">
                   <div 
                     className="text-xs sm:text-base md:text-lg lg:text-xl text-amber-200 font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] border-t border-amber-300/40 pt-1.5 px-6 font-bold inline-block"
