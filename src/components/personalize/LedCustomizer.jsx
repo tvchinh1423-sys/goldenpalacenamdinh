@@ -49,9 +49,9 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Tỷ lệ font chuẩn: Tên Dâu Rể = 4/5 size Monogram, Khoảng cách Monogram -> Tên x2
+Phông chữ Tên Dâu Rể: Ballet Canva Script (Giữ nguyên gốc 100%)
+Kích thước: Tên = 4/5 Monogram, Khoảng cách Monogram -> Tên x2
 Monogram: True Interlocking Crest (${brideInitial}${groomInitial})
-Phông chữ Tên: Ballet Script Canva (Bảo toàn nét thanh nét đậm nghệ thuật)
 Ngày Cưới: ${formatDateDots(eventDate)} (Số Ả Rập 11 chuẩn, phông Playfair Didone)
 Chú Rể: ${groomName || 'Văn Mạnh'}
 Cô Dâu: ${brideName || 'Anh Thư'}`;
@@ -76,7 +76,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Tên dâu rể tăng lên 4/5 size Monogram, bảo toàn nét thanh nét đậm Calligraphy nghệ thuật, khoảng cách giữa Monogram và Tên nhân đôi (x2 gap) cực kỳ sang trọng.
+          Giữ nguyên 100% phông chữ Ballet nguyên bản của tên dâu rể, tỷ lệ 4/5 Monogram, khoảng cách x2 thoáng rộng và ngày cưới xx . 11 . 2026.
         </p>
 
         {/* Mode Switcher */}
@@ -91,7 +91,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Tỷ Lệ 4/5 & Khoảng Cách x2</span>
+            <span>Phông Ballet Nguyên Bản</span>
           </button>
           <button
             type="button"
@@ -277,12 +277,12 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-10"
+                id="canva-image-input-11"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-10"
+                htmlFor="canva-image-input-11"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -362,7 +362,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
               {/* FOREGROUND CONTENT LAYER: EXPANDED 70% HEIGHT WITH 2X GAP BETWEEN MONOGRAM AND NAMES */}
               <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between text-center px-4 pt-4 pb-2">
 
-                {/* TẦNG 1: MONOGRAM LOGO (100% BASE REFERENCE SIZE) */}
+                {/* TẦNG 1: MONOGRAM LOGO */}
                 <div className="h-[25%] flex items-center justify-center z-10">
                   <div className="relative h-full aspect-square flex items-center justify-center">
                     <div 
@@ -392,14 +392,11 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
 
                 {/* DOUBLE VERTICAL GAP (x2 Khoảng Cách Giữa Monogram & Tên Dâu Rể) */}
 
-                {/* TẦNG 2: COUPLE NAMES (INCREASED TO 4/5 MONOGRAM SIZE, PRESERVING ARTISTIC THIN/THICK STROKES) */}
+                {/* TẦNG 2: COUPLE NAMES (100% PURE ORIGINAL UNTOUCHED BALLET FONT STYLING) */}
                 <div className="w-[70%] max-w-[70%] flex items-center justify-center mt-6 sm:mt-8 md:mt-10 mb-2 z-20">
                   <div 
-                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap font-script"
-                    style={{ 
-                      fontFamily: "'Ballet', 'Great Vibes', cursive",
-                      filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.95))"
-                    }}
+                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap"
+                    style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
                   >
                     {brideName || 'Anh Thư'} 
                     
@@ -417,7 +414,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                   </div>
                 </div>
 
-                {/* TẦNG 3: WEDDING DATE (1/2 COUPLE NAMES SIZE) */}
+                {/* TẦNG 3: WEDDING DATE (1/2 COUPLE NAMES SIZE - ARABIC DIGITS 20 . 11 . 2026) */}
                 <div className="z-20 w-full flex flex-col items-center mb-1">
                   <div 
                     className="text-xs sm:text-base md:text-lg lg:text-xl text-amber-200 font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] border-t border-amber-300/40 pt-1.5 px-6 font-bold inline-block"
@@ -448,7 +445,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
         <div className="w-full flex flex-wrap gap-3 mt-4">
           <button
             onClick={handleCopyConfig}
-            className="flex-1 px-5 py-3 bg-[#1e1e1e] hover:bg-[#2a2a2a] text-[#ffffff] text-xs uppercase font-bold tracking-wider rounded-xl border border-gray-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="flex-1 px-5 py-3 bg-[#1e1e1e] hover:bg-[#2a2a2a] text-white text-xs uppercase font-bold tracking-wider rounded-xl border border-gray-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span className="material-symbols-outlined text-base text-amber-400">
               {copied ? 'check_circle' : 'content_copy'}
