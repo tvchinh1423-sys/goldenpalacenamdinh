@@ -69,9 +69,15 @@
   }
 
   .chrome-silver-text {
-    background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 45%, #CBD5E1 75%, #94A3B8 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #d1d5db 30%, #9ca3af 50%, #ffffff 70%, #9ca3af 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 4px 15px rgba(255, 255, 255, 0.5));
+  }
+
+  .chrome-silver-text-3d {
+    background: linear-gradient(140deg, #ffffff 0%, #e2e8f0 25%, #94a3b8 45%, #ffffff 65%, #64748b 85%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0px 6px 12px rgba(0, 0, 0, 0.95)) drop-shadow(0px 1px 3px rgba(255, 255, 255, 0.9));
   }
 }

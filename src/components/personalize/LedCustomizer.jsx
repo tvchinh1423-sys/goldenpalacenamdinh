@@ -49,10 +49,10 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
+Monogram Crest: Chữ lồng 3D Khối Nổi Bạc Bạch Kim (Bodoni/Trajan Serif, Bevel Metal 3D)
 Biểu tượng nối: ${showRings ? 'Cặp nhẫn đan nét đen trắng size lớn (Chuẩn mẫu ảnh)' : 'Ký tự & phông Didone nghiêng mềm mại'}
 Phông chữ Tên Dâu Rể: Ballet Canva Script (Giữ nguyên gốc 100%)
 Kích thước: Tên = 4/5 Monogram, Khoảng cách Monogram -> Tên x2
-Monogram: True Interlocking Crest (${brideInitial}${groomInitial})
 Ngày Cưới: ${formatDateDots(eventDate)} (Số Ả Rập 11 chuẩn, phông Playfair Didone)
 Chú Rể: ${groomName || 'Văn Mạnh'}
 Cô Dâu: ${brideName || 'Anh Thư'}`;
@@ -77,7 +77,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Ký tự & mềm mại không lấn át tên chính, nhẫn đan kim cương phóng to chuẩn phong cách nét vẽ Đen Trắng như mẫu ảnh.
+          Đã áp dụng trọn bộ Quy tắc thiết kế Bộ Chữ Monogram Crest: Phông Serif cổ điển Bodoni/Trajan, hiệu ứng Bevel Metal 3D Bạc Bạch Kim đúc khối và nét đan luồn sâu nghệ thuật.
         </p>
 
         {/* Mode Switcher */}
@@ -92,7 +92,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Nhẫn Đen Trắng Size Lớn</span>
+            <span>Monogram Crest 3D Bạc</span>
           </button>
           <button
             type="button"
@@ -278,12 +278,12 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-13"
+                id="canva-image-input-14"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-13"
+                htmlFor="canva-image-input-14"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -363,31 +363,41 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
               {/* FOREGROUND CONTENT LAYER */}
               <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between text-center px-4 pt-4 pb-2">
 
-                {/* TẦNG 1: MONOGRAM LOGO */}
-                <div className="h-[25%] flex items-center justify-center z-10">
+                {/* TẦNG 1: MONOGRAM CREST (QUY TẮC 1-4: BODONI/TRAJAN SERIF, 3D BEVEL PLATINUM METAL, WEAVED LAYERING) */}
+                <div className="h-[28%] flex items-center justify-center z-10">
                   <div className="relative h-full aspect-square flex items-center justify-center">
+                    
+                    {/* Decorative Swash Crest Ring Background */}
+                    <div className="absolute inset-0 rounded-full border border-slate-200/25 bg-gradient-to-b from-white/10 to-transparent pointer-events-none filter drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] transform scale-95"></div>
+
                     <div 
-                      className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-normal select-none"
+                      className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-normal select-none font-didone-serif"
                       style={{ 
                         fontFamily: isSameInitial 
                           ? "'Bodoni Moda', 'Playfair Display', Didot, serif"
-                          : "'Cinzel Decorative', 'Parfumerie Script', 'Playfair Display', serif"
+                          : "'Cinzel Decorative', 'Bodoni Moda', 'Playfair Display', serif"
                       }}
                     >
-                      {/* First Initial */}
-                      <span className="font-black italic chrome-silver-text z-20 transform -translate-x-2 sm:-translate-x-3 drop-shadow-[0_4px_15px_rgba(255,255,255,0.7)]">
+                      {/* First Letter (Bride Initial) - 3D Platinum Bevel Chrome */}
+                      <span className="font-black italic chrome-silver-text-3d z-20 transform -translate-x-2 sm:-translate-x-3 filter drop-shadow-[0_6px_18px_rgba(0,0,0,0.95)]">
                         {brideInitial}
                       </span>
 
                       {isSameInitial ? (
-                        <span className="text-amber-300/80 text-xl sm:text-3xl mx-1 font-light">&</span>
+                        <span className="text-slate-300 text-xl sm:text-3xl mx-1 font-light italic opacity-85">&</span>
                       ) : null}
 
-                      {/* Second Initial Interlocked */}
-                      <span className="font-light italic chrome-silver-text z-10 transform translate-x-2 sm:translate-x-3 -ml-7 sm:-ml-11 md:-ml-14 opacity-90 drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
+                      {/* Second Letter (Groom Initial) - Interlocked & Weaved Layering */}
+                      <span className="font-light italic chrome-silver-text-3d z-10 transform translate-x-2 sm:translate-x-3 -ml-7 sm:-ml-11 md:-ml-14 opacity-95 filter drop-shadow-[0_4px_14px_rgba(0,0,0,0.85)]">
                         {groomInitial}
                       </span>
+
+                      {/* Swash Calligraphic Loop Accent below */}
+                      <svg className="absolute -bottom-1 w-3/4 h-5 text-slate-300/40 pointer-events-none" viewBox="0 0 100 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M10 10 Q 30 2, 50 10 T 90 10" />
+                      </svg>
                     </div>
+
                   </div>
                 </div>
 
