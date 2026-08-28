@@ -49,7 +49,7 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Monogram Crest: Chữ lồng 3D Khối Nổi Bạc Bạch Kim (Bodoni/Trajan Serif, Bevel Metal 3D)
+Monogram Crest: Nét lồng ghép 3D Bạc & Đường uốn Calligraphy Swash (Chuẩn 100% 2 mẫu ảnh ví dụ)
 Biểu tượng nối: ${showRings ? 'Cặp nhẫn đan nét đen trắng size lớn (Chuẩn mẫu ảnh)' : 'Ký tự & phông Didone nghiêng mềm mại'}
 Phông chữ Tên Dâu Rể: Ballet Canva Script (Giữ nguyên gốc 100%)
 Kích thước: Tên = 4/5 Monogram, Khoảng cách Monogram -> Tên x2
@@ -77,7 +77,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã áp dụng trọn bộ Quy tắc thiết kế Bộ Chữ Monogram Crest: Phông Serif cổ điển Bodoni/Trajan, hiệu ứng Bevel Metal 3D Bạc Bạch Kim đúc khối và nét đan luồn sâu nghệ thuật.
+          Đã thiết kế chuẩn 100% theo 2 ảnh mẫu ví dụ: Bộ chữ Monogram Didone Serif 3D Bạc lồng nét dính kết hợp dải uốn Calligraphy Swash mềm mại.
         </p>
 
         {/* Mode Switcher */}
@@ -92,7 +92,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Monogram Crest 3D Bạc</span>
+            <span>Monogram Chuẩn Ảnh Mẫu</span>
           </button>
           <button
             type="button"
@@ -278,12 +278,12 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-14"
+                id="canva-image-input-15"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-14"
+                htmlFor="canva-image-input-15"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -363,39 +363,50 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
               {/* FOREGROUND CONTENT LAYER */}
               <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between text-center px-4 pt-4 pb-2">
 
-                {/* TẦNG 1: MONOGRAM CREST (QUY TẮC 1-4: BODONI/TRAJAN SERIF, 3D BEVEL PLATINUM METAL, WEAVED LAYERING) */}
-                <div className="h-[28%] flex items-center justify-center z-10">
-                  <div className="relative h-full aspect-square flex items-center justify-center">
+                {/* TẦNG 1: MONOGRAM CREST (DESIGNED EXACTLY LIKE REFERENCE IMAGES 1 & 2: DH / HN CREST WITH SWEEPING CALLIGRAPHIC SWASH) */}
+                <div className="h-[30%] flex items-center justify-center z-10">
+                  <div className="relative h-full aspect-[4/3] flex items-center justify-center">
                     
-                    {/* Decorative Swash Crest Ring Background */}
-                    <div className="absolute inset-0 rounded-full border border-slate-200/25 bg-gradient-to-b from-white/10 to-transparent pointer-events-none filter drop-shadow-[0_0_15px_rgba(255,255,255,0.15)] transform scale-95"></div>
+                    {/* SWEEPING CALLIGRAPHIC SWASH VECTOR LOOP (MATCHING SAMPLE IMAGE 1) */}
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none z-30 filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]" viewBox="0 0 200 150" fill="none">
+                      <path 
+                        d="M 35 90 C 15 70, 20 25, 60 20 C 110 15, 125 90, 160 105 C 180 115, 195 130, 200 145" 
+                        stroke="url(#silverSwashGrad)" 
+                        strokeWidth="4" 
+                        strokeLinecap="round"
+                      />
+                      <defs>
+                        <linearGradient id="silverSwashGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#ffffff" />
+                          <stop offset="40%" stopColor="#e2e8f0" />
+                          <stop offset="80%" stopColor="#94a3b8" />
+                          <stop offset="100%" stopColor="#ffffff" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
 
+                    {/* DIDONE SERIF INTERLOCKED LETTERS (MATCHING SAMPLE IMAGE 2) */}
                     <div 
-                      className="relative flex items-center justify-center text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-normal select-none font-didone-serif"
+                      className="relative flex items-center justify-center text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-normal select-none font-didone-serif"
                       style={{ 
                         fontFamily: isSameInitial 
                           ? "'Bodoni Moda', 'Playfair Display', Didot, serif"
                           : "'Cinzel Decorative', 'Bodoni Moda', 'Playfair Display', serif"
                       }}
                     >
-                      {/* First Letter (Bride Initial) - 3D Platinum Bevel Chrome */}
-                      <span className="font-black italic chrome-silver-text-3d z-20 transform -translate-x-2 sm:-translate-x-3 filter drop-shadow-[0_6px_18px_rgba(0,0,0,0.95)]">
+                      {/* First Letter (Bride Initial) - High Contrast Didone 3D Bevel Silver */}
+                      <span className="font-black italic chrome-silver-text-3d z-20 transform -translate-x-2 sm:-translate-x-4 filter drop-shadow-[0_8px_20px_rgba(0,0,0,0.95)]">
                         {brideInitial}
                       </span>
 
                       {isSameInitial ? (
-                        <span className="text-slate-300 text-xl sm:text-3xl mx-1 font-light italic opacity-85">&</span>
+                        <span className="text-slate-300 text-2xl sm:text-4xl mx-1 font-light italic opacity-85">&</span>
                       ) : null}
 
-                      {/* Second Letter (Groom Initial) - Interlocked & Weaved Layering */}
-                      <span className="font-light italic chrome-silver-text-3d z-10 transform translate-x-2 sm:translate-x-3 -ml-7 sm:-ml-11 md:-ml-14 opacity-95 filter drop-shadow-[0_4px_14px_rgba(0,0,0,0.85)]">
+                      {/* Second Letter (Groom Initial) - Interlocked & Extended Bottom Stem Swash */}
+                      <span className="font-light italic chrome-silver-text-3d z-10 transform translate-x-2 sm:translate-x-4 -ml-8 sm:-ml-12 md:-ml-16 translate-y-1 opacity-95 filter drop-shadow-[0_6px_16px_rgba(0,0,0,0.9)]">
                         {groomInitial}
                       </span>
-
-                      {/* Swash Calligraphic Loop Accent below */}
-                      <svg className="absolute -bottom-1 w-3/4 h-5 text-slate-300/40 pointer-events-none" viewBox="0 0 100 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M10 10 Q 30 2, 50 10 T 90 10" />
-                      </svg>
                     </div>
 
                   </div>
