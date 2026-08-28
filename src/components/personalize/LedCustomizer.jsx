@@ -52,8 +52,7 @@ Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMe
 Monogram Crest: Nét lồng ghép 3D Bạc & Đường uốn Calligraphy Swash (Chuẩn 100% 2 mẫu ảnh ví dụ)
 Biểu tượng nối: ${showRings ? 'Cặp nhẫn đan nét đen trắng size lớn (Chuẩn mẫu ảnh)' : 'Ký tự & phông Didone nghiêng mềm mại'}
 Phông chữ Tên Dâu Rể: Ballet Canva Script (Giữ nguyên gốc 100%)
-Kích thước: Tên = 4/5 Monogram, Khoảng cách Monogram -> Tên x2
-Ngày Cưới: ${formatDateDots(eventDate)} (Số Ả Rập 11 chuẩn, phông Playfair Didone)
+Ngày Cưới: ${formatDateDots(eventDate)} (Đã bỏ đường gạch trên, màu trắng đồng bộ tên dâu rể)
 Chú Rể: ${groomName || 'Văn Mạnh'}
 Cô Dâu: ${brideName || 'Anh Thư'}`;
     navigator.clipboard.writeText(info);
@@ -77,7 +76,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã thiết kế chuẩn 100% theo 2 ảnh mẫu ví dụ: Bộ chữ Monogram Didone Serif 3D Bạc lồng nét dính kết hợp dải uốn Calligraphy Swash mềm mại.
+          Đã loại bỏ gạch ngang phía trên ngày tháng và chuyển màu ngày cưới sang tông Trắng Đồng Bộ với tên Dâu Rể.
         </p>
 
         {/* Mode Switcher */}
@@ -92,7 +91,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Monogram Chuẩn Ảnh Mẫu</span>
+            <span>Ngày Cưới Màu Trắng</span>
           </button>
           <button
             type="button"
@@ -278,12 +277,12 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-15"
+                id="canva-image-input-16"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-15"
+                htmlFor="canva-image-input-16"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -363,11 +362,11 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
               {/* FOREGROUND CONTENT LAYER */}
               <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between text-center px-4 pt-4 pb-2">
 
-                {/* TẦNG 1: MONOGRAM CREST (DESIGNED EXACTLY LIKE REFERENCE IMAGES 1 & 2: DH / HN CREST WITH SWEEPING CALLIGRAPHIC SWASH) */}
+                {/* TẦNG 1: MONOGRAM CREST */}
                 <div className="h-[30%] flex items-center justify-center z-10">
                   <div className="relative h-full aspect-[4/3] flex items-center justify-center">
                     
-                    {/* SWEEPING CALLIGRAPHIC SWASH VECTOR LOOP (MATCHING SAMPLE IMAGE 1) */}
+                    {/* SWEEPING CALLIGRAPHIC SWASH VECTOR LOOP */}
                     <svg className="absolute inset-0 w-full h-full pointer-events-none z-30 filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]" viewBox="0 0 200 150" fill="none">
                       <path 
                         d="M 35 90 C 15 70, 20 25, 60 20 C 110 15, 125 90, 160 105 C 180 115, 195 130, 200 145" 
@@ -385,7 +384,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                       </defs>
                     </svg>
 
-                    {/* DIDONE SERIF INTERLOCKED LETTERS (MATCHING SAMPLE IMAGE 2) */}
+                    {/* DIDONE SERIF INTERLOCKED LETTERS */}
                     <div 
                       className="relative flex items-center justify-center text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-normal select-none font-didone-serif"
                       style={{ 
@@ -394,7 +393,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                           : "'Cinzel Decorative', 'Bodoni Moda', 'Playfair Display', serif"
                       }}
                     >
-                      {/* First Letter (Bride Initial) - High Contrast Didone 3D Bevel Silver */}
+                      {/* First Letter (Bride Initial) */}
                       <span className="font-black italic chrome-silver-text-3d z-20 transform -translate-x-2 sm:-translate-x-4 filter drop-shadow-[0_8px_20px_rgba(0,0,0,0.95)]">
                         {brideInitial}
                       </span>
@@ -403,7 +402,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                         <span className="text-slate-300 text-2xl sm:text-4xl mx-1 font-light italic opacity-85">&</span>
                       ) : null}
 
-                      {/* Second Letter (Groom Initial) - Interlocked & Extended Bottom Stem Swash */}
+                      {/* Second Letter (Groom Initial) */}
                       <span className="font-light italic chrome-silver-text-3d z-10 transform translate-x-2 sm:translate-x-4 -ml-8 sm:-ml-12 md:-ml-16 translate-y-1 opacity-95 filter drop-shadow-[0_6px_16px_rgba(0,0,0,0.9)]">
                         {groomInitial}
                       </span>
@@ -459,14 +458,14 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                   </div>
                 </div>
 
-                {/* TẦNG 3: WEDDING DATE */}
+                {/* TẦNG 3: WEDDING DATE (NO TOP BORDER, PURE WHITE COLOR MATCHING COUPLE NAMES) */}
                 <div className="z-20 w-full flex flex-col items-center mb-1">
                   <div 
-                    className="text-xs sm:text-base md:text-lg lg:text-xl text-amber-200 font-serif drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] border-t border-amber-300/40 pt-1.5 px-6 font-bold inline-block"
+                    className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
                     style={{ 
                       fontFamily: "'Playfair Display', Didot, 'Times New Roman', serif",
                       fontVariantNumeric: "lining-nums tabular-nums",
-                      letterSpacing: "0.15em"
+                      letterSpacing: "0.18em"
                     }}
                   >
                     {formatDateDots(eventDate)}
