@@ -144,6 +144,20 @@ function PersonalizePageContent() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               
+              {/* Tên Tiệc Cưới (Đồng Bộ Với Phông LED) */}
+              <div className="sm:col-span-2">
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
+                  Tên Tiệc Cưới (*)
+                </label>
+                <input
+                  type="text"
+                  value={partyTitle}
+                  onChange={(e) => handlePartyTitleChange(e.target.value)}
+                  placeholder="VD: LỄ THÀNH HÔN"
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none transition-colors text-xs"
+                />
+              </div>
+
               {/* Tên Chú Rể & Cô Dâu */}
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
@@ -153,8 +167,8 @@ function PersonalizePageContent() {
                   type="text"
                   value={groomName}
                   onChange={(e) => setGroomName(e.target.value)}
-                  placeholder="VD: Văn Mạnh"
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none"
+                  placeholder="VD: Đức Hoàng"
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white font-semibold outline-none"
                 />
               </div>
 
@@ -166,8 +180,8 @@ function PersonalizePageContent() {
                   type="text"
                   value={brideName}
                   onChange={(e) => setBrideName(e.target.value)}
-                  placeholder="VD: Anh Thư"
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none"
+                  placeholder="VD: Thu Hương"
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white font-semibold outline-none"
                 />
               </div>
 
@@ -231,11 +245,11 @@ function PersonalizePageContent() {
                 />
               </div>
 
-              {/* Link Google Drive chứa Ảnh / Video Cưới */}
+              {/* Link Google Drive chứa Ảnh / Video Cưới (Gọn gàng siêu ít chữ như Ảnh 1) */}
               <div className="sm:col-span-2 bg-[#1b1b1b] p-3.5 rounded-xl border border-blue-500/30 space-y-1.5">
                 <label className="block text-blue-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-base">cloud_upload</span>
-                  Link Google Drive / Cloud chứa Ảnh & Video Cưới (Giải pháp tối ưu cho file dung lượng lớn):
+                  LINK GOOGLE DRIVE / CLOUD CHỨA ẢNH & VIDEO CƯỚI:
                 </label>
                 <input
                   type="url"
@@ -244,9 +258,6 @@ function PersonalizePageContent() {
                   placeholder="Dán link Google Drive / Dropbox (VD: https://drive.google.com/drive/folders/...)"
                   className="w-full bg-[#121212] border border-gray-700 focus:border-blue-400 rounded-lg px-3.5 py-2 text-white font-mono outline-none"
                 />
-                <p className="text-[11px] text-gray-400 leading-relaxed italic">
-                  💡 <strong>Khuyên dùng:</strong> Do Video 4K & Ảnh cưới nguyên gốc có dung lượng rất lớn (hàng chục GB), việc dán Link Google Drive / Dropbox giúp Đội Kỹ Thuật tải về máy chiếu nhanh nhất, giữ nguyên 100% chất lượng sắc nét và không bị nghẽn mạng server.
-                </p>
               </div>
 
             </div>

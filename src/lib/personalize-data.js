@@ -36,8 +36,8 @@ export const LED_SCREEN_FLOORS = [
 export const LED_STAGE_TEMPLATES = [
   {
     id: 'led-starry-diamond',
-    name: '1. Bầu Trời Sao Đêm Kim Cương (Didone Monogram)',
-    slogan: 'Nền bầu trời sao lấp lánh, Monogram Didone 35-40% & Logo góc trái',
+    name: '1. Bầu Trời Sao Đêm Kim Cương',
+    slogan: '',
     defaultVenueId: 'tang-3',
     bgImage: '/images/led-bg/starry-night-1.jpg',
     borderColor: '#ffffff',
@@ -46,12 +46,12 @@ export const LED_STAGE_TEMPLATES = [
     subTextColor: '#e2e8f0',
     monogramStyle: 'DIDONE_INTERLOCKED',
     fontFamily: 'font-greatvibes',
-    badge: 'Chuẩn Mẫu Tham Khảo 1'
+    badge: ''
   },
   {
     id: 'led-cosmic-milkyway',
     name: '2. Dải Ngân Hà Cosmic Galaxy',
-    slogan: 'Không gian vũ trụ dải ngân hà huyền bí, chữ lồng đan xen Didone',
+    slogan: '',
     defaultVenueId: 'tang-2',
     bgImage: '/images/led-bg/starry-night-2.jpg',
     borderColor: '#ffffff',
@@ -60,21 +60,21 @@ export const LED_STAGE_TEMPLATES = [
     subTextColor: '#cbd5e1',
     monogramStyle: 'DIDONE_INTERLOCKED',
     fontFamily: 'font-greatvibes',
-    badge: 'Chuẩn Mẫu Tham Khảo 2'
+    badge: ''
   },
   {
-    id: 'led-stardust-constellation',
+    id: 'led-constellation-magic',
     name: '3. Mạn Sao Huyền Ảo Constellation',
-    slogan: 'Tone chòm sao lấp lánh, tỷ lệ phân cấp thị giác Didone & Calligraphy',
+    slogan: '',
     defaultVenueId: 'tang-4',
     bgImage: '/images/led-bg/starry-night-3.jpg',
-    borderColor: '#e3a638',
-    glowColor: 'rgba(227, 166, 56, 0.6)',
+    borderColor: '#ffffff',
+    glowColor: 'rgba(255, 255, 255, 0.75)',
     accentColor: '#ffffff',
-    subTextColor: '#fef08a',
+    subTextColor: '#94a3b8',
     monogramStyle: 'DIDONE_INTERLOCKED',
     fontFamily: 'font-greatvibes',
-    badge: 'Chuẩn Mẫu Tham Khảo 3'
+    badge: ''
   }
 ];
 
