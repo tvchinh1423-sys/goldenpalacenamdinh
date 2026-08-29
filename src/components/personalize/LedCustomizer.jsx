@@ -46,9 +46,9 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Tiêu đề tiệc (Tầng 1): ${eventTypeTitle} (Phông Didone Serif In Hoa)
-Tên Dâu Rể (Tầng 2): ${brideName || 'Thu Hương'} & ${groomName || 'Đức Hoàng'} (Phông Ballet Script Mạ Bạc)
-Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Phông Số Ả Rập 28.12.2025)`;
+Tiêu đề tiệc (Tầng 1): ${eventTypeTitle} (Sửa phông Playfair Display 100% Tiếng Việt, nét vừa đủ)
+Tên Dâu Rể (Tầng 2): ${brideName || 'Thu Hương'} & ${groomName || 'Đức Hoàng'} (Giảm 2 size)
+Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Giảm 1 size)`;
     navigator.clipboard.writeText(info);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -70,7 +70,7 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Phông Số Ả Rập 28.
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã thay thế Monogram bằng Tiêu đề tiệc cưới (VD: LỄ THÀNH HÔN) chuẩn 100% phông chữ & bố cục 3 tầng theo mẫu ảnh thực tế!
+          Đã đổi phông Tầng 1 dày rõ nét chuẩn Tiếng Việt, gom gọn khoảng cách chữ, thu nhỏ Tầng 2 bớt 2 size và Tầng 3 bớt 1 size.
         </p>
 
         {/* Mode Switcher */}
@@ -85,7 +85,7 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Phông Số Ả Rập 28.
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Mẫu Lễ Thành Hôn Mới</span>
+            <span>Tối Ưu Size & Phông Chữ</span>
           </button>
           <button
             type="button"
@@ -305,12 +305,12 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Phông Số Ả Rập 28.
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-17"
+                id="canva-image-input-18"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-17"
+                htmlFor="canva-image-input-18"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -387,23 +387,23 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Phông Số Ả Rập 28.
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER: STRICT 3-TIER VERTICAL STACK (EXACTLY MATCHING SAMPLE PHOTO) */}
+              {/* FOREGROUND CONTENT LAYER: STRICT 3-TIER VERTICAL STACK */}
               <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between text-center px-4 pt-6 sm:pt-10 md:pt-12 pb-3">
 
-                {/* TẦNG 1: EVENT TITLE HEADER (E.G. "LỄ THÀNH HÔN" - DIDONE SERIF IN HOA MẠ BẠC - MATCHING SAMPLE PHOTO) */}
+                {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN" - PLAYFAIR DISPLAY SERIF DÀY NÉT BÓNG MẠ BẠC, 100% TIẾNG VIỆT, KHẢO SÁT KHOẢNG CÁCH NẾT CHỮ GỌN) */}
                 <div className="w-full flex items-center justify-center z-20">
                   <div 
-                    className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-slate-100 font-bold tracking-[0.3em] font-serif uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]"
-                    style={{ fontFamily: "'Bodoni Moda', 'Cormorant Garamond', 'Playfair Display', Didot, serif" }}
+                    className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                    style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
                   >
                     {eventTypeTitle || 'LỄ THÀNH HÔN'}
                   </div>
                 </div>
 
-                {/* TẦNG 2: COUPLE NAMES (E.G. "Đức Hoàng & Thu Hương" - BALLET CALLIGRAPHY SCRIPT MẠ BẠC - MATCHING SAMPLE PHOTO) */}
-                <div className="w-[80%] max-w-[80%] flex items-center justify-center my-3 sm:my-5 z-20">
+                {/* TẦNG 2: COUPLE NAMES (REDUCED BY 2 FONT SIZES: text-xl sm:text-3xl md:text-4xl lg:text-5xl) */}
+                <div className="w-[75%] max-w-[75%] flex items-center justify-center my-2 sm:my-4 z-20">
                   <div 
-                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                    className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
                     style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
                   >
                     <span>{groomName || 'Đức Hoàng'}</span>
@@ -427,9 +427,9 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Phông Số Ả Rập 28.
                         </svg>
                       </span>
                     ) : (
-                      /* AMPERSAND & IN BALLET SCRIPT OR ELEGANT SERIF - MATCHING SAMPLE PHOTO */
+                      /* AMPERSAND & IN ELEGANT DIDONE ITALIC */
                       <span 
-                        className="text-slate-100 text-xl sm:text-3xl md:text-4xl mx-3 sm:mx-5 font-serif italic font-light tracking-normal"
+                        className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
                         style={{ fontFamily: "'Playfair Display', 'Bodoni Moda', Didot, serif" }}
                       >
                         &
@@ -440,14 +440,14 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Phông Số Ả Rập 28.
                   </div>
                 </div>
 
-                {/* TẦNG 3: WEDDING DATE (E.G. "28.12.2025" - DIDONE SERIF ARABIC DIGITS - MATCHING SAMPLE PHOTO) */}
+                {/* TẦNG 3: WEDDING DATE (REDUCED BY 1 FONT SIZE: text-xs sm:text-base md:text-lg lg:text-xl) */}
                 <div className="z-20 w-full flex flex-col items-center mb-1">
                   <div 
-                    className="text-sm sm:text-xl md:text-2xl lg:text-3xl text-slate-100 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                    className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
                     style={{ 
                       fontFamily: "'Playfair Display', Didot, 'Times New Roman', serif",
                       fontVariantNumeric: "lining-nums tabular-nums",
-                      letterSpacing: "0.15em"
+                      letterSpacing: "0.14em"
                     }}
                   >
                     {formatDateDot(eventDate)}
