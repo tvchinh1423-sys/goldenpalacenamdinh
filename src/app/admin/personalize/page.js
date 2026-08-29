@@ -24,11 +24,13 @@ export default function AdminPersonalizePage() {
 
   useEffect(() => {
     fetchProfiles();
+    const timer = setInterval(fetchProfiles, 4000);
+    return () => clearInterval(timer);
   }, []);
 
   const fetchProfiles = async () => {
     try {
-      const res = await fetch('/api/personalize');
+      const res = await fetch(`/api/personalize?t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
       if (data.success) {
         setProfiles(data.profiles || []);
