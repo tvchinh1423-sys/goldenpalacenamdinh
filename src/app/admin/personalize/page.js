@@ -610,26 +610,60 @@ export default function AdminPersonalizePage() {
                   </div>
                 </div>
 
-                {/* Mini LED Canvas Visualizer */}
-                <div className="relative aspect-video w-full rounded-xl overflow-hidden border-2 border-amber-500/40 shadow-inner bg-black flex items-center justify-center">
-                  <div className={`w-full h-full bg-gradient-to-br ${currentLedTemplate.bgGradient} relative flex flex-col items-center justify-center p-4 text-center`}>
-                    <div className="absolute top-2 left-3 flex items-center gap-1 z-20">
-                      <img src="/logo-icon.png" alt="Golden Palace" className="h-5 w-auto object-contain" />
-                      <span className="text-[8px] tracking-widest font-playfair uppercase text-amber-300 font-bold">
-                        GOLDEN PALACE
+                {/* Mini LED Canvas Visualizer matching LedCustomizer.jsx 100% */}
+                <div 
+                  className="w-full relative rounded-xl overflow-hidden border-2 border-amber-500/50 shadow-[0_10px_40px_rgba(0,0,0,0.9)] bg-[#050508]"
+                  style={{ aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384' }}
+                >
+                  {/* STARRY BACKGROUND */}
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
+                  ></div>
+                  <div className="absolute inset-0 bg-black/25"></div>
+
+                  {/* VERTICAL SPOTLIGHT GLOW BEAM */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
+
+                  {/* LOGO ICON */}
+                  <div className="absolute top-2.5 left-3.5 z-40">
+                    <img src="/logo-icon.png" alt="Golden Palace" className="h-6 sm:h-8 w-auto object-contain filter drop-shadow-[0_0_10px_rgba(227,166,56,0.85)]" />
+                  </div>
+
+                  {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
+                  <div className="relative z-30 w-full h-[75%] flex flex-col items-center justify-evenly text-center px-4 py-2 my-auto">
+                    
+                    {/* TẦNG 1: EVENT TITLE HEADER */}
+                    <div 
+                      className="text-xs sm:text-base md:text-xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                      style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
+                    >
+                      {selectedProfile.partyTitle || 'LỄ THÀNH HÔN'}
+                    </div>
+
+                    {/* TẦNG 2: COUPLE NAMES IN CURSIVE SCRIPT */}
+                    <div 
+                      className="text-base sm:text-2xl md:text-3xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                      style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
+                    >
+                      <span>{selectedProfile.groomName || 'Đức Hoàng'}</span>
+                      <span 
+                        className="text-slate-100 text-sm sm:text-lg mx-2.5 sm:mx-3 font-serif italic font-light"
+                        style={{ fontFamily: "'Playfair Display', Didot, serif" }}
+                      >
+                        &
                       </span>
+                      <span>{selectedProfile.brideName || 'Thu Hương'}</span>
                     </div>
-                    <div className={`w-[90%] h-[80%] rounded-lg flex flex-col items-center justify-center p-4 relative ${currentLedTemplate.frameStyle}`}>
-                      <div className="text-[8px] tracking-widest uppercase text-amber-200 font-semibold mb-1">
-                        LỄ THÀNH HÔN • WEDDING CEREMONY
-                      </div>
-                      <div className="font-playfair text-xl sm:text-2xl font-bold text-white tracking-wider my-1 drop-shadow-md">
-                        {selectedProfile.groomName} & {selectedProfile.brideName}
-                      </div>
-                      <div className="text-[9px] font-mono text-amber-300 mt-1">
-                        {selectedProfile.eventDate} • GOLDEN PALACE {selectedProfile.venueName}
-                      </div>
+
+                    {/* TẦNG 3: WEDDING DATE */}
+                    <div 
+                      className="text-[10px] sm:text-xs md:text-sm text-slate-100 font-bold tracking-[0.2em] font-mono drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]"
+                      style={{ fontFamily: "'Playfair Display', serif" }}
+                    >
+                      {selectedProfile.eventDate || '2026-11-20'}
                     </div>
+
                   </div>
                 </div>
               </div>
@@ -787,24 +821,59 @@ export default function AdminPersonalizePage() {
             </button>
           </div>
 
-          <div className={`w-full max-w-6xl aspect-video rounded-3xl border-4 border-amber-500/60 shadow-[0_0_80px_rgba(227,166,56,0.3)] bg-gradient-to-br ${currentLedTemplate.bgGradient} relative flex flex-col items-center justify-center p-8 text-center`}>
-            <div className="absolute top-6 left-8 flex items-center gap-2 z-20">
-              <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-12 w-auto object-contain drop-shadow-[0_0_15px_rgba(227,166,56,0.8)]" />
-              <span className="text-xs sm:text-sm font-playfair tracking-[0.3em] uppercase text-amber-300 font-bold">
-                GOLDEN PALACE
-              </span>
+          <div 
+            className="w-full max-w-6xl relative rounded-3xl overflow-hidden border-4 border-amber-500/60 shadow-[0_0_80px_rgba(227,166,56,0.35)] bg-[#050508]"
+            style={{ aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384' }}
+          >
+            {/* STARRY BACKGROUND */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
+            ></div>
+            <div className="absolute inset-0 bg-black/25"></div>
+
+            {/* VERTICAL SPOTLIGHT GLOW BEAM */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
+
+            {/* LOGO ICON */}
+            <div className="absolute top-6 left-8 z-40">
+              <img src="/logo-icon.png" alt="Golden Palace" className="h-10 sm:h-14 w-auto object-contain filter drop-shadow-[0_0_15px_rgba(227,166,56,0.85)]" />
             </div>
 
-            <div className={`w-[92%] h-[85%] rounded-2xl flex flex-col items-center justify-center p-8 relative backdrop-blur-xs ${currentLedTemplate.frameStyle}`}>
-              <div className="text-xs sm:text-sm tracking-[0.4em] uppercase text-amber-200 font-semibold mb-2 drop-shadow-md">
-                LỄ THÀNH HÔN • WEDDING CEREMONY
+            {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
+            <div className="relative z-30 w-full h-[75%] flex flex-col items-center justify-evenly text-center px-8 py-4 my-auto">
+              
+              {/* TẦNG 1: EVENT TITLE HEADER */}
+              <div 
+                className="text-2xl sm:text-4xl md:text-5xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)]"
+                style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
+              >
+                {selectedProfile.partyTitle || 'LỄ THÀNH HÔN'}
               </div>
-              <h1 className="text-4xl sm:text-7xl font-playfair font-bold text-white tracking-wider my-3 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
-                {selectedProfile.groomName} <span className="text-amber-400 font-serif italic font-normal">&</span> {selectedProfile.brideName}
-              </h1>
-              <div className="text-sm sm:text-lg font-mono text-amber-300 mt-2 tracking-wide">
-                {selectedProfile.eventDate} • GOLDEN PALACE NAM ĐỊNH ({selectedProfile.venueName})
+
+              {/* TẦNG 2: COUPLE NAMES IN CURSIVE SCRIPT */}
+              <div 
+                className="text-4xl sm:text-6xl md:text-7xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_30px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
+              >
+                <span>{selectedProfile.groomName || 'Đức Hoàng'}</span>
+                <span 
+                  className="text-slate-100 text-2xl sm:text-4xl mx-4 sm:mx-6 font-serif italic font-light"
+                  style={{ fontFamily: "'Playfair Display', Didot, serif" }}
+                >
+                  &
+                </span>
+                <span>{selectedProfile.brideName || 'Thu Hương'}</span>
               </div>
+
+              {/* TẦNG 3: WEDDING DATE */}
+              <div 
+                className="text-base sm:text-2xl text-slate-100 font-bold tracking-[0.25em] font-mono drop-shadow-[0_2px_15px_rgba(0,0,0,0.95)]"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                {selectedProfile.eventDate || '2026-11-20'}
+              </div>
+
             </div>
           </div>
         </div>
