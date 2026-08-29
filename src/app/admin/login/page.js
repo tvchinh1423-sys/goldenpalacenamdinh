@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Login() {
-  const [email, setEmail] = useState('0945857996');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ export default function Login() {
               type="text" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Nhập 0945857996..."
+              placeholder="Nhập số điện thoại admin..."
               required
               className="w-full bg-black border border-white/20 p-3 rounded-lg focus:outline-none focus:border-[#e3a638] text-sm" 
             />
@@ -59,7 +59,7 @@ export default function Login() {
               type="password" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Nhập 0945857996..."
+              placeholder="••••••••"
               required
               className="w-full bg-black border border-white/20 p-3 rounded-lg focus:outline-none focus:border-[#e3a638] text-sm" 
             />
