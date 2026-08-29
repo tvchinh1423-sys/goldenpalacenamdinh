@@ -3,25 +3,22 @@
 import { useState } from 'react';
 import { LED_STAGE_TEMPLATES, LED_SCREEN_FLOORS } from '@/lib/personalize-data';
 
+const EVENT_TITLE_OPTIONS = [
+  'LỄ THÀNH HÔN',
+  'LỄ VU QUY',
+  'LỄ TÂN HÔN',
+  'LỄ BÁO HỶ',
+  'LỄ ĐÍNH HÔN'
+];
+
 export default function LedCustomizer({ groomName, setGroomName, brideName, setBrideName, eventDate, setEventDate, onSave }) {
   const [selectedFloor, setSelectedFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3 (7.04x3.84m)
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
   const [designMode, setDesignMode] = useState('masterpiece');
   const [customUploadUrl, setCustomUploadUrl] = useState(null);
-  const [showRings, setShowRings] = useState(true);
+  const [eventTypeTitle, setEventTypeTitle] = useState('LỄ THÀNH HÔN');
+  const [showRings, setShowRings] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  // Extract initial letters for Monogram
-  const getInitial = (name, fallback) => {
-    if (!name || !name.trim()) return fallback;
-    const parts = name.trim().split(' ');
-    const lastWord = parts[parts.length - 1];
-    return lastWord.charAt(0).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-  };
-
-  const brideInitial = getInitial(brideName, 'T');
-  const groomInitial = getInitial(groomName, 'M');
-  const isSameInitial = brideInitial === groomInitial;
 
   // Handle custom image upload from Canva/Photoshop
   const handleImageUpload = (e) => {
@@ -35,26 +32,23 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     }
   };
 
-  // Format Date strictly to Arabic digits 20 . 11 . 2026
-  const formatDateDots = (dateStr) => {
-    if (!dateStr) return '20 . 11 . 2026';
+  // Format Date to xx.xx.xxxx format (e.g. 28.12.2025) strictly Arabic digits
+  const formatDateDot = (dateStr) => {
+    if (!dateStr) return '28.12.2025';
     const d = new Date(dateStr);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
-    return `${day} . ${month} . ${year}`;
+    return `${day}.${month}.${year}`;
   };
 
   const handleCopyConfig = () => {
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Monogram Crest: Nét lồng ghép 3D Bạc & Đường uốn Calligraphy Swash (Chuẩn 100% 2 mẫu ảnh ví dụ)
-Biểu tượng nối: ${showRings ? 'Cặp nhẫn đan nét đen trắng size lớn (Chuẩn mẫu ảnh)' : 'Ký tự & phông Didone nghiêng mềm mại'}
-Phông chữ Tên Dâu Rể: Ballet Canva Script (Giữ nguyên gốc 100%)
-Ngày Cưới: ${formatDateDots(eventDate)} (Đã bỏ đường gạch trên, màu trắng đồng bộ tên dâu rể)
-Chú Rể: ${groomName || 'Văn Mạnh'}
-Cô Dâu: ${brideName || 'Anh Thư'}`;
+Tiêu đề tiệc (Tầng 1): ${eventTypeTitle} (Phông Didone Serif In Hoa)
+Tên Dâu Rể (Tầng 2): ${brideName || 'Thu Hương'} & ${groomName || 'Đức Hoàng'} (Phông Ballet Script Mạ Bạc)
+Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Phông Số Ả Rập 28.12.2025)`;
     navigator.clipboard.writeText(info);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -76,7 +70,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã loại bỏ gạch ngang phía trên ngày tháng và chuyển màu ngày cưới sang tông Trắng Đồng Bộ với tên Dâu Rể.
+          Đã thay thế Monogram bằng Tiêu đề tiệc cưới (VD: LỄ THÀNH HÔN) chuẩn 100% phông chữ & bố cục 3 tầng theo mẫu ảnh thực tế!
         </p>
 
         {/* Mode Switcher */}
@@ -91,7 +85,7 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Ngày Cưới Màu Trắng</span>
+            <span>Mẫu Lễ Thành Hôn Mới</span>
           </button>
           <button
             type="button"
@@ -138,32 +132,66 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           </div>
         </div>
 
-        {/* 2. Names & Date Input */}
+        {/* 2. Event Title & Names & Date Inputs */}
         <div className="space-y-3.5 text-sm">
+          
+          {/* Select / Enter Event Title */}
           <div>
-            <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
-              Tên Cô Dâu
+            <label className="block text-[#e3a638] text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-1">
+              <span className="material-symbols-outlined text-sm">title</span>
+              Tên Tiêu Đề Tiệc Cưới (Tầng Trên Cùng)
             </label>
+            <div className="grid grid-cols-3 gap-1.5 mb-2">
+              {EVENT_TITLE_OPTIONS.map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setEventTypeTitle(opt)}
+                  className={`py-1.5 px-2 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
+                    eventTypeTitle === opt
+                      ? 'border-amber-400 bg-amber-400/20 text-amber-300'
+                      : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
             <input
               type="text"
-              value={brideName}
-              onChange={(e) => setBrideName(e.target.value)}
-              placeholder="VD: Anh Thư"
-              className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none text-xs transition-colors"
+              value={eventTypeTitle}
+              onChange={(e) => setEventTypeTitle(e.target.value)}
+              placeholder="VD: LỄ THÀNH HÔN"
+              className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs font-semibold tracking-wider transition-colors"
             />
           </div>
 
-          <div>
-            <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
-              Tên Chú Rể
-            </label>
-            <input
-              type="text"
-              value={groomName}
-              onChange={(e) => setGroomName(e.target.value)}
-              placeholder="VD: Văn Mạnh"
-              className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none text-xs transition-colors"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
+                Tên Cô Dâu
+              </label>
+              <input
+                type="text"
+                value={brideName}
+                onChange={(e) => setBrideName(e.target.value)}
+                placeholder="VD: Thu Hương"
+                className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none text-xs transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
+                Tên Chú Rể
+              </label>
+              <input
+                type="text"
+                value={groomName}
+                onChange={(e) => setGroomName(e.target.value)}
+                placeholder="VD: Đức Hoàng"
+                className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none text-xs transition-colors"
+              />
+            </div>
           </div>
 
           <div>
@@ -181,21 +209,9 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
           {/* Symbol Selector */}
           <div>
             <label className="block text-gray-300 text-xs font-semibold mb-1.5 uppercase tracking-wider">
-              Biểu Tượng Nối Giữa 2 Tên
+              Biểu Tượng Giữa 2 Tên
             </label>
             <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setShowRings(true)}
-                className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  showRings
-                    ? 'border-amber-400 bg-amber-400/20 text-amber-300'
-                    : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
-                }`}
-              >
-                <span>💍 Cặp Nhẫn Đen Trắng Size Lớn</span>
-              </button>
-
               <button
                 type="button"
                 onClick={() => setShowRings(false)}
@@ -205,7 +221,19 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                     : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
                 }`}
               >
-                <span>& Ký Tự Mềm Mại Tinh Tế</span>
+                <span>& Ký Tự Trắng Bạc (Mẫu Ảnh)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowRings(true)}
+                className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  showRings
+                    ? 'border-amber-400 bg-amber-400/20 text-amber-300'
+                    : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
+                }`}
+              >
+                <span>💍 Cặp Nhẫn Đen Trắng</span>
               </button>
             </div>
           </div>
@@ -277,12 +305,12 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-16"
+                id="canva-image-input-17"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-16"
+                htmlFor="canva-image-input-17"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -359,116 +387,70 @@ Cô Dâu: ${brideName || 'Anh Thư'}`;
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER */}
-              <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between text-center px-4 pt-4 pb-2">
+              {/* FOREGROUND CONTENT LAYER: STRICT 3-TIER VERTICAL STACK (EXACTLY MATCHING SAMPLE PHOTO) */}
+              <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between text-center px-4 pt-6 sm:pt-10 md:pt-12 pb-3">
 
-                {/* TẦNG 1: MONOGRAM CREST */}
-                <div className="h-[30%] flex items-center justify-center z-10">
-                  <div className="relative h-full aspect-[4/3] flex items-center justify-center">
-                    
-                    {/* SWEEPING CALLIGRAPHIC SWASH VECTOR LOOP */}
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none z-30 filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]" viewBox="0 0 200 150" fill="none">
-                      <path 
-                        d="M 35 90 C 15 70, 20 25, 60 20 C 110 15, 125 90, 160 105 C 180 115, 195 130, 200 145" 
-                        stroke="url(#silverSwashGrad)" 
-                        strokeWidth="4" 
-                        strokeLinecap="round"
-                      />
-                      <defs>
-                        <linearGradient id="silverSwashGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#ffffff" />
-                          <stop offset="40%" stopColor="#e2e8f0" />
-                          <stop offset="80%" stopColor="#94a3b8" />
-                          <stop offset="100%" stopColor="#ffffff" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-
-                    {/* DIDONE SERIF INTERLOCKED LETTERS */}
-                    <div 
-                      className="relative flex items-center justify-center text-5xl sm:text-7xl md:text-8xl lg:text-9xl tracking-normal select-none font-didone-serif"
-                      style={{ 
-                        fontFamily: isSameInitial 
-                          ? "'Bodoni Moda', 'Playfair Display', Didot, serif"
-                          : "'Cinzel Decorative', 'Bodoni Moda', 'Playfair Display', serif"
-                      }}
-                    >
-                      {/* First Letter (Bride Initial) */}
-                      <span className="font-black italic chrome-silver-text-3d z-20 transform -translate-x-2 sm:-translate-x-4 filter drop-shadow-[0_8px_20px_rgba(0,0,0,0.95)]">
-                        {brideInitial}
-                      </span>
-
-                      {isSameInitial ? (
-                        <span className="text-slate-300 text-2xl sm:text-4xl mx-1 font-light italic opacity-85">&</span>
-                      ) : null}
-
-                      {/* Second Letter (Groom Initial) */}
-                      <span className="font-light italic chrome-silver-text-3d z-10 transform translate-x-2 sm:translate-x-4 -ml-8 sm:-ml-12 md:-ml-16 translate-y-1 opacity-95 filter drop-shadow-[0_6px_16px_rgba(0,0,0,0.9)]">
-                        {groomInitial}
-                      </span>
-                    </div>
-
+                {/* TẦNG 1: EVENT TITLE HEADER (E.G. "LỄ THÀNH HÔN" - DIDONE SERIF IN HOA MẠ BẠC - MATCHING SAMPLE PHOTO) */}
+                <div className="w-full flex items-center justify-center z-20">
+                  <div 
+                    className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-slate-100 font-bold tracking-[0.3em] font-serif uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.95)]"
+                    style={{ fontFamily: "'Bodoni Moda', 'Cormorant Garamond', 'Playfair Display', Didot, serif" }}
+                  >
+                    {eventTypeTitle || 'LỄ THÀNH HÔN'}
                   </div>
                 </div>
 
-                {/* TẦNG 2: COUPLE NAMES */}
-                <div className="w-[70%] max-w-[70%] flex items-center justify-center mt-6 sm:mt-8 md:mt-10 mb-2 z-20">
+                {/* TẦNG 2: COUPLE NAMES (E.G. "Đức Hoàng & Thu Hương" - BALLET CALLIGRAPHY SCRIPT MẠ BẠC - MATCHING SAMPLE PHOTO) */}
+                <div className="w-[80%] max-w-[80%] flex items-center justify-center my-3 sm:my-5 z-20">
                   <div 
                     className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
                     style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
                   >
-                    <span>{brideName || 'Anh Thư'}</span>
+                    <span>{groomName || 'Đức Hoàng'}</span>
                     
                     {showRings ? (
-                      /* LARGER BLACK & WHITE / MONOCHROME LINE ART WEDDING RINGS MATCHING REFERENCE IMAGE */
+                      /* BLACK & WHITE / MONOCHROME LINE ART WEDDING RINGS */
                       <span className="inline-flex items-center mx-3 sm:mx-5 align-middle">
                         <svg 
-                          className="w-9 h-9 sm:w-14 sm:h-14 filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]" 
+                          className="w-8 h-8 sm:w-12 sm:h-12 filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]" 
                           viewBox="0 0 100 100" 
                           fill="none"
                         >
-                          {/* Dark outline back rings */}
                           <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#000000" strokeWidth="8" fill="none" />
                           <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#000000" strokeWidth="8" fill="none" />
-
-                          {/* White Line-Art Ring 1 (Back Ring) */}
                           <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
                           <ellipse cx="38" cy="46" rx="20" ry="10" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="3" fill="none" />
-                          {/* Diamond facet setting 1 */}
                           <polygon points="26,30 32,25 38,30 32,35" fill="#ffffff" stroke="#000000" strokeWidth="2" />
-
-                          {/* White Line-Art Ring 2 (Front Ring) */}
                           <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
                           <ellipse cx="60" cy="56" rx="20" ry="10" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="3" fill="none" />
-                          {/* Diamond facet setting 2 */}
                           <polygon points="68,62 74,57 80,62 74,67" fill="#ffffff" stroke="#000000" strokeWidth="2" />
                         </svg>
                       </span>
                     ) : (
-                      /* SOFT ELEGANT DIDONE ITALIC & THAT DOES NOT OVERPOWER THE NAMES */
+                      /* AMPERSAND & IN BALLET SCRIPT OR ELEGANT SERIF - MATCHING SAMPLE PHOTO */
                       <span 
-                        className="text-slate-200/90 text-lg sm:text-2xl md:text-3xl mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
+                        className="text-slate-100 text-xl sm:text-3xl md:text-4xl mx-3 sm:mx-5 font-serif italic font-light tracking-normal"
                         style={{ fontFamily: "'Playfair Display', 'Bodoni Moda', Didot, serif" }}
                       >
                         &
                       </span>
                     )}
 
-                    <span>{groomName || 'Văn Mạnh'}</span>
+                    <span>{brideName || 'Thu Hương'}</span>
                   </div>
                 </div>
 
-                {/* TẦNG 3: WEDDING DATE (NO TOP BORDER, PURE WHITE COLOR MATCHING COUPLE NAMES) */}
+                {/* TẦNG 3: WEDDING DATE (E.G. "28.12.2025" - DIDONE SERIF ARABIC DIGITS - MATCHING SAMPLE PHOTO) */}
                 <div className="z-20 w-full flex flex-col items-center mb-1">
                   <div 
-                    className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                    className="text-sm sm:text-xl md:text-2xl lg:text-3xl text-slate-100 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
                     style={{ 
                       fontFamily: "'Playfair Display', Didot, 'Times New Roman', serif",
                       fontVariantNumeric: "lining-nums tabular-nums",
-                      letterSpacing: "0.18em"
+                      letterSpacing: "0.15em"
                     }}
                   >
-                    {formatDateDots(eventDate)}
+                    {formatDateDot(eventDate)}
                   </div>
                 </div>
 
