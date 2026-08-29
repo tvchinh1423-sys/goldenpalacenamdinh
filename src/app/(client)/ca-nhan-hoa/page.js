@@ -39,12 +39,11 @@ function PersonalizePageContent() {
   const [selectedFloor, setSelectedFloor] = useState('FLOOR_3');
   const [driveLink, setDriveLink] = useState('');
 
-  // Tracking section modifications
-  const [ledModified, setLedModified] = useState(false);
-  const [musicModified, setMusicModified] = useState(false);
+  // LED State
+  const [selectedLedTemplate, setSelectedLedTemplate] = useState('led-starry-diamond');
 
-  // Music selector state
-  const [selectedTracks, setSelectedTracks] = useState([]);
+  // Music selector state (Defaults to 4 standard tracks if empty)
+  const [selectedTracks, setSelectedTracks] = useState(['w1', 'e1', 't1', 'd1']);
   const [youtubeLinks, setYoutubeLinks] = useState({ welcome: '', entrance: '', toast: '', dining: '' });
   const [customNotes, setCustomNotes] = useState('');
 
@@ -52,23 +51,39 @@ function PersonalizePageContent() {
   const [saving, setSaving] = useState(false);
   const [savedNotification, setSavedNotification] = useState(false);
 
-  const handleSaveProfile = async () => {
+  // Floor name helper
+  const getFloorName = (code) => {
+    if (code === 'FLOOR_1' || code === 'tang-1') return 'Tầng 1';
+    if (code === 'FLOOR_2' || code === 'tang-2') return 'Tầng 2';
+    if (code === 'FLOOR_4' || code === 'tang-4') return 'Tầng 4';
+    return 'Tầng 3';
+  };
+
+  const handleSaveProfile = async (customOverrides = {}) => {
     setSaving(true);
+    const currentFloorName = getFloorName(selectedFloor);
+
     try {
       const payload = {
-        partyTitle,
-        groomName,
-        brideName,
-        phone,
-        eventDate,
-        eventTime,
-        floorId: selectedFloor,
-        driveLink,
-        ledStatus: ledModified ? 'Đã tùy chỉnh phông LED' : 'Không có yêu cầu gì',
-        musicStatus: (selectedTracks.length > 0 || Object.values(youtubeLinks).some(Boolean)) ? 'Đã chọn danh sách nhạc' : 'Không có yêu cầu gì',
-        selectedMusic: selectedTracks,
-        youtubeLinks,
-        customNotes: customNotes || 'Không có ghi chú thêm',
+        partyTitle: customOverrides.partyTitle || partyTitle,
+        groomName: customOverrides.groomName || groomName,
+        brideName: customOverrides.brideName || brideName,
+        phone: customOverrides.phone || phone,
+        eventDate: customOverrides.eventDate || eventDate,
+        eventTime: customOverrides.eventTime || eventTime,
+        floorId: customOverrides.selectedFloor || selectedFloor,
+        venueName: currentFloorName,
+        driveLink: customOverrides.driveLink !== undefined ? customOverrides.driveLink : driveLink,
+        
+        // AUTOMATICALLY SAVE COMPLETE LED & MUSIC CONFIGURATIONS BY DEFAULT OR OVERRIDES
+        ledStatus: customOverrides.ledStatus || `Đã thiết kế phông màn LED sân khấu (${currentFloorName})`,
+        ledTemplateId: customOverrides.ledTemplateId || selectedLedTemplate || 'led-starry-diamond',
+        
+        musicStatus: customOverrides.musicStatus || (selectedTracks.length > 0 ? `Đã chọn ${selectedTracks.length} bài hát kịch bản` : 'Đã chọn kịch bản nhạc tiệc cưới chuẩn'),
+        selectedMusic: customOverrides.selectedMusic || (selectedTracks.length > 0 ? selectedTracks : ['w1', 'e1', 't1', 'd1']),
+        youtubeLinks: customOverrides.youtubeLinks || youtubeLinks,
+        customNotes: customOverrides.customNotes !== undefined ? customOverrides.customNotes : (customNotes || 'Mở kịch bản chuẩn cho sảnh tiệc sân khấu'),
+        
         invitationSlug: `thiep-${(groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-${(brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-2026`
       };
 
@@ -113,7 +128,7 @@ function PersonalizePageContent() {
           <span className="material-symbols-outlined text-2xl">check_circle</span>
           <div>
             <div className="text-xs font-bold uppercase tracking-wider">Lưu Hồ Sơ Thành Công!</div>
-            <div className="text-[11px] text-emerald-100">Thông tin đã được chuyển tới Đội Kỹ Thuật Golden Palace.</div>
+            <div className="text-[11px] text-emerald-100">Toàn bộ Phông LED, Nhạc tiệc & Thông tin đã được chuyển tới Đội Kỹ Thuật Admin Golden Palace.</div>
           </div>
         </div>
       )}
@@ -324,7 +339,7 @@ function PersonalizePageContent() {
                 * Thông tin này sẽ tự động điền vào Phông LED, Playlist nhạc & Thiệp cưới bên dưới.
               </p>
               <button
-                onClick={handleSaveProfile}
+                onClick={() => handleSaveProfile()}
                 disabled={saving}
                 className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
               >
@@ -389,9 +404,12 @@ function PersonalizePageContent() {
             setEventTypeTitle={setPartyTitle}
             selectedFloorId={mapFloorToLedId(selectedFloor)}
             setSelectedFloorId={(ledId) => setSelectedFloor(mapFloorFromLedId(ledId))}
-            onSave={() => {
-              setLedModified(true);
-              handleSaveProfile();
+            onSave={(ledData) => {
+              setSelectedLedTemplate(ledData?.template?.id || 'led-starry-diamond');
+              handleSaveProfile({
+                ledStatus: `Đã thiết kế phông màn LED (${getFloorName(selectedFloor)}) - Mẫu: ${ledData?.template?.name || 'Sao đêm'}`,
+                ledTemplateId: ledData?.template?.id || 'led-starry-diamond'
+              });
             }}
           />
         )}
@@ -401,12 +419,16 @@ function PersonalizePageContent() {
             selectedTracks={selectedTracks}
             setSelectedTracks={(tracks) => {
               setSelectedTracks(tracks);
-              setMusicModified(true);
             }}
             customNotes={customNotes}
             setCustomNotes={setCustomNotes}
             youtubeLinks={youtubeLinks}
             setYoutubeLinks={setYoutubeLinks}
+            onSave={() => {
+              handleSaveProfile({
+                musicStatus: `Đã chọn ${selectedTracks.length} bài hát & gửi kịch bản nhạc`
+              });
+            }}
           />
         )}
 

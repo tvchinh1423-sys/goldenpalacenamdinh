@@ -26,7 +26,8 @@ export default function MusicSelector({
   customNotes = '',
   setCustomNotes = () => {},
   youtubeLinks = {},
-  setYoutubeLinks = () => {}
+  setYoutubeLinks = () => {},
+  onSave
 }) {
   const [activeTab, setActiveTab] = useState('welcome');
   const [previewTrack, setPreviewTrack] = useState(null); // { title: string, embedUrl: string, watchUrl: string }
@@ -202,6 +203,19 @@ export default function MusicSelector({
           className="w-full bg-[#1c1c1c] border border-gray-700 focus:border-[#e3a638] rounded-xl p-3.5 text-xs text-white outline-none transition-colors leading-relaxed"
         />
       </div>
+
+      {onSave && (
+        <div className="pt-2 flex justify-end">
+          <button
+            type="button"
+            onClick={onSave}
+            className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-xs uppercase tracking-wider rounded-xl hover:brightness-110 shadow-lg flex items-center gap-2 cursor-pointer transition-all"
+          >
+            <span className="material-symbols-outlined text-base">cloud_upload</span>
+            Lưu Kịch Bản Nhạc Vào Hồ Sơ Kỹ Thuật
+          </button>
+        </div>
+      )}
 
       {/* EMBEDDED YOUTUBE VIDEO PLAYER POPUP MODAL */}
       {previewTrack && (
