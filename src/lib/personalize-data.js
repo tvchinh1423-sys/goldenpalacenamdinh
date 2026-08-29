@@ -3,7 +3,7 @@
 export const LED_SCREEN_FLOORS = [
   { 
     id: 'tang-1', 
-    name: 'Tầng 1 (5.12m × 2.72m)', 
+    name: 'Tầng 1', 
     shortName: 'Tầng 1', 
     widthMeters: 5.12, 
     heightMeters: 2.72, 
@@ -13,7 +13,7 @@ export const LED_SCREEN_FLOORS = [
   },
   { 
     id: 'tang-2', 
-    name: 'Tầng 2 (7.04m × 3.36m)', 
+    name: 'Tầng 2', 
     shortName: 'Tầng 2', 
     widthMeters: 7.04, 
     heightMeters: 3.36, 
@@ -23,7 +23,7 @@ export const LED_SCREEN_FLOORS = [
   },
   { 
     id: 'tang-3', 
-    name: 'Tầng 3 (7.04m × 3.84m)', 
+    name: 'Tầng 3', 
     shortName: 'Tầng 3', 
     widthMeters: 7.04, 
     heightMeters: 3.84, 
@@ -33,7 +33,7 @@ export const LED_SCREEN_FLOORS = [
   },
   { 
     id: 'tang-4', 
-    name: 'Tầng 4 (5.12m × 2.72m)', 
+    name: 'Tầng 4', 
     shortName: 'Tầng 4', 
     widthMeters: 5.12, 
     heightMeters: 2.72, 
@@ -204,8 +204,8 @@ export const INVITATION_TEMPLATES = [
 ];
 
 export const VENUE_FLOOR_OPTIONS = [
-  { id: 'FLOOR_1', idLed: 'tang-1', name: 'Tầng 1 (5.12m × 2.72m)', shortName: 'Tầng 1' },
-  { id: 'FLOOR_2', idLed: 'tang-2', name: 'Tầng 2 (7.04m × 3.36m)', shortName: 'Tầng 2' },
-  { id: 'FLOOR_3', idLed: 'tang-3', name: 'Tầng 3 (7.04m × 3.84m)', shortName: 'Tầng 3' },
-  { id: 'FLOOR_4', idLed: 'tang-4', name: 'Tầng 4 (5.12m × 2.72m)', shortName: 'Tầng 4' }
+  { id: 'FLOOR_1', idLed: 'tang-1', name: 'Tầng 1', shortName: 'Tầng 1' },
+  { id: 'FLOOR_2', idLed: 'tang-2', name: 'Tầng 2', shortName: 'Tầng 2' },
+  { id: 'FLOOR_3', idLed: 'tang-3', name: 'Tầng 3', shortName: 'Tầng 3' },
+  { id: 'FLOOR_4', idLed: 'tang-4', name: 'Tầng 4', shortName: 'Tầng 4' }
 ];
