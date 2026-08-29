@@ -13,12 +13,27 @@ const EVENT_TITLE_OPTIONS = [
   'TIỆC KỶ NIỆM'
 ];
 
-export default function LedCustomizer({ groomName, setGroomName, brideName, setBrideName, eventDate, setEventDate, onSave }) {
+export default function LedCustomizer({ 
+  groomName, 
+  setGroomName, 
+  brideName, 
+  setBrideName, 
+  eventDate, 
+  setEventDate, 
+  eventTypeTitle: propEventTypeTitle, 
+  setEventTypeTitle: propSetEventTypeTitle, 
+  onSave 
+}) {
   const [selectedFloor, setSelectedFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3 (7.04x3.84m)
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
   const [designMode, setDesignMode] = useState('masterpiece');
   const [customUploadUrl, setCustomUploadUrl] = useState(null);
-  const [eventTypeTitle, setEventTypeTitle] = useState('LỄ THÀNH HÔN');
+
+  // Local fallback state if props not provided
+  const [localEventTypeTitle, setLocalEventTypeTitle] = useState('LỄ THÀNH HÔN');
+  const eventTypeTitle = propEventTypeTitle !== undefined ? propEventTypeTitle : localEventTypeTitle;
+  const setEventTypeTitle = propSetEventTypeTitle || setLocalEventTypeTitle;
+
   const [showRings, setShowRings] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -73,7 +88,7 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)}`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã căn dãn khoảng cách giữa 3 tầng bằng nhau 100%, bổ sung các nút chọn tên tiệc mẫu + ô tự nhập tay linh hoạt.
+          Đã hợp nhất Tên Tiệc Cưới & Tiêu Đề thành 1 ô duy nhất kèm bộ nút chọn nhanh tiện lợi, dãn đều khoảng cách 3 tầng.
         </p>
 
         {/* Mode Switcher */}
@@ -88,7 +103,7 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)}`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Khoảng Cách 3 Tầng Bằng Nhau</span>
+            <span>Mẫu Tiệc Cưới Hoàn Hảo</span>
           </button>
           <button
             type="button"
@@ -138,14 +153,14 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)}`;
         {/* 2. Event Title & Names & Date Inputs */}
         <div className="space-y-3.5 text-sm">
           
-          {/* Select / Enter Event Title */}
-          <div className="bg-[#1a1a1a] p-3 rounded-xl border border-amber-500/20">
+          {/* UNIFIED SINGLE INPUT: TÊN TIỆC CƯỚI & TIÊU ĐỀ (TẦNG 1) */}
+          <div className="bg-[#1a1a1a] p-3.5 rounded-xl border border-amber-500/30">
             <label className="block text-[#e3a638] text-xs font-bold mb-2 uppercase tracking-wider flex items-center justify-between">
-              <span className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-sm">title</span>
-                Tên Tiêu Đề Tiệc (Tầng 1 - Trên Cùng)
+              <span className="flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-base">title</span>
+                Tên Tiệc Cưới & Tiêu Đề (Tầng 1) (*)
               </span>
-              <span className="text-[10px] text-amber-300/80 font-normal">Gợi ý + Nhập tay</span>
+              <span className="text-[10px] text-amber-300/80 font-normal">Gợi ý + Nhập tự do</span>
             </label>
             
             {/* Quick Suggestion Buttons */}
@@ -166,13 +181,13 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)}`;
               ))}
             </div>
 
-            {/* Custom Input */}
+            {/* Unified Input Box */}
             <input
               type="text"
               value={eventTypeTitle}
               onChange={(e) => setEventTypeTitle(e.target.value)}
               placeholder="VD: LỄ THÀNH HÔN / TIỆC SINH NHẬT"
-              className="w-full bg-[#141414] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs font-bold tracking-wider transition-colors"
+              className="w-full bg-[#141414] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none text-xs font-bold tracking-wider transition-colors"
             />
           </div>
 
@@ -315,12 +330,12 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)}`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-19"
+                id="canva-image-input-20"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-19"
+                htmlFor="canva-image-input-20"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>

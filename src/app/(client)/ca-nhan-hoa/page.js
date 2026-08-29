@@ -144,20 +144,6 @@ function PersonalizePageContent() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               
-              {/* Tên Tiệc Cưới */}
-              <div className="sm:col-span-2">
-                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
-                  Tên Tiệc Cưới (*)
-                </label>
-                <input
-                  type="text"
-                  value={partyTitle}
-                  onChange={(e) => handlePartyTitleChange(e.target.value)}
-                  placeholder="VD: Tiệc cưới Anh Thư & Văn Mạnh"
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white font-medium outline-none transition-colors"
-                />
-              </div>
-
               {/* Tên Chú Rể & Cô Dâu */}
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
@@ -332,6 +318,8 @@ function PersonalizePageContent() {
             setBrideName={setBrideName}
             eventDate={eventDate}
             setEventDate={setEventDate}
+            eventTypeTitle={partyTitle}
+            setEventTypeTitle={setPartyTitle}
             onSave={() => {
               setLedModified(true);
               handleSaveProfile();
