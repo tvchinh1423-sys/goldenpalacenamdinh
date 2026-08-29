@@ -2,18 +2,18 @@
 
 export const LED_SCREEN_FLOORS = [
   { 
-    id: 'tang-3', 
-    name: 'Tầng 3 (Sảnh Hoàng Gia)', 
-    shortName: 'Tầng 3', 
-    widthMeters: 7.04, 
-    heightMeters: 3.84, 
-    aspectRatio: '704 / 384', 
-    aspectClass: 'aspect-[704/384]',
-    specText: 'Kích thước Màn LED: 7.04m x 3.84m (Tỷ lệ 1.83:1)' 
+    id: 'tang-1', 
+    name: 'Tầng 1 (5.12m × 2.72m)', 
+    shortName: 'Tầng 1', 
+    widthMeters: 5.12, 
+    heightMeters: 2.72, 
+    aspectRatio: '512 / 272', 
+    aspectClass: 'aspect-[512/272]',
+    specText: 'Kích thước Màn LED: 5.12m x 2.72m (Tỷ lệ 1.88:1)' 
   },
   { 
     id: 'tang-2', 
-    name: 'Tầng 2 (Sảnh Ngọc Bích)', 
+    name: 'Tầng 2 (7.04m × 3.36m)', 
     shortName: 'Tầng 2', 
     widthMeters: 7.04, 
     heightMeters: 3.36, 
@@ -22,8 +22,18 @@ export const LED_SCREEN_FLOORS = [
     specText: 'Kích thước Màn LED: 7.04m x 3.36m (Tỷ lệ 2.10:1)' 
   },
   { 
+    id: 'tang-3', 
+    name: 'Tầng 3 (7.04m × 3.84m)', 
+    shortName: 'Tầng 3', 
+    widthMeters: 7.04, 
+    heightMeters: 3.84, 
+    aspectRatio: '704 / 384', 
+    aspectClass: 'aspect-[704/384]',
+    specText: 'Kích thước Màn LED: 7.04m x 3.84m (Tỷ lệ 1.83:1)' 
+  },
+  { 
     id: 'tang-4', 
-    name: 'Tầng 4 (Sảnh Kim Cương)', 
+    name: 'Tầng 4 (5.12m × 2.72m)', 
     shortName: 'Tầng 4', 
     widthMeters: 5.12, 
     heightMeters: 2.72, 
@@ -98,40 +108,30 @@ export const MUSIC_TRACKS = [
   { id: 'e3', catId: 'entrance', title: 'Lover', artist: 'Taylor Swift', duration: '3:41', youtubeUrl: 'https://www.youtube.com/watch?v=-BjZmE2gtdo' },
   { id: 'e4', catId: 'entrance', title: 'Yes I Do', artist: 'Only C x Lou Hoàng', duration: '3:55', youtubeUrl: 'https://www.youtube.com/watch?v=Zt_35B07X9Y' },
   { id: 'e5', catId: 'entrance', title: 'Beautiful in White', artist: 'Westlife', duration: '3:52', youtubeUrl: 'https://www.youtube.com/watch?v=XRNL56lYc2E' },
-  { id: 'e6', catId: 'entrance', title: 'Ánh Nắng Của Anh', artist: 'Đức Phúc', duration: '4:20', youtubeUrl: 'https://www.youtube.com/watch?v=3-fV9gWc0Z4' },
-  { id: 'e7', catId: 'entrance', title: 'Perfect', artist: 'Ed Sheeran', duration: '4:23', youtubeUrl: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g' },
-  { id: 'e8', catId: 'entrance', title: 'Hơn Cả Yêu', artist: 'Đức Phúc', duration: '4:05', youtubeUrl: 'https://www.youtube.com/watch?v=Z7nQ2S1H1J0' },
 
-  // Giai đoạn 3: Khai tiệc & Nâng ly
-  { id: 't1', catId: 'toast', title: 'Đừng Làm Trái Tim Anh Đau', artist: 'Sơn Tùng M-TP', duration: '3:50', youtubeUrl: 'https://www.youtube.com/watch?v=abPmZCZZrFA' },
-  { id: 't2', catId: 'toast', title: 'Love Paradise', artist: 'Kelly Chen', duration: '3:15', youtubeUrl: 'https://www.youtube.com/watch?v=YmD47R2w8Z8' },
-  { id: 't3', catId: 'toast', title: 'Ngày Mình Chung Đôi', artist: 'Hùng Min', duration: '3:45', youtubeUrl: 'https://www.youtube.com/watch?v=CqHj_dJ2A-M' },
-  { id: 't4', catId: 'toast', title: 'Ngày Hạnh Phúc', artist: 'Đan Trường', duration: '4:10', youtubeUrl: 'https://www.youtube.com/watch?v=Zk9gD18k-C8' },
-  { id: 't5', catId: 'toast', title: 'Sugar', artist: 'Maroon 5', duration: '3:55', youtubeUrl: 'https://www.youtube.com/watch?v=09R8_2nJtjg' },
-  { id: 't6', catId: 'toast', title: 'Cưới Thôi', artist: 'Masew x Masiu', duration: '3:05', youtubeUrl: 'https://www.youtube.com/watch?v=3R-zSgK2OQ0' },
-  { id: 't7', catId: 'toast', title: 'Marry You', artist: 'Bruno Mars', duration: '3:50', youtubeUrl: 'https://www.youtube.com/watch?v=8VqCqGz99mE' },
-  { id: 't8', catId: 'toast', title: 'Dancing Queen', artist: 'ABBA', duration: '3:51', youtubeUrl: 'https://www.youtube.com/watch?v=xFrGuyw1V8s' },
+  // Giai đoạn 3: Rót rượu & Cắt bánh
+  { id: 't1', catId: 'toast', title: 'Marry You', artist: 'Bruno Mars', duration: '3:50', youtubeUrl: 'https://www.youtube.com/watch?v=83XlW4h16Wk' },
+  { id: 't2', catId: 'toast', title: 'Hơn Cả Yêu', artist: 'Đức Phúc', duration: '4:15', youtubeUrl: 'https://www.youtube.com/watch?v=f0b2f-G1gU8' },
+  { id: 't3', catId: 'toast', title: 'Sugar', artist: 'Maroon 5', duration: '3:55', youtubeUrl: 'https://www.youtube.com/watch?v=09R8_2nJtjg' },
+  { id: 't4', catId: 'toast', title: 'Cầu Hôn', artist: 'Văn Mai Hương', duration: '4:02', youtubeUrl: 'https://www.youtube.com/watch?v=4y-W_m3y8mQ' },
 
-  // Giai đoạn 4: Giao lưu & Tiễn khách
-  { id: 'd1', catId: 'dining', title: 'Một Nhà', artist: 'Da LAB', duration: '3:15', youtubeUrl: 'https://www.youtube.com/watch?v=3v3-L6k_Kso' },
-  { id: 'd2', catId: 'dining', title: 'Pretty Boy', artist: 'M2M', duration: '4:40', youtubeUrl: 'https://www.youtube.com/watch?v=7YwZ1qF4S0s' },
-  { id: 'd3', catId: 'dining', title: 'Túp Lều Vàng', artist: 'Nguyễn Đình Vũ x NBORO', duration: '3:20', youtubeUrl: 'https://www.youtube.com/watch?v=2e6N21X2X78' },
-  { id: 'd4', catId: 'dining', title: 'Chỉ Cần Có Nhau', artist: 'Vũ Cát Tường', duration: '3:35', youtubeUrl: 'https://www.youtube.com/watch?v=7GqH1f1q-E8' },
-  { id: 'd5', catId: 'dining', title: 'You Are The Reason', artist: 'Calum Scott', duration: '3:24', youtubeUrl: 'https://www.youtube.com/watch?v=ShZ978fBl6Y' },
-  { id: 'd6', catId: 'dining', title: 'Vài Câu Nói Có Khiến Người Thay Đổi', artist: 'GREY D', duration: '3:45', youtubeUrl: 'https://www.youtube.com/watch?v=W0c00k2tVn4' },
-  { id: 'd7', catId: 'dining', title: 'I Do', artist: '911', duration: '3:28', youtubeUrl: 'https://www.youtube.com/watch?v=0A6QNUXn000' }
+  // Giai đoạn 4: Thưởng thức tiệc & Giao lưu
+  { id: 'd1', catId: 'dining', title: 'Ngày Đầu Tiên', artist: 'Đức Phúc', duration: '3:28', youtubeUrl: 'https://www.youtube.com/watch?v=fF-c7zL-kR4' },
+  { id: 'd2', catId: 'dining', title: 'Bài Ca Tình Yêu', artist: 'Đinh Mạnh Ninh', duration: '4:30', youtubeUrl: 'https://www.youtube.com/watch?v=68h3c8Yx2Z0' },
+  { id: 'd3', catId: 'dining', title: 'Perfect', artist: 'Ed Sheeran', duration: '4:23', youtubeUrl: 'https://www.youtube.com/watch?v=2Vv-BfVoq4g' },
+  { id: 'd4', catId: 'dining', title: 'Một Nhà', artist: 'Da LAB', duration: '3:10', youtubeUrl: 'https://www.youtube.com/watch?v=84LhW-Wb0b4' }
 ];
 
 export const INVITATION_TEMPLATES = [
   {
-    id: 'CRYSTAL_GOLD_GLASS',
-    name: '1. Vàng Ép Kim Hoàng Gia',
+    id: 'CLASSIC_GOLD_FLORAL',
+    name: '1. Ép Kim Vàng Cổ Điển',
     bgClass: 'bg-[#faf6f0]',
-    cardBorder: 'border-2 border-[#d4af37]/60 shadow-[0_15px_50px_rgba(212,175,55,0.18)]',
+    cardBorder: 'border-2 border-[#d4af37]/80 shadow-[0_15px_50px_rgba(212,175,55,0.25)]',
     accentColor: '#b8860b',
     nameColor: 'text-[#b8860b]',
     headerColor: 'text-[#a66a3a]',
-    subTextColor: '#8c6d3f',
+    subTextColor: '#a66a3a',
     boxBg: 'bg-[#fdfbf7] border border-[#e3a638]/30',
     floralTheme: 'gold-vintage',
     badge: 'Ép Kim Vàng Cổ Điển'
@@ -204,7 +204,8 @@ export const INVITATION_TEMPLATES = [
 ];
 
 export const VENUE_FLOOR_OPTIONS = [
-  { id: 'FLOOR_3', idLed: 'tang-3', name: 'Tầng 3 (Sảnh Hoàng Gia - 7.04x3.84m)', shortName: 'Tầng 3' },
-  { id: 'FLOOR_2', idLed: 'tang-2', name: 'Tầng 2 (Sảnh Ngọc Bích - 7.04x3.36m)', shortName: 'Tầng 2' },
-  { id: 'FLOOR_4', idLed: 'tang-4', name: 'Tầng 4 (Sảnh Kim Cương - 5.12x2.72m)', shortName: 'Tầng 4' }
+  { id: 'FLOOR_1', idLed: 'tang-1', name: 'Tầng 1 (5.12m × 2.72m)', shortName: 'Tầng 1' },
+  { id: 'FLOOR_2', idLed: 'tang-2', name: 'Tầng 2 (7.04m × 3.36m)', shortName: 'Tầng 2' },
+  { id: 'FLOOR_3', idLed: 'tang-3', name: 'Tầng 3 (7.04m × 3.84m)', shortName: 'Tầng 3' },
+  { id: 'FLOOR_4', idLed: 'tang-4', name: 'Tầng 4 (5.12m × 2.72m)', shortName: 'Tầng 4' }
 ];

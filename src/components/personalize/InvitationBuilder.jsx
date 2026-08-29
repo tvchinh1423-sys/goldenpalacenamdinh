@@ -485,40 +485,40 @@ export default function InvitationBuilder({
         </div>
 
         {/* E-Card Interactive Preview Screen */}
-        <div className={`w-full max-w-sm rounded-3xl p-6 sm:p-8 ${selectedTemplate.cardBorder} relative overflow-hidden transition-all duration-500`}>
+        <div className={`w-full max-w-sm rounded-3xl p-6 sm:p-8 ${selectedTemplate.bgClass || 'bg-[#faf6f0]'} ${selectedTemplate.cardBorder} relative overflow-hidden transition-all duration-500 text-stone-800`}>
           <FloralOrnaments theme={selectedTemplate.floralTheme} />
 
           {/* Logo Golden Palace */}
           <div className="absolute top-4 left-5 flex items-center gap-1.5 z-20">
             <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-6 w-auto object-contain" />
-            <span className="text-[8px] font-playfair tracking-[0.2em] text-amber-600 font-bold uppercase">
+            <span className="text-[8px] font-playfair tracking-[0.2em] text-amber-800 font-bold uppercase">
               GOLDEN PALACE
             </span>
           </div>
 
           <div className="pt-4 text-center relative z-10">
-            <div className="font-script text-3xl text-amber-600 mb-1">
+            <div className={`font-script text-3xl ${selectedTemplate.nameColor || 'text-amber-800'} mb-1`}>
               We Do
             </div>
-            <div className="text-[9px] tracking-[0.3em] uppercase text-amber-700 font-bold mb-3 border-b border-amber-300/40 pb-2">
+            <div className={`text-[9px] tracking-[0.3em] uppercase ${selectedTemplate.headerColor || 'text-amber-900'} font-bold mb-3 border-b border-amber-300/40 pb-2`}>
               TRÂN TRỌNG KÍNH MỜI
             </div>
           </div>
 
           {/* GUEST NAME IF ENTERED */}
           {guestName.trim() && (
-            <div className="w-full bg-amber-50/80 border border-amber-300/60 rounded-xl p-2.5 my-2 text-center shadow-xs">
-              <span className="text-[9px] tracking-[0.2em] uppercase text-amber-700 font-bold block">
+            <div className={`w-full ${selectedTemplate.boxBg || 'bg-white/80'} rounded-xl p-2.5 my-2 text-center shadow-xs`}>
+              <span className={`text-[9px] tracking-[0.2em] uppercase ${selectedTemplate.headerColor || 'text-amber-800'} font-bold block`}>
                 KÍNH MỜI QUÝ KHÁCH
               </span>
-              <span className="text-base font-playfair font-bold text-amber-800">
+              <span className={`text-base font-playfair font-bold ${selectedTemplate.nameColor || 'text-amber-900'}`}>
                 {guestName}
               </span>
             </div>
           )}
 
           <div className="text-center space-y-0.5 my-3 relative z-10">
-            <h4 className="text-lg font-playfair font-bold text-amber-700 tracking-wider uppercase">
+            <h4 className={`text-lg font-playfair font-bold ${selectedTemplate.nameColor || 'text-amber-800'} tracking-wider uppercase`}>
               WEDDING CEREMONY
             </h4>
             <p className="text-[10px] text-stone-600 font-serif italic">
@@ -527,12 +527,12 @@ export default function InvitationBuilder({
           </div>
 
           {/* Couple Names */}
-          <div className="w-full bg-white/70 border border-amber-300/40 rounded-xl p-4 text-center my-3">
-            <div className="font-script text-3xl text-amber-700 leading-tight">
+          <div className={`w-full ${selectedTemplate.boxBg || 'bg-white/80'} rounded-xl p-4 text-center my-3`}>
+            <div className={`font-script text-3xl ${selectedTemplate.nameColor || 'text-amber-800'} leading-tight`}>
               {groomName || 'Đức Hoàng'}
             </div>
-            <div className="my-0.5 text-amber-700 font-serif italic text-lg">&</div>
-            <div className="font-script text-3xl text-amber-700 leading-tight">
+            <div className={`my-0.5 ${selectedTemplate.nameColor || 'text-amber-800'} font-serif italic text-lg`}>&</div>
+            <div className={`font-script text-3xl ${selectedTemplate.nameColor || 'text-amber-800'} leading-tight`}>
               {brideName || 'Thu Hương'}
             </div>
           </div>
@@ -540,12 +540,12 @@ export default function InvitationBuilder({
           {/* Parents */}
           <div className="w-full grid grid-cols-2 gap-2 text-[10px] border-y border-amber-300/50 py-3 my-3 font-serif">
             <div className="text-center border-r border-amber-300/40 pr-1 space-y-0.5">
-              <div className="font-bold text-amber-800 uppercase text-[9px]">NHÀ TRAI</div>
+              <div className={`font-bold ${selectedTemplate.headerColor || 'text-amber-800'} uppercase text-[9px]`}>NHÀ TRAI</div>
               <div className="text-stone-800">{groomFather}</div>
               <div className="text-stone-800">{groomMother}</div>
             </div>
             <div className="text-center pl-1 space-y-0.5">
-              <div className="font-bold text-amber-800 uppercase text-[9px]">NHÀ GÁI</div>
+              <div className={`font-bold ${selectedTemplate.headerColor || 'text-amber-800'} uppercase text-[9px]`}>NHÀ GÁI</div>
               <div className="text-stone-800">{brideFather}</div>
               <div className="text-stone-800">{brideMother}</div>
             </div>
@@ -553,18 +553,18 @@ export default function InvitationBuilder({
 
           {/* Event Time & Venue Floor */}
           <div className="space-y-2 text-center text-[10px] my-3">
-            <div className="p-2.5 bg-white/70 border border-amber-300/40 rounded-lg">
-              <div className="text-amber-800 text-[9px] font-bold uppercase">Thời Gian Cử Hành</div>
+            <div className={`p-2.5 ${selectedTemplate.boxBg || 'bg-white/80'} rounded-lg`}>
+              <div className={`${selectedTemplate.headerColor || 'text-amber-800'} text-[9px] font-bold uppercase`}>Thời Gian Cử Hành</div>
               <div className="text-sm font-bold text-stone-900 font-mono mt-0.5">{eventTime || '11:00 AM'}</div>
               <div className="text-stone-700 font-medium">{eventDate || '2026-11-20'}</div>
             </div>
 
-            <div className="p-2.5 bg-white/70 border border-amber-300/40 rounded-lg">
-              <div className="text-amber-800 text-[9px] font-bold uppercase">Địa Điểm Tổ Chức</div>
+            <div className={`p-2.5 ${selectedTemplate.boxBg || 'bg-white/80'} rounded-lg`}>
+              <div className={`${selectedTemplate.headerColor || 'text-amber-800'} text-[9px] font-bold uppercase`}>Địa Điểm Tổ Chức</div>
               <div className="text-sm font-bold text-stone-900 font-playfair uppercase">
                 {selectedVenueObj.shortName || 'Tầng 3'}
               </div>
-              <div className="text-amber-800 font-bold text-[9px] uppercase">GOLDEN PALACE NAM ĐỊNH</div>
+              <div className={`${selectedTemplate.headerColor || 'text-amber-800'} font-bold text-[9px] uppercase`}>GOLDEN PALACE NAM ĐỊNH</div>
             </div>
           </div>
 

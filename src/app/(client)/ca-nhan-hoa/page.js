@@ -89,14 +89,16 @@ function PersonalizePageContent() {
     }
   };
 
-  // Floor mapping helper between LedCustomizer (tang-3, tang-2, tang-4) and FLOOR_3, FLOOR_2, FLOOR_4
+  // Floor mapping helper between LedCustomizer (tang-1, tang-2, tang-3, tang-4) and FLOOR_1, FLOOR_2, FLOOR_3, FLOOR_4
   const mapFloorToLedId = (floorCode) => {
+    if (floorCode === 'FLOOR_1' || floorCode === 'tang-1') return 'tang-1';
     if (floorCode === 'FLOOR_2' || floorCode === 'tang-2') return 'tang-2';
     if (floorCode === 'FLOOR_4' || floorCode === 'tang-4') return 'tang-4';
     return 'tang-3';
   };
 
   const mapFloorFromLedId = (ledCode) => {
+    if (ledCode === 'tang-1' || ledCode === 'FLOOR_1') return 'FLOOR_1';
     if (ledCode === 'tang-2' || ledCode === 'FLOOR_2') return 'FLOOR_2';
     if (ledCode === 'tang-4' || ledCode === 'FLOOR_4') return 'FLOOR_4';
     return 'FLOOR_3';
