@@ -8,7 +8,9 @@ const EVENT_TITLE_OPTIONS = [
   'LỄ VU QUY',
   'LỄ TÂN HÔN',
   'LỄ BÁO HỶ',
-  'LỄ ĐÍNH HÔN'
+  'LỄ ĐÍNH HÔN',
+  'TIỆC SINH NHẬT',
+  'TIỆC KỶ NIỆM'
 ];
 
 export default function LedCustomizer({ groomName, setGroomName, brideName, setBrideName, eventDate, setEventDate, onSave }) {
@@ -46,9 +48,10 @@ export default function LedCustomizer({ groomName, setGroomName, brideName, setB
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
-Tiêu đề tiệc (Tầng 1): ${eventTypeTitle} (Sửa phông Playfair Display 100% Tiếng Việt, nét vừa đủ)
-Tên Dâu Rể (Tầng 2): ${brideName || 'Thu Hương'} & ${groomName || 'Đức Hoàng'} (Giảm 2 size)
-Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Giảm 1 size)`;
+Khoảng cách 3 tầng: Bằng nhau 100% (Equal vertical gaps)
+Tiêu đề tiệc (Tầng 1): ${eventTypeTitle}
+Tên Dâu Rể (Tầng 2): ${brideName || 'Thu Hương'} & ${groomName || 'Đức Hoàng'}
+Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)}`;
     navigator.clipboard.writeText(info);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -70,7 +73,7 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Giảm 1 size)`;
           Thiết Kế Phông Màn LED Sân Khấu
         </h3>
         <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-          Đã đổi phông Tầng 1 dày rõ nét chuẩn Tiếng Việt, gom gọn khoảng cách chữ, thu nhỏ Tầng 2 bớt 2 size và Tầng 3 bớt 1 size.
+          Đã căn dãn khoảng cách giữa 3 tầng bằng nhau 100%, bổ sung các nút chọn tên tiệc mẫu + ô tự nhập tay linh hoạt.
         </p>
 
         {/* Mode Switcher */}
@@ -85,7 +88,7 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Giảm 1 size)`;
             }`}
           >
             <span className="material-symbols-outlined text-sm">auto_awesome</span>
-            <span>Tối Ưu Size & Phông Chữ</span>
+            <span>Khoảng Cách 3 Tầng Bằng Nhau</span>
           </button>
           <button
             type="button"
@@ -136,40 +139,47 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Giảm 1 size)`;
         <div className="space-y-3.5 text-sm">
           
           {/* Select / Enter Event Title */}
-          <div>
-            <label className="block text-[#e3a638] text-xs font-bold mb-1 uppercase tracking-wider flex items-center gap-1">
-              <span className="material-symbols-outlined text-sm">title</span>
-              Tên Tiêu Đề Tiệc Cưới (Tầng Trên Cùng)
+          <div className="bg-[#1a1a1a] p-3 rounded-xl border border-amber-500/20">
+            <label className="block text-[#e3a638] text-xs font-bold mb-2 uppercase tracking-wider flex items-center justify-between">
+              <span className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm">title</span>
+                Tên Tiêu Đề Tiệc (Tầng 1 - Trên Cùng)
+              </span>
+              <span className="text-[10px] text-amber-300/80 font-normal">Gợi ý + Nhập tay</span>
             </label>
-            <div className="grid grid-cols-3 gap-1.5 mb-2">
+            
+            {/* Quick Suggestion Buttons */}
+            <div className="flex flex-wrap gap-1.5 mb-2.5">
               {EVENT_TITLE_OPTIONS.map((opt) => (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => setEventTypeTitle(opt)}
-                  className={`py-1.5 px-2 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
+                  className={`py-1.5 px-2.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
                     eventTypeTitle === opt
-                      ? 'border-amber-400 bg-amber-400/20 text-amber-300'
-                      : 'border-gray-800 bg-[#1a1a1a] text-gray-400 hover:text-white'
+                      ? 'border-amber-400 bg-amber-400/25 text-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.3)]'
+                      : 'border-gray-800 bg-[#141414] text-gray-400 hover:text-white hover:border-gray-700'
                   }`}
                 >
                   {opt}
                 </button>
               ))}
             </div>
+
+            {/* Custom Input */}
             <input
               type="text"
               value={eventTypeTitle}
               onChange={(e) => setEventTypeTitle(e.target.value)}
-              placeholder="VD: LỄ THÀNH HÔN"
-              className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs font-semibold tracking-wider transition-colors"
+              placeholder="VD: LỄ THÀNH HÔN / TIỆC SINH NHẬT"
+              className="w-full bg-[#141414] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2 text-white outline-none text-xs font-bold tracking-wider transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">
-                Tên Cô Dâu
+                Tên Cô Dâu / Chủ Tiệc
               </label>
               <input
                 type="text"
@@ -305,12 +315,12 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Giảm 1 size)`;
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                id="canva-image-input-18"
+                id="canva-image-input-19"
                 className="hidden"
               />
 
               <label
-                htmlFor="canva-image-input-18"
+                htmlFor="canva-image-input-19"
                 className="w-full py-2.5 px-3 bg-[#252525] hover:bg-[#303030] border border-dashed border-gray-600 hover:border-amber-400 rounded-lg text-xs text-gray-300 flex items-center justify-center gap-2 cursor-pointer transition-colors"
               >
                 <span className="material-symbols-outlined text-lg text-amber-400">add_photo_alternate</span>
@@ -387,10 +397,10 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Giảm 1 size)`;
                 />
               </div>
 
-              {/* FOREGROUND CONTENT LAYER: STRICT 3-TIER VERTICAL STACK */}
-              <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-between text-center px-4 pt-6 sm:pt-10 md:pt-12 pb-3">
+              {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
+              <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
 
-                {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN" - PLAYFAIR DISPLAY SERIF DÀY NÉT BÓNG MẠ BẠC, 100% TIẾNG VIỆT, KHẢO SÁT KHOẢNG CÁCH NẾT CHỮ GỌN) */}
+                {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
                 <div className="w-full flex items-center justify-center z-20">
                   <div 
                     className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
@@ -400,8 +410,8 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Giảm 1 size)`;
                   </div>
                 </div>
 
-                {/* TẦNG 2: COUPLE NAMES (REDUCED BY 2 FONT SIZES: text-xl sm:text-3xl md:text-4xl lg:text-5xl) */}
-                <div className="w-[75%] max-w-[75%] flex items-center justify-center my-2 sm:my-4 z-20">
+                {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
+                <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
                   <div 
                     className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
                     style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
@@ -440,8 +450,8 @@ Ngày Cưới (Tầng 3): ${formatDateDot(eventDate)} (Giảm 1 size)`;
                   </div>
                 </div>
 
-                {/* TẦNG 3: WEDDING DATE (REDUCED BY 1 FONT SIZE: text-xs sm:text-base md:text-lg lg:text-xl) */}
-                <div className="z-20 w-full flex flex-col items-center mb-1">
+                {/* TẦNG 3: WEDDING DATE ("28.12.2025") */}
+                <div className="z-20 w-full flex flex-col items-center">
                   <div 
                     className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
                     style={{ 
