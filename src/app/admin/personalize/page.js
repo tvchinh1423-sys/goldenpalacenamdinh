@@ -14,7 +14,7 @@ export default function AdminPersonalizePage() {
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [editingProfile, setEditingProfile] = useState(null); // Edit profile modal state
   
-  // Date Filtering State matching Screenshot 2
+  // Date Filtering State
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [dateFilterPreset, setDateFilterPreset] = useState('all'); // 'all' | 'month' | 'week' | 'today' | 'custom'
@@ -138,57 +138,90 @@ export default function AdminPersonalizePage() {
     ? (LED_STAGE_TEMPLATES.find(t => t.id === selectedProfile.ledTemplateId) || LED_STAGE_TEMPLATES[0])
     : LED_STAGE_TEMPLATES[0];
 
-  // Helper function to export/download 1920x1080 Full HD Stage LED image file
-  const handleDownloadLedBackdrop = () => {
+  // Helper function to export/download 1920x1080 Full HD Stage LED image file (EXACT MATCH WITH LIVE DISPLAY)
+  const handleDownloadLedBackdrop = async () => {
     if (!selectedProfile) return;
+
     const canvas = document.createElement('canvas');
     canvas.width = 1920;
     canvas.height = 1080;
     const ctx = canvas.getContext('2d');
-    
-    // Background Gradient
-    const grad = ctx.createLinearGradient(0, 0, 1920, 1080);
-    grad.addColorStop(0, '#1a1200');
-    grad.addColorStop(0.5, '#3a2903');
-    grad.addColorStop(1, '#1a1200');
-    ctx.fillStyle = grad;
+
+    // Load Starry Night Background Image
+    const bgImg = new Image();
+    bgImg.crossOrigin = 'anonymous';
+    bgImg.src = currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg';
+
+    // Load Logo Image
+    const logoImg = new Image();
+    logoImg.crossOrigin = 'anonymous';
+    logoImg.src = '/logo-icon.png';
+
+    // Wait for images to load
+    await Promise.all([
+      new Promise((resolve) => { bgImg.onload = resolve; bgImg.onerror = resolve; }),
+      new Promise((resolve) => { logoImg.onload = resolve; logoImg.onerror = resolve; })
+    ]);
+
+    // Ensure Web Fonts are loaded
+    if (typeof document !== 'undefined' && document.fonts) {
+      await document.fonts.ready;
+    }
+
+    // 1. Draw Starry Night Background
+    if (bgImg.complete && bgImg.naturalWidth > 0) {
+      ctx.drawImage(bgImg, 0, 0, 1920, 1080);
+    } else {
+      ctx.fillStyle = '#050508';
+      ctx.fillRect(0, 0, 1920, 1080);
+    }
+
+    // Overlay Subtle Dark Vignette for contrast
+    const vignette = ctx.createRadialGradient(960, 540, 200, 960, 540, 1100);
+    vignette.addColorStop(0, 'rgba(0, 0, 0, 0.15)');
+    vignette.addColorStop(1, 'rgba(0, 0, 0, 0.65)');
+    ctx.fillStyle = vignette;
     ctx.fillRect(0, 0, 1920, 1080);
 
-    // Outer Glow / Border Frame
-    ctx.strokeStyle = '#e3a638';
-    ctx.lineWidth = 14;
-    ctx.strokeRect(70, 60, 1780, 960);
+    // 2. Draw Golden Palace Logo Top-Left
+    if (logoImg.complete && logoImg.naturalWidth > 0) {
+      ctx.drawImage(logoImg, 80, 60, 100, 100);
+    }
 
-    // Inner Corner Motif
-    ctx.strokeStyle = '#f3c969';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(90, 80, 1740, 920);
-
-    // Header Title
-    ctx.fillStyle = '#f3c969';
-    ctx.font = 'bold 36px serif';
     ctx.textAlign = 'center';
-    ctx.fillText('LỄ THÀNH HÔN • WEDDING CEREMONY', 960, 240);
+    ctx.textBaseline = 'middle';
 
-    // Couple Names
+    // 3. TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN")
     ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 92px serif';
-    ctx.fillText(`${selectedProfile.groomName || 'Văn Mạnh'}  &  ${selectedProfile.brideName || 'Anh Thư'}`, 960, 520);
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.98)';
+    ctx.shadowBlur = 20;
+    ctx.shadowOffsetY = 6;
+    ctx.font = '900 68px "Playfair Display", Didot, serif';
+    const partyText = (selectedProfile.partyTitle || 'LỄ THÀNH HÔN').toUpperCase();
+    ctx.fillText(partyText, 960, 340);
 
-    // Subtitle Date & Venue
-    ctx.fillStyle = '#e3a638';
-    ctx.font = '32px sans-serif';
-    ctx.fillText(`${selectedProfile.eventDate || '2026-11-20'} • GOLDEN PALACE NAM ĐỊNH (${selectedProfile.venueName || 'Tầng 3'})`, 960, 720);
+    // 4. TẦNG 2: COUPLE NAMES IN CURSIVE SCRIPT ("Đức Hoàng & Thu Hương")
+    ctx.fillStyle = '#FFFFFF';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.98)';
+    ctx.shadowBlur = 25;
+    ctx.shadowOffsetY = 8;
+    ctx.font = '400 110px "Ballet", "Great Vibes", cursive, serif';
+    const coupleText = `${selectedProfile.groomName || 'Đức Hoàng'}   &   ${selectedProfile.brideName || 'Thu Hương'}`;
+    ctx.fillText(coupleText, 960, 540);
 
-    // Branding Footer
-    ctx.fillStyle = '#a66a3a';
-    ctx.font = '24px sans-serif';
-    ctx.fillText('GOLDEN PALACE NAM ĐỊNH — P3 FULL HD STAGE BACKDROP', 960, 920);
+    // 5. TẦNG 3: WEDDING DATE ("2026-11-20")
+    ctx.fillStyle = '#F3C969';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+    ctx.shadowBlur = 15;
+    ctx.shadowOffsetY = 4;
+    ctx.font = '700 44px "Playfair Display", monospace, serif';
+    const dateText = selectedProfile.eventDate || '2026-11-20';
+    ctx.fillText(dateText, 960, 720);
 
-    // Download Trigger
+    // Trigger Image Download
     const link = document.createElement('a');
-    const groomClean = (selectedProfile.groomName || 'chinh').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const brideClean = (selectedProfile.brideName || 'ha').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const groomClean = (selectedProfile.groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+    const brideClean = (selectedProfile.brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
     link.download = `phong-led-san-khau-${groomClean}-${brideClean}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
@@ -217,7 +250,7 @@ export default function AdminPersonalizePage() {
         </button>
       </div>
 
-      {/* Date Filter Bar matching Screenshot 2 */}
+      {/* Date Filter Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-stone-200 shadow-xs text-xs">
         <div className="flex items-center gap-2 flex-wrap">
           <input
@@ -332,12 +365,12 @@ export default function AdminPersonalizePage() {
                     <td className="p-4">
                       <div className="flex flex-wrap gap-1">
                         <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-800">
-                          LED: {prof.ledStatus || 'Phông Mặc Định Sảnh Tiệc'}
+                          LED: {prof.ledStatus || 'Đã tùy chỉnh phông LED'}
                         </span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                           prof.musicStatus === 'Không có yêu cầu gì' ? 'bg-gray-100 text-gray-600' : 'bg-emerald-100 text-emerald-800'
                         }`}>
-                          Nhạc: {prof.musicStatus || 'Không có yêu cầu gì'}
+                          Nhạc: {prof.musicStatus || 'Đã chọn danh sách nhạc'}
                         </span>
                       </div>
                     </td>
@@ -585,7 +618,7 @@ export default function AdminPersonalizePage() {
                 </div>
               )}
 
-              {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU (Luôn cho xem, Fullscreen & Tải phông mặc định) */}
+              {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2 text-amber-400 font-bold uppercase tracking-wider text-xs">
@@ -668,7 +701,7 @@ export default function AdminPersonalizePage() {
                 </div>
               </div>
 
-              {/* SECTION 2: BẢNG PHÁT NHẠC (Chỉ phần nhạc không chọn mới để Không có yêu cầu) */}
+              {/* SECTION 2: BẢNG PHÁT NHẠC */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-amber-400 font-bold uppercase tracking-wider text-xs">
