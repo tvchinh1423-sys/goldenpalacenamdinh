@@ -21,10 +21,23 @@ export default function LedCustomizer({
   eventDate, 
   setEventDate, 
   eventTypeTitle: propEventTypeTitle, 
-  setEventTypeTitle: propSetEventTypeTitle, 
+  setEventTypeTitle: propSetEventTypeTitle,
+  selectedFloorId: propSelectedFloorId,
+  setSelectedFloorId: propSetSelectedFloorId,
   onSave 
 }) {
-  const [selectedFloor, setSelectedFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3 (7.04x3.84m)
+  const [localFloor, setLocalFloor] = useState(LED_SCREEN_FLOORS[0]); // Default Tầng 3 (7.04x3.84m)
+  const activeFloorId = propSelectedFloorId || localFloor.id;
+  const selectedFloor = LED_SCREEN_FLOORS.find(f => f.id === activeFloorId) || LED_SCREEN_FLOORS[0];
+
+  const handleFloorSelect = (floor) => {
+    if (propSetSelectedFloorId) {
+      propSetSelectedFloorId(floor.id);
+    } else {
+      setLocalFloor(floor);
+    }
+  };
+
   const [selectedTemplate, setSelectedTemplate] = useState(LED_STAGE_TEMPLATES[0]);
   const [designMode, setDesignMode] = useState('masterpiece');
   const [customUploadUrl, setCustomUploadUrl] = useState(null);
@@ -128,7 +141,7 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
                 <button
                   key={floor.id}
                   type="button"
-                  onClick={() => setSelectedFloor(floor)}
+                  onClick={() => handleFloorSelect(floor)}
                   className={`py-2.5 px-2 rounded-lg text-xs font-semibold border transition-all text-center flex flex-col items-center justify-center cursor-pointer ${
                     active
                       ? 'border-[#e3a638] bg-[#e3a638]/20 text-amber-300 shadow-[0_0_12px_rgba(227,166,56,0.35)]'

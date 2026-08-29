@@ -7,6 +7,16 @@ import MusicSelector from '@/components/personalize/MusicSelector';
 import InvitationBuilder from '@/components/personalize/InvitationBuilder';
 import { VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
 
+const PARTY_TITLE_PRESETS = [
+  'LỄ THÀNH HÔN',
+  'LỄ VU QUY',
+  'LỄ TÂN HÔN',
+  'LỄ BÁO HỶ',
+  'LỄ ĐÍNH HÔN',
+  'TIỆC SINH NHẬT',
+  'TIỆC KỶ NIỆM'
+];
+
 function PersonalizePageContent() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
@@ -20,12 +30,12 @@ function PersonalizePageContent() {
   }, [tabParam]);
   
   // Shared global state across all personalization tools
-  const [partyTitle, setPartyTitle] = useState('Tiệc cưới Anh Thư & Văn Mạnh');
-  const [groomName, setGroomName] = useState('Văn Mạnh');
-  const [brideName, setBrideName] = useState('Anh Thư');
+  const [partyTitle, setPartyTitle] = useState('LỄ THÀNH HÔN');
+  const [groomName, setGroomName] = useState('Đức Hoàng');
+  const [brideName, setBrideName] = useState('Thu Hương');
   const [phone, setPhone] = useState('0912345678');
   const [eventDate, setEventDate] = useState('2026-11-20');
-  const [eventTime, setEventTime] = useState('Buổi Trưa (11:00 AM)');
+  const [eventTime, setEventTime] = useState('11:00 AM');
   const [selectedFloor, setSelectedFloor] = useState('FLOOR_3');
   const [driveLink, setDriveLink] = useState('');
 
@@ -33,7 +43,7 @@ function PersonalizePageContent() {
   const [ledModified, setLedModified] = useState(false);
   const [musicModified, setMusicModified] = useState(false);
 
-  // Music selector state (Empty by default per user request)
+  // Music selector state
   const [selectedTracks, setSelectedTracks] = useState([]);
   const [youtubeLinks, setYoutubeLinks] = useState({ welcome: '', entrance: '', toast: '', dining: '' });
   const [customNotes, setCustomNotes] = useState('');
@@ -41,23 +51,6 @@ function PersonalizePageContent() {
   // Saving state & Notification
   const [saving, setSaving] = useState(false);
   const [savedNotification, setSavedNotification] = useState(false);
-
-  // Auto-parse Bride & Groom names when Party Title changes
-  const handlePartyTitleChange = (val) => {
-    setPartyTitle(val);
-    if (!val) return;
-
-    const cleanStr = val.replace(/tiệc\s*cưới|đám\s*cưới|lễ\s*thành\s*hôn/gi, '').trim();
-    if (cleanStr.includes('&')) {
-      const parts = cleanStr.split('&');
-      if (parts[0]?.trim()) setBrideName(parts[0].trim());
-      if (parts[1]?.trim()) setGroomName(parts[1].trim());
-    } else if (cleanStr.includes('và')) {
-      const parts = cleanStr.split('và');
-      if (parts[0]?.trim()) setBrideName(parts[0].trim());
-      if (parts[1]?.trim()) setGroomName(parts[1].trim());
-    }
-  };
 
   const handleSaveProfile = async () => {
     setSaving(true);
@@ -94,6 +87,19 @@ function PersonalizePageContent() {
     } finally {
       setSaving(false);
     }
+  };
+
+  // Floor mapping helper between LedCustomizer (tang-3, tang-2, tang-4) and FLOOR_3, FLOOR_2, FLOOR_4
+  const mapFloorToLedId = (floorCode) => {
+    if (floorCode === 'FLOOR_2' || floorCode === 'tang-2') return 'tang-2';
+    if (floorCode === 'FLOOR_4' || floorCode === 'tang-4') return 'tang-4';
+    return 'tang-3';
+  };
+
+  const mapFloorFromLedId = (ledCode) => {
+    if (ledCode === 'tang-2' || ledCode === 'FLOOR_2') return 'FLOOR_2';
+    if (ledCode === 'tang-4' || ledCode === 'FLOOR_4') return 'FLOOR_4';
+    return 'FLOOR_3';
   };
 
   return (
@@ -144,17 +150,38 @@ function PersonalizePageContent() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               
-              {/* Tên Tiệc Cưới (Đồng Bộ Với Phông LED) */}
-              <div className="sm:col-span-2">
-                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
-                  Tên Tiệc Cưới (*)
+              {/* 1. TÊN TIỆC CƯỚI (WITH PRESETS + MANUAL INPUT, 2-WAY SYNC WITH LED TITLE) */}
+              <div className="sm:col-span-2 bg-[#1f1f1f] p-3.5 rounded-2xl border border-amber-500/30">
+                <label className="block text-amber-300 font-bold mb-2 uppercase tracking-wider flex items-center justify-between text-xs">
+                  <span>Tên Tiệc Cưới & Tiêu Đề (Đồng Bộ Phông LED & Thiệp) (*)</span>
+                  <span className="text-[10px] text-gray-400 font-normal">Chọn gợi ý hoặc nhập tự do</span>
                 </label>
+                
+                {/* Preset Option Buttons */}
+                <div className="flex flex-wrap gap-1.5 mb-2.5">
+                  {PARTY_TITLE_PRESETS.map((opt) => (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => setPartyTitle(opt)}
+                      className={`py-1.5 px-2.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
+                        partyTitle === opt
+                          ? 'border-amber-400 bg-amber-400/25 text-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.3)]'
+                          : 'border-gray-800 bg-[#161616] text-gray-400 hover:text-white hover:border-gray-700'
+                      }`}
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Free Manual Input Box */}
                 <input
                   type="text"
                   value={partyTitle}
-                  onChange={(e) => handlePartyTitleChange(e.target.value)}
+                  onChange={(e) => setPartyTitle(e.target.value)}
                   placeholder="VD: LỄ THÀNH HÔN"
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none transition-colors text-xs"
+                  className="w-full bg-[#141414] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none text-xs tracking-wider transition-colors"
                 />
               </div>
 
@@ -198,25 +225,52 @@ function PersonalizePageContent() {
                 />
               </div>
 
-              {/* Buổi / Thời Gian */}
+              {/* 2. THỜI GIAN TỔ CHỨC (OPEN MANUAL INPUT + PRESETS, 2-WAY SYNC WITH INVITATION TIME) */}
               <div>
-                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
-                  Thời Gian Tổ Chức (*)
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
+                  <span>Thời Gian / Giờ Đón Khách (*)</span>
+                  <span className="text-[10px] text-amber-300 font-normal">Đồng bộ Thiệp</span>
                 </label>
-                <select
+                
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setEventTime('11:00 AM')}
+                    className={`py-1 px-2 rounded text-[10px] font-bold border transition-all cursor-pointer ${
+                      eventTime === '11:00 AM'
+                        ? 'border-amber-400 bg-amber-400/20 text-amber-300'
+                        : 'border-gray-800 bg-[#1f1f1f] text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    11:00 AM (Trưa)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEventTime('17:30 PM')}
+                    className={`py-1 px-2 rounded text-[10px] font-bold border transition-all cursor-pointer ${
+                      eventTime === '17:30 PM'
+                        ? 'border-amber-400 bg-amber-400/20 text-amber-300'
+                        : 'border-gray-800 bg-[#1f1f1f] text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    17:30 PM (Tối)
+                  </button>
+                </div>
+
+                <input
+                  type="text"
                   value={eventTime}
                   onChange={(e) => setEventTime(e.target.value)}
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none cursor-pointer"
-                >
-                  <option value="Buổi Trưa (11:00 AM)">Buổi Trưa (11:00 AM)</option>
-                  <option value="Buổi Chiều (17:30 PM)">Buổi Chiều (17:30 PM)</option>
-                </select>
+                  placeholder="VD: 11:00 AM hoặc 10:30 AM"
+                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white font-semibold outline-none transition-colors"
+                />
               </div>
 
-              {/* Địa Điểm Tầng */}
+              {/* 3. ĐỊA ĐIỂM TẦNG (3-WAY SYNCHRONIZED ACROSS TOP FORM, LED SCREEN & INVITATION) */}
               <div>
-                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
-                  Địa Điểm Tầng Tổ Chức (*)
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
+                  <span>Địa Điểm Tầng Tổ Chức (*)</span>
+                  <span className="text-[10px] text-amber-300 font-normal">Đồng bộ 3 nơi</span>
                 </label>
                 <select
                   value={selectedFloor}
@@ -245,7 +299,7 @@ function PersonalizePageContent() {
                 />
               </div>
 
-              {/* Link Google Drive chứa Ảnh / Video Cưới (Gọn gàng siêu ít chữ như Ảnh 1) */}
+              {/* Link Google Drive */}
               <div className="sm:col-span-2 bg-[#1b1b1b] p-3.5 rounded-xl border border-blue-500/30 space-y-1.5">
                 <label className="block text-blue-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-base">cloud_upload</span>
@@ -331,6 +385,8 @@ function PersonalizePageContent() {
             setEventDate={setEventDate}
             eventTypeTitle={partyTitle}
             setEventTypeTitle={setPartyTitle}
+            selectedFloorId={mapFloorToLedId(selectedFloor)}
+            setSelectedFloorId={(ledId) => setSelectedFloor(mapFloorFromLedId(ledId))}
             onSave={() => {
               setLedModified(true);
               handleSaveProfile();
@@ -360,6 +416,10 @@ function PersonalizePageContent() {
             setBrideName={setBrideName}
             eventDate={eventDate}
             setEventDate={setEventDate}
+            eventTime={eventTime}
+            setEventTime={setEventTime}
+            selectedFloor={selectedFloor}
+            setSelectedFloor={setSelectedFloor}
           />
         )}
       </section>

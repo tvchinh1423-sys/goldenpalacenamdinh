@@ -204,8 +204,7 @@ export const INVITATION_TEMPLATES = [
 ];
 
 export const VENUE_FLOOR_OPTIONS = [
-  { id: 'FLOOR_1', name: 'Tầng 1', shortName: 'Tầng 1' },
-  { id: 'FLOOR_2', name: 'Tầng 2', shortName: 'Tầng 2' },
-  { id: 'FLOOR_3', name: 'Tầng 3', shortName: 'Tầng 3' },
-  { id: 'FLOOR_4', name: 'Tầng 4', shortName: 'Tầng 4' }
+  { id: 'FLOOR_3', idLed: 'tang-3', name: 'Tầng 3 (Sảnh Hoàng Gia - 7.04x3.84m)', shortName: 'Tầng 3' },
+  { id: 'FLOOR_2', idLed: 'tang-2', name: 'Tầng 2 (Sảnh Ngọc Bích - 7.04x3.36m)', shortName: 'Tầng 2' },
+  { id: 'FLOOR_4', idLed: 'tang-4', name: 'Tầng 4 (Sảnh Kim Cương - 5.12x2.72m)', shortName: 'Tầng 4' }
 ];

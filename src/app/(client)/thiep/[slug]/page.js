@@ -3,21 +3,53 @@
 import { use, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
 
 function PublicInvitationContent({ params }) {
   const resolvedParams = use(params);
   const searchParams = useSearchParams();
+
+  // Dynamic values extracted from searchParams with elegant fallbacks
+  const groomName = searchParams.get('groom') || 'Trần Văn Chinh';
+  const brideName = searchParams.get('bride') || 'Nguyễn Thu Hà';
+  const groomFather = searchParams.get('gf') || 'Ông: Trần Văn A';
+  const groomMother = searchParams.get('gm') || 'Bà: Nguyễn Thị B';
+  const brideFather = searchParams.get('bf') || 'Ông: Lê Văn C';
+  const brideMother = searchParams.get('bm') || 'Bà: Phạm Thị D';
+  const eventDateStr = searchParams.get('date') || '2026-11-20';
+  const eventTime = searchParams.get('time') || '11:00 AM';
+  const floorId = searchParams.get('floor') || 'FLOOR_3';
   const guestName = searchParams.get('guest') || '';
+  const customNote = searchParams.get('note') || 'Trân trọng kính mời Quý khách tới dự bữa cơm thân mật chung vui cùng gia đình chúng tôi!';
 
   const [showCalendarModal, setShowCalendarModal] = useState(false);
 
+  // Find venue object
+  const venueObj = VENUE_FLOOR_OPTIONS.find(v => v.id === floorId || v.idLed === floorId) || VENUE_FLOOR_OPTIONS[0];
+
+  // Format Date in Vietnamese
+  const formatDateVN = (dStr) => {
+    if (!dStr) return 'Ngày 20 Tháng 11 Năm 2026';
+    try {
+      const date = new Date(dStr);
+      const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+      const dayOfWeek = days[date.getDay()];
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      return `${dayOfWeek}, Ngày ${day} Tháng ${month} Năm ${year}`;
+    } catch (e) {
+      return 'Ngày 20 Tháng 11 Năm 2026';
+    }
+  };
+
   // Calendar Event Data
   const eventDetails = {
-    title: 'Tiệc Cưới Trần Văn Chinh & Nguyễn Thu Hà - Golden Palace Nam Định',
-    description: 'Trân trọng kính mời Quý khách tới dự bữa cơm thân mật chung vui cùng gia đình chúng tôi tại Golden Palace Nam Định!',
-    location: 'Golden Palace Nam Định - 98 Đông A, KĐT Hòa Vượng, TP. Nam Định',
-    startDate: '20261120T040000Z', // 11:00 AM VN Time (UTC 04:00)
-    endDate: '20261120T070000Z'
+    title: `Tiệc Cưới ${groomName} & ${brideName} - Golden Palace Nam Định`,
+    description: customNote,
+    location: `Golden Palace Nam Định - ${venueObj.shortName}, 98 Đông A, KĐT Hòa Vượng, TP. Nam Định`,
+    startDate: eventDateStr.replace(/-/g, '') + 'T040000Z',
+    endDate: eventDateStr.replace(/-/g, '') + 'T070000Z'
   };
 
   const handleGoogleCalendar = () => {
@@ -72,18 +104,9 @@ function PublicInvitationContent({ params }) {
         <svg className="absolute top-2 right-2 w-20 h-20 pointer-events-none opacity-80 transform scale-x-[-1]" viewBox="0 0 100 100" fill="none">
           <path d="M10 30 C10 15, 25 10, 40 10 M10 45 C10 20, 30 10, 55 10 M10 10 Q35 10 10 35" stroke="#d4af37" strokeWidth="2" strokeLinecap="round" />
           <circle cx="20" cy="20" r="3" fill="#d4af37" />
-          <path d="M25 15 C30 8, 40 12, 35 22 C25 25, 18 18, 25 15 Z" fill="#d4af37" opacity="0.6" />
-        </svg>
-        <svg className="absolute bottom-2 left-2 w-20 h-20 pointer-events-none opacity-80 transform scale-y-[-1]" viewBox="0 0 100 100" fill="none">
-          <path d="M10 30 C10 15, 25 10, 40 10 M10 45 C10 20, 30 10, 55 10 M10 10 Q35 10 10 35" stroke="#d4af37" strokeWidth="2" strokeLinecap="round" />
-          <circle cx="20" cy="20" r="3" fill="#d4af37" />
-        </svg>
-        <svg className="absolute bottom-2 right-2 w-20 h-20 pointer-events-none opacity-80 transform scale-x-[-1] scale-y-[-1]" viewBox="0 0 100 100" fill="none">
-          <path d="M10 30 C10 15, 25 10, 40 10 M10 45 C10 20, 30 10, 55 10 M10 10 Q35 10 10 35" stroke="#d4af37" strokeWidth="2" strokeLinecap="round" />
-          <circle cx="20" cy="20" r="3" fill="#d4af37" />
         </svg>
 
-        {/* Logo Golden Palace ở góc trái trên cùng (Gắn Link Trang Chủ) */}
+        {/* Logo Golden Palace */}
         <Link href="/" target="_blank" className="absolute top-4 left-5 flex items-center gap-1.5 z-20 hover:opacity-80 transition-opacity">
           <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-8 w-auto object-contain drop-shadow-xs" />
           <span className="text-[9px] font-playfair tracking-[0.2em] text-[#a66a3a] font-bold uppercase">
@@ -91,7 +114,7 @@ function PublicInvitationContent({ params }) {
           </span>
         </Link>
 
-        {/* Header Spacing for Logo */}
+        {/* Header Spacing */}
         <div className="pt-6 w-full text-center relative z-10">
           <div className="font-script text-4xl sm:text-5xl text-[#b8860b] mb-1">
             We Do
@@ -101,7 +124,7 @@ function PublicInvitationContent({ params }) {
           </div>
         </div>
 
-        {/* OPTIONAL GUEST NAME DISPLAY IF PASSED — RE-DESIGNED TO BE LUXURIOUS & HARMONIOUS */}
+        {/* GUEST NAME DISPLAY */}
         {guestName && (
           <div className="w-full bg-[#fdfbf7] border border-[#d4af37]/60 rounded-2xl p-4 my-2 text-center shadow-xs relative z-10">
             <span className="text-[10px] tracking-[0.25em] uppercase text-[#a66a3a] font-serif font-bold block mb-1">
@@ -113,7 +136,7 @@ function PublicInvitationContent({ params }) {
           </div>
         )}
 
-        {/* Ceremony Header Title - WEDDING CEREMONY */}
+        {/* Ceremony Title */}
         <div className="text-center space-y-1 my-4 relative z-10">
           <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-[#b8860b] tracking-wider uppercase">
             WEDDING CEREMONY
@@ -123,40 +146,40 @@ function PublicInvitationContent({ params }) {
           </p>
         </div>
 
-        {/* Couple Calligraphy Names */}
+        {/* Couple Calligraphy Names DYNAMIC */}
         <div className="w-full bg-[#fdfbf7] border border-[#e3a638]/30 rounded-2xl p-6 text-center shadow-xs mb-6 relative z-10">
           <div className="font-script text-4xl sm:text-5xl text-[#b8860b] leading-tight drop-shadow-xs">
-            Trần Văn Chinh
+            {groomName}
           </div>
           <div className="my-1 text-[#b8860b] font-serif italic text-2xl">&</div>
           <div className="font-script text-4xl sm:text-5xl text-[#b8860b] leading-tight drop-shadow-xs">
-            Nguyễn Thu Hà
+            {brideName}
           </div>
         </div>
 
-        {/* Groom & Bride Parents (Nhà Trai / Nhà Gái) */}
+        {/* Groom & Bride Parents DYNAMIC */}
         <div className="w-full grid grid-cols-2 gap-3 text-xs border-y border-amber-200/80 py-4 mb-6 font-serif relative z-10">
           <div className="text-center border-r border-amber-200/60 pr-2 space-y-1">
             <div className="font-bold text-[#a66a3a] uppercase text-[10px] tracking-wider">NHÀ TRAI</div>
-            <div className="text-stone-800 font-medium">Ông: Trần Văn A</div>
-            <div className="text-stone-800 font-medium">Bà: Nguyễn Thị B</div>
+            <div className="text-stone-800 font-medium">{groomFather}</div>
+            <div className="text-stone-800 font-medium">{groomMother}</div>
           </div>
           <div className="text-center pl-2 space-y-1">
             <div className="font-bold text-[#a66a3a] uppercase text-[10px] tracking-wider">NHÀ GÁI</div>
-            <div className="text-stone-800 font-medium">Ông: Lê Văn C</div>
-            <div className="text-stone-800 font-medium">Bà: Phạm Thị D</div>
+            <div className="text-stone-800 font-medium">{brideFather}</div>
+            <div className="text-stone-800 font-medium">{brideMother}</div>
           </div>
         </div>
 
-        {/* Event Time & Clean Floor Venue Details */}
+        {/* Event Time & Venue Floor Details DYNAMIC */}
         <div className="w-full space-y-3 text-center text-xs mb-6 relative z-10">
           <div className="p-4 bg-[#fdfbf7] border border-[#e3a638]/30 rounded-xl">
             <div className="text-[#a66a3a] text-xs font-bold uppercase tracking-wider mb-1 flex items-center justify-center gap-1">
               <span className="material-symbols-outlined text-sm">schedule</span>
-              Thời Gian Cử Hành
+              Thời Gian Cử Hành / Giờ Đón Khách
             </div>
-            <div className="text-xl font-bold text-stone-900 font-mono">11:00 AM</div>
-            <div className="text-stone-700 font-medium mt-0.5">Chủ Nhật, Ngày 20 Tháng 11 Năm 2026</div>
+            <div className="text-xl font-bold text-stone-900 font-mono">{eventTime}</div>
+            <div className="text-stone-700 font-medium mt-0.5">{formatDateVN(eventDateStr)}</div>
           </div>
 
           <div className="p-4 bg-[#fdfbf7] border border-[#e3a638]/30 rounded-xl">
@@ -165,7 +188,7 @@ function PublicInvitationContent({ params }) {
               Địa Điểm Tổ Chức
             </div>
             <div className="text-xl font-bold text-stone-900 font-playfair uppercase">
-              Tầng 3
+              {venueObj.shortName || 'Tầng 3'}
             </div>
             <div className="text-[#a66a3a] font-bold text-xs mt-0.5 uppercase">
               GOLDEN PALACE NAM ĐỊNH
@@ -184,7 +207,7 @@ function PublicInvitationContent({ params }) {
           </div>
         </div>
 
-        {/* NÚT TÍNH NĂNG MỚI: THÊM VÀO LỊCH (Đã sửa 1 icon duy nhất + tên ngắn gọn) */}
+        {/* Calendar Add Button */}
         <div className="w-full mb-6 relative z-10">
           <button
             onClick={() => setShowCalendarModal(!showCalendarModal)}
@@ -194,7 +217,6 @@ function PublicInvitationContent({ params }) {
             <span>THÊM VÀO LỊCH</span>
           </button>
 
-          {/* Calendar Option Modal Dropdown */}
           {showCalendarModal && (
             <div className="mt-3 p-4 bg-white border border-[#e3a638]/40 rounded-2xl shadow-xl space-y-2 text-left animate-in fade-in slide-in-from-top-2 duration-200">
               <span className="text-[11px] font-bold text-stone-900 block mb-2 border-b pb-1.5">
@@ -226,15 +248,14 @@ function PublicInvitationContent({ params }) {
           )}
         </div>
 
-        {/* Honor Note formatted with line break before 'cho' */}
+        {/* Note */}
         <div className="w-full pt-4 border-t border-amber-200/80 text-center space-y-2 relative z-10">
           <p className="text-xs text-stone-600 italic font-serif leading-relaxed">
-            Sự hiện diện của Quý vị là niềm vinh hạnh lớn<br />
-            cho gia đình chúng tôi!
+            {customNote}
           </p>
         </div>
 
-        {/* Footer Branding (Gắn Link Trang Chủ Mới) */}
+        {/* Footer */}
         <div className="mt-6 pt-3 border-t border-stone-200 text-center text-[10px] text-stone-500 relative z-10">
           <Link href="/" target="_blank" className="hover:text-[#a66a3a] transition-colors underline font-medium">
             Golden Palace Wedding & Convention Center • Hotline: 0228 659 5959

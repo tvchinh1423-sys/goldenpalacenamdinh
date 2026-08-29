@@ -47,7 +47,18 @@ function FloralOrnaments({ theme }) {
   );
 }
 
-export default function InvitationBuilder({ groomName, setGroomName, brideName, setBrideName, eventDate, setEventDate }) {
+export default function InvitationBuilder({ 
+  groomName, 
+  setGroomName, 
+  brideName, 
+  setBrideName, 
+  eventDate, 
+  setEventDate,
+  eventTime,
+  setEventTime,
+  selectedFloor,
+  setSelectedFloor
+}) {
   const [selectedTemplate, setSelectedTemplate] = useState(INVITATION_TEMPLATES[0]);
   
   // Separate Parents Fields
@@ -60,16 +71,13 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
   const [guestName, setGuestName] = useState(''); // Single optional guest name
   const [guestListRaw, setGuestListRaw] = useState(''); // Textarea for uploading/pasting multiple guest names
 
-  // Venue floor selection
-  const [selectedFloor, setSelectedFloor] = useState(VENUE_FLOOR_OPTIONS[2].id);
-  const [eventTime, setEventTime] = useState('11:00 AM');
   const [invitationNote, setInvitationNote] = useState('Trân trọng kính mời Quý khách tới dự bữa cơm thân mật chung vui cùng gia đình chúng tôi!');
   
   const [createdSlug, setCreatedSlug] = useState('');
   const [loading, setLoading] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const selectedVenueObj = VENUE_FLOOR_OPTIONS.find(v => v.id === selectedFloor) || VENUE_FLOOR_OPTIONS[2];
+  const selectedVenueObj = VENUE_FLOOR_OPTIONS.find(v => v.id === selectedFloor || v.idLed === selectedFloor) || VENUE_FLOOR_OPTIONS[0];
 
   const generateSlug = () => {
     const groomClean = (groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
@@ -83,14 +91,14 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
     const slug = generateSlug();
     const payload = {
       slug,
-      groomName: groomName || 'Trần Văn Chinh',
-      brideName: brideName || 'Nguyễn Thu Hà',
+      groomName: groomName || 'Đức Hoàng',
+      brideName: brideName || 'Thu Hương',
       groomFather,
       groomMother,
       brideFather,
       brideMother,
       eventDate: eventDate || '2026-11-20',
-      eventTime,
+      eventTime: eventTime || '11:00 AM',
       floorId: selectedFloor,
       venueName: selectedVenueObj.name,
       templateId: selectedTemplate.id,
@@ -123,16 +131,36 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
       : `/thiep/${slugStr}`;
   };
 
-  const getFinalInvitationUrl = () => {
+  // BUILD DYNAMIC INVITATION URL WITH ALL CUSTOMIZATION PARAMS ACCURATELY
+  const buildInvitationUrlWithParams = (gName = '') => {
     const base = getBaseInvitationUrl();
-    if (guestName.trim()) {
-      return `${base}?guest=${encodeURIComponent(guestName.trim())}`;
-    }
-    return base;
+    const params = new URLSearchParams();
+    if (groomName) params.set('groom', groomName);
+    if (brideName) params.set('bride', brideName);
+    if (groomFather) params.set('gf', groomFather);
+    if (groomMother) params.set('gm', groomMother);
+    if (brideFather) params.set('bf', brideFather);
+    if (brideMother) params.set('bm', brideMother);
+    if (eventDate) params.set('date', eventDate);
+    if (eventTime) params.set('time', eventTime);
+    if (selectedFloor) params.set('floor', selectedFloor);
+    if (selectedTemplate?.id) params.set('tmpl', selectedTemplate.id);
+    if (invitationNote) params.set('note', invitationNote);
+
+    const targetGuest = gName.trim() || guestName.trim();
+    if (targetGuest) params.set('guest', targetGuest);
+
+    const queryString = params.toString();
+    return queryString ? `${base}?${queryString}` : base;
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(getFinalInvitationUrl());
+  const getFinalInvitationUrl = () => {
+    return buildInvitationUrlWithParams();
+  };
+
+  const handleCopyLink = (customUrl = null) => {
+    const targetUrl = customUrl || getFinalInvitationUrl();
+    navigator.clipboard.writeText(targetUrl);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2500);
   };
@@ -148,20 +176,22 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
       
       {/* Left Form Controls Column */}
       <div className="lg:col-span-6 bg-[#141414] border border-[#e3a638]/20 rounded-2xl p-6 shadow-2xl backdrop-blur-md">
-        <h3 className="text-xl font-playfair text-[#e3a638] font-bold mb-1 flex items-center gap-2">
+        
+        <h3 className="text-xl font-playfair text-[#e3a638] font-bold mb-2 flex items-center gap-2">
           <span className="material-symbols-outlined text-[#e3a638]">mark_email_read</span>
-          Khởi Tạo Thiệp Cưới Điện Tử Nền Sáng Sang Trọng
+          Tạo Thiệp Cưới Điện Tử Online
         </h3>
         <p className="text-xs text-gray-400 mb-6 leading-relaxed">
-          Tự chọn phong cách thiệp cao cấp, phông chữ bay bổng & hoa văn tinh tế để tạo link gửi Zalo/Facebook.
+          Tùy chỉnh thông tin nhà trai, nhà gái, giờ đón khách và địa điểm. Mọi thông tin sẽ được đóng gói chuẩn 100% vào Link thiệp!
         </p>
 
-        {/* 6 Template Selector Grid */}
+        {/* Template Selector */}
         <div className="mb-6">
-          <label className="block text-gray-300 text-xs font-semibold mb-3 uppercase tracking-wider">
-            1. Chọn Mẫu Thiệp Cưới Nền Sáng (6 Phong Cách)
+          <label className="block text-amber-300 text-xs font-bold mb-2.5 uppercase tracking-wider flex items-center gap-1">
+            <span className="material-symbols-outlined text-sm">palette</span>
+            Chọn Giao Diện Theme Thiệp Cưới
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-2 gap-2.5">
             {INVITATION_TEMPLATES.map((tmpl) => {
               const active = selectedTemplate.id === tmpl.id;
               return (
@@ -170,12 +200,13 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
                   onClick={() => setSelectedTemplate(tmpl)}
                   className={`p-3 rounded-xl border cursor-pointer transition-all ${
                     active
-                      ? 'border-[#e3a638] bg-[#e3a638]/20 shadow-[0_0_15px_rgba(227,166,56,0.3)] ring-1 ring-[#e3a638]'
-                      : 'border-gray-800 bg-[#1a1a1a] hover:border-gray-700'
+                      ? 'border-[#e3a638] bg-[#e3a638]/15 shadow-[0_0_15px_rgba(227,166,56,0.25)]'
+                      : 'border-gray-800 bg-[#161616] hover:border-gray-700'
                   }`}
                 >
-                  <div className="text-xs font-semibold text-white truncate flex items-center justify-between">
-                    <span className="truncate">{tmpl.name}</span>
+                  <div className="text-xs font-bold text-white flex items-center justify-between">
+                    <span>{tmpl.name}</span>
+                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: tmpl.accentColor }}></span>
                   </div>
                   <div className="text-[10px] text-amber-300/80 mt-1 truncate">{tmpl.badge}</div>
                 </div>
@@ -197,7 +228,7 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
                 type="text"
                 value={groomName}
                 onChange={(e) => setGroomName(e.target.value)}
-                placeholder="VD: Trần Văn Chinh"
+                placeholder="VD: Đức Hoàng"
                 className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-3.5 py-2 text-white outline-none"
               />
             </div>
@@ -209,7 +240,7 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
                 type="text"
                 value={brideName}
                 onChange={(e) => setBrideName(e.target.value)}
-                placeholder="VD: Nguyễn Thu Hà"
+                placeholder="VD: Thu Hương"
                 className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-3.5 py-2 text-white outline-none"
               />
             </div>
@@ -220,7 +251,7 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
             <div className="flex items-center justify-between">
               <span className="text-[#e3a638] font-bold uppercase tracking-wider text-[11px] flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-sm">person_add</span>
-                Tùy Chọn Cá Nhân Hóa Tên Khách Mời (Không Bắt Buộc)
+                Tùy Chọn Tên Khách Mời (Không Bắt Buộc)
               </span>
               <span className="text-[10px] text-gray-400 bg-gray-800 px-2 py-0.5 rounded">Tùy chọn</span>
             </div>
@@ -249,9 +280,6 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
                 placeholder={"Ví dụ:\nAnh Nam & Chị Mai\nBạn Hoàng (Lớp Cấp 3)\nGia đình Bác Hùng"}
                 className="w-full bg-[#121212] border border-gray-700 focus:border-[#e3a638] rounded-lg p-3 text-gray-200 font-mono text-xs outline-none leading-relaxed"
               />
-              <span className="text-[10px] text-gray-400 block mt-1">
-                💡 Nhập danh sách tên khách mời để tạo hàng loạt Link Thiệp riêng biệt trân trọng nhất.
-              </span>
             </div>
           </div>
 
@@ -313,10 +341,10 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
             </div>
           </div>
 
-          {/* Địa điểm Sảnh Tầng 1, 2, 3, 4 */}
+          {/* Địa điểm Sảnh (3-WAY SYNCHRONIZED WITH TOP FORM & LED CUSTOMIZER) */}
           <div>
             <label className="block text-gray-300 font-semibold mb-1 uppercase tracking-wider">
-              Chọn Địa Điểm Tổ Chức (Tầng 1, 2, 3, 4)
+              Địa Điểm Tổ Chức (Tầng 2, 3, 4) (*)
             </label>
             <select
               value={selectedFloor}
@@ -343,16 +371,18 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
                 className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-3.5 py-2 text-white outline-none"
               />
             </div>
+            
+            {/* GIỜ ĐÓN KHÁCH (2-WAY SYNCHRONIZED WITH TOP FORM TIME) */}
             <div>
               <label className="block text-gray-300 font-semibold mb-1 uppercase tracking-wider">
-                Giờ Đón Khách
+                Giờ Đón Khách (*)
               </label>
               <input
                 type="text"
                 value={eventTime}
                 onChange={(e) => setEventTime(e.target.value)}
-                placeholder="11:00 AM hoặc 17:30 PM"
-                className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-3.5 py-2 text-white outline-none"
+                placeholder="VD: 11:00 AM"
+                className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-3.5 py-2 text-amber-300 font-bold outline-none"
               />
             </div>
           </div>
@@ -378,197 +408,166 @@ export default function InvitationBuilder({ groomName, setGroomName, brideName, 
             className="w-full py-3.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-xs uppercase font-bold tracking-wider rounded-xl shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <span className="material-symbols-outlined text-base">insert_link</span>
-            {loading ? 'Đang Khởi Tạo Link Thiệp...' : 'Khởi Tạo Link Thiệp Cưới Điện Tử'}
+            {loading ? 'Đang Đóng Gói Thiệp...' : 'Tạo & Đóng Gói Link Thiệp Điện Tử'}
           </button>
-        </div>
 
-        {/* Shareable Link Result Box */}
-        {createdSlug && (
-          <div className="mt-5 p-4 bg-[#1b1910] border border-amber-500/40 rounded-xl text-center space-y-4 animate-fade-in">
-            <div className="text-xs text-amber-300 font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5">
-              <span className="material-symbols-outlined text-sm">check_circle</span>
-              Link Thiệp Cưới Điện Tử Đã Sẵn Sàng!
+          {/* Copy Link Output Box */}
+          <div className="mt-4 p-3.5 bg-[#1a1a1a] rounded-xl border border-amber-500/30 space-y-2">
+            <div className="text-[11px] text-gray-300 font-bold flex items-center justify-between">
+              <span>LINK THIỆP CƯỚI ĐÃ ĐÓNG GÓI ĐẦY ĐỦ THÔNG TIN:</span>
+              {guestName.trim() && <span className="text-amber-300 text-[10px]">Đã gắn tên khách</span>}
             </div>
             
-            <input
-              type="text"
-              readOnly
-              value={getFinalInvitationUrl()}
-              className="w-full bg-[#121212] border border-gray-700 text-amber-400 font-mono text-xs px-3 py-2 rounded-lg text-center select-all"
-            />
-            
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                readOnly
+                value={getFinalInvitationUrl()}
+                className="w-full bg-[#121212] border border-gray-800 rounded-lg px-3 py-2 text-amber-300 font-mono text-[11px] outline-none select-all"
+              />
               <button
-                onClick={handleCopyLink}
-                className="flex-1 py-2 bg-amber-400 text-black text-xs font-bold uppercase rounded-lg hover:bg-amber-300 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                onClick={() => handleCopyLink()}
+                className="px-4 py-2 bg-[#e3a638] hover:bg-[#c98e27] text-black font-bold text-[11px] uppercase rounded-lg transition-all shrink-0 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-sm">content_copy</span>
-                {copiedLink ? 'Đã Copy Link!' : 'Copy Link Thiệp'}
+                {copiedLink ? 'Đã Chép!' : 'Sao Chép'}
               </button>
-              <a
-                href={getFinalInvitationUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 py-2 bg-[#2a2a2a] text-white text-xs font-semibold uppercase rounded-lg border border-gray-700 hover:bg-[#333] transition-colors flex items-center justify-center gap-1"
-              >
-                <span className="material-symbols-outlined text-sm">open_in_new</span>
-                Xem Thiệp Trực Tiếp
-              </a>
             </div>
 
-            {/* Batch List Links if Guest List Raw was provided */}
+            {/* If user pasted multiple guest names, list individual links */}
             {parsedGuestNames.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-800 text-left space-y-2">
-                <span className="text-xs font-bold text-amber-300 block">
-                  📋 Danh Sách Link Thiệp Riêng Cho {parsedGuestNames.length} Khách Mời:
+              <div className="mt-3 pt-3 border-t border-gray-800 space-y-2">
+                <span className="text-[11px] font-bold text-amber-300 block">
+                  DANH SÁCH LINK RIÊNG CHO TỪNG KHÁCH ({parsedGuestNames.length} khách):
                 </span>
-                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                  {parsedGuestNames.map((gName, gIdx) => {
-                    const gUrl = `${getBaseInvitationUrl()}?guest=${encodeURIComponent(gName)}`;
+                <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1">
+                  {parsedGuestNames.map((g, idx) => {
+                    const guestUrl = buildInvitationUrlWithParams(g);
                     return (
-                      <div key={gIdx} className="flex items-center justify-between bg-[#121212] p-2 rounded-lg text-xs border border-gray-800">
-                        <span className="font-semibold text-gray-200 truncate max-w-[160px]">{gName}</span>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(gUrl);
-                            alert(`✅ Đã copy link thiệp cho ${gName}!`);
-                          }}
-                          className="px-2.5 py-1 bg-amber-400/20 text-amber-300 hover:bg-amber-400 hover:text-black rounded text-[10px] font-bold transition-colors cursor-pointer"
-                        >
-                          Copy Link
-                        </button>
+                      <div key={idx} className="flex items-center justify-between bg-[#121212] p-2 rounded border border-gray-800 text-[11px]">
+                        <span className="font-semibold text-white truncate max-w-[150px]">{g}</span>
+                        <div className="flex items-center gap-1.5">
+                          <a
+                            href={guestUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-cyan-400 hover:underline text-[10px]"
+                          >
+                            Xem
+                          </a>
+                          <button
+                            onClick={() => handleCopyLink(guestUrl)}
+                            className="px-2 py-0.5 bg-amber-400/20 text-amber-300 rounded text-[10px] font-bold hover:bg-amber-400/30 cursor-pointer"
+                          >
+                            Copy Link
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
                 </div>
               </div>
             )}
-
           </div>
-        )}
+        </div>
 
       </div>
 
-      {/* Right Column: Live E-Card Preview */}
+      {/* Right E-Card Preview Column */}
       <div className="lg:col-span-6 flex flex-col items-center">
-        <div className="w-full flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-white">
-            <span className="material-symbols-outlined text-[#e3a638]">visibility</span>
-            <span className="text-sm font-semibold tracking-wider uppercase font-playfair">
-              Xem Trước Thiệp Cưới (Live Card)
-            </span>
-          </div>
-          <span className="text-[11px] text-amber-300 font-mono font-medium">{selectedTemplate.name}</span>
+        <div className="w-full flex items-center justify-between mb-3 px-1">
+          <span className="text-xs font-bold text-amber-300 uppercase tracking-wider font-playfair flex items-center gap-1">
+            <span className="material-symbols-outlined text-base">visibility</span>
+            Xem Trước Thiệp Cưới Điện Tử Thực Tế
+          </span>
+          <span className="text-[10px] text-gray-400 font-mono">
+            {selectedTemplate.name}
+          </span>
         </div>
 
-        {/* Mobile Device Frame */}
-        <div className="w-full max-w-sm rounded-[36px] p-3 bg-gradient-to-b from-stone-200 via-stone-300 to-stone-400 border-4 border-amber-400/50 shadow-[0_15px_50px_rgba(0,0,0,0.4)] relative">
-          
-          {/* Top Notch Bar */}
-          <div className="w-24 h-3 bg-stone-800 mx-auto rounded-full mb-3"></div>
+        {/* E-Card Interactive Preview Screen */}
+        <div className={`w-full max-w-sm rounded-3xl p-6 sm:p-8 ${selectedTemplate.cardBorder} relative overflow-hidden transition-all duration-500`}>
+          <FloralOrnaments theme={selectedTemplate.floralTheme} />
 
-          {/* E-Card Canvas dynamically rendered according to selected template */}
-          <div className={`w-full rounded-[24px] overflow-hidden p-6 text-center ${selectedTemplate.bgClass} ${selectedTemplate.cardBorder} relative shadow-xl transition-all duration-500 min-h-[500px] flex flex-col justify-between`}>
-            
-            {/* SVG Floral Corner Ornaments */}
-            <FloralOrnaments theme={selectedTemplate.floralTheme} />
-
-            {/* Logo Golden Palace ở góc trái trên cùng */}
-            <div className="absolute top-3 left-4 flex items-center gap-1.5 z-20">
-              <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-7 w-auto object-contain drop-shadow" />
-              <span className="text-[8px] font-playfair tracking-[0.2em] text-[#a66a3a] font-bold uppercase">
-                GOLDEN PALACE
-              </span>
-            </div>
-
-            {/* Top Space for Logo */}
-            <div className="pt-6"></div>
-
-            {/* Optional Guest Name Banner if typed - RE-DESIGNED HOÀN HẢO THEO PHONG CÁCH HOÀNG GIA */}
-            {guestName.trim() && (
-              <div className="my-2 p-3 bg-[#fdfbf7] border border-[#d4af37]/60 rounded-xl relative z-10 text-center shadow-xs">
-                <span className="text-[8px] tracking-[0.25em] uppercase text-[#a66a3a] font-serif font-bold block mb-0.5">KÍNH MỜI QUÝ KHÁCH</span>
-                <span className="text-sm font-bold text-[#b8860b] font-playfair">{guestName.trim()}</span>
-              </div>
-            )}
-
-            {/* Header Motif & English Ceremony Title */}
-            <div className="my-2 relative z-10">
-              <div className="font-script text-4xl sm:text-5xl text-[#b8860b] mb-1" style={{ color: selectedTemplate.accentColor }}>
-                We Do
-              </div>
-              <div className="text-[9px] uppercase tracking-[0.3em] font-serif font-bold text-stone-600 mb-2">
-                TRÂN TRỌNG KÍNH MỜI QUÝ KHÁCH
-              </div>
-              
-              {/* WEDDING CEREMONY (English) */}
-              <h2 className="text-xl sm:text-2xl font-playfair font-bold uppercase tracking-wider my-1" style={{ color: selectedTemplate.accentColor }}>
-                WEDDING CEREMONY
-              </h2>
-              <div className="text-[9px] italic font-serif text-stone-500">
-                vui lòng đến dự buổi tiệc chung vui cùng gia đình chúng tôi
-              </div>
-            </div>
-
-            {/* Couple Calligraphy Names */}
-            <div className={`my-3 p-4 rounded-2xl ${selectedTemplate.boxBg} relative z-10 shadow-xs`}>
-              <div className="font-script text-4xl sm:text-5xl leading-tight drop-shadow-xs" style={{ color: selectedTemplate.accentColor }}>
-                {groomName || 'Trần Văn Chinh'}
-              </div>
-              <div className="text-xl font-serif italic my-0.5" style={{ color: selectedTemplate.accentColor }}>&</div>
-              <div className="font-script text-4xl sm:text-5xl leading-tight drop-shadow-xs" style={{ color: selectedTemplate.accentColor }}>
-                {brideName || 'Nguyễn Thu Hà'}
-              </div>
-            </div>
-
-            {/* Groom & Bride Parents */}
-            <div className="grid grid-cols-2 gap-2 text-[10px] border-y border-stone-300/60 py-3 my-2 text-stone-700 font-serif relative z-10">
-              <div className="space-y-0.5 border-r border-stone-200 pr-1">
-                <div className="font-bold uppercase text-[9px]" style={{ color: selectedTemplate.accentColor }}>NHÀ TRAI</div>
-                <div className="truncate font-medium">{groomFather || 'Ông: Trần Văn A'}</div>
-                <div className="truncate font-medium">{groomMother || 'Bà: Nguyễn Thị B'}</div>
-              </div>
-              <div className="space-y-0.5 pl-1">
-                <div className="font-bold uppercase text-[9px]" style={{ color: selectedTemplate.accentColor }}>NHÀ GÁI</div>
-                <div className="truncate font-medium">{brideFather || 'Ông: Lê Văn C'}</div>
-                <div className="truncate font-medium">{brideMother || 'Bà: Phạm Thị D'}</div>
-              </div>
-            </div>
-
-            {/* Event Time & Floor Venue */}
-            <div className={`rounded-xl p-3 ${selectedTemplate.boxBg} shadow-xs my-2 text-xs relative z-10`}>
-              <div className="text-stone-500 text-[9px] uppercase font-bold tracking-wider mb-1 flex items-center justify-center gap-1">
-                <span className="material-symbols-outlined text-xs">schedule</span>
-                THỜI GIAN CỬ HÀNH
-              </div>
-              <div className="font-bold text-sm font-mono text-stone-900">
-                {eventTime} • {eventDate ? new Date(eventDate).toLocaleDateString('vi-VN') : '20/11/2026'}
-              </div>
-              <div className="text-stone-500 text-[9px] uppercase font-bold tracking-wider mt-2 mb-0.5 flex items-center justify-center gap-1">
-                <span className="material-symbols-outlined text-xs">location_on</span>
-                ĐỊA ĐIỂM TỔ CHỨC
-              </div>
-              <div className="font-bold text-sm font-playfair uppercase text-stone-900">
-                {selectedVenueObj.shortName}
-              </div>
-              <div className="font-bold text-[10px] mt-0.5 uppercase" style={{ color: selectedTemplate.accentColor }}>
-                GOLDEN PALACE NAM ĐỊNH
-              </div>
-              <div className="text-[9px] text-stone-500 mt-0.5">
-                98 Đông A, KĐT Hòa Vượng, TP. Nam Định
-              </div>
-            </div>
-
-            {/* Honor Note formatted with explicit line break before 'cho' */}
-            <div className="pt-2 border-t border-stone-200/80 text-[10px] text-stone-600 font-serif italic relative z-10 leading-relaxed">
-              Sự hiện diện của Quý vị là niềm vinh hạnh lớn<br />
-              cho gia đình chúng tôi!
-            </div>
-
+          {/* Logo Golden Palace */}
+          <div className="absolute top-4 left-5 flex items-center gap-1.5 z-20">
+            <img src="/logo-icon.png" alt="Golden Palace Logo" className="h-6 w-auto object-contain" />
+            <span className="text-[8px] font-playfair tracking-[0.2em] text-amber-600 font-bold uppercase">
+              GOLDEN PALACE
+            </span>
           </div>
 
-          {/* Bottom Bar */}
-          <div className="w-16 h-1 bg-stone-500 mx-auto rounded-full mt-2"></div>
+          <div className="pt-4 text-center relative z-10">
+            <div className="font-script text-3xl text-amber-600 mb-1">
+              We Do
+            </div>
+            <div className="text-[9px] tracking-[0.3em] uppercase text-amber-700 font-bold mb-3 border-b border-amber-300/40 pb-2">
+              TRÂN TRỌNG KÍNH MỜI
+            </div>
+          </div>
+
+          {/* GUEST NAME IF ENTERED */}
+          {guestName.trim() && (
+            <div className="w-full bg-amber-50/80 border border-amber-300/60 rounded-xl p-2.5 my-2 text-center shadow-xs">
+              <span className="text-[9px] tracking-[0.2em] uppercase text-amber-700 font-bold block">
+                KÍNH MỜI QUÝ KHÁCH
+              </span>
+              <span className="text-base font-playfair font-bold text-amber-800">
+                {guestName}
+              </span>
+            </div>
+          )}
+
+          <div className="text-center space-y-0.5 my-3 relative z-10">
+            <h4 className="text-lg font-playfair font-bold text-amber-700 tracking-wider uppercase">
+              WEDDING CEREMONY
+            </h4>
+            <p className="text-[10px] text-stone-600 font-serif italic">
+              dự bữa cơm thân mật cùng gia đình
+            </p>
+          </div>
+
+          {/* Couple Names */}
+          <div className="w-full bg-white/70 border border-amber-300/40 rounded-xl p-4 text-center my-3">
+            <div className="font-script text-3xl text-amber-700 leading-tight">
+              {groomName || 'Đức Hoàng'}
+            </div>
+            <div className="my-0.5 text-amber-700 font-serif italic text-lg">&</div>
+            <div className="font-script text-3xl text-amber-700 leading-tight">
+              {brideName || 'Thu Hương'}
+            </div>
+          </div>
+
+          {/* Parents */}
+          <div className="w-full grid grid-cols-2 gap-2 text-[10px] border-y border-amber-300/50 py-3 my-3 font-serif">
+            <div className="text-center border-r border-amber-300/40 pr-1 space-y-0.5">
+              <div className="font-bold text-amber-800 uppercase text-[9px]">NHÀ TRAI</div>
+              <div className="text-stone-800">{groomFather}</div>
+              <div className="text-stone-800">{groomMother}</div>
+            </div>
+            <div className="text-center pl-1 space-y-0.5">
+              <div className="font-bold text-amber-800 uppercase text-[9px]">NHÀ GÁI</div>
+              <div className="text-stone-800">{brideFather}</div>
+              <div className="text-stone-800">{brideMother}</div>
+            </div>
+          </div>
+
+          {/* Event Time & Venue Floor */}
+          <div className="space-y-2 text-center text-[10px] my-3">
+            <div className="p-2.5 bg-white/70 border border-amber-300/40 rounded-lg">
+              <div className="text-amber-800 text-[9px] font-bold uppercase">Thời Gian Cử Hành</div>
+              <div className="text-sm font-bold text-stone-900 font-mono mt-0.5">{eventTime || '11:00 AM'}</div>
+              <div className="text-stone-700 font-medium">{eventDate || '2026-11-20'}</div>
+            </div>
+
+            <div className="p-2.5 bg-white/70 border border-amber-300/40 rounded-lg">
+              <div className="text-amber-800 text-[9px] font-bold uppercase">Địa Điểm Tổ Chức</div>
+              <div className="text-sm font-bold text-stone-900 font-playfair uppercase">
+                {selectedVenueObj.shortName || 'Tầng 3'}
+              </div>
+              <div className="text-amber-800 font-bold text-[9px] uppercase">GOLDEN PALACE NAM ĐỊNH</div>
+            </div>
+          </div>
+
         </div>
       </div>
 
