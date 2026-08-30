@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { toPng } from 'html-to-image';
 import { MUSIC_TRACKS, MUSIC_CATEGORIES, LED_STAGE_TEMPLATES, VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
 
 // Standardized Date Dot Formatter (e.g. "2026-11-20" -> "20.11.2026") matching LedCustomizer.jsx 100%
@@ -150,114 +151,30 @@ export default function AdminPersonalizePage() {
     ? (LED_STAGE_TEMPLATES.find(t => t.id === selectedProfile.ledTemplateId) || LED_STAGE_TEMPLATES[0])
     : LED_STAGE_TEMPLATES[0];
 
-  // Helper function to export/download 1920x1080 Full HD Stage LED image file (EXACT 100% MATCH WITH WEB CLIENT)
+  // Helper function to export/download exact 100% snapshot of live LED element using html-to-image
   const handleDownloadLedBackdrop = async () => {
     if (!selectedProfile) return;
+    
+    // Priority: capture fullscreen LED container or main LED container
+    const node = document.getElementById('fullscreen-led-stage-screen') || document.getElementById('led-stage-screen-canvas');
+    if (!node) return;
 
-    const canvas = document.createElement('canvas');
-    canvas.width = 1920;
-    canvas.height = 1080;
-    const ctx = canvas.getContext('2d');
+    try {
+      const dataUrl = await toPng(node, {
+        quality: 1.0,
+        pixelRatio: 3, // Ultra HD quality snapshot
+        cacheBust: true,
+      });
 
-    // Load Starry Night Background Image
-    const bgImg = new Image();
-    bgImg.crossOrigin = 'anonymous';
-    bgImg.src = currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg';
-
-    // Load Logo Image
-    const logoImg = new Image();
-    logoImg.crossOrigin = 'anonymous';
-    logoImg.src = '/logo-icon.png';
-
-    // Wait for images to load
-    await Promise.all([
-      new Promise((resolve) => { bgImg.onload = resolve; bgImg.onerror = resolve; }),
-      new Promise((resolve) => { logoImg.onload = resolve; logoImg.onerror = resolve; })
-    ]);
-
-    // Ensure Web Fonts are loaded
-    if (typeof document !== 'undefined' && document.fonts) {
-      await document.fonts.ready;
+      const link = document.createElement('a');
+      const groomClean = (selectedProfile.groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+      const brideClean = (selectedProfile.brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+      link.download = `phong-led-san-khau-${groomClean}-${brideClean}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Error rendering LED image snapshot:', err);
     }
-
-    // 1. Draw Starry Night Background
-    if (bgImg.complete && bgImg.naturalWidth > 0) {
-      ctx.drawImage(bgImg, 0, 0, 1920, 1080);
-    } else {
-      ctx.fillStyle = '#050508';
-      ctx.fillRect(0, 0, 1920, 1080);
-    }
-
-    // Overlay Subtle Dark Vignette for contrast
-    const vignette = ctx.createRadialGradient(960, 540, 200, 960, 540, 1100);
-    vignette.addColorStop(0, 'rgba(0, 0, 0, 0.15)');
-    vignette.addColorStop(1, 'rgba(0, 0, 0, 0.65)');
-    ctx.fillStyle = vignette;
-    ctx.fillRect(0, 0, 1920, 1080);
-
-    // 2. Draw Golden Palace Logo Top-Left
-    if (logoImg.complete && logoImg.naturalWidth > 0) {
-      ctx.drawImage(logoImg, 80, 60, 100, 100);
-    }
-
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    // 3. TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN")
-    ctx.fillStyle = '#FFFFFF';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.98)';
-    ctx.shadowBlur = 20;
-    ctx.shadowOffsetY = 6;
-    ctx.font = '900 68px "Playfair Display", Didot, serif';
-    const partyText = (selectedProfile.partyTitle || 'LỄ THÀNH HÔN').toUpperCase();
-    ctx.fillText(partyText, 960, 260);
-
-    // 4. TẦNG 2: COUPLE NAMES IN CURSIVE SCRIPT ("Đức Hoàng & Thu Hương")
-    ctx.fillStyle = '#FFFFFF';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.98)';
-    ctx.shadowBlur = 25;
-    ctx.shadowOffsetY = 8;
-    ctx.font = '400 110px "Ballet", "Great Vibes", cursive, serif';
-    const coupleText = `${selectedProfile.groomName || 'Đức Hoàng'}   &   ${selectedProfile.brideName || 'Thu Hương'}`;
-    ctx.fillText(coupleText, 960, 430);
-
-    // 5. TẦNG 3: WEDDING DATE IN DD.MM.YYYY FORMAT ("20.11.2026")
-    ctx.fillStyle = '#FFFFFF';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
-    ctx.shadowBlur = 15;
-    ctx.shadowOffsetY = 4;
-    ctx.font = '700 44px "Playfair Display", Didot, serif';
-    const formattedDate = formatDateDot(selectedProfile.eventDate);
-    ctx.fillText(formattedDate, 960, 580);
-
-    // 6. Draw Bottom 30% Empty Space Indicator Overlay
-    const bottomGrad = ctx.createLinearGradient(0, 756, 0, 1080);
-    bottomGrad.addColorStop(0, 'rgba(2, 2, 4, 0)');
-    bottomGrad.addColorStop(1, 'rgba(2, 2, 4, 0.95)');
-    ctx.fillStyle = bottomGrad;
-    ctx.fillRect(0, 756, 1920, 324);
-
-    // Bottom Badge Pills
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.strokeStyle = 'rgba(227, 166, 56, 0.3)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(460, 1000, 1000, 44, 22);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = '#f3c969';
-    ctx.shadowBlur = 0;
-    ctx.font = 'bold 20px monospace';
-    ctx.fillText('KHU VỰC ĐỂ TRỐNG ĐÁY MÀN LED (ĐÚNG 30% CHO DÂU RỂ & MC ĐỨNG)', 960, 1022);
-
-    // Trigger Image Download
-    const link = document.createElement('a');
-    const groomClean = (selectedProfile.groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-    const brideClean = (selectedProfile.brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-    link.download = `phong-led-san-khau-${groomClean}-${brideClean}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
   };
 
   return (
@@ -678,6 +595,7 @@ export default function AdminPersonalizePage() {
 
                 {/* Mini LED Canvas Visualizer matching LedCustomizer.jsx 100% */}
                 <div 
+                  id="led-stage-screen-canvas"
                   className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500"
                   style={{ aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384' }}
                 >
@@ -746,13 +664,6 @@ export default function AdminPersonalizePage() {
                       </div>
                     </div>
 
-                  </div>
-
-                  {/* INDICATOR OVERLAY: EXACTLY Bottom 30% Empty Space */}
-                  <div className="absolute bottom-0 inset-x-0 h-[30%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
-                    <span className="text-[9px] text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-amber-400/20 font-bold">
-                      Khu Vực Để Trống Đáy Màn LED (Đúng 30% cho Dâu Rể & MC đứng)
-                    </span>
                   </div>
 
                 </div>
@@ -912,6 +823,7 @@ export default function AdminPersonalizePage() {
           </div>
 
           <div 
+            id="fullscreen-led-stage-screen"
             className="w-full max-w-6xl relative rounded-3xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508]"
             style={{ aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384' }}
           >
@@ -980,13 +892,6 @@ export default function AdminPersonalizePage() {
                 </div>
               </div>
 
-            </div>
-
-            {/* INDICATOR OVERLAY: EXACTLY Bottom 30% Empty Space */}
-            <div className="absolute bottom-0 inset-x-0 h-[30%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-4 pointer-events-none z-20">
-              <span className="text-xs text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-4 py-1 rounded-full border border-amber-400/20 font-bold">
-                Khu Vực Để Trống Đáy Màn LED (Đúng 30% cho Dâu Rể & MC đứng)
-              </span>
             </div>
 
           </div>

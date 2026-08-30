@@ -478,13 +478,6 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
 
             </div>
 
-            {/* INDICATOR OVERLAY: EXACTLY Bottom 30% Empty Space */}
-            <div className="absolute bottom-0 inset-x-0 h-[30%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
-              <span className="text-[9px] text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-amber-400/20 font-bold">
-                Khu Vực Để Trống Đáy Màn LED (Đúng 30% cho Dâu Rể & MC đứng)
-              </span>
-            </div>
-
           </div>
 
           {/* Action Buttons below Visualizer */}
