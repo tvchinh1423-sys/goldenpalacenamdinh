@@ -50,6 +50,7 @@ function PersonalizePageContent() {
   // Validation display control (Only show warning badges on attempt submit or onBlur)
   const [showErrors, setShowErrors] = useState(false);
   const [touchedFields, setTouchedFields] = useState({});
+  const [validationError, setValidationError] = useState('');
 
   const markTouched = (field) => {
     setTouchedFields(prev => ({ ...prev, [field]: true }));
@@ -74,6 +75,30 @@ function PersonalizePageContent() {
 
   const handleSaveProfile = async (customOverrides = {}) => {
     setShowErrors(true);
+
+    // STRICT VALIDATION: Check required fields (driveLink is OPTIONAL)
+    const effectiveTitle = customOverrides.partyTitle || partyTitle;
+    const effectiveGroom = customOverrides.groomName || groomName;
+    const effectiveBride = customOverrides.brideName || brideName;
+    const effectiveDate = customOverrides.eventDate || eventDate;
+    const effectiveTime = customOverrides.eventTime || eventTime;
+    const effectivePhone = customOverrides.phone || phone;
+
+    const isMissingRequired = 
+      !effectiveTitle?.trim() ||
+      !effectiveGroom?.trim() ||
+      !effectiveBride?.trim() ||
+      !effectiveDate ||
+      !effectiveTime?.trim() ||
+      !effectivePhone?.trim();
+
+    if (isMissingRequired) {
+      setValidationError('⚠️ Vui lòng điền đầy đủ thông tin vào bảng đăng ký (Tên tiệc, Chú rể, Cô dâu, Ngày cưới, Giờ đón khách, SĐT) trước khi lưu!');
+      setTimeout(() => setValidationError(''), 6000);
+      return; // STRICTLY BLOCK SAVING IF REQUIRED FIELDS ARE MISSING!
+    }
+
+    setValidationError('');
     setSaving(true);
     const currentFloorName = getFloorName(selectedFloor);
 
@@ -83,12 +108,12 @@ function PersonalizePageContent() {
 
     try {
       const payload = {
-        partyTitle: customOverrides.partyTitle || partyTitle || 'LỄ THÀNH HÔN',
-        groomName: customOverrides.groomName || groomName || 'Chú rể',
-        brideName: customOverrides.brideName || brideName || 'Cô dâu',
-        phone: customOverrides.phone || phone || 'Chưa cung cấp',
-        eventDate: customOverrides.eventDate || eventDate || new Date().toISOString().split('T')[0],
-        eventTime: customOverrides.eventTime || eventTime || '11:00 AM',
+        partyTitle: effectiveTitle,
+        groomName: effectiveGroom,
+        brideName: effectiveBride,
+        phone: effectivePhone,
+        eventDate: effectiveDate,
+        eventTime: effectiveTime,
         floorId: customOverrides.selectedFloor || selectedFloor,
         venueName: currentFloorName,
         driveLink: customOverrides.driveLink !== undefined ? customOverrides.driveLink : driveLink,
@@ -102,7 +127,7 @@ function PersonalizePageContent() {
         youtubeLinks: customOverrides.youtubeLinks || youtubeLinks,
         customNotes: customOverrides.customNotes !== undefined ? customOverrides.customNotes : (customNotes || 'Không có ghi chú thêm'),
         
-        invitationSlug: `thiep-${(groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-${(brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-2026`
+        invitationSlug: `thiep-${(effectiveGroom || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-${(effectiveBride || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-2026`
       };
 
       const res = await fetch('/api/personalize', {
@@ -140,7 +165,7 @@ function PersonalizePageContent() {
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-gray-100 font-montserrat pb-24 selection:bg-[#e3a638] selection:text-white">
       
-      {/* Toast Notification */}
+      {/* Toast Success Notification */}
       {savedNotification && (
         <div className="fixed top-24 right-6 z-50 bg-emerald-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce border border-emerald-400">
           <span className="material-symbols-outlined text-2xl">check_circle</span>
@@ -148,6 +173,14 @@ function PersonalizePageContent() {
             <div className="text-xs font-bold uppercase tracking-wider">Lưu Hồ Sơ Thành Công!</div>
             <div className="text-[11px] text-emerald-100">Toàn bộ Phông LED, Playlist Nhạc & Thông tin đã được chuyển tới Đội Kỹ Thuật Admin Golden Palace.</div>
           </div>
+        </div>
+      )}
+
+      {/* Validation Warning Alert Toast */}
+      {validationError && (
+        <div className="fixed top-24 right-6 z-50 bg-amber-500 text-black px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-pulse border border-amber-300 font-bold text-xs max-w-md">
+          <span className="material-symbols-outlined text-2xl shrink-0">warning</span>
+          <div>{validationError}</div>
         </div>
       )}
 
@@ -192,7 +225,7 @@ function PersonalizePageContent() {
                   {shouldShowWarning('partyTitle', partyTitle) ? (
                     <span className="text-[10px] text-amber-400 font-bold flex items-center gap-1 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
-                      Chưa điền thông tin
+                      Vui lòng điền tên tiệc
                     </span>
                   ) : (
                     <span className="text-[10px] text-gray-400 font-normal">Chọn gợi ý hoặc nhập tự do</span>
@@ -236,11 +269,11 @@ function PersonalizePageContent() {
               {/* Tên Chú Rể */}
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
-                  <span>Tên Chú Rể</span>
+                  <span>Tên Chú Rể (*)</span>
                   {shouldShowWarning('groomName', groomName) && (
                     <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
-                      Chưa nhập
+                      Vui lòng nhập tên chú rể
                     </span>
                   )}
                 </label>
@@ -259,11 +292,11 @@ function PersonalizePageContent() {
               {/* Tên Cô Dâu */}
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
-                  <span>Tên Cô Dâu</span>
+                  <span>Tên Cô Dâu (*)</span>
                   {shouldShowWarning('brideName', brideName) && (
                     <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
-                      Chưa nhập
+                      Vui lòng nhập tên cô dâu
                     </span>
                   )}
                 </label>
@@ -286,7 +319,7 @@ function PersonalizePageContent() {
                   {shouldShowWarning('eventDate', eventDate) && (
                     <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
-                      Chưa chọn ngày
+                      Vui lòng chọn ngày
                     </span>
                   )}
                 </label>
@@ -308,7 +341,7 @@ function PersonalizePageContent() {
                   {shouldShowWarning('eventTime', eventTime) ? (
                     <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
-                      Chưa nhập
+                      Vui lòng nhập giờ
                     </span>
                   ) : (
                     <span className="text-[10px] text-amber-300 font-normal">Đồng bộ Thiệp</span>
@@ -384,7 +417,7 @@ function PersonalizePageContent() {
                   {shouldShowWarning('phone', phone) && (
                     <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
-                      Chưa nhập
+                      Vui lòng nhập SĐT
                     </span>
                   )}
                 </label>
@@ -400,19 +433,13 @@ function PersonalizePageContent() {
                 />
               </div>
 
-              {/* Link Google Drive */}
+              {/* Link Google Drive (KHÔNG BẮT BUỘC - OPTIONAL) */}
               <div className="sm:col-span-2 bg-[#1b1b1b] p-3.5 rounded-xl border border-blue-500/30 space-y-1.5">
                 <label className="block text-blue-300 font-bold uppercase tracking-wider flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-base">cloud_upload</span>
-                    LINK GOOGLE DRIVE / CLOUD CHỨA ẢNH & VIDEO CƯỚI:
+                    LINK GOOGLE DRIVE / CLOUD CHỨA ẢNH & VIDEO CƯỚI (KHÔNG BẮT BUỘC):
                   </span>
-                  {shouldShowWarning('driveLink', driveLink) && (
-                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
-                      <span className="material-symbols-outlined text-xs">warning</span>
-                      Chưa dán link
-                    </span>
-                  )}
                 </label>
                 <input
                   type="url"
@@ -420,9 +447,7 @@ function PersonalizePageContent() {
                   onChange={(e) => setDriveLink(e.target.value)}
                   onBlur={() => markTouched('driveLink')}
                   placeholder="Dán link Google Drive / Dropbox (VD: https://drive.google.com/drive/folders/...)"
-                  className={`w-full bg-[#121212] border rounded-lg px-3.5 py-2 text-white font-mono outline-none transition-colors ${
-                    shouldShowWarning('driveLink', driveLink) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-blue-400'
-                  }`}
+                  className="w-full bg-[#121212] border border-gray-700 focus:border-blue-400 rounded-lg px-3.5 py-2 text-white font-mono outline-none transition-colors"
                 />
                 <p className="text-[11px] text-blue-300/80 italic flex items-center gap-1 mt-1">
                   <span className="material-symbols-outlined text-xs text-blue-400">info</span>
@@ -435,7 +460,7 @@ function PersonalizePageContent() {
             {/* Global Submit / Save Profile Button */}
             <div className="mt-6 pt-4 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-[11px] text-gray-400 italic">
-                * Thông tin này sẽ tự động điền vào Phông LED, Playlist nhạc & Thiệp cưới bên dưới.
+                * Vui lòng nhập đủ các trường thông tin bắt buộc (*). Mục Link Drive có thể bổ sung sau.
               </p>
               <button
                 onClick={() => handleSaveProfile()}
