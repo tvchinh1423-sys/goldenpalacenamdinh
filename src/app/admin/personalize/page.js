@@ -4,6 +4,18 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { MUSIC_TRACKS, MUSIC_CATEGORIES, LED_STAGE_TEMPLATES, VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
 
+// Standardized Date Dot Formatter (e.g. "2026-11-20" -> "20.11.2026") matching LedCustomizer.jsx 100%
+function formatDateDot(dateStr) {
+  if (!dateStr) return '20.11.2026';
+  if (dateStr.includes('-')) {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+  }
+  return dateStr;
+}
+
 export default function AdminPersonalizePage() {
   const { data: session } = useSession();
   const isReadOnly = session?.user?.role === 'MEMBER';
@@ -138,7 +150,7 @@ export default function AdminPersonalizePage() {
     ? (LED_STAGE_TEMPLATES.find(t => t.id === selectedProfile.ledTemplateId) || LED_STAGE_TEMPLATES[0])
     : LED_STAGE_TEMPLATES[0];
 
-  // Helper function to export/download 1920x1080 Full HD Stage LED image file (EXACT MATCH WITH LIVE DISPLAY)
+  // Helper function to export/download 1920x1080 Full HD Stage LED image file (EXACT 100% MATCH WITH WEB CLIENT)
   const handleDownloadLedBackdrop = async () => {
     if (!selectedProfile) return;
 
@@ -198,7 +210,7 @@ export default function AdminPersonalizePage() {
     ctx.shadowOffsetY = 6;
     ctx.font = '900 68px "Playfair Display", Didot, serif';
     const partyText = (selectedProfile.partyTitle || 'LỄ THÀNH HÔN').toUpperCase();
-    ctx.fillText(partyText, 960, 340);
+    ctx.fillText(partyText, 960, 260);
 
     // 4. TẦNG 2: COUPLE NAMES IN CURSIVE SCRIPT ("Đức Hoàng & Thu Hương")
     ctx.fillStyle = '#FFFFFF';
@@ -207,16 +219,37 @@ export default function AdminPersonalizePage() {
     ctx.shadowOffsetY = 8;
     ctx.font = '400 110px "Ballet", "Great Vibes", cursive, serif';
     const coupleText = `${selectedProfile.groomName || 'Đức Hoàng'}   &   ${selectedProfile.brideName || 'Thu Hương'}`;
-    ctx.fillText(coupleText, 960, 540);
+    ctx.fillText(coupleText, 960, 430);
 
-    // 5. TẦNG 3: WEDDING DATE ("2026-11-20")
-    ctx.fillStyle = '#F3C969';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+    // 5. TẦNG 3: WEDDING DATE IN DD.MM.YYYY FORMAT ("20.11.2026")
+    ctx.fillStyle = '#FFFFFF';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
     ctx.shadowBlur = 15;
     ctx.shadowOffsetY = 4;
-    ctx.font = '700 44px "Playfair Display", monospace, serif';
-    const dateText = selectedProfile.eventDate || '2026-11-20';
-    ctx.fillText(dateText, 960, 720);
+    ctx.font = '700 44px "Playfair Display", Didot, serif';
+    const formattedDate = formatDateDot(selectedProfile.eventDate);
+    ctx.fillText(formattedDate, 960, 580);
+
+    // 6. Draw Bottom 30% Empty Space Indicator Overlay
+    const bottomGrad = ctx.createLinearGradient(0, 756, 0, 1080);
+    bottomGrad.addColorStop(0, 'rgba(2, 2, 4, 0)');
+    bottomGrad.addColorStop(1, 'rgba(2, 2, 4, 0.95)');
+    ctx.fillStyle = bottomGrad;
+    ctx.fillRect(0, 756, 1920, 324);
+
+    // Bottom Badge Pills
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.strokeStyle = 'rgba(227, 166, 56, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(460, 1000, 1000, 44, 22);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#f3c969';
+    ctx.shadowBlur = 0;
+    ctx.font = 'bold 20px monospace';
+    ctx.fillText('KHU VỰC ĐỂ TRỐNG ĐÁY MÀN LED (ĐÚNG 30% CHO DÂU RỂ & MC ĐỨNG)', 960, 1022);
 
     // Trigger Image Download
     const link = document.createElement('a');
@@ -351,7 +384,7 @@ export default function AdminPersonalizePage() {
                       </div>
                     </td>
                     <td className="p-4 font-mono font-medium">
-                      <div className="font-bold text-stone-900">{prof.eventDate}</div>
+                      <div className="font-bold text-stone-900">{formatDateDot(prof.eventDate)}</div>
                       <div className="text-[11px] text-gray-500">{prof.eventTime}</div>
                     </td>
                     <td className="p-4 font-bold text-amber-700">
@@ -580,7 +613,7 @@ export default function AdminPersonalizePage() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-stone-900/90 border border-stone-800 rounded-2xl">
                 <div>
                   <span className="text-gray-400 block text-[10px]">Ngày & Buổi Tổ Chức:</span>
-                  <strong className="text-sm font-mono text-amber-300">{selectedProfile.eventDate} ({selectedProfile.eventTime})</strong>
+                  <strong className="text-sm font-mono text-amber-300">{formatDateDot(selectedProfile.eventDate)} ({selectedProfile.eventTime})</strong>
                 </div>
                 <div>
                   <span className="text-gray-400 block text-[10px]">Sảnh Tiệc:</span>
@@ -618,7 +651,7 @@ export default function AdminPersonalizePage() {
                 </div>
               )}
 
-              {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU */}
+              {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU (EXACT 100% MATCH WITH WEB LedCustomizer.jsx) */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2 text-amber-400 font-bold uppercase tracking-wider text-xs">
@@ -645,12 +678,12 @@ export default function AdminPersonalizePage() {
 
                 {/* Mini LED Canvas Visualizer matching LedCustomizer.jsx 100% */}
                 <div 
-                  className="w-full relative rounded-xl overflow-hidden border-2 border-amber-500/50 shadow-[0_10px_40px_rgba(0,0,0,0.9)] bg-[#050508]"
+                  className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500"
                   style={{ aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384' }}
                 >
                   {/* STARRY BACKGROUND */}
                   <div 
-                    className="absolute inset-0 bg-cover bg-center"
+                    className="absolute inset-0 bg-cover bg-center transition-all duration-700"
                     style={{ backgroundImage: `url(${currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
                   ></div>
                   <div className="absolute inset-0 bg-black/25"></div>
@@ -658,46 +691,70 @@ export default function AdminPersonalizePage() {
                   {/* VERTICAL SPOTLIGHT GLOW BEAM */}
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
-                  {/* LOGO ICON */}
-                  <div className="absolute top-2.5 left-3.5 z-40">
-                    <img src="/logo-icon.png" alt="Golden Palace" className="h-6 sm:h-8 w-auto object-contain filter drop-shadow-[0_0_10px_rgba(227,166,56,0.85)]" />
+                  {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
+                  <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
+                    <img 
+                      src="/logo-icon.png" 
+                      alt="Golden Palace Icon Logo" 
+                      className="h-7 sm:h-10 md:h-12 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(227,166,56,0.85)]" 
+                    />
                   </div>
 
                   {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
-                  <div className="relative z-30 w-full h-[75%] flex flex-col items-center justify-evenly text-center px-4 py-2 my-auto">
-                    
-                    {/* TẦNG 1: EVENT TITLE HEADER */}
-                    <div 
-                      className="text-xs sm:text-base md:text-xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
-                      style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
-                    >
-                      {selectedProfile.partyTitle || 'LỄ THÀNH HÔN'}
-                    </div>
+                  <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
 
-                    {/* TẦNG 2: COUPLE NAMES IN CURSIVE SCRIPT */}
-                    <div 
-                      className="text-base sm:text-2xl md:text-3xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                      style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
-                    >
-                      <span>{selectedProfile.groomName || 'Đức Hoàng'}</span>
-                      <span 
-                        className="text-slate-100 text-sm sm:text-lg mx-2.5 sm:mx-3 font-serif italic font-light"
-                        style={{ fontFamily: "'Playfair Display', Didot, serif" }}
+                    {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
+                    <div className="w-full flex items-center justify-center z-20">
+                      <div 
+                        className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                        style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
                       >
-                        &
-                      </span>
-                      <span>{selectedProfile.brideName || 'Thu Hương'}</span>
+                        {selectedProfile.partyTitle || 'LỄ THÀNH HÔN'}
+                      </div>
                     </div>
 
-                    {/* TẦNG 3: WEDDING DATE */}
-                    <div 
-                      className="text-[10px] sm:text-xs md:text-sm text-slate-100 font-bold tracking-[0.2em] font-mono drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]"
-                      style={{ fontFamily: "'Playfair Display', serif" }}
-                    >
-                      {selectedProfile.eventDate || '2026-11-20'}
+                    {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
+                    <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
+                      <div 
+                        className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                        style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
+                      >
+                        <span>{selectedProfile.groomName || 'Đức Hoàng'}</span>
+                        
+                        <span 
+                          className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
+                          style={{ fontFamily: "'Playfair Display', 'Bodoni Moda', Didot, serif" }}
+                        >
+                          &
+                        </span>
+
+                        <span>{selectedProfile.brideName || 'Thu Hương'}</span>
+                      </div>
+                    </div>
+
+                    {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
+                    <div className="z-20 w-full flex flex-col items-center">
+                      <div 
+                        className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                        style={{ 
+                          fontFamily: "'Playfair Display', Didot, 'Times New Roman', serif",
+                          fontVariantNumeric: "lining-nums tabular-nums",
+                          letterSpacing: "0.14em"
+                        }}
+                      >
+                        {formatDateDot(selectedProfile.eventDate)}
+                      </div>
                     </div>
 
                   </div>
+
+                  {/* INDICATOR OVERLAY: EXACTLY Bottom 30% Empty Space */}
+                  <div className="absolute bottom-0 inset-x-0 h-[30%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-2 pointer-events-none z-20">
+                    <span className="text-[9px] text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-3 py-0.5 rounded-full border border-amber-400/20 font-bold">
+                      Khu Vực Để Trống Đáy Màn LED (Đúng 30% cho Dâu Rể & MC đứng)
+                    </span>
+                  </div>
+
                 </div>
               </div>
 
@@ -834,7 +891,7 @@ export default function AdminPersonalizePage() {
         </div>
       )}
 
-      {/* FULLSCREEN STAGE LED SCREEN MODAL */}
+      {/* FULLSCREEN STAGE LED SCREEN MODAL (EXACT 100% MATCH WITH WEB LedCustomizer.jsx) */}
       {fullscreenLed && selectedProfile && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-4">
           <div className="absolute top-6 right-6 z-50 flex items-center gap-3">
@@ -855,12 +912,12 @@ export default function AdminPersonalizePage() {
           </div>
 
           <div 
-            className="w-full max-w-6xl relative rounded-3xl overflow-hidden border-4 border-amber-500/60 shadow-[0_0_80px_rgba(227,166,56,0.35)] bg-[#050508]"
+            className="w-full max-w-6xl relative rounded-3xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508]"
             style={{ aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384' }}
           >
             {/* STARRY BACKGROUND */}
             <div 
-              className="absolute inset-0 bg-cover bg-center"
+              className="absolute inset-0 bg-cover bg-center transition-all duration-700"
               style={{ backgroundImage: `url(${currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
             ></div>
             <div className="absolute inset-0 bg-black/25"></div>
@@ -868,46 +925,70 @@ export default function AdminPersonalizePage() {
             {/* VERTICAL SPOTLIGHT GLOW BEAM */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
-            {/* LOGO ICON */}
-            <div className="absolute top-6 left-8 z-40">
-              <img src="/logo-icon.png" alt="Golden Palace" className="h-10 sm:h-14 w-auto object-contain filter drop-shadow-[0_0_15px_rgba(227,166,56,0.85)]" />
+            {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
+            <div className="absolute top-5 left-6 z-40">
+              <img 
+                src="/logo-icon.png" 
+                alt="Golden Palace Icon Logo" 
+                className="h-10 sm:h-14 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(227,166,56,0.85)]" 
+              />
             </div>
 
             {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
-            <div className="relative z-30 w-full h-[75%] flex flex-col items-center justify-evenly text-center px-8 py-4 my-auto">
-              
-              {/* TẦNG 1: EVENT TITLE HEADER */}
-              <div 
-                className="text-2xl sm:text-4xl md:text-5xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)]"
-                style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
-              >
-                {selectedProfile.partyTitle || 'LỄ THÀNH HÔN'}
-              </div>
+            <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
 
-              {/* TẦNG 2: COUPLE NAMES IN CURSIVE SCRIPT */}
-              <div 
-                className="text-4xl sm:text-6xl md:text-7xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_30px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
-              >
-                <span>{selectedProfile.groomName || 'Đức Hoàng'}</span>
-                <span 
-                  className="text-slate-100 text-2xl sm:text-4xl mx-4 sm:mx-6 font-serif italic font-light"
-                  style={{ fontFamily: "'Playfair Display', Didot, serif" }}
+              {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
+              <div className="w-full flex items-center justify-center z-20">
+                <div 
+                  className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                  style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
                 >
-                  &
-                </span>
-                <span>{selectedProfile.brideName || 'Thu Hương'}</span>
+                  {selectedProfile.partyTitle || 'LỄ THÀNH HÔN'}
+                </div>
               </div>
 
-              {/* TẦNG 3: WEDDING DATE */}
-              <div 
-                className="text-base sm:text-2xl text-slate-100 font-bold tracking-[0.25em] font-mono drop-shadow-[0_2px_15px_rgba(0,0,0,0.95)]"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                {selectedProfile.eventDate || '2026-11-20'}
+              {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
+              <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
+                <div 
+                  className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                  style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
+                >
+                  <span>{selectedProfile.groomName || 'Đức Hoàng'}</span>
+                  
+                  <span 
+                    className="text-slate-100 text-2xl sm:text-4xl md:text-5xl mx-4 sm:mx-6 font-serif italic font-light tracking-normal"
+                    style={{ fontFamily: "'Playfair Display', 'Bodoni Moda', Didot, serif" }}
+                  >
+                    &
+                  </span>
+
+                  <span>{selectedProfile.brideName || 'Thu Hương'}</span>
+                </div>
+              </div>
+
+              {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
+              <div className="z-20 w-full flex flex-col items-center">
+                <div 
+                  className="text-base sm:text-2xl md:text-3xl text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                  style={{ 
+                    fontFamily: "'Playfair Display', Didot, 'Times New Roman', serif",
+                    fontVariantNumeric: "lining-nums tabular-nums",
+                    letterSpacing: "0.14em"
+                  }}
+                >
+                  {formatDateDot(selectedProfile.eventDate)}
+                </div>
               </div>
 
             </div>
+
+            {/* INDICATOR OVERLAY: EXACTLY Bottom 30% Empty Space */}
+            <div className="absolute bottom-0 inset-x-0 h-[30%] bg-gradient-to-t from-[#020204] via-[#050508]/80 to-transparent flex items-end justify-center pb-4 pointer-events-none z-20">
+              <span className="text-xs text-amber-200/60 uppercase font-mono tracking-widest bg-black/60 px-4 py-1 rounded-full border border-amber-400/20 font-bold">
+                Khu Vực Để Trống Đáy Màn LED (Đúng 30% cho Dâu Rể & MC đứng)
+              </span>
+            </div>
+
           </div>
         </div>
       )}
