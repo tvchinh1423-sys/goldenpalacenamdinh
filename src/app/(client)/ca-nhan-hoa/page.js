@@ -42,10 +42,23 @@ function PersonalizePageContent() {
   // LED State
   const [selectedLedTemplate, setSelectedLedTemplate] = useState('led-starry-diamond');
 
-  // Music selector state - EMPTY ARRAY BY DEFAULT (NO PRE-SELECTED TRACKS AS DIRECTED)
+  // Music selector state - EMPTY ARRAY BY DEFAULT (NO PRE-SELECTED TRACKS)
   const [selectedTracks, setSelectedTracks] = useState([]);
   const [youtubeLinks, setYoutubeLinks] = useState({ welcome: '', entrance: '', toast: '', dining: '' });
   const [customNotes, setCustomNotes] = useState('');
+
+  // Validation display control (Only show warning badges on attempt submit or onBlur)
+  const [showErrors, setShowErrors] = useState(false);
+  const [touchedFields, setTouchedFields] = useState({});
+
+  const markTouched = (field) => {
+    setTouchedFields(prev => ({ ...prev, [field]: true }));
+  };
+
+  const shouldShowWarning = (field, val) => {
+    const isEmpty = !val || (typeof val === 'string' && !val.trim());
+    return isEmpty && (showErrors || touchedFields[field]);
+  };
 
   // Saving state & Notification
   const [saving, setSaving] = useState(false);
@@ -60,6 +73,7 @@ function PersonalizePageContent() {
   };
 
   const handleSaveProfile = async (customOverrides = {}) => {
+    setShowErrors(true);
     setSaving(true);
     const currentFloorName = getFloorName(selectedFloor);
 
@@ -157,26 +171,26 @@ function PersonalizePageContent() {
             Nhập thông tin tiệc một lần duy nhất – hệ thống tự động đồng bộ Phông Màn LED Sân Khấu, Kịch Bản Nhạc Tiệc và Thiệp Cưới Điện Tử.
           </p>
 
-          {/* Unified Global Registration Form */}
+          {/* Registration Form Block */}
           <div className="w-full max-w-3xl mt-10 bg-[#161616] border border-[#e3a638]/30 rounded-3xl p-6 sm:p-8 text-left shadow-2xl backdrop-blur-md">
             <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-6">
               <div className="flex items-center gap-2 text-[#e3a638]">
                 <span className="material-symbols-outlined text-2xl">badge</span>
-                <h3 className="text-base sm:text-lg font-playfair font-bold">Đăng Ký Thông Tin Tiệc Cưới Dùng Chung</h3>
+                <h3 className="text-base sm:text-lg font-playfair font-bold">Đăng Ký Thông Tin</h3>
               </div>
-              <span className="text-[10px] text-amber-300 font-mono bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+              <span className="text-[10px] text-amber-300 font-mono bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30 font-semibold">
                 Đồng Bộ Real-time 3 Tính Năng
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               
-              {/* 1. TÊN TIỆC CƯỚI */}
+              {/* 1. TÊN TIỆC CƯỚI & TIÊU ĐỀ */}
               <div className="sm:col-span-2 bg-[#1f1f1f] p-3.5 rounded-2xl border border-amber-500/30">
                 <label className="block text-amber-300 font-bold mb-2 uppercase tracking-wider flex items-center justify-between text-xs">
-                  <span>Tên Tiệc Cưới & Tiêu Đề (Đồng Bộ Phông LED & Thiệp) (*)</span>
-                  {!partyTitle.trim() ? (
-                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-1 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                  <span>TÊN TIỆC CƯỚI & TIÊU ĐỀ (*)</span>
+                  {shouldShowWarning('partyTitle', partyTitle) ? (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-1 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
                       Chưa điền thông tin
                     </span>
@@ -191,7 +205,10 @@ function PersonalizePageContent() {
                     <button
                       key={opt}
                       type="button"
-                      onClick={() => setPartyTitle(opt)}
+                      onClick={() => {
+                        setPartyTitle(opt);
+                        markTouched('partyTitle');
+                      }}
                       className={`py-1.5 px-2.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
                         partyTitle === opt
                           ? 'border-amber-400 bg-amber-400/25 text-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.3)]'
@@ -208,9 +225,10 @@ function PersonalizePageContent() {
                   type="text"
                   value={partyTitle}
                   onChange={(e) => setPartyTitle(e.target.value)}
+                  onBlur={() => markTouched('partyTitle')}
                   placeholder="VD: LỄ THÀNH HÔN"
                   className={`w-full bg-[#141414] border rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none text-xs tracking-wider transition-colors ${
-                    !partyTitle.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                    shouldShowWarning('partyTitle', partyTitle) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
                   }`}
                 />
               </div>
@@ -219,8 +237,8 @@ function PersonalizePageContent() {
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
                   <span>Tên Chú Rể</span>
-                  {!groomName.trim() && (
-                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                  {shouldShowWarning('groomName', groomName) && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
                       Chưa nhập
                     </span>
@@ -230,9 +248,10 @@ function PersonalizePageContent() {
                   type="text"
                   value={groomName}
                   onChange={(e) => setGroomName(e.target.value)}
+                  onBlur={() => markTouched('groomName')}
                   placeholder="VD: Đức Hoàng"
                   className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white font-semibold outline-none transition-colors ${
-                    !groomName.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                    shouldShowWarning('groomName', groomName) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
                   }`}
                 />
               </div>
@@ -241,8 +260,8 @@ function PersonalizePageContent() {
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
                   <span>Tên Cô Dâu</span>
-                  {!brideName.trim() && (
-                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                  {shouldShowWarning('brideName', brideName) && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
                       Chưa nhập
                     </span>
@@ -252,9 +271,10 @@ function PersonalizePageContent() {
                   type="text"
                   value={brideName}
                   onChange={(e) => setBrideName(e.target.value)}
+                  onBlur={() => markTouched('brideName')}
                   placeholder="VD: Thu Hương"
                   className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white font-semibold outline-none transition-colors ${
-                    !brideName.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                    shouldShowWarning('brideName', brideName) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
                   }`}
                 />
               </div>
@@ -263,8 +283,8 @@ function PersonalizePageContent() {
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
                   <span>Ngày Tổ Chức Cưới (*)</span>
-                  {!eventDate && (
-                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                  {shouldShowWarning('eventDate', eventDate) && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
                       Chưa chọn ngày
                     </span>
@@ -274,8 +294,9 @@ function PersonalizePageContent() {
                   type="date"
                   value={eventDate}
                   onChange={(e) => setEventDate(e.target.value)}
+                  onBlur={() => markTouched('eventDate')}
                   className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white outline-none transition-colors ${
-                    !eventDate ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                    shouldShowWarning('eventDate', eventDate) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
                   }`}
                 />
               </div>
@@ -284,8 +305,8 @@ function PersonalizePageContent() {
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
                   <span>Thời Gian / Giờ Đón Khách (*)</span>
-                  {!eventTime.trim() ? (
-                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                  {shouldShowWarning('eventTime', eventTime) ? (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
                       Chưa nhập
                     </span>
@@ -297,7 +318,10 @@ function PersonalizePageContent() {
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <button
                     type="button"
-                    onClick={() => setEventTime('11:00 AM')}
+                    onClick={() => {
+                      setEventTime('11:00 AM');
+                      markTouched('eventTime');
+                    }}
                     className={`py-1 px-2 rounded text-[10px] font-bold border transition-all cursor-pointer ${
                       eventTime === '11:00 AM'
                         ? 'border-amber-400 bg-amber-400/20 text-amber-300'
@@ -308,7 +332,10 @@ function PersonalizePageContent() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setEventTime('17:30 PM')}
+                    onClick={() => {
+                      setEventTime('17:30 PM');
+                      markTouched('eventTime');
+                    }}
                     className={`py-1 px-2 rounded text-[10px] font-bold border transition-all cursor-pointer ${
                       eventTime === '17:30 PM'
                         ? 'border-amber-400 bg-amber-400/20 text-amber-300'
@@ -323,9 +350,10 @@ function PersonalizePageContent() {
                   type="text"
                   value={eventTime}
                   onChange={(e) => setEventTime(e.target.value)}
+                  onBlur={() => markTouched('eventTime')}
                   placeholder="VD: 11:00 AM hoặc 10:30 AM"
                   className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white font-semibold outline-none transition-colors ${
-                    !eventTime.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                    shouldShowWarning('eventTime', eventTime) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
                   }`}
                 />
               </div>
@@ -353,8 +381,8 @@ function PersonalizePageContent() {
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
                   <span>Số Điện Thoại Liên Hệ Gia Chủ (*)</span>
-                  {!phone.trim() && (
-                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                  {shouldShowWarning('phone', phone) && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
                       Chưa nhập
                     </span>
@@ -364,9 +392,10 @@ function PersonalizePageContent() {
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  onBlur={() => markTouched('phone')}
                   placeholder="VD: 0912 345 678"
                   className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white outline-none transition-colors ${
-                    !phone.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                    shouldShowWarning('phone', phone) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
                   }`}
                 />
               </div>
@@ -378,8 +407,8 @@ function PersonalizePageContent() {
                     <span className="material-symbols-outlined text-base">cloud_upload</span>
                     LINK GOOGLE DRIVE / CLOUD CHỨA ẢNH & VIDEO CƯỚI:
                   </span>
-                  {!driveLink.trim() && (
-                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                  {shouldShowWarning('driveLink', driveLink) && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
                       Chưa dán link
                     </span>
@@ -389,11 +418,16 @@ function PersonalizePageContent() {
                   type="url"
                   value={driveLink}
                   onChange={(e) => setDriveLink(e.target.value)}
+                  onBlur={() => markTouched('driveLink')}
                   placeholder="Dán link Google Drive / Dropbox (VD: https://drive.google.com/drive/folders/...)"
                   className={`w-full bg-[#121212] border rounded-lg px-3.5 py-2 text-white font-mono outline-none transition-colors ${
-                    !driveLink.trim() ? 'border-amber-500/50 bg-amber-500/5' : 'border-gray-700 focus:border-blue-400'
+                    shouldShowWarning('driveLink', driveLink) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-blue-400'
                   }`}
                 />
+                <p className="text-[11px] text-blue-300/80 italic flex items-center gap-1 mt-1">
+                  <span className="material-symbols-outlined text-xs text-blue-400">info</span>
+                  Vui lòng mở quyền chia sẻ "Bất kỳ ai có liên kết" để kỹ thuật xem được file
+                </p>
               </div>
 
             </div>
@@ -406,10 +440,19 @@ function PersonalizePageContent() {
               <button
                 onClick={() => handleSaveProfile()}
                 disabled={saving}
-                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0 disabled:opacity-50"
               >
-                <span className="material-symbols-outlined text-base">cloud_upload</span>
-                {saving ? 'Đang Lưu...' : 'Lưu Hồ Sơ & Gửi Đội Kỹ Thuật'}
+                {saving ? (
+                  <>
+                    <span className="material-symbols-outlined text-base animate-spin">sync</span>
+                    Đang Lưu Hồ Sơ...
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined text-base">cloud_upload</span>
+                    Lưu Hồ Sơ & Gửi Đội Kỹ Thuật
+                  </>
+                )}
               </button>
             </div>
           </div>
