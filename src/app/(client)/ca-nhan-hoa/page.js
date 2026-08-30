@@ -42,8 +42,8 @@ function PersonalizePageContent() {
   // LED State
   const [selectedLedTemplate, setSelectedLedTemplate] = useState('led-starry-diamond');
 
-  // Music selector state (Defaults to 4 standard tracks if empty)
-  const [selectedTracks, setSelectedTracks] = useState(['w1', 'e1', 't1', 'd1']);
+  // Music selector state - EMPTY ARRAY BY DEFAULT (NO PRE-SELECTED TRACKS AS DIRECTED)
+  const [selectedTracks, setSelectedTracks] = useState([]);
   const [youtubeLinks, setYoutubeLinks] = useState({ welcome: '', entrance: '', toast: '', dining: '' });
   const [customNotes, setCustomNotes] = useState('');
 
@@ -63,6 +63,10 @@ function PersonalizePageContent() {
     setSaving(true);
     const currentFloorName = getFloorName(selectedFloor);
 
+    // Music Status Check: Only say "Đã chọn..." if user actively selected tracks or pasted youtube links
+    const hasUserMusic = (selectedTracks && selectedTracks.length > 0) || Object.values(youtubeLinks || {}).some(Boolean);
+    const finalMusicStatus = customOverrides.musicStatus || (hasUserMusic ? `Đã chọn ${selectedTracks.length} bài hát kịch bản` : 'Không có yêu cầu gì');
+
     try {
       const payload = {
         partyTitle: customOverrides.partyTitle || partyTitle || 'LỄ THÀNH HÔN',
@@ -75,14 +79,14 @@ function PersonalizePageContent() {
         venueName: currentFloorName,
         driveLink: customOverrides.driveLink !== undefined ? customOverrides.driveLink : driveLink,
         
-        // AUTOMATICALLY SAVE COMPLETE LED & MUSIC CONFIGURATIONS BY DEFAULT OR OVERRIDES
+        // LED & MUSIC CONFIGURATIONS
         ledStatus: customOverrides.ledStatus || `Đã thiết kế phông màn LED sân khấu (${currentFloorName})`,
         ledTemplateId: customOverrides.ledTemplateId || selectedLedTemplate || 'led-starry-diamond',
         
-        musicStatus: customOverrides.musicStatus || (selectedTracks.length > 0 ? `Đã chọn ${selectedTracks.length} bài hát kịch bản` : 'Đã chọn kịch bản nhạc tiệc cưới chuẩn'),
-        selectedMusic: customOverrides.selectedMusic || (selectedTracks.length > 0 ? selectedTracks : ['w1', 'e1', 't1', 'd1']),
+        musicStatus: finalMusicStatus,
+        selectedMusic: customOverrides.selectedMusic !== undefined ? customOverrides.selectedMusic : selectedTracks,
         youtubeLinks: customOverrides.youtubeLinks || youtubeLinks,
-        customNotes: customOverrides.customNotes !== undefined ? customOverrides.customNotes : (customNotes || 'Mở kịch bản chuẩn cho sảnh tiệc sân khấu'),
+        customNotes: customOverrides.customNotes !== undefined ? customOverrides.customNotes : (customNotes || 'Không có ghi chú thêm'),
         
         invitationSlug: `thiep-${(groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-${(brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '')}-2026`
       };
@@ -128,7 +132,7 @@ function PersonalizePageContent() {
           <span className="material-symbols-outlined text-2xl">check_circle</span>
           <div>
             <div className="text-xs font-bold uppercase tracking-wider">Lưu Hồ Sơ Thành Công!</div>
-            <div className="text-[11px] text-emerald-100">Toàn bộ Phông LED, Nhạc tiệc & Thông tin đã được chuyển tới Đội Kỹ Thuật Admin Golden Palace.</div>
+            <div className="text-[11px] text-emerald-100">Toàn bộ Phông LED, Playlist Nhạc & Thông tin đã được chuyển tới Đội Kỹ Thuật Admin Golden Palace.</div>
           </div>
         </div>
       )}
@@ -167,11 +171,18 @@ function PersonalizePageContent() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               
-              {/* 1. TÊN TIỆC CƯỚI (WITH PRESETS + MANUAL INPUT, 2-WAY SYNC WITH LED TITLE) */}
+              {/* 1. TÊN TIỆC CƯỚI */}
               <div className="sm:col-span-2 bg-[#1f1f1f] p-3.5 rounded-2xl border border-amber-500/30">
                 <label className="block text-amber-300 font-bold mb-2 uppercase tracking-wider flex items-center justify-between text-xs">
                   <span>Tên Tiệc Cưới & Tiêu Đề (Đồng Bộ Phông LED & Thiệp) (*)</span>
-                  <span className="text-[10px] text-gray-400 font-normal">Chọn gợi ý hoặc nhập tự do</span>
+                  {!partyTitle.trim() ? (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-1 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                      <span className="material-symbols-outlined text-xs">warning</span>
+                      Chưa điền thông tin
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-gray-400 font-normal">Chọn gợi ý hoặc nhập tự do</span>
+                  )}
                 </label>
                 
                 {/* Preset Option Buttons */}
@@ -198,55 +209,89 @@ function PersonalizePageContent() {
                   value={partyTitle}
                   onChange={(e) => setPartyTitle(e.target.value)}
                   placeholder="VD: LỄ THÀNH HÔN"
-                  className="w-full bg-[#141414] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none text-xs tracking-wider transition-colors"
+                  className={`w-full bg-[#141414] border rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none text-xs tracking-wider transition-colors ${
+                    !partyTitle.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                  }`}
                 />
               </div>
 
-              {/* Tên Chú Rể & Cô Dâu */}
+              {/* Tên Chú Rể */}
               <div>
-                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
-                  Tên Chú Rể
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
+                  <span>Tên Chú Rể</span>
+                  {!groomName.trim() && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-xs">warning</span>
+                      Chưa nhập
+                    </span>
+                  )}
                 </label>
                 <input
                   type="text"
                   value={groomName}
                   onChange={(e) => setGroomName(e.target.value)}
                   placeholder="VD: Đức Hoàng"
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white font-semibold outline-none"
+                  className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white font-semibold outline-none transition-colors ${
+                    !groomName.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                  }`}
                 />
               </div>
 
+              {/* Tên Cô Dâu */}
               <div>
-                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
-                  Tên Cô Dâu
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
+                  <span>Tên Cô Dâu</span>
+                  {!brideName.trim() && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-xs">warning</span>
+                      Chưa nhập
+                    </span>
+                  )}
                 </label>
                 <input
                   type="text"
                   value={brideName}
                   onChange={(e) => setBrideName(e.target.value)}
                   placeholder="VD: Thu Hương"
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white font-semibold outline-none"
+                  className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white font-semibold outline-none transition-colors ${
+                    !brideName.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                  }`}
                 />
               </div>
 
               {/* Ngày Tổ Chức */}
               <div>
-                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
-                  Ngày Tổ Chức Cưới (*)
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
+                  <span>Ngày Tổ Chức Cưới (*)</span>
+                  {!eventDate && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-xs">warning</span>
+                      Chưa chọn ngày
+                    </span>
+                  )}
                 </label>
                 <input
                   type="date"
                   value={eventDate}
                   onChange={(e) => setEventDate(e.target.value)}
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none"
+                  className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white outline-none transition-colors ${
+                    !eventDate ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                  }`}
                 />
               </div>
 
-              {/* 2. THỜI GIAN TỔ CHỨC (OPEN MANUAL INPUT + PRESETS, 2-WAY SYNC WITH INVITATION TIME) */}
+              {/* THỜI GIAN TỔ CHỨC */}
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
                   <span>Thời Gian / Giờ Đón Khách (*)</span>
-                  <span className="text-[10px] text-amber-300 font-normal">Đồng bộ Thiệp</span>
+                  {!eventTime.trim() ? (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-xs">warning</span>
+                      Chưa nhập
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-amber-300 font-normal">Đồng bộ Thiệp</span>
+                  )}
                 </label>
                 
                 <div className="flex items-center gap-1.5 mb-1.5">
@@ -279,11 +324,13 @@ function PersonalizePageContent() {
                   value={eventTime}
                   onChange={(e) => setEventTime(e.target.value)}
                   placeholder="VD: 11:00 AM hoặc 10:30 AM"
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white font-semibold outline-none transition-colors"
+                  className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white font-semibold outline-none transition-colors ${
+                    !eventTime.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                  }`}
                 />
               </div>
 
-              {/* 3. ĐỊA ĐIỂM TẦNG (3-WAY SYNCHRONIZED ACROSS TOP FORM, LED SCREEN & INVITATION) */}
+              {/* ĐỊA ĐIỂM TẦNG */}
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
                   <span>Địa Điểm Tầng Tổ Chức (*)</span>
@@ -302,32 +349,50 @@ function PersonalizePageContent() {
                 </select>
               </div>
 
-              {/* SĐT Liên Hệ */}
+              {/* Số Điện Thoại */}
               <div>
-                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider">
-                  Số Điện Thoại Liên Hệ Gia Chủ (*)
+                <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
+                  <span>Số Điện Thoại Liên Hệ Gia Chủ (*)</span>
+                  {!phone.trim() && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-xs">warning</span>
+                      Chưa nhập
+                    </span>
+                  )}
                 </label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0912 345 678"
-                  className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-4 py-2.5 text-white outline-none"
+                  placeholder="VD: 0912 345 678"
+                  className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white outline-none transition-colors ${
+                    !phone.trim() ? 'border-amber-500/60 bg-amber-500/5' : 'border-gray-700 focus:border-[#e3a638]'
+                  }`}
                 />
               </div>
 
               {/* Link Google Drive */}
               <div className="sm:col-span-2 bg-[#1b1b1b] p-3.5 rounded-xl border border-blue-500/30 space-y-1.5">
-                <label className="block text-blue-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-base">cloud_upload</span>
-                  LINK GOOGLE DRIVE / CLOUD CHỨA ẢNH & VIDEO CƯỚI:
+                <label className="block text-blue-300 font-bold uppercase tracking-wider flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-base">cloud_upload</span>
+                    LINK GOOGLE DRIVE / CLOUD CHỨA ẢNH & VIDEO CƯỚI:
+                  </span>
+                  {!driveLink.trim() && (
+                    <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-xs">warning</span>
+                      Chưa dán link
+                    </span>
+                  )}
                 </label>
                 <input
                   type="url"
                   value={driveLink}
                   onChange={(e) => setDriveLink(e.target.value)}
                   placeholder="Dán link Google Drive / Dropbox (VD: https://drive.google.com/drive/folders/...)"
-                  className="w-full bg-[#121212] border border-gray-700 focus:border-blue-400 rounded-lg px-3.5 py-2 text-white font-mono outline-none"
+                  className={`w-full bg-[#121212] border rounded-lg px-3.5 py-2 text-white font-mono outline-none transition-colors ${
+                    !driveLink.trim() ? 'border-amber-500/50 bg-amber-500/5' : 'border-gray-700 focus:border-blue-400'
+                  }`}
                 />
               </div>
 
@@ -426,7 +491,8 @@ function PersonalizePageContent() {
             setYoutubeLinks={setYoutubeLinks}
             onSave={() => {
               handleSaveProfile({
-                musicStatus: `Đã chọn ${selectedTracks.length} bài hát & gửi kịch bản nhạc`
+                musicStatus: selectedTracks.length > 0 ? `Đã chọn ${selectedTracks.length} bài hát & gửi kịch bản nhạc` : 'Không có yêu cầu gì',
+                selectedMusic: selectedTracks
               });
             }}
           />
