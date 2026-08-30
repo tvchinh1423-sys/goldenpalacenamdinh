@@ -29,13 +29,13 @@ function PersonalizePageContent() {
     }
   }, [tabParam]);
   
-  // Shared global state across all personalization tools
-  const [partyTitle, setPartyTitle] = useState('LỄ THÀNH HÔN');
-  const [groomName, setGroomName] = useState('Đức Hoàng');
-  const [brideName, setBrideName] = useState('Thu Hương');
-  const [phone, setPhone] = useState('0912345678');
-  const [eventDate, setEventDate] = useState('2026-11-20');
-  const [eventTime, setEventTime] = useState('11:00 AM');
+  // Shared global state across all personalization tools - Empty by default with placeholders
+  const [partyTitle, setPartyTitle] = useState('');
+  const [groomName, setGroomName] = useState('');
+  const [brideName, setBrideName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [eventDate, setEventDate] = useState('');
+  const [eventTime, setEventTime] = useState('');
   const [selectedFloor, setSelectedFloor] = useState('FLOOR_3');
   const [driveLink, setDriveLink] = useState('');
 
@@ -65,12 +65,12 @@ function PersonalizePageContent() {
 
     try {
       const payload = {
-        partyTitle: customOverrides.partyTitle || partyTitle,
-        groomName: customOverrides.groomName || groomName,
-        brideName: customOverrides.brideName || brideName,
-        phone: customOverrides.phone || phone,
-        eventDate: customOverrides.eventDate || eventDate,
-        eventTime: customOverrides.eventTime || eventTime,
+        partyTitle: customOverrides.partyTitle || partyTitle || 'LỄ THÀNH HÔN',
+        groomName: customOverrides.groomName || groomName || 'Chú rể',
+        brideName: customOverrides.brideName || brideName || 'Cô dâu',
+        phone: customOverrides.phone || phone || 'Chưa cung cấp',
+        eventDate: customOverrides.eventDate || eventDate || new Date().toISOString().split('T')[0],
+        eventTime: customOverrides.eventTime || eventTime || '11:00 AM',
         floorId: customOverrides.selectedFloor || selectedFloor,
         venueName: currentFloorName,
         driveLink: customOverrides.driveLink !== undefined ? customOverrides.driveLink : driveLink,
