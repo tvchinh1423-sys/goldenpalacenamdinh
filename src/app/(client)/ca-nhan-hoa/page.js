@@ -88,6 +88,55 @@ function PersonalizePageContent() {
   const [touchedFields, setTouchedFields] = useState({});
   const [validationError, setValidationError] = useState('');
 
+  // Auto-Lookup Saved Profile by Phone Number (Phone acts as Customer ID)
+  const [phoneLookupNotice, setPhoneLookupNotice] = useState('');
+  const [isLookingUpPhone, setIsLookingUpPhone] = useState(false);
+
+  const lookupProfileByPhone = async (phoneStr) => {
+    const clean = (phoneStr || '').replace(/[^0-9]/g, '');
+    if (clean.length < 8) {
+      setPhoneLookupNotice('');
+      return;
+    }
+
+    setIsLookingUpPhone(true);
+    try {
+      const res = await fetch(`/api/personalize?phone=${encodeURIComponent(clean)}&t=${Date.now()}`, { cache: 'no-store' });
+      const data = await res.json();
+      if (data.success && data.profile) {
+        const prof = data.profile;
+        if (prof.partyTitle) setPartyTitle(prof.partyTitle);
+        if (prof.groomName) setGroomName(prof.groomName);
+        if (prof.brideName) setBrideName(prof.brideName);
+        if (prof.eventDate) setEventDate(prof.eventDate);
+        if (prof.floorId) setSelectedFloor(prof.floorId);
+        if (prof.driveLink) setDriveLink(prof.driveLink);
+        
+        if (prof.selectedMusic && prof.selectedMusic.length > 0) setSelectedTracks(prof.selectedMusic);
+        if (prof.youtubeLinks) setYoutubeLinks(prof.youtubeLinks);
+        if (prof.customNotes) setCustomNotes(prof.customNotes);
+        if (prof.ledTemplateId) setSelectedLedTemplate(prof.ledTemplateId);
+
+        // Parse eventTime e.g. "Chiều (16:00)"
+        if (prof.eventTime) {
+          const rawTime = prof.eventTime;
+          const matchSession = rawTime.match(/(Trưa|Chiều|Tối)/);
+          const matchTime = rawTime.match(/(\d{1,2}:\d{2})/);
+          if (matchSession) setEventSession(matchSession[1]);
+          if (matchTime) setEventSpecificTime(matchTime[1]);
+          setEventTime(rawTime);
+        }
+
+        setPhoneLookupNotice(`✨ Đã tự động điền lại toàn bộ thông tin tiệc cưới của SĐT ${prof.phone}! Anh/chị có thể bổ sung Link Drive hoặc chỉnh sửa thông tin bên dưới.`);
+        setTimeout(() => setPhoneLookupNotice(''), 8000);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLookingUpPhone(false);
+    }
+  };
+
   // Drive Accessibility Auto-Checker State
   const [driveChecking, setDriveChecking] = useState(false);
   const [driveStatus, setDriveStatus] = useState(null); // { isPublic: boolean, isGoogleDrive: boolean, error?: string, message?: string }
@@ -246,6 +295,14 @@ function PersonalizePageContent() {
         </div>
       )}
 
+      {/* Toast Phone Auto-Lookup Notice */}
+      {phoneLookupNotice && (
+        <div className="fixed top-24 right-6 z-50 bg-blue-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-pulse border border-blue-300 font-semibold text-xs max-w-md">
+          <span className="material-symbols-outlined text-2xl shrink-0">history_edu</span>
+          <div>{phoneLookupNotice}</div>
+        </div>
+      )}
+
       {/* Validation Warning Alert Toast */}
       {validationError && (
         <div className="fixed top-24 right-6 z-50 bg-amber-500 text-black px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-pulse border border-amber-300 font-bold text-xs max-w-md">
@@ -288,7 +345,7 @@ function PersonalizePageContent() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               
-              {/* 1. TÊN TIỆC CƯỚI & TIÊU ĐỀ (DROPDOWN CHỌN NHANH HÀNG MŨI TÊN + ĐIỀN TỰ DO) */}
+              {/* 1. TÊN TIỆC CƯỚI & TIÊU ĐỀ */}
               <div className="sm:col-span-2 bg-[#1f1f1f] p-3.5 rounded-2xl border border-amber-500/30">
                 <label className="block text-amber-300 font-bold mb-2 uppercase tracking-wider flex items-center justify-between text-xs">
                   <span>TÊN TIỆC CƯỚI & TIÊU ĐỀ (*)</span>
@@ -485,10 +542,13 @@ function PersonalizePageContent() {
                 </select>
               </div>
 
-              {/* Số Điện Thoại */}
+              {/* Số Điện Thoại (SỐ ĐIỆN THOẠI LÀ ID KHÁCH HÀNG - TỰ ĐỘNG LẤY LẠI HỒ SƠ ĐÃ LƯU) */}
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
-                  <span>Số Điện Thoại Liên Hệ Gia Chủ (*)</span>
+                  <span className="flex items-center gap-1">
+                    Số Điện Thoại Liên Hệ Gia Chủ (*)
+                    {isLookingUpPhone && <span className="material-symbols-outlined text-xs animate-spin text-amber-400">sync</span>}
+                  </span>
                   {shouldShowWarning('phone', phone) && (
                     <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
@@ -499,8 +559,19 @@ function PersonalizePageContent() {
                 <input
                   type="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  onBlur={() => markTouched('phone')}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setPhone(val);
+                    if (val.replace(/[^0-9]/g, '').length >= 9) {
+                      lookupProfileByPhone(val);
+                    }
+                  }}
+                  onBlur={() => {
+                    markTouched('phone');
+                    if (phone.replace(/[^0-9]/g, '').length >= 9) {
+                      lookupProfileByPhone(phone);
+                    }
+                  }}
                   placeholder="VD: 0912 345 678"
                   className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white outline-none transition-colors ${
                     shouldShowWarning('phone', phone) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
@@ -583,7 +654,7 @@ function PersonalizePageContent() {
             {/* Global Submit / Save Profile Button */}
             <div className="mt-6 pt-4 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-[11px] text-gray-400 italic">
-                * Vui lòng nhập đủ các trường thông tin bắt buộc (*). Mục Link Drive có thể bổ sung sau.
+                * Nhập SĐT đã lưu để tự điền lại hồ sơ. Vui lòng nhập đủ các trường bắt buộc (*).
               </p>
               <button
                 onClick={() => handleSaveProfile()}

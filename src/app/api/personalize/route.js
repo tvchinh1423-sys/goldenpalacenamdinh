@@ -81,8 +81,28 @@ function saveProfiles(profiles) {
   }
 }
 
-export async function GET() {
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const phone = searchParams.get('phone');
   const profiles = readProfiles();
+
+  if (phone) {
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.length >= 8) {
+      const found = profiles.find(p => p.phone && p.phone.replace(/[^0-9]/g, '') === cleanPhone);
+      if (found) {
+        return NextResponse.json(
+          { success: true, profile: found },
+          { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+        );
+      }
+    }
+    return NextResponse.json(
+      { success: false, message: 'Chưa có hồ sơ nào với SĐT này' },
+      { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+    );
+  }
+
   return NextResponse.json(
     { success: true, profiles },
     { headers: { 'Cache-Control': 'no-store, max-age=0' } }
@@ -112,9 +132,11 @@ export async function POST(req) {
     const profiles = readProfiles();
     const venueName = floorId === 'FLOOR_1' ? 'Tầng 1' : floorId === 'FLOOR_2' ? 'Tầng 2' : floorId === 'FLOOR_4' ? 'Tầng 4' : 'Tầng 3';
 
-    // Deduplication check: Match by same phone/names or same partyTitle
+    const cleanInputPhone = (phone || '').replace(/[^0-9]/g, '');
+
+    // Deduplication check: Match by same phone or same couple names & date
     const existingIndex = profiles.findIndex(p => (
-      (p.phone && phone && p.phone === phone && p.eventDate === eventDate) ||
+      (cleanInputPhone && p.phone && p.phone.replace(/[^0-9]/g, '') === cleanInputPhone) ||
       (p.groomName && groomName && p.groomName === groomName && p.brideName === brideName && p.eventDate === eventDate)
     ));
 
@@ -140,7 +162,7 @@ export async function POST(req) {
     };
 
     if (existingIndex >= 0) {
-      // Overwrite existing record
+      // Overwrite existing record for same phone number
       profiles[existingIndex] = profileData;
     } else {
       // Add new record at top
