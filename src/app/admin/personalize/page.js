@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { toPng } from 'html-to-image';
 import { MUSIC_TRACKS, MUSIC_CATEGORIES, LED_STAGE_TEMPLATES, VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
+import TableMenuDesignerModal from '@/components/admin/TableMenuDesignerModal';
 
 // Standardized Date Dot Formatter (e.g. "2026-11-20" -> "20.11.2026") matching LedCustomizer.jsx 100%
 function formatDateDot(dateStr) {
@@ -26,6 +27,7 @@ export default function AdminPersonalizePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [editingProfile, setEditingProfile] = useState(null); // Edit profile modal state
+  const [menuModalProfile, setMenuModalProfile] = useState(null); // Table Menu modal state
   
   // Date Filtering State
   const [startDate, setStartDate] = useState('');
@@ -347,6 +349,15 @@ export default function AdminPersonalizePage() {
                         >
                           <span className="material-symbols-outlined text-xs">tune</span>
                           Mở Kịch Bản & Phát Nhạc
+                        </button>
+
+                        <button
+                          onClick={() => setMenuModalProfile(prof)}
+                          className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-stone-950 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 shadow-xs cursor-pointer"
+                          title="Tạo & in Menu tiệc để bàn cho tiệc cưới này"
+                        >
+                          <span className="material-symbols-outlined text-xs">restaurant_menu</span>
+                          Menu Để Bàn
                         </button>
 
                         {!isReadOnly && (
@@ -911,6 +922,18 @@ export default function AdminPersonalizePage() {
 
           </div>
         </div>
+      )}
+
+      {/* Table Menu Designer Modal */}
+      {menuModalProfile && (
+        <TableMenuDesignerModal
+          leadId={menuModalProfile.leadId || menuModalProfile.id}
+          leadName={menuModalProfile.partyTitle || `${menuModalProfile.groomName} & ${menuModalProfile.brideName}`}
+          brideGroomDefault={`${menuModalProfile.groomName} & ${menuModalProfile.brideName}`}
+          eventDateDefault={formatDateDot(menuModalProfile.eventDate)}
+          isOpen={!!menuModalProfile}
+          onClose={() => setMenuModalProfile(null)}
+        />
       )}
 
     </div>

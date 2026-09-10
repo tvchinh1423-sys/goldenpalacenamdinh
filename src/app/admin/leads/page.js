@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import ZaloHeaderButton from './ZaloHeaderButton';
 import TelegramHeaderButton from './TelegramHeaderButton';
+import LeadsTableQuickMenuButton from './LeadsTableQuickMenuButton';
 
 const formatVietnamTime = (dateVal) => {
   if (!dateVal) return 'N/A';
@@ -161,6 +162,13 @@ export default async function LeadsPage({ searchParams }) {
                       </td>
                       <td className="px-6 py-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-2">
+                          <LeadsTableQuickMenuButton
+                            leadId={lead.id}
+                            leadName={lead.name}
+                            brideGroomNames={lead.brideGroomNames}
+                            eventDate={latestProposal?.eventDate ? formatVietnamDateOnly(latestProposal.eventDate) : ''}
+                          />
+
                           {/* Direct Zalo Button */}
                           <a 
                             href={`https://zalo.me/${cleanPhone}`} 

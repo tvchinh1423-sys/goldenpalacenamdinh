@@ -225,6 +225,7 @@ model Lead {
 
   assignedUser User?      @relation(fields: [assignedTo], references: [id], onDelete: SetNull)
   proposals    Proposal[]
+  tableMenus   TableMenu[]
 
   @@index([leadStatus, createdAt])
   @@index([assignedTo])
@@ -369,4 +370,26 @@ model AiSystemConfig {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   @@map("ai_system_configs")
+}
+
+/// 21. Menu tiệc để bàn dành cho nhân viên
+model TableMenu {
+  id              String   @id @default(uuid())
+  leadId          String   @map("lead_id")
+  title           String   @default("Lễ Thành Hôn")
+  brideGroomNames String   @map("bride_groom_names")
+  eventDate       String   @map("event_date")
+  khaiVi          String   @default("[]")
+  monChinh        String   @default("[]")
+  trangMieng      String   @default("[]")
+  doUong          String   @default("[]")
+  footerText      String?  @default("Chúc Quý Khách Ngon Miệng!")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@map("table_menus")
 }

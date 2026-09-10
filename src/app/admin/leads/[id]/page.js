@@ -5,6 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { revalidatePath } from 'next/cache';
 import LeadZaloClientActions from './LeadZaloClientActions';
+import LeadMenuDesignerButton from './LeadMenuDesignerButton';
 
 const formatVietnamTime = (dateVal) => {
   if (!dateVal) return 'N/A';
@@ -181,7 +182,14 @@ export default async function LeadDetailPage({ params }) {
             </div>
           </div>
 
-          <div className="pt-4 border-t border-gray-100">
+          <div className="pt-4 border-t border-gray-100 space-y-3">
+            <LeadMenuDesignerButton
+              leadId={lead.id}
+              leadName={lead.name}
+              brideGroomNames={lead.brideGroomNames}
+              eventDate={latestProposal?.eventDate ? formatVietnamDateOnly(latestProposal.eventDate) : ''}
+            />
+
             <Link href={`/du-toan-chi-phi/link/${lead.linkToken}`} target="_blank">
               <button className="w-full bg-gray-900 text-amber-300 py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-black transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-md">
                 <span className="material-symbols-outlined text-base">link</span> Xem Link Dự Toán Khách Hàng

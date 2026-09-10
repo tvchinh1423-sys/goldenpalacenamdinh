@@ -12,12 +12,12 @@ function AdminLayoutContent({ children }) {
   const isMember = session?.user?.role === 'MEMBER';
   const isStaff = session?.user?.role === 'STAFF';
 
-  // Route protection for MEMBER role: strictly only allow /admin/personalize
+  // Route protection for MEMBER role: allow /admin/personalize & /admin/menus/table-designer
   useEffect(() => {
     if (status === 'authenticated') {
-      if (isMember && pathname !== '/admin/personalize') {
+      if (isMember && pathname !== '/admin/personalize' && !pathname.startsWith('/admin/menus/table-designer')) {
         router.replace('/admin/personalize');
-      } else if (isStaff && !pathname.startsWith('/admin/leads')) {
+      } else if (isStaff && !pathname.startsWith('/admin/leads') && !pathname.startsWith('/admin/menus/table-designer')) {
         router.replace('/admin/leads');
       }
     }
@@ -26,11 +26,12 @@ function AdminLayoutContent({ children }) {
   const allNavItems = [
     { name: 'Bảng điều khiển', href: '/admin', icon: 'dashboard' },
     { name: 'Quản lý Khách hàng', href: '/admin/leads', icon: 'group' },
+    { name: 'Menu Tiệc Để Bàn', href: '/admin/menus/table-designer', icon: 'restaurant_menu' },
     { name: 'Huấn Luyện AI Chat', href: '/admin/ai-training', icon: 'psychology' },
     { name: 'Quản lý Hội trường', href: '/admin/venues', icon: 'apartment' },
     { name: 'Gói Dịch vụ', href: '/admin/packages', icon: 'card_giftcard' },
     { name: 'Dịch vụ Bổ sung', href: '/admin/addons', icon: 'extension' },
-    { name: 'Thực đơn', href: '/admin/menus', icon: 'restaurant_menu' },
+    { name: 'Thực đơn Cỗ Tiệc', href: '/admin/menus', icon: 'menu_book' },
     { name: 'Đồ uống', href: '/admin/beverages', icon: 'local_bar' },
     { name: 'Bài viết & Ưu đãi', href: '/admin/posts', icon: 'article' },
     { name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' },
@@ -39,9 +40,15 @@ function AdminLayoutContent({ children }) {
   // Role-based sidebar menu items
   let navItems = allNavItems;
   if (isMember) {
-    navItems = [{ name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' }];
+    navItems = [
+      { name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' },
+      { name: 'Menu Tiệc Để Bàn', href: '/admin/menus/table-designer', icon: 'restaurant_menu' }
+    ];
   } else if (isStaff) {
-    navItems = [{ name: 'Quản lý Khách hàng', href: '/admin/leads', icon: 'group' }];
+    navItems = [
+      { name: 'Quản lý Khách hàng', href: '/admin/leads', icon: 'group' },
+      { name: 'Menu Tiệc Để Bàn', href: '/admin/menus/table-designer', icon: 'restaurant_menu' }
+    ];
   }
 
   // Header Title & Badge

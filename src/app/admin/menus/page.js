@@ -39,15 +39,24 @@ export default function AdminMenusPage() {
           <h2 className="text-xl font-bold text-gray-900">Quản Lý Thực Đơn Tiệc (Đồng bộ Trang Công Khai)</h2>
           <p className="text-xs text-gray-500 mt-1">Quản lý Set Menu cỗ tiệc, Menu Chuyên Món, Combo Trẻ Em & Menu Chọn Món A la carte</p>
         </div>
-        <a 
-          href="/thuc-don" 
-          target="_blank" 
-          rel="noreferrer"
-          className="px-4 py-2.5 bg-[#e3a638] text-white text-xs font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center gap-1.5"
-        >
-          <span className="material-symbols-outlined text-base">open_in_new</span>
-          Xem Trang Thực Đơn
-        </a>
+        <div className="flex items-center gap-3">
+          <a 
+            href="/admin/menus/table-designer" 
+            className="px-4 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 text-stone-950 font-bold text-xs rounded-xl hover:brightness-110 transition-all flex items-center gap-1.5 shadow-md"
+          >
+            <span className="material-symbols-outlined text-base">restaurant_menu</span>
+            🎴 Công Cụ In Menu Tiệc Để Bàn
+          </a>
+          <a 
+            href="/thuc-don" 
+            target="_blank" 
+            rel="noreferrer"
+            className="px-4 py-2.5 bg-gray-900 text-amber-300 text-xs font-semibold rounded-xl hover:bg-black transition-colors flex items-center gap-1.5"
+          >
+            <span className="material-symbols-outlined text-base">open_in_new</span>
+            Xem Trang Thực Đơn
+          </a>
+        </div>
       </div>
 
       {/* Sub Tabs */}
