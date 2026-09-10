@@ -572,11 +572,15 @@ function PersonalizePageContent() {
                       lookupProfileByPhone(phone);
                     }
                   }}
-                  placeholder="VD: 0912 345 678"
+                  placeholder="Nhập số điện thoại của bạn..."
                   className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white outline-none transition-colors ${
                     shouldShowWarning('phone', phone) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
                   }`}
                 />
+                <p className="text-[11px] text-amber-300/80 italic flex items-center gap-1 mt-1">
+                  <span className="material-symbols-outlined text-xs text-amber-400">info</span>
+                  Nhập SĐT nếu bạn đã đăng ký thông tin trước đó
+                </p>
               </div>
 
               {/* Link Google Drive (KHÔNG BẮT BUỘC - AUTOMATIC ACCESSIBILITY CHECK) */}
