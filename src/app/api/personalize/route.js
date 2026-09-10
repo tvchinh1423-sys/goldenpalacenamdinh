@@ -39,24 +39,47 @@ async function readProfiles() {
   let dbProfiles = [];
   try {
     const leads = await prisma.lead.findMany({
-      where: {
-        internalNotes: {
-          contains: '[PERSONALIZE_PROFILE]'
-        }
-      },
       orderBy: { updatedAt: 'desc' }
     });
 
     dbProfiles = leads.map(l => {
       try {
-        if (!l.internalNotes) return null;
-        const match = l.internalNotes.match(/\[PERSONALIZE_PROFILE\]([\s\S]*)/);
-        if (match && match[1]) {
-          const parsed = JSON.parse(match[1].trim());
-          return { ...parsed, dbLeadId: l.id };
+        if (l.internalNotes && l.internalNotes.includes('[PERSONALIZE_PROFILE]')) {
+          const match = l.internalNotes.match(/\[PERSONALIZE_PROFILE\]([\s\S]*)/);
+          if (match && match[1]) {
+            const parsed = JSON.parse(match[1].trim());
+            return { ...parsed, dbLeadId: l.id };
+          }
         }
+        
+        // Fallback mapping for standard leads so all leads show in admin personalize
+        const names = (l.brideGroomNames || l.name || '').split('&');
+        const groom = names[0]?.trim() || l.name || 'Chú Rể';
+        const bride = names[1]?.trim() || '';
+
+        return {
+          id: l.id,
+          partyTitle: l.notes || `LỄ THÀNH HÔN ${groom} ${bride ? '& ' + bride : ''}`,
+          groomName: groom,
+          brideName: bride,
+          phone: l.phone || 'Chưa cung cấp',
+          eventDate: l.createdAt ? new Date(l.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          eventTime: '11:00 AM',
+          floorId: 'FLOOR_3',
+          venueName: 'Tầng 3',
+          driveLink: '',
+          ledStatus: 'Chưa tùy chỉnh phông LED',
+          ledTemplateId: 'led-starry-diamond',
+          musicStatus: 'Không có yêu cầu gì',
+          selectedMusic: [],
+          youtubeLinks: {},
+          customNotes: l.notes || 'Khách hàng đăng ký qua hệ thống',
+          createdAt: l.createdAt ? new Date(l.createdAt).toISOString() : new Date().toISOString(),
+          updatedAt: l.updatedAt ? new Date(l.updatedAt).toISOString() : new Date().toISOString(),
+          dbLeadId: l.id
+        };
       } catch (err) {
-        console.error('Error parsing profile JSON from Lead:', err);
+        console.error('Error mapping Lead to profile:', err);
       }
       return null;
     }).filter(Boolean);

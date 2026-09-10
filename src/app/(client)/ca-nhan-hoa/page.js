@@ -256,6 +256,9 @@ function PersonalizePageContent() {
       });
       const data = await res.json();
       if (data.success) {
+        try {
+          localStorage.setItem('gp_saved_wedding_profile', JSON.stringify(payload));
+        } catch (err) {}
         setSavedNotification(true);
         setTimeout(() => setSavedNotification(false), 4500);
       }
