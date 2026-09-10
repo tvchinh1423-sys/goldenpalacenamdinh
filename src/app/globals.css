@@ -98,36 +98,33 @@
     padding: 0 !important;
   }
 
-  /* Hide all Admin sidebars, headers, forms, overlays, buttons, modals background */
-  body > *:not(#printable-wedding-menu-container),
-  header, aside, main > header, nav, button, input, select, textarea {
-    display: none !important;
+  /* Hide all elements on page except the menu card */
+  body * {
+    visibility: hidden !important;
   }
 
-  /* Show ONLY the menu card */
+  /* Exclusively reveal #printable-wedding-menu canvas and its children */
+  #printable-wedding-menu, #printable-wedding-menu * {
+    visibility: visible !important;
+  }
+
   #printable-wedding-menu {
     position: fixed !important;
     left: 0 !important;
     top: 0 !important;
     width: 297mm !important;
     height: 210mm !important;
-    max-width: 297mm !important;
-    max-height: 210mm !important;
+    box-sizing: border-box !important;
     margin: 0 !important;
     padding: 8mm !important;
     border: none !important;
     box-shadow: none !important;
-    background-color: #faf7f2 !important;
+    background-color: #fdfbf7 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     display: flex !important;
     flex-direction: row !important;
-    visibility: visible !important;
-    z-index: 99999 !important;
-  }
-
-  #printable-wedding-menu * {
-    visibility: visible !important;
+    z-index: 9999999 !important;
   }
 }
 
