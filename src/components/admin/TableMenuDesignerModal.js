@@ -8,6 +8,9 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
   const [saving, setSaving] = useState(false);
   const [aiParsing, setAiParsing] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  
+  // Mobile Tab State: 'editor' | 'preview'
+  const [activeTab, setActiveTab] = useState('editor');
 
   // Form State
   const [title, setTitle] = useState('Lễ Thành Hôn');
@@ -29,13 +32,11 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
   const menuPreviewRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // Auto toast clear
   const showToast = (msg, isError = false) => {
     setToastMessage({ text: msg, isError });
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  // Fetch saved table menu data when modal opens
   useEffect(() => {
     if (isOpen && leadId) {
       fetchMenuData();
@@ -64,7 +65,6 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
     }
   };
 
-  // Save menu to database
   const handleSaveMenu = async () => {
     setSaving(true);
     try {
@@ -99,18 +99,12 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
     }
   };
 
-  // Handle Image Upload & AI Auto-Classification
   const handleImageFileSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    processImageFile(file);
-  };
-
-  const processImageFile = (file) => {
     const reader = new FileReader();
     reader.onload = async (event) => {
-      const base64 = event.target.result;
-      sendImageToAI(base64);
+      sendImageToAI(event.target.result);
     };
     reader.readAsDataURL(file);
   };
@@ -142,7 +136,6 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
     }
   };
 
-  // Quick Text Paste Classification
   const handleParseRawText = async () => {
     if (!pasteRawText.trim()) return;
     setAiParsing(true);
@@ -170,7 +163,6 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
     }
   };
 
-  // Camera Handling
   const startCamera = async () => {
     setIsCameraOpen(true);
     try {
@@ -208,7 +200,6 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
     sendImageToAI(base64);
   };
 
-  // Export to PNG Image
   const handleExportPNG = async () => {
     if (!menuPreviewRef.current) return;
     try {
@@ -218,14 +209,13 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
       link.download = `Menu-Tiec-De-Ban-${brideGroomNames.replace(/\s+/g, '_')}.png`;
       link.href = dataUrl;
       link.click();
-      showToast('✅ Đã tải ảnh Menu về máy thành công!');
+      showToast('✅ Đã tải ảnh Menu thành công!');
     } catch (err) {
       console.error('Export PNG Error:', err);
       showToast('❌ Lỗi khi xuất file ảnh', true);
     }
   };
 
-  // Print Menu
   const handlePrint = () => {
     window.print();
   };
@@ -238,10 +228,11 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
   const doUongList = doUongText.split('\n').map(s => s.trim()).filter(Boolean);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-2 sm:p-4 overflow-y-auto">
-      {/* Toast alert */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-1 sm:p-4 overflow-y-auto">
+      
+      {/* Toast Alert */}
       {toastMessage && (
-        <div className={`fixed top-5 right-5 z-60 px-5 py-3 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2 animate-bounce transition-all ${
+        <div className={`fixed top-4 right-4 z-60 px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2 animate-bounce transition-all ${
           toastMessage.isError ? 'bg-rose-600 text-white' : 'bg-amber-400 text-amber-950 border border-amber-500'
         }`}>
           <span>{toastMessage.text}</span>
@@ -249,106 +240,120 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
       )}
 
       {/* Main Dialog Container */}
-      <div className="bg-stone-900 border border-amber-500/30 rounded-3xl w-full max-w-7xl max-h-[96vh] flex flex-col shadow-2xl text-amber-100 overflow-hidden">
+      <div className="bg-stone-900 border border-amber-500/30 rounded-2xl sm:rounded-3xl w-full max-w-7xl h-[98vh] sm:h-auto max-h-[98vh] flex flex-col shadow-2xl text-amber-100 overflow-hidden">
         
-        {/* Modal Header Bar */}
-        <div className="px-6 py-4 border-b border-stone-800 flex items-center justify-between bg-stone-950/80">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <span className="material-symbols-outlined text-xl">restaurant_menu</span>
+        {/* Header Bar */}
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-stone-800 flex items-center justify-between bg-stone-950/90 shrink-0">
+          <div className="flex items-center gap-2.5 truncate">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+              <span className="material-symbols-outlined text-lg sm:text-xl">restaurant_menu</span>
             </div>
-            <div>
-              <h2 className="text-lg font-bold text-amber-200 font-playfair flex items-center gap-2">
-                Tạo Menu Tiệc Để Bàn
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded-md">Golden Palace</span>
+            <div className="truncate">
+              <h2 className="text-sm sm:text-lg font-bold text-amber-200 font-playfair truncate flex items-center gap-2">
+                <span>Menu Tiệc Để Bàn</span>
+                <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 bg-amber-500/20 text-amber-300 rounded hidden sm:inline-block">Golden Palace</span>
               </h2>
-              <p className="text-xs text-stone-400">Thiết kế & Tự động phân loại món ăn cho tiệc cưới ({brideGroomNames})</p>
+              <p className="text-[10px] sm:text-xs text-stone-400 truncate">{brideGroomNames}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={handleSaveMenu}
               disabled={saving}
-              className="bg-amber-500 hover:bg-amber-400 text-stone-950 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer shadow-lg disabled:opacity-50"
+              className="bg-amber-500 hover:bg-amber-400 text-stone-950 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1 cursor-pointer shadow-lg disabled:opacity-50"
             >
-              <span className="material-symbols-outlined text-base">save</span>
-              {saving ? 'Đang lưu...' : 'Lưu Thực Đơn'}
+              <span className="material-symbols-outlined text-sm sm:text-base">save</span>
+              <span className="hidden sm:inline">{saving ? 'Đang lưu...' : 'Lưu Thực Đơn'}</span>
+              <span className="sm:hidden">{saving ? 'Lưu...' : 'Lưu'}</span>
             </button>
 
             <button
               onClick={handleExportPNG}
-              className="bg-stone-800 hover:bg-stone-700 text-amber-300 border border-amber-500/30 px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              className="bg-stone-800 hover:bg-stone-700 text-amber-300 border border-amber-500/30 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+              title="Tải ảnh PNG"
             >
-              <span className="material-symbols-outlined text-base">download</span> Tải Ảnh PNG
-            </button>
-
-            <button
-              onClick={handlePrint}
-              className="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer hidden sm:flex"
-            >
-              <span className="material-symbols-outlined text-base">print</span> In Menu
+              <span className="material-symbols-outlined text-sm sm:text-base">download</span>
+              <span className="hidden sm:inline">Tải PNG</span>
             </button>
 
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-xl border border-stone-700 flex items-center justify-center text-stone-400 hover:text-white hover:bg-stone-800 transition-colors cursor-pointer"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-stone-700 flex items-center justify-center text-stone-400 hover:text-white hover:bg-stone-800 transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-lg">close</span>
+              <span className="material-symbols-outlined text-base sm:text-lg">close</span>
             </button>
           </div>
         </div>
 
-        {/* Modal Main Content (2 Columns) */}
+        {/* MOBILE VIEW SWITCH TABS (Visible only on small mobile screens) */}
+        <div className="flex lg:hidden bg-stone-950 border-b border-stone-800 p-1.5 shrink-0">
+          <button
+            onClick={() => setActiveTab('editor')}
+            className={`flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+              activeTab === 'editor' ? 'bg-amber-500 text-stone-950 shadow-md' : 'text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            <span className="material-symbols-outlined text-sm">edit_note</span>
+            <span>1. Nhập & AI Phân Loại</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('preview')}
+            className={`flex-1 py-2 text-center text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+              activeTab === 'preview' ? 'bg-amber-500 text-stone-950 shadow-md' : 'text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            <span className="material-symbols-outlined text-sm">preview</span>
+            <span>2. Bản Xem Trước In Menu</span>
+          </button>
+        </div>
+
+        {/* Main Content Body */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-y-auto divide-y lg:divide-y-0 lg:divide-x divide-stone-800">
           
-          {/* LEFT COLUMN: EDITOR & AI BUTTONS (5 cols) */}
-          <div className="lg:col-span-5 p-5 space-y-5 bg-stone-900/90 overflow-y-auto">
+          {/* LEFT COLUMN: EDITOR & AI (Visible if desktop OR activeTab === 'editor') */}
+          <div className={`lg:col-span-5 p-4 sm:p-5 space-y-4 bg-stone-900/90 overflow-y-auto ${
+            activeTab === 'editor' ? 'block' : 'hidden lg:block'
+          }`}>
             
-            {/* AI AUTO CLASSIFICATION TOOLBAR */}
-            <div className="bg-gradient-to-r from-amber-950/40 via-stone-800 to-amber-950/40 border border-amber-500/40 rounded-2xl p-4 space-y-3">
+            {/* AI TOOLBAR */}
+            <div className="bg-gradient-to-r from-amber-950/40 via-stone-800 to-amber-950/40 border border-amber-500/40 rounded-2xl p-3.5 space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="text-base">🤖</span> AI Tự Động Phân Loại Thực Đơn
+                <span className="text-[11px] sm:text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1">
+                  <span>🤖</span> AI Quét Ảnh & Tự Phân Loại
                 </span>
                 {aiParsing && (
-                  <span className="text-[11px] text-amber-400 font-medium animate-pulse flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> Đang phân tích...
+                  <span className="text-[10px] text-amber-400 font-medium animate-pulse flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> Đang đọc...
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-stone-300 leading-relaxed">
-                Chụp ảnh thực đơn hoặc tải ảnh lên — AI sẽ đọc chữ và tự sắp xếp vào 4 mục <b>Khai vị, Món chính, Tráng miệng, Đồ uống</b>.
-              </p>
 
-              <div className="grid grid-cols-3 gap-2 pt-1">
-                {/* Camera Capture */}
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={startCamera}
                   disabled={aiParsing}
-                  className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 py-2 px-2 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer"
+                  className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 py-2 px-1 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-lg">photo_camera</span>
+                  <span className="material-symbols-outlined text-base">photo_camera</span>
                   <span>Chụp Ảnh</span>
                 </button>
 
-                {/* File Upload */}
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={aiParsing}
-                  className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 py-2 px-2 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer"
+                  className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 py-2 px-1 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-lg">upload_file</span>
-                  <span>Tải Ảnh Lên</span>
+                  <span className="material-symbols-outlined text-base">upload_file</span>
+                  <span>Tải Ảnh</span>
                 </button>
 
-                {/* Text Paste */}
                 <button
                   onClick={() => setIsPasteModalOpen(true)}
                   disabled={aiParsing}
-                  className="bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 py-2 px-2 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer"
+                  className="bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 py-2 px-1 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-lg">content_paste</span>
+                  <span className="material-symbols-outlined text-base">content_paste</span>
                   <span>Dán Chữ</span>
                 </button>
 
@@ -362,19 +367,19 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
               </div>
             </div>
 
-            {/* PARTY INFORMATION FIELDS */}
-            <div className="bg-stone-950/60 p-4 rounded-2xl border border-stone-800 space-y-3">
-              <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-base">info</span> Thông Tin Tiệc Cưới
+            {/* PARTY INFO */}
+            <div className="bg-stone-950/60 p-3.5 rounded-2xl border border-stone-800 space-y-2.5">
+              <h3 className="text-[11px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm">info</span> Thông Tin Tiệc Cưới
               </h3>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="text-[10px] uppercase font-bold text-stone-400 block mb-1">Loại Tiệc</label>
+                  <label className="text-[9px] uppercase font-bold text-stone-400 block mb-0.5">Loại Tiệc</label>
                   <select
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-1.5 text-xs text-amber-100 font-semibold outline-none focus:border-amber-500"
+                    className="w-full bg-stone-900 border border-stone-700 rounded-xl px-2.5 py-1.5 text-xs text-amber-100 font-semibold outline-none focus:border-amber-500"
                   >
                     <option value="Lễ Thành Hôn">Lễ Thành Hôn</option>
                     <option value="Lễ Vu Quy">Lễ Vu Quy</option>
@@ -385,318 +390,265 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
                 </div>
 
                 <div>
-                  <label className="text-[10px] uppercase font-bold text-stone-400 block mb-1">Ngày Tổ Chức</label>
+                  <label className="text-[9px] uppercase font-bold text-stone-400 block mb-0.5">Ngày Tổ Chức</label>
                   <input
                     type="text"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
                     placeholder="VD: 02/08/2026"
-                    className="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-1.5 text-xs text-amber-100 font-semibold outline-none focus:border-amber-500 font-mono"
+                    className="w-full bg-stone-900 border border-stone-700 rounded-xl px-2.5 py-1.5 text-xs text-amber-100 font-semibold outline-none focus:border-amber-500 font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[10px] uppercase font-bold text-stone-400 block mb-1">Tên Cô Dâu & Chú Rể</label>
+                <label className="text-[9px] uppercase font-bold text-stone-400 block mb-0.5">Tên Cô Dâu & Chú Rể</label>
                 <input
                   type="text"
                   value={brideGroomNames}
                   onChange={(e) => setBrideGroomNames(e.target.value)}
                   placeholder="VD: Minh Quang & Thu Hiền"
-                  className="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-xs text-amber-200 font-bold outline-none focus:border-amber-500 font-script text-base"
+                  className="w-full bg-stone-900 border border-stone-700 rounded-xl px-2.5 py-1.5 text-xs text-amber-200 font-bold outline-none focus:border-amber-500 font-script text-base"
                 />
               </div>
             </div>
 
-            {/* DISH CATEGORIES INPUTS */}
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-base">format_list_bulleted</span> Danh Sách Món Ăn (Mỗi món 1 dòng)
-                </span>
-              </h3>
-
-              {/* 1. Khai vị */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-stone-200 flex items-center justify-between">
-                  <span className="flex items-center gap-1 text-amber-300">🥗 Khai Vị ({khaiViList.length} món)</span>
+            {/* DISH INPUTS */}
+            <div className="space-y-3">
+              {/* Khai vị */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-amber-300 flex items-center justify-between">
+                  <span>🥗 Khai Vị ({khaiViList.length} món)</span>
                 </label>
                 <textarea
                   rows={2}
                   value={khaiViText}
                   onChange={(e) => setKhaiViText(e.target.value)}
-                  placeholder="Nhập món khai vị..."
-                  className="w-full bg-stone-950 border border-stone-700 rounded-xl p-3 text-xs text-stone-100 outline-none focus:border-amber-500 leading-relaxed font-serif"
+                  className="w-full bg-stone-950 border border-stone-700 rounded-xl p-2.5 text-xs text-stone-100 outline-none focus:border-amber-500 leading-relaxed font-serif"
                 />
               </div>
 
-              {/* 2. Món chính */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-stone-200 flex items-center justify-between">
-                  <span className="flex items-center gap-1 text-amber-300">🍲 Món Chính ({monChinhList.length} món)</span>
+              {/* Món chính */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-amber-300 flex items-center justify-between">
+                  <span>🍲 Món Chính ({monChinhList.length} món)</span>
                 </label>
                 <textarea
-                  rows={6}
+                  rows={5}
                   value={monChinhText}
                   onChange={(e) => setMonChinhText(e.target.value)}
-                  placeholder="Nhập các món chính..."
-                  className="w-full bg-stone-950 border border-stone-700 rounded-xl p-3 text-xs text-stone-100 outline-none focus:border-amber-500 leading-relaxed font-serif"
+                  className="w-full bg-stone-950 border border-stone-700 rounded-xl p-2.5 text-xs text-stone-100 outline-none focus:border-amber-500 leading-relaxed font-serif"
                 />
               </div>
 
-              {/* 3. Tráng miệng */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-stone-200 flex items-center justify-between">
-                  <span className="flex items-center gap-1 text-amber-300">🍨 Tráng Miệng ({trangMiengList.length} món)</span>
+              {/* Tráng miệng */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-amber-300 flex items-center justify-between">
+                  <span>🍨 Tráng Miệng ({trangMiengList.length} món)</span>
                 </label>
                 <textarea
                   rows={2}
                   value={trangMiengText}
                   onChange={(e) => setTrangMiengText(e.target.value)}
-                  placeholder="Nhập món tráng miệng..."
-                  className="w-full bg-stone-950 border border-stone-700 rounded-xl p-3 text-xs text-stone-100 outline-none focus:border-amber-500 leading-relaxed font-serif"
+                  className="w-full bg-stone-950 border border-stone-700 rounded-xl p-2.5 text-xs text-stone-100 outline-none focus:border-amber-500 leading-relaxed font-serif"
                 />
               </div>
 
-              {/* 4. Đồ uống */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-stone-200 flex items-center justify-between">
-                  <span className="flex items-center gap-1 text-amber-300">🍷 Đồ Uống</span>
+              {/* Đồ uống */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-amber-300 flex items-center justify-between">
+                  <span>🍷 Đồ Uống</span>
                 </label>
                 <textarea
                   rows={2}
                   value={doUongText}
                   onChange={(e) => setDoUongText(e.target.value)}
-                  placeholder="Nhập danh mục đồ uống..."
-                  className="w-full bg-stone-950 border border-stone-700 rounded-xl p-3 text-xs text-stone-100 outline-none focus:border-amber-500 leading-relaxed font-serif"
+                  className="w-full bg-stone-950 border border-stone-700 rounded-xl p-2.5 text-xs text-stone-100 outline-none focus:border-amber-500 leading-relaxed font-serif"
                 />
               </div>
 
               {/* Lời chúc */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-stone-300 block">Lời Chúc Chân Trang</label>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-stone-300 block">Lời Chúc Chân Trang</label>
                 <input
                   type="text"
                   value={footerText}
                   onChange={(e) => setFooterText(e.target.value)}
-                  className="w-full bg-stone-950 border border-stone-700 rounded-xl px-3 py-2 text-xs text-stone-200 outline-none focus:border-amber-500 font-serif italic text-center"
+                  className="w-full bg-stone-950 border border-stone-700 rounded-xl px-2.5 py-1.5 text-xs text-stone-200 outline-none focus:border-amber-500 font-serif italic text-center"
                 />
               </div>
             </div>
+
+            {/* Mobile Switch to Preview Button */}
+            <button
+              onClick={() => setActiveTab('preview')}
+              className="lg:hidden w-full py-3 bg-amber-500 text-stone-950 font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-base">visibility</span>
+              <span>Xem Bản In Menu Của Tiệc Này</span>
+            </button>
+
           </div>
 
-          {/* RIGHT COLUMN: LIVE MENU CARD CANVAS PREVIEW (7 cols) */}
-          <div className="lg:col-span-7 p-4 sm:p-6 bg-stone-950 flex flex-col items-center justify-center overflow-y-auto min-h-[500px]">
+          {/* RIGHT COLUMN: LIVE MENU PREVIEW (Visible if desktop OR activeTab === 'preview') */}
+          <div className={`lg:col-span-7 p-3 sm:p-6 bg-stone-950 flex flex-col items-center justify-start overflow-x-auto ${
+            activeTab === 'preview' ? 'block' : 'hidden lg:flex'
+          }`}>
             
-            <div className="w-full flex justify-between items-center mb-3 max-w-[840px]">
-              <span className="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-base">preview</span> Bản Xem Trước Menu Để Bàn (Khổ Đôi)
+            <div className="w-full flex justify-between items-center mb-3 max-w-[840px] px-1">
+              <span className="text-[11px] sm:text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm">preview</span> Khổ Gập 2 Mặt Chuẩn In
               </span>
-              <span className="text-[10px] text-stone-400 italic">Khổ gập 2 mặt chuẩn in Golden Palace</span>
+              <button
+                onClick={handleExportPNG}
+                className="lg:hidden px-3 py-1 bg-amber-500 text-stone-950 text-[11px] font-bold rounded-lg shadow-sm"
+              >
+                Tải Ảnh PNG
+              </button>
             </div>
 
-            {/* PRINT & RENDERING CONTAINER */}
-            <div
-              ref={menuPreviewRef}
-              id="printable-wedding-menu"
-              className="bg-[#faf7f2] text-stone-900 w-full max-w-[860px] min-h-[560px] rounded-lg shadow-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 relative select-none border border-stone-300"
-              style={{
-                fontFamily: `'Cormorant Garamond', 'Playfair Display', Georgia, serif`,
-                backgroundImage: `radial-gradient(#e8e0d0 0.7px, transparent 0.7px)`,
-                backgroundSize: '16px 16px'
-              }}
-            >
-              {/* Fold line separator in center */}
-              <div className="hidden sm:block absolute left-1/2 top-4 bottom-4 w-[1px] bg-stone-300/80 border-r border-dashed border-stone-400/50 -ml-[0.5px]"></div>
+            {/* SCROLLABLE CANVAS WRAPPER FOR MOBILE */}
+            <div className="w-full overflow-x-auto pb-4 flex justify-start lg:justify-center">
+              <div
+                ref={menuPreviewRef}
+                id="printable-wedding-menu"
+                className="bg-[#faf7f2] text-stone-900 w-[780px] sm:w-[840px] min-h-[540px] rounded-lg shadow-2xl p-5 sm:p-7 flex flex-row gap-5 relative select-none border border-stone-300 shrink-0"
+                style={{
+                  fontFamily: `'Cormorant Garamond', 'Playfair Display', Georgia, serif`,
+                  backgroundImage: `radial-gradient(#e8e0d0 0.7px, transparent 0.7px)`,
+                  backgroundSize: '16px 16px'
+                }}
+              >
+                {/* Fold line separator in center */}
+                <div className="absolute left-1/2 top-4 bottom-4 w-[1px] bg-stone-300/80 border-r border-dashed border-stone-400/50 -ml-[0.5px]"></div>
 
-              {/* ═══════════════════════════════════════════════════════════════ */}
-              {/* PAGE 1 (LEFT SIDE): MENU DISHES CONTENT PAGE */}
-              {/* ═══════════════════════════════════════════════════════════════ */}
-              <div className="flex-1 border-2 border-stone-800 p-5 rounded-sm relative flex flex-col justify-between text-center bg-[#fdfbf7]/90 shadow-xs">
-                
-                {/* VINTAGE CORNER BORDER ORNAMENTS */}
-                {/* Top-Left Corner Floral SVG */}
-                <svg className="absolute top-1.5 left-1.5 w-10 h-10 text-stone-800" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M10 40 V 10 H 40" />
-                  <path d="M15 35 V 15 H 35" />
-                  <circle cx="22" cy="22" r="4" fill="currentColor" />
-                  <path d="M22 26 C 28 35 35 28 45 35" />
-                  <path d="M26 22 C 35 28 28 35 35 45" />
-                </svg>
-                {/* Top-Right Corner Floral SVG */}
-                <svg className="absolute top-1.5 right-1.5 w-10 h-10 text-stone-800" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M90 40 V 10 H 60" />
-                  <path d="M85 35 V 15 H 65" />
-                  <circle cx="78" cy="22" r="4" fill="currentColor" />
-                  <path d="M78 26 C 72 35 65 28 55 35" />
-                  <path d="M74 22 C 65 28 72 35 65 45" />
-                </svg>
-                {/* Bottom-Left Corner Floral SVG */}
-                <svg className="absolute bottom-1.5 left-1.5 w-10 h-10 text-stone-800" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M10 60 V 90 H 40" />
-                  <path d="M15 65 V 85 H 35" />
-                  <circle cx="22" cy="78" r="4" fill="currentColor" />
-                </svg>
-                {/* Bottom-Right Corner Floral SVG */}
-                <svg className="absolute bottom-1.5 right-1.5 w-10 h-10 text-stone-800" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M90 60 V 90 H 60" />
-                  <path d="M85 65 V 85 H 65" />
-                  <circle cx="78" cy="78" r="4" fill="currentColor" />
-                </svg>
-
-                <div className="space-y-3.5 my-auto px-2 py-2">
+                {/* PAGE 1 (LEFT SIDE): DISHES */}
+                <div className="flex-1 border-2 border-stone-800 p-4 sm:p-5 rounded-sm relative flex flex-col justify-between text-center bg-[#fdfbf7]/90 shadow-xs">
                   
-                  {/* 1. KHAI VỊ */}
-                  {khaiViList.length > 0 && (
-                    <div className="space-y-1">
-                      <h3 className="font-script text-2xl font-bold text-stone-900 tracking-wide">Khai vị</h3>
-                      <div className="space-y-0.5 text-[12px] sm:text-[13px] font-serif text-stone-800 font-medium leading-tight">
-                        {khaiViList.map((item, idx) => (
-                          <p key={idx}>{item}</p>
-                        ))}
-                      </div>
-                      
-                      {/* Flourish Divider */}
-                      <div className="flex items-center justify-center my-1.5 text-stone-600">
-                        <svg className="w-20 h-3 fill-current" viewBox="0 0 100 20">
-                          <path d="M0 10 Q 25 0, 50 10 Q 75 20, 100 10 Q 75 0, 50 10 Q 25 20, 0 10 Z" />
-                          <circle cx="50" cy="10" r="3" />
-                        </svg>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 2. MÓN CHÍNH */}
-                  {monChinhList.length > 0 && (
-                    <div className="space-y-1">
-                      <h3 className="font-script text-2xl font-bold text-stone-900 tracking-wide">Món chính</h3>
-                      <div className="space-y-0.5 text-[12px] sm:text-[13px] font-serif text-stone-800 font-medium leading-tight">
-                        {monChinhList.map((item, idx) => (
-                          <p key={idx}>{item}</p>
-                        ))}
-                      </div>
-
-                      {/* Flourish Divider */}
-                      <div className="flex items-center justify-center my-1.5 text-stone-600">
-                        <svg className="w-20 h-3 fill-current" viewBox="0 0 100 20">
-                          <path d="M0 10 Q 25 0, 50 10 Q 75 20, 100 10 Q 75 0, 50 10 Q 25 20, 0 10 Z" />
-                          <circle cx="50" cy="10" r="3" />
-                        </svg>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 3. TRÁNG MIỆNG */}
-                  {trangMiengList.length > 0 && (
-                    <div className="space-y-1">
-                      <h3 className="font-script text-2xl font-bold text-stone-900 tracking-wide">Tráng miệng</h3>
-                      <div className="space-y-0.5 text-[12px] sm:text-[13px] font-serif text-stone-800 font-medium leading-tight">
-                        {trangMiengList.map((item, idx) => (
-                          <p key={idx}>{item}</p>
-                        ))}
-                      </div>
-
-                      {/* Flourish Divider */}
-                      <div className="flex items-center justify-center my-1.5 text-stone-600">
-                        <svg className="w-20 h-3 fill-current" viewBox="0 0 100 20">
-                          <path d="M0 10 Q 25 0, 50 10 Q 75 20, 100 10 Q 75 0, 50 10 Q 25 20, 0 10 Z" />
-                          <circle cx="50" cy="10" r="3" />
-                        </svg>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 4. ĐỒ UỐNG */}
-                  {doUongList.length > 0 && (
-                    <div className="space-y-1">
-                      <h3 className="font-script text-2xl font-bold text-stone-900 tracking-wide">Đồ uống</h3>
-                      <div className="space-y-0.5 text-[12px] sm:text-[13px] font-serif text-stone-800 font-medium leading-tight">
-                        {doUongList.map((item, idx) => (
-                          <p key={idx}>{item}</p>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* FOOTER BLESSING */}
-                <div className="pt-2 pb-1">
-                  <p className="font-serif text-sm font-bold italic text-stone-900 tracking-wide">
-                    {footerText}
-                  </p>
-                </div>
-              </div>
-
-              {/* ═══════════════════════════════════════════════════════════════ */}
-              {/* PAGE 2 (RIGHT SIDE): COVER PAGE */}
-              {/* ═══════════════════════════════════════════════════════════════ */}
-              <div className="flex-1 border-2 border-stone-800 p-6 rounded-sm relative flex flex-col justify-between text-center bg-[#fdfbf7]/90 shadow-xs">
-                
-                {/* Ornate Leaf Top Corners */}
-                <div className="absolute top-2 left-2 right-2 flex justify-between pointer-events-none">
-                  {/* Left Leaf Garland SVG */}
-                  <svg className="w-16 h-16 text-stone-800 opacity-90" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M10 10 Q 40 10 50 40 Q 30 50 10 10 Z" fill="currentColor" fillOpacity="0.08" />
-                    <path d="M5 5 C 30 15 20 45 45 45" />
-                    <circle cx="25" cy="15" r="2.5" fill="currentColor" />
-                    <circle cx="15" cy="25" r="2.5" fill="currentColor" />
-                    <circle cx="35" cy="30" r="2" fill="currentColor" />
+                  {/* Ornaments */}
+                  <svg className="absolute top-1.5 left-1.5 w-8 h-8 text-stone-800" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M10 40 V 10 H 40" />
+                    <path d="M15 35 V 15 H 35" />
+                    <circle cx="22" cy="22" r="4" fill="currentColor" />
                   </svg>
-                  {/* Right Leaf Garland SVG */}
-                  <svg className="w-16 h-16 text-stone-800 opacity-90 scale-x-[-1]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M10 10 Q 40 10 50 40 Q 30 50 10 10 Z" fill="currentColor" fillOpacity="0.08" />
-                    <path d="M5 5 C 30 15 20 45 45 45" />
-                    <circle cx="25" cy="15" r="2.5" fill="currentColor" />
-                    <circle cx="15" cy="25" r="2.5" fill="currentColor" />
+                  <svg className="absolute top-1.5 right-1.5 w-8 h-8 text-stone-800" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M90 40 V 10 H 60" />
+                    <path d="M85 35 V 15 H 65" />
+                    <circle cx="78" cy="22" r="4" fill="currentColor" />
                   </svg>
-                </div>
 
-                {/* Bottom Corners */}
-                <div className="absolute bottom-2 left-2 right-2 flex justify-between pointer-events-none">
-                  <svg className="w-10 h-10 text-stone-800" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M10 90 V 60 H 40" />
-                  </svg>
-                  <svg className="w-10 h-10 text-stone-800 scale-x-[-1]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M10 90 V 60 H 40" />
-                  </svg>
-                </div>
+                  <div className="space-y-2.5 my-auto px-1 py-1">
+                    {/* Khai vị */}
+                    {khaiViList.length > 0 && (
+                      <div className="space-y-0.5">
+                        <h3 className="font-script text-xl sm:text-2xl font-bold text-stone-900">Khai vị</h3>
+                        <div className="space-y-0.5 text-[11px] sm:text-[12px] font-serif text-stone-800 font-medium leading-tight">
+                          {khaiViList.map((item, idx) => (
+                            <p key={idx}>{item}</p>
+                          ))}
+                        </div>
+                        <div className="flex items-center justify-center my-1 text-stone-600">
+                          <svg className="w-16 h-2.5 fill-current" viewBox="0 0 100 20">
+                            <circle cx="50" cy="10" r="3" />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
 
-                {/* LOGO BADGE */}
-                <div className="pt-6 flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full border-2 border-stone-800 flex items-center justify-center p-1 bg-stone-900 text-amber-400 shadow-md">
-                    <div className="w-full h-full rounded-full border border-amber-400/40 flex items-center justify-center font-bold font-playfair text-xl tracking-tighter">
-                      GP
-                    </div>
+                    {/* Món chính */}
+                    {monChinhList.length > 0 && (
+                      <div className="space-y-0.5">
+                        <h3 className="font-script text-xl sm:text-2xl font-bold text-stone-900">Món chính</h3>
+                        <div className="space-y-0.5 text-[11px] sm:text-[12px] font-serif text-stone-800 font-medium leading-tight">
+                          {monChinhList.map((item, idx) => (
+                            <p key={idx}>{item}</p>
+                          ))}
+                        </div>
+                        <div className="flex items-center justify-center my-1 text-stone-600">
+                          <svg className="w-16 h-2.5 fill-current" viewBox="0 0 100 20">
+                            <circle cx="50" cy="10" r="3" />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tráng miệng */}
+                    {trangMiengList.length > 0 && (
+                      <div className="space-y-0.5">
+                        <h3 className="font-script text-xl sm:text-2xl font-bold text-stone-900">Tráng miệng</h3>
+                        <div className="space-y-0.5 text-[11px] sm:text-[12px] font-serif text-stone-800 font-medium leading-tight">
+                          {trangMiengList.map((item, idx) => (
+                            <p key={idx}>{item}</p>
+                          ))}
+                        </div>
+                        <div className="flex items-center justify-center my-1 text-stone-600">
+                          <svg className="w-16 h-2.5 fill-current" viewBox="0 0 100 20">
+                            <circle cx="50" cy="10" r="3" />
+                          </svg>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Đồ uống */}
+                    {doUongList.length > 0 && (
+                      <div className="space-y-0.5">
+                        <h3 className="font-script text-xl sm:text-2xl font-bold text-stone-900">Đồ uống</h3>
+                        <div className="space-y-0.5 text-[11px] sm:text-[12px] font-serif text-stone-800 font-medium leading-tight">
+                          {doUongList.map((item, idx) => (
+                            <p key={idx}>{item}</p>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-2 pb-1">
+                    <p className="font-serif text-xs sm:text-sm font-bold italic text-stone-900">
+                      {footerText}
+                    </p>
                   </div>
                 </div>
 
-                {/* COVER TITLES */}
-                <div className="my-auto space-y-4 py-4">
-                  <h1 className="text-xl sm:text-2xl font-serif tracking-[0.2em] font-semibold text-stone-900 uppercase border-b border-stone-300 pb-2 mx-6">
-                    WEDDING MENU
-                  </h1>
-
-                  <div className="space-y-1">
-                    <p className="font-script text-2xl sm:text-3xl text-stone-800 font-semibold">{title}</p>
-                    <h2 className="font-script text-3xl sm:text-4xl text-stone-900 font-bold px-2 py-1 leading-snug">
-                      {brideGroomNames}
-                    </h2>
+                {/* PAGE 2 (RIGHT SIDE): COVER PAGE */}
+                <div className="flex-1 border-2 border-stone-800 p-5 rounded-sm relative flex flex-col justify-between text-center bg-[#fdfbf7]/90 shadow-xs">
+                  
+                  {/* LOGO */}
+                  <div className="pt-4 flex flex-col items-center">
+                    <div className="w-14 h-14 rounded-full border-2 border-stone-800 flex items-center justify-center p-1 bg-stone-900 text-amber-400 shadow-md">
+                      <div className="w-full h-full rounded-full border border-amber-400/40 flex items-center justify-center font-bold font-playfair text-lg">
+                        GP
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="pt-2">
-                    <span className="inline-block border-t border-b border-stone-800 px-6 py-1 font-serif text-sm sm:text-base font-bold text-stone-900 tracking-wider">
-                      {eventDate}
-                    </span>
+                  {/* TITLES */}
+                  <div className="my-auto space-y-3 py-2">
+                    <h1 className="text-lg sm:text-xl font-serif tracking-[0.2em] font-semibold text-stone-900 uppercase border-b border-stone-300 pb-1.5 mx-4">
+                      WEDDING MENU
+                    </h1>
+
+                    <div className="space-y-0.5">
+                      <p className="font-script text-xl sm:text-2xl text-stone-800 font-semibold">{title}</p>
+                      <h2 className="font-script text-2xl sm:text-3xl text-stone-900 font-bold px-1 leading-snug">
+                        {brideGroomNames}
+                      </h2>
+                    </div>
+
+                    <div className="pt-1">
+                      <span className="inline-block border-t border-b border-stone-800 px-4 py-0.5 font-serif text-xs sm:text-sm font-bold text-stone-900 tracking-wider">
+                        {eventDate}
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                {/* FOOTER HOTEL DETAILS */}
-                <div className="pb-4 pt-2 px-2 text-[10px] sm:text-[11px] font-serif text-stone-700 leading-tight border-t border-stone-300/80 mx-4">
-                  <p className="font-bold text-stone-900">Trung tâm Hội nghị, Tiệc cưới & Nhà hàng Golden Palace</p>
-                  <p className="italic text-stone-700">Số 98 Đông A, Phường Nam Định, Tỉnh Ninh Bình</p>
-                  <p className="font-medium text-stone-800">Mọi chi tiết liên hệ: 02286595959</p>
-                </div>
+                  {/* FOOTER DETAILS */}
+                  <div className="pb-2 pt-1 px-1 text-[9px] sm:text-[10px] font-serif text-stone-700 leading-tight border-t border-stone-300/80 mx-2">
+                    <p className="font-bold text-stone-900">Trung tâm Hội nghị, Tiệc cưới & Nhà hàng Golden Palace</p>
+                    <p className="italic text-stone-700">Số 98 Đông A, Phường Nam Định, Tỉnh Ninh Bình</p>
+                    <p className="font-medium text-stone-800">Mọi chi tiết liên hệ: 02286595959</p>
+                  </div>
 
+                </div>
               </div>
             </div>
 
@@ -707,11 +659,11 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
 
       {/* CAMERA VIEWFINDER MODAL */}
       {isCameraOpen && (
-        <div className="fixed inset-0 z-70 bg-black/95 flex flex-col items-center justify-center p-4">
-          <div className="relative w-full max-w-lg bg-stone-900 border border-amber-500/40 rounded-3xl overflow-hidden shadow-2xl">
-            <div className="p-4 border-b border-stone-800 flex justify-between items-center text-amber-200">
-              <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                <span className="material-symbols-outlined">photo_camera</span> Chụp Ảnh Thực Đơn Để Bàn
+        <div className="fixed inset-0 z-70 bg-black/95 flex flex-col items-center justify-center p-3">
+          <div className="relative w-full max-w-md bg-stone-900 border border-amber-500/40 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="p-3 border-b border-stone-800 flex justify-between items-center text-amber-200">
+              <span className="text-xs font-bold uppercase flex items-center gap-1">
+                <span className="material-symbols-outlined text-base">photo_camera</span> Chụp Ảnh Thực Đơn
               </span>
               <button onClick={stopCamera} className="text-stone-400 hover:text-white">
                 <span className="material-symbols-outlined">close</span>
@@ -720,23 +672,12 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
             
             <div className="relative aspect-3/4 bg-black flex items-center justify-center overflow-hidden">
               <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover"></video>
-              <div className="absolute inset-8 border-2 border-dashed border-amber-400/70 rounded-2xl pointer-events-none flex items-center justify-center">
-                <span className="text-[11px] text-amber-300/80 bg-stone-950/70 px-3 py-1 rounded-full">Canh thực đơn vào ô vuông</span>
-              </div>
             </div>
 
-            <div className="p-4 flex items-center justify-center gap-4 bg-stone-950">
-              <button
-                onClick={stopCamera}
-                className="px-4 py-2 bg-stone-800 text-stone-300 rounded-xl text-xs font-bold"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={capturePhoto}
-                className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg cursor-pointer"
-              >
-                <span className="material-symbols-outlined text-lg">camera</span> Chụp & Phân Loại AI
+            <div className="p-3 flex items-center justify-center gap-3 bg-stone-950">
+              <button onClick={stopCamera} className="px-3 py-2 bg-stone-800 text-stone-300 rounded-xl text-xs font-bold">Hủy</button>
+              <button onClick={capturePhoto} className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer">
+                <span className="material-symbols-outlined text-base">camera</span> Chụp & Phân Loại AI
               </button>
             </div>
           </div>
@@ -745,40 +686,29 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
 
       {/* QUICK TEXT PASTE MODAL */}
       {isPasteModalOpen && (
-        <div className="fixed inset-0 z-70 bg-black/80 flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-stone-900 border border-amber-500/30 rounded-3xl p-6 space-y-4 text-amber-100 shadow-2xl">
-            <div className="flex justify-between items-center border-b border-stone-800 pb-3">
-              <h3 className="text-sm font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
-                <span className="material-symbols-outlined">content_paste</span> Dán Văn Bản Thực Đơn Tự Động
+        <div className="fixed inset-0 z-70 bg-black/80 flex items-center justify-center p-3">
+          <div className="w-full max-w-md bg-stone-900 border border-amber-500/30 rounded-2xl p-4 space-y-3 text-amber-100 shadow-2xl">
+            <div className="flex justify-between items-center border-b border-stone-800 pb-2">
+              <h3 className="text-xs font-bold text-amber-300 uppercase flex items-center gap-1">
+                <span className="material-symbols-outlined text-base">content_paste</span> Dán Văn Bản Thực Đơn
               </h3>
               <button onClick={() => setIsPasteModalOpen(false)} className="text-stone-400 hover:text-white">
-                <span className="material-symbols-outlined">close</span>
+                <span className="material-symbols-outlined text-base">close</span>
               </button>
             </div>
 
-            <p className="text-xs text-stone-300">Dán danh sách món ăn vào ô bên dưới, hệ thống sẽ tự sắp xếp vào Khai vị, Món chính, Tráng miệng và Đồ uống:</p>
-
             <textarea
-              rows={8}
+              rows={6}
               value={pasteRawText}
               onChange={(e) => setPasteRawText(e.target.value)}
-              placeholder={`Dán thực đơn mẫu ở đây, ví dụ:\n\nSúp nấm đông trùng hạ thảo\nSalad trứng cá hồi\nCá hồi áp chảo sốt chanh leo\nTôm hùm chiên bơ tỏi\nBò hầm vang\nSữa chua\nRượu ta + Bia`}
-              className="w-full bg-stone-950 border border-stone-700 rounded-xl p-3 text-xs text-stone-100 outline-none focus:border-amber-500 leading-relaxed font-serif"
+              placeholder={`Dán thực đơn ở đây...`}
+              className="w-full bg-stone-950 border border-stone-700 rounded-xl p-2.5 text-xs text-stone-100 outline-none focus:border-amber-500 font-serif"
             />
 
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                onClick={() => setIsPasteModalOpen(false)}
-                className="px-4 py-2 bg-stone-800 text-stone-300 rounded-xl text-xs font-bold"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handleParseRawText}
-                disabled={aiParsing || !pasteRawText.trim()}
-                className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer disabled:opacity-50"
-              >
-                {aiParsing ? 'Đang Phân Loại...' : 'Tự Động Phân Loại'}
+            <div className="flex justify-end gap-2 pt-1">
+              <button onClick={() => setIsPasteModalOpen(false)} className="px-3 py-1.5 bg-stone-800 text-stone-300 rounded-xl text-xs font-bold">Hủy</button>
+              <button onClick={handleParseRawText} disabled={aiParsing || !pasteRawText.trim()} className="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer">
+                {aiParsing ? 'Đang Phân Loại...' : 'Tự Phân Loại'}
               </button>
             </div>
           </div>
