@@ -256,7 +256,7 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
           </div>
           <div>
             <h2 className="text-base sm:text-xl font-bold text-amber-200 font-playfair flex items-center gap-2">
-              Menu Tiệc Để Bàn
+              Công Cụ In Menu Tiệc Cưới A4
               <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 bg-amber-500/20 text-amber-300 rounded hidden sm:inline-block">Golden Palace</span>
             </h2>
             <p className="text-[11px] sm:text-xs text-stone-400 mt-0.5">Chụp/tải ảnh menu & AI tự động phân loại món ăn</p>
@@ -283,10 +283,10 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
 
           <button
             onClick={handlePrint}
-            className="hidden sm:flex bg-stone-800 hover:bg-stone-700 text-stone-200 px-3.5 py-2 rounded-xl text-xs font-bold transition-all items-center gap-1.5 cursor-pointer"
+            className="bg-amber-600 hover:bg-amber-500 text-stone-950 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
           >
             <span className="material-symbols-outlined text-base">print</span>
-            <span>In</span>
+            <span>In Tờ Menu (A4)</span>
           </button>
         </div>
       </div>
@@ -338,7 +338,7 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
           }`}
         >
           <span className="material-symbols-outlined text-sm">preview</span>
-          <span>2. Bản Xem Trước In Menu</span>
+          <span>2. Xem Bản In Tờ Menu</span>
         </button>
       </div>
 
@@ -508,115 +508,137 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
             className="lg:hidden w-full py-3 bg-amber-500 text-stone-950 font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg cursor-pointer"
           >
             <span className="material-symbols-outlined text-base">visibility</span>
-            <span>Xem Bản In Menu Của Tiệc Này</span>
+            <span>Xem Bản In Tờ Menu Của Tiệc Này</span>
           </button>
 
         </div>
 
-        {/* RIGHT COLUMN: LIVE MENU CARD CANVAS PREVIEW */}
+        {/* RIGHT COLUMN: EXACT REPLICA CANVAS (A4 LANDSCAPE FOLDABLE 2-PAGE) */}
         <div className={`lg:col-span-7 bg-stone-900 border border-stone-800 rounded-2xl p-4 sm:p-6 flex flex-col items-center justify-start shadow-xl overflow-x-auto ${
           activeTab === 'preview' ? 'block' : 'hidden lg:flex'
         }`}>
           
-          <div className="w-full flex justify-between items-center mb-3 max-w-[840px] px-1">
+          <div className="w-full flex justify-between items-center mb-3 max-w-[860px] px-1">
             <span className="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-base">preview</span> Bản Xem Trước Khổ Gập
+              <span className="material-symbols-outlined text-base">preview</span> Bản Thiết Kế Y Hệt Menu Gốc (Khổ In A4)
             </span>
             <button
-              onClick={handleExportPNG}
-              className="lg:hidden px-3 py-1 bg-amber-500 text-stone-950 text-[11px] font-bold rounded-lg"
+              onClick={handlePrint}
+              className="px-3.5 py-1.5 bg-amber-500 text-stone-950 text-[11px] font-bold rounded-lg shadow-md flex items-center gap-1 cursor-pointer"
             >
-              Tải PNG
+              <span className="material-symbols-outlined text-sm">print</span> In Tờ Menu
             </button>
           </div>
 
           {/* SCROLLABLE CANVAS WRAPPER FOR MOBILE */}
           <div className="w-full overflow-x-auto pb-4 flex justify-start lg:justify-center">
+            
             <div
               ref={menuPreviewRef}
               id="printable-wedding-menu"
-              className="bg-[#faf7f2] text-stone-900 w-[780px] sm:w-[840px] min-h-[540px] rounded-lg shadow-2xl p-5 sm:p-7 flex flex-row gap-5 relative select-none border border-stone-300 shrink-0"
+              className="bg-[#fcfaf7] text-stone-900 w-[840px] h-[594px] min-w-[840px] rounded-sm shadow-2xl p-6 flex flex-row relative select-none border border-stone-400/60 shrink-0"
               style={{
                 fontFamily: `'Cormorant Garamond', 'Playfair Display', Georgia, serif`,
-                backgroundImage: `radial-gradient(#e8e0d0 0.7px, transparent 0.7px)`,
-                backgroundSize: '16px 16px'
+                backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px)`,
+                backgroundSize: '20px 100%'
               }}
             >
-              {/* Fold line separator in center */}
-              <div className="absolute left-1/2 top-4 bottom-4 w-[1px] bg-stone-300/80 border-r border-dashed border-stone-400/50 -ml-[0.5px]"></div>
+              {/* Center Fold Line */}
+              <div className="absolute left-1/2 top-4 bottom-4 w-[1px] bg-stone-400/40 border-r border-dashed border-stone-400/60 -ml-[0.5px]"></div>
 
-              {/* PAGE 1 (LEFT): DISHES */}
-              <div className="flex-1 border-2 border-stone-800 p-4 sm:p-5 rounded-sm relative flex flex-col justify-between text-center bg-[#fdfbf7]/90 shadow-xs">
+              {/* ═══════════════════════════════════════════════════════════════ */}
+              {/* PAGE 1 (LEFT): MENU CONTENT PAGE */}
+              {/* ═══════════════════════════════════════════════════════════════ */}
+              <div className="w-1/2 p-5 relative flex flex-col justify-between text-center bg-[#fcfaf7]">
                 
-                {/* Ornaments */}
-                <svg className="absolute top-1.5 left-1.5 w-8 h-8 text-stone-800" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
+                {/* Outer Frame: Double Line Border */}
+                <div className="absolute inset-2 border border-stone-800 pointer-events-none"></div>
+                <div className="absolute inset-3 border border-stone-700 pointer-events-none"></div>
+
+                {/* 4 Corner Ornaments */}
+                <svg className="absolute top-3 left-3 w-8 h-8 text-stone-900 pointer-events-none" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M10 40 V 10 H 40" />
-                  <path d="M15 35 V 15 H 35" />
-                  <circle cx="22" cy="22" r="4" fill="currentColor" />
+                  <path d="M18 32 V 18 H 32" />
+                  <circle cx="26" cy="26" r="3.5" fill="currentColor" />
                 </svg>
-                <svg className="absolute top-1.5 right-1.5 w-8 h-8 text-stone-800" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M90 40 V 10 H 60" />
-                  <path d="M85 35 V 15 H 65" />
-                  <circle cx="78" cy="22" r="4" fill="currentColor" />
+                <svg className="absolute top-3 right-3 w-8 h-8 text-stone-900 pointer-events-none scale-x-[-1]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M10 40 V 10 H 40" />
+                  <path d="M18 32 V 18 H 32" />
+                  <circle cx="26" cy="26" r="3.5" fill="currentColor" />
+                </svg>
+                <svg className="absolute bottom-3 left-3 w-8 h-8 text-stone-900 pointer-events-none scale-y-[-1]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M10 40 V 10 H 40" />
+                  <path d="M18 32 V 18 H 32" />
+                  <circle cx="26" cy="26" r="3.5" fill="currentColor" />
+                </svg>
+                <svg className="absolute bottom-3 right-3 w-8 h-8 text-stone-900 pointer-events-none scale-x-[-1] scale-y-[-1]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M10 40 V 10 H 40" />
+                  <path d="M18 32 V 18 H 32" />
+                  <circle cx="26" cy="26" r="3.5" fill="currentColor" />
                 </svg>
 
-                <div className="space-y-2.5 my-auto px-1 py-1">
-                  {/* Khai vị */}
+                {/* DISH SECTIONS */}
+                <div className="my-auto space-y-3.5 px-3 py-3 relative z-10">
+                  
+                  {/* 1. KHAI VỊ */}
                   {khaiViList.length > 0 && (
-                    <div className="space-y-0.5">
-                      <h3 className="font-script text-xl sm:text-2xl font-bold text-stone-900">Khai vị</h3>
-                      <div className="space-y-0.5 text-[11px] sm:text-[12px] font-serif text-stone-800 font-medium leading-tight">
+                    <div className="space-y-1">
+                      <h3 className="font-script text-2xl font-bold italic text-stone-900 tracking-wider">Khai vị</h3>
+                      <div className="space-y-0.5 text-[13px] font-serif text-stone-900 font-medium italic leading-snug">
                         {khaiViList.map((item, idx) => (
                           <p key={idx}>{item}</p>
                         ))}
                       </div>
-                      <div className="flex items-center justify-center my-1 text-stone-600">
-                        <svg className="w-16 h-2.5 fill-current" viewBox="0 0 100 20">
+                      <div className="flex items-center justify-center my-2 text-stone-700">
+                        <svg className="w-24 h-3 fill-current" viewBox="0 0 100 20">
+                          <path d="M0 10 Q 25 0, 50 10 Q 75 20, 100 10 Q 75 0, 50 10 Q 25 20, 0 10 Z" />
                           <circle cx="50" cy="10" r="3" />
                         </svg>
                       </div>
                     </div>
                   )}
 
-                  {/* Món chính */}
+                  {/* 2. MÓN CHÍNH */}
                   {monChinhList.length > 0 && (
-                    <div className="space-y-0.5">
-                      <h3 className="font-script text-xl sm:text-2xl font-bold text-stone-900">Món chính</h3>
-                      <div className="space-y-0.5 text-[11px] sm:text-[12px] font-serif text-stone-800 font-medium leading-tight">
+                    <div className="space-y-1">
+                      <h3 className="font-script text-2xl font-bold italic text-stone-900 tracking-wider">Món chính</h3>
+                      <div className="space-y-0.5 text-[13px] font-serif text-stone-900 font-medium italic leading-snug">
                         {monChinhList.map((item, idx) => (
                           <p key={idx}>{item}</p>
                         ))}
                       </div>
-                      <div className="flex items-center justify-center my-1 text-stone-600">
-                        <svg className="w-16 h-2.5 fill-current" viewBox="0 0 100 20">
+                      <div className="flex items-center justify-center my-2 text-stone-700">
+                        <svg className="w-24 h-3 fill-current" viewBox="0 0 100 20">
+                          <path d="M0 10 Q 25 0, 50 10 Q 75 20, 100 10 Q 75 0, 50 10 Q 25 20, 0 10 Z" />
                           <circle cx="50" cy="10" r="3" />
                         </svg>
                       </div>
                     </div>
                   )}
 
-                  {/* Tráng miệng */}
+                  {/* 3. TRÁNG MIỆNG */}
                   {trangMiengList.length > 0 && (
-                    <div className="space-y-0.5">
-                      <h3 className="font-script text-xl sm:text-2xl font-bold text-stone-900">Tráng miệng</h3>
-                      <div className="space-y-0.5 text-[11px] sm:text-[12px] font-serif text-stone-800 font-medium leading-tight">
+                    <div className="space-y-1">
+                      <h3 className="font-script text-2xl font-bold italic text-stone-900 tracking-wider">Tráng miệng</h3>
+                      <div className="space-y-0.5 text-[13px] font-serif text-stone-900 font-medium italic leading-snug">
                         {trangMiengList.map((item, idx) => (
                           <p key={idx}>{item}</p>
                         ))}
                       </div>
-                      <div className="flex items-center justify-center my-1 text-stone-600">
-                        <svg className="w-16 h-2.5 fill-current" viewBox="0 0 100 20">
+                      <div className="flex items-center justify-center my-2 text-stone-700">
+                        <svg className="w-24 h-3 fill-current" viewBox="0 0 100 20">
+                          <path d="M0 10 Q 25 0, 50 10 Q 75 20, 100 10 Q 75 0, 50 10 Q 25 20, 0 10 Z" />
                           <circle cx="50" cy="10" r="3" />
                         </svg>
                       </div>
                     </div>
                   )}
 
-                  {/* Đồ uống */}
+                  {/* 4. ĐỒ UỐNG */}
                   {doUongList.length > 0 && (
-                    <div className="space-y-0.5">
-                      <h3 className="font-script text-xl sm:text-2xl font-bold text-stone-900">Đồ uống</h3>
-                      <div className="space-y-0.5 text-[11px] sm:text-[12px] font-serif text-stone-800 font-medium leading-tight">
+                    <div className="space-y-1">
+                      <h3 className="font-script text-2xl font-bold italic text-stone-900 tracking-wider">Đồ uống</h3>
+                      <div className="space-y-0.5 text-[13px] font-serif text-stone-900 font-medium italic leading-snug">
                         {doUongList.map((item, idx) => (
                           <p key={idx}>{item}</p>
                         ))}
@@ -625,54 +647,88 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
                   )}
                 </div>
 
-                <div className="pt-2 pb-1">
-                  <p className="font-serif text-xs sm:text-sm font-bold italic text-stone-900">
+                {/* FOOTER BLESSING */}
+                <div className="pb-3 pt-1 z-10">
+                  <p className="font-serif text-base font-bold italic text-stone-900 tracking-wide">
                     {footerText}
                   </p>
                 </div>
               </div>
 
-              {/* PAGE 2 (RIGHT SIDE): COVER PAGE */}
-              <div className="flex-1 border-2 border-stone-800 p-5 rounded-sm relative flex flex-col justify-between text-center bg-[#fdfbf7]/90 shadow-xs">
+              {/* ═══════════════════════════════════════════════════════════════ */}
+              {/* PAGE 2 (RIGHT): COVER PAGE (EXACT MATCH TO USER PHOTO) */}
+              {/* ═══════════════════════════════════════════════════════════════ */}
+              <div className="w-1/2 p-5 relative flex flex-col justify-between text-center bg-[#fcfaf7]">
                 
-                {/* LOGO */}
-                <div className="pt-4 flex flex-col items-center">
-                  <div className="w-14 h-14 rounded-full border-2 border-stone-800 flex items-center justify-center p-1 bg-stone-900 text-amber-400 shadow-md">
-                    <div className="w-full h-full rounded-full border border-amber-400/40 flex items-center justify-center font-bold font-playfair text-lg">
-                      GP
-                    </div>
+                {/* Outer Frame: Double Line Border */}
+                <div className="absolute inset-2 border border-stone-800 pointer-events-none"></div>
+                <div className="absolute inset-3 border border-stone-700 pointer-events-none"></div>
+
+                {/* TOP CORNERS: DETAILED OLIVE/LEAF GARLAND VECTOR SPRAYS */}
+                <svg className="absolute top-4 left-4 w-28 h-28 text-stone-900 pointer-events-none opacity-90" viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M5 5 C 40 10 70 30 90 70" />
+                  <path d="M15 12 Q 35 5 45 25 Q 25 30 15 12 Z" fill="currentColor" fillOpacity="0.15" />
+                  <path d="M35 25 Q 55 20 65 40 Q 45 45 35 25 Z" fill="currentColor" fillOpacity="0.15" />
+                  <path d="M55 45 Q 75 40 85 60 Q 65 65 55 45 Z" fill="currentColor" fillOpacity="0.15" />
+                  <circle cx="20" cy="20" r="3" fill="currentColor" />
+                  <circle cx="42" cy="32" r="3" fill="currentColor" />
+                </svg>
+                <svg className="absolute top-4 right-4 w-28 h-28 text-stone-900 pointer-events-none opacity-90 scale-x-[-1]" viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M5 5 C 40 10 70 30 90 70" />
+                  <path d="M15 12 Q 35 5 45 25 Q 25 30 15 12 Z" fill="currentColor" fillOpacity="0.15" />
+                  <path d="M35 25 Q 55 20 65 40 Q 45 45 35 25 Z" fill="currentColor" fillOpacity="0.15" />
+                  <path d="M55 45 Q 75 40 85 60 Q 65 65 55 45 Z" fill="currentColor" fillOpacity="0.15" />
+                  <circle cx="20" cy="20" r="3" fill="currentColor" />
+                  <circle cx="42" cy="32" r="3" fill="currentColor" />
+                </svg>
+
+                {/* MH LOGO BADGE */}
+                <div className="pt-8 flex flex-col items-center z-10">
+                  <div className="w-20 h-14 relative flex items-center justify-center">
+                    <svg className="w-full h-full text-stone-900 fill-current" viewBox="0 0 120 70">
+                      <path d="M10 35 Q 30 5 60 5 Q 90 5 110 35 Q 90 65 60 65 Q 30 65 10 35 Z" stroke="currentColor" strokeWidth="3" fill="none" />
+                      <path d="M15 35 Q 35 12 60 12 Q 85 12 105 35 Q 85 58 60 58 Q 35 58 15 35 Z" fill="currentColor" />
+                      <text x="60" y="44" textAnchor="middle" fill="#fcfaf7" fontSize="26" fontWeight="bold" fontFamily="'Playfair Display', serif">MH</text>
+                    </svg>
                   </div>
                 </div>
 
-                {/* TITLES */}
-                <div className="my-auto space-y-3 py-2">
-                  <h1 className="text-lg sm:text-xl font-serif tracking-[0.2em] font-semibold text-stone-900 uppercase border-b border-stone-300 pb-1.5 mx-4">
+                {/* COVER TITLES */}
+                <div className="my-auto space-y-4 py-4 z-10">
+                  <h1 className="text-2xl font-serif tracking-[0.25em] font-semibold text-stone-900 uppercase">
                     WEDDING MENU
                   </h1>
 
-                  <div className="space-y-0.5">
-                    <p className="font-script text-xl sm:text-2xl text-stone-800 font-semibold">{title}</p>
-                    <h2 className="font-script text-2xl sm:text-3xl text-stone-900 font-bold px-1 leading-snug">
+                  <div className="space-y-1">
+                    <p className="font-script text-3xl text-stone-900 font-semibold italic">{title}</p>
+                    <h2 className="font-script text-4xl text-stone-900 font-bold px-2 py-1 leading-snug">
                       {brideGroomNames}
                     </h2>
                   </div>
 
-                  <div className="pt-1">
-                    <span className="inline-block border-t border-b border-stone-800 px-4 py-0.5 font-serif text-xs sm:text-sm font-bold text-stone-900 tracking-wider">
+                  <div className="pt-2">
+                    <span className="inline-block border-t border-b border-stone-800 px-8 py-1 font-serif text-base font-bold text-stone-900 tracking-wider">
                       {eventDate}
                     </span>
                   </div>
+
+                  <div className="flex items-center justify-center my-1 text-stone-800">
+                    <svg className="w-20 h-2.5 fill-current" viewBox="0 0 100 20">
+                      <circle cx="50" cy="10" r="3" />
+                    </svg>
+                  </div>
                 </div>
 
-                {/* FOOTER DETAILS */}
-                <div className="pb-2 pt-1 px-1 text-[9px] sm:text-[10px] font-serif text-stone-700 leading-tight border-t border-stone-300/80 mx-2">
+                {/* FOOTER HOTEL DETAILS */}
+                <div className="pb-4 pt-2 px-2 text-[11px] font-serif text-stone-800 leading-snug z-10">
                   <p className="font-bold text-stone-900">Trung tâm Hội nghị, Tiệc cưới & Nhà hàng Golden Palace</p>
-                  <p className="italic text-stone-700">Số 98 Đông A, Phường Nam Định, Tỉnh Ninh Bình</p>
-                  <p className="font-medium text-stone-800">Mọi chi tiết liên hệ: 02286595959</p>
+                  <p className="italic text-stone-800">Số 98 Đông A, Phường Nam Định, Tỉnh Ninh Bình</p>
+                  <p className="font-medium text-stone-900">Mọi chi tiết liên hệ: 02286595959</p>
                 </div>
 
               </div>
             </div>
+
           </div>
 
         </div>
