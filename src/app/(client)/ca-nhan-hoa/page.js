@@ -288,7 +288,7 @@ function PersonalizePageContent() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               
-              {/* 1. TÊN TIỆC CƯỚI & TIÊU ĐỀ */}
+              {/* 1. TÊN TIỆC CƯỚI & TIÊU ĐỀ (DROPDOWN CHỌN NHANH HÀNG MŨI TÊN + ĐIỀN TỰ DO) */}
               <div className="sm:col-span-2 bg-[#1f1f1f] p-3.5 rounded-2xl border border-amber-500/30">
                 <label className="block text-amber-300 font-bold mb-2 uppercase tracking-wider flex items-center justify-between text-xs">
                   <span>TÊN TIỆC CƯỚI & TIÊU ĐỀ (*)</span>
@@ -298,42 +298,44 @@ function PersonalizePageContent() {
                       Vui lòng điền tên tiệc
                     </span>
                   ) : (
-                    <span className="text-[10px] text-gray-400 font-normal">Chọn gợi ý hoặc nhập tự do</span>
+                    <span className="text-[10px] text-gray-400 font-normal">Chọn gợi ý từ mũi tên hoặc nhập tự do</span>
                   )}
                 </label>
                 
-                {/* Preset Option Buttons */}
-                <div className="flex flex-wrap gap-1.5 mb-2.5">
-                  {PARTY_TITLE_PRESETS.map((opt) => (
-                    <button
-                      key={opt}
-                      type="button"
-                      onClick={() => {
-                        setPartyTitle(opt);
-                        markTouched('partyTitle');
-                      }}
-                      className={`py-1.5 px-2.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
-                        partyTitle === opt
-                          ? 'border-amber-400 bg-amber-400/25 text-amber-300 shadow-[0_0_8px_rgba(245,158,11,0.3)]'
-                          : 'border-gray-800 bg-[#161616] text-gray-400 hover:text-white hover:border-gray-700'
-                      }`}
-                    >
-                      {opt}
-                    </button>
-                  ))}
-                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {/* Ô 1: Dropdown chọn tên tiệc mẫu có mũi tên */}
+                  <select
+                    value={PARTY_TITLE_PRESETS.includes(partyTitle) ? partyTitle : 'Khác'}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val !== 'Khác') {
+                        setPartyTitle(val);
+                      }
+                      markTouched('partyTitle');
+                    }}
+                    className="w-full bg-[#161616] border border-gray-700 focus:border-[#e3a638] rounded-xl px-3 py-2.5 text-amber-300 font-bold outline-none cursor-pointer text-xs"
+                  >
+                    <option value="" disabled>-- Chọn Tên Tiệc Gợi Ý --</option>
+                    {PARTY_TITLE_PRESETS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                    <option value="Khác">-- Tự Nhập Tên Tiệc Khác --</option>
+                  </select>
 
-                {/* Free Manual Input Box */}
-                <input
-                  type="text"
-                  value={partyTitle}
-                  onChange={(e) => setPartyTitle(e.target.value)}
-                  onBlur={() => markTouched('partyTitle')}
-                  placeholder="VD: LỄ THÀNH HÔN"
-                  className={`w-full bg-[#141414] border rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none text-xs tracking-wider transition-colors ${
-                    shouldShowWarning('partyTitle', partyTitle) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
-                  }`}
-                />
+                  {/* Ô 2: Điền tự do / Chỉnh sửa tên tiệc */}
+                  <input
+                    type="text"
+                    value={partyTitle}
+                    onChange={(e) => setPartyTitle(e.target.value)}
+                    onBlur={() => markTouched('partyTitle')}
+                    placeholder="VD: LỄ THÀNH HÔN"
+                    className={`w-full bg-[#141414] border rounded-xl px-4 py-2.5 text-amber-300 font-bold outline-none text-xs tracking-wider transition-colors ${
+                      shouldShowWarning('partyTitle', partyTitle) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
+                    }`}
+                  />
+                </div>
               </div>
 
               {/* Tên Chú Rể */}
