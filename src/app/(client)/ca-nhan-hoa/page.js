@@ -35,7 +35,12 @@ function PersonalizePageContent() {
   const [brideName, setBrideName] = useState('');
   const [phone, setPhone] = useState('');
   const [eventDate, setEventDate] = useState('');
-  const [eventTime, setEventTime] = useState('');
+  
+  // 2-Box Split for Event Time (Session: Trưa/Chiều/Tối & Specific Time: 11:00/17:30)
+  const [eventSession, setEventSession] = useState('Trưa');
+  const [eventSpecificTime, setEventSpecificTime] = useState('11:00');
+  const [eventTime, setEventTime] = useState('Trưa (11:00)');
+  
   const [selectedFloor, setSelectedFloor] = useState('FLOOR_3');
   const [driveLink, setDriveLink] = useState('');
 
@@ -368,10 +373,10 @@ function PersonalizePageContent() {
                 />
               </div>
 
-              {/* THỜI GIAN TỔ CHỨC */}
+              {/* THỜI GIAN ĐÓN KHÁCH (CHIA 2 Ô NHỎ THẲNG HÀNG VỚI NGÀY CƯỚI THEO NÉT VẼ) */}
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
-                  <span>Thời Gian / Giờ Đón Khách (*)</span>
+                  <span>Thời Gian Đón Khách (*)</span>
                   {shouldShowWarning('eventTime', eventTime) ? (
                     <span className="text-[10px] text-amber-400 font-bold flex items-center gap-0.5 animate-pulse">
                       <span className="material-symbols-outlined text-xs">warning</span>
@@ -382,47 +387,47 @@ function PersonalizePageContent() {
                   )}
                 </label>
                 
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEventTime('11:00 AM');
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Ô 1: Buổi Trưa / Chiều / Tối */}
+                  <select
+                    value={eventSession}
+                    onChange={(e) => {
+                      const session = e.target.value;
+                      setEventSession(session);
                       markTouched('eventTime');
+                      
+                      let newTime = eventSpecificTime;
+                      if (session === 'Trưa' && (!eventSpecificTime || eventSpecificTime === '17:30')) {
+                        newTime = '11:00';
+                      } else if ((session === 'Chiều' || session === 'Tối') && (!eventSpecificTime || eventSpecificTime === '11:00')) {
+                        newTime = '17:30';
+                      }
+                      setEventSpecificTime(newTime);
+                      setEventTime(`${session} (${newTime})`);
                     }}
-                    className={`py-1 px-2 rounded text-[10px] font-bold border transition-all cursor-pointer ${
-                      eventTime === '11:00 AM'
-                        ? 'border-amber-400 bg-amber-400/20 text-amber-300'
-                        : 'border-gray-800 bg-[#1f1f1f] text-gray-400 hover:text-white'
-                    }`}
+                    className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-3 py-2.5 text-amber-300 font-bold outline-none cursor-pointer text-xs"
                   >
-                    11:00 AM (Trưa)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEventTime('17:30 PM');
-                      markTouched('eventTime');
-                    }}
-                    className={`py-1 px-2 rounded text-[10px] font-bold border transition-all cursor-pointer ${
-                      eventTime === '17:30 PM'
-                        ? 'border-amber-400 bg-amber-400/20 text-amber-300'
-                        : 'border-gray-800 bg-[#1f1f1f] text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    17:30 PM (Tối)
-                  </button>
-                </div>
+                    <option value="Trưa">Trưa</option>
+                    <option value="Chiều">Chiều</option>
+                    <option value="Tối">Tối</option>
+                  </select>
 
-                <input
-                  type="text"
-                  value={eventTime}
-                  onChange={(e) => setEventTime(e.target.value)}
-                  onBlur={() => markTouched('eventTime')}
-                  placeholder="VD: 11:00 AM hoặc 10:30 AM"
-                  className={`w-full bg-[#1f1f1f] border rounded-xl px-4 py-2.5 text-white font-semibold outline-none transition-colors ${
-                    shouldShowWarning('eventTime', eventTime) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
-                  }`}
-                />
+                  {/* Ô 2: Giờ cụ thể tùy chỉnh (VD: 11:00, 17:30) */}
+                  <input
+                    type="text"
+                    value={eventSpecificTime}
+                    onChange={(e) => {
+                      const timeVal = e.target.value;
+                      setEventSpecificTime(timeVal);
+                      setEventTime(`${eventSession} (${timeVal})`);
+                    }}
+                    onBlur={() => markTouched('eventTime')}
+                    placeholder="11:00"
+                    className={`w-full bg-[#1f1f1f] border rounded-xl px-3 py-2.5 text-white font-semibold outline-none transition-colors text-xs text-center font-mono ${
+                      shouldShowWarning('eventTime', eventTime) ? 'border-amber-500/80 bg-amber-500/10' : 'border-gray-700 focus:border-[#e3a638]'
+                    }`}
+                  />
+                </div>
               </div>
 
               {/* ĐỊA ĐIỂM TẦNG */}
