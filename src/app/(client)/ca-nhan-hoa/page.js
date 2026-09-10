@@ -17,6 +17,37 @@ const PARTY_TITLE_PRESETS = [
   'TIỆC KỶ NIỆM'
 ];
 
+// Smart helper to determine session period from time string (Trưa: 9-13:59, Chiều: 14-17:59, Tối: 18-20:00)
+function getSessionFromTimeString(timeStr) {
+  if (!timeStr) return null;
+  const match = timeStr.trim().match(/^(\d{1,2})(?::(\d{2}))?/);
+  if (!match) return null;
+  
+  const hour = parseInt(match[1], 10);
+  const minute = match[2] ? parseInt(match[2], 10) : 0;
+  if (isNaN(hour)) return null;
+
+  const totalMinutes = hour * 60 + minute;
+
+  // Trưa: 9:00 (540m) to 13:59 (839m)
+  if (totalMinutes >= 540 && totalMinutes < 840) {
+    return 'Trưa';
+  }
+  // Chiều: 14:00 (840m) to 17:59 (1079m)
+  if (totalMinutes >= 840 && totalMinutes < 1080) {
+    return 'Chiều';
+  }
+  // Tối: 18:00 (1080m) to 20:00 (1200m) or above
+  if (totalMinutes >= 1080) {
+    return 'Tối';
+  }
+  if (totalMinutes < 540) {
+    return 'Trưa';
+  }
+  
+  return null;
+}
+
 function PersonalizePageContent() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
@@ -36,7 +67,7 @@ function PersonalizePageContent() {
   const [phone, setPhone] = useState('');
   const [eventDate, setEventDate] = useState('');
   
-  // 2-Box Split for Event Time (Session: Trưa/Chiều/Tối & Specific Time: 11:00/17:30)
+  // 2-Box Split for Event Time with 2-Way Smart Auto Sync (Defaults: Trưa=11:00, Chiều=16:00, Tối=19:00)
   const [eventSession, setEventSession] = useState('Trưa');
   const [eventSpecificTime, setEventSpecificTime] = useState('11:00');
   const [eventTime, setEventTime] = useState('Trưa (11:00)');
@@ -373,7 +404,7 @@ function PersonalizePageContent() {
                 />
               </div>
 
-              {/* THỜI GIAN ĐÓN KHÁCH (CHIA 2 Ô NHỎ THẲNG HÀNG VỚI NGÀY CƯỚI THEO NÉT VẼ) */}
+              {/* THỜI GIAN ĐÓN KHÁCH (SMART 2-WAY AUTO SYNC DEFAULTS: Trưa=11:00, Chiều=16:00, Tối=19:00) */}
               <div>
                 <label className="block text-gray-300 font-semibold mb-1.5 uppercase tracking-wider flex items-center justify-between">
                   <span>Thời Gian Đón Khách (*)</span>
@@ -388,7 +419,7 @@ function PersonalizePageContent() {
                 </label>
                 
                 <div className="grid grid-cols-2 gap-2">
-                  {/* Ô 1: Buổi Trưa / Chiều / Tối */}
+                  {/* Ô 1: Buổi Trưa (11:00) / Chiều (16:00) / Tối (19:00) */}
                   <select
                     value={eventSession}
                     onChange={(e) => {
@@ -396,14 +427,13 @@ function PersonalizePageContent() {
                       setEventSession(session);
                       markTouched('eventTime');
                       
-                      let newTime = eventSpecificTime;
-                      if (session === 'Trưa' && (!eventSpecificTime || eventSpecificTime === '17:30')) {
-                        newTime = '11:00';
-                      } else if ((session === 'Chiều' || session === 'Tối') && (!eventSpecificTime || eventSpecificTime === '11:00')) {
-                        newTime = '17:30';
-                      }
-                      setEventSpecificTime(newTime);
-                      setEventTime(`${session} (${newTime})`);
+                      let defaultTime = '11:00';
+                      if (session === 'Trưa') defaultTime = '11:00';
+                      if (session === 'Chiều') defaultTime = '16:00';
+                      if (session === 'Tối') defaultTime = '19:00';
+
+                      setEventSpecificTime(defaultTime);
+                      setEventTime(`${session} (${defaultTime})`);
                     }}
                     className="w-full bg-[#1f1f1f] border border-gray-700 focus:border-[#e3a638] rounded-xl px-3 py-2.5 text-amber-300 font-bold outline-none cursor-pointer text-xs"
                   >
@@ -412,14 +442,18 @@ function PersonalizePageContent() {
                     <option value="Tối">Tối</option>
                   </select>
 
-                  {/* Ô 2: Giờ cụ thể tùy chỉnh (VD: 11:00, 17:30) */}
+                  {/* Ô 2: Giờ cụ thể tùy chỉnh & Tự động đồng bộ Buổi */}
                   <input
                     type="text"
                     value={eventSpecificTime}
                     onChange={(e) => {
                       const timeVal = e.target.value;
                       setEventSpecificTime(timeVal);
-                      setEventTime(`${eventSession} (${timeVal})`);
+                      
+                      // Auto-detect & sync matched session from typed time string (Trưa: 9-13:59, Chiều: 14-17:59, Tối: 18-20:00)
+                      const detectedSession = getSessionFromTimeString(timeVal) || eventSession;
+                      setEventSession(detectedSession);
+                      setEventTime(`${detectedSession} (${timeVal})`);
                     }}
                     onBlur={() => markTouched('eventTime')}
                     placeholder="11:00"
