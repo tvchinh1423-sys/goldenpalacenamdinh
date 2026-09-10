@@ -34,11 +34,67 @@ if (!global.gpProfilesCache) {
   global.gpProfilesCache = [DEMO_PROFILE];
 }
 
+// Auto-delete profiles 7 days after the eventDate
+async function autoCleanExpiredProfiles(profiles) {
+  const now = new Date();
+  const todayMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+  const activeProfiles = [];
+  const expiredDbIds = [];
+
+  for (const p of profiles) {
+    if (!p.eventDate || p.id === 'demo-1') {
+      activeProfiles.push(p);
+      continue;
+    }
+
+    try {
+      const parts = (p.eventDate || '').split('-');
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const day = parseInt(parts[2], 10);
+        const eventDateMs = new Date(year, month - 1, day).getTime();
+
+        // Expired if current date is strictly more than 7 days after the wedding event date
+        if (todayMs - eventDateMs > SEVEN_DAYS_MS) {
+          if (p.dbLeadId) expiredDbIds.push(p.dbLeadId);
+          continue;
+        }
+      }
+    } catch (e) {}
+
+    activeProfiles.push(p);
+  }
+
+  // Delete expired records from DB
+  if (expiredDbIds.length > 0) {
+    try {
+      await prisma.lead.deleteMany({
+        where: {
+          id: { in: expiredDbIds }
+        }
+      });
+    } catch (e) {
+      console.error('Error auto-deleting expired profiles from DB:', e);
+    }
+  }
+
+  return activeProfiles;
+}
+
 // Helper to read saved profiles from DB + Filesystem + Memory
 async function readProfiles() {
   let dbProfiles = [];
   try {
+    // ONLY query records tagged specifically as [PERSONALIZE_PROFILE]
     const leads = await prisma.lead.findMany({
+      where: {
+        internalNotes: {
+          contains: '[PERSONALIZE_PROFILE]'
+        }
+      },
       orderBy: { updatedAt: 'desc' }
     });
 
@@ -51,35 +107,8 @@ async function readProfiles() {
             return { ...parsed, dbLeadId: l.id };
           }
         }
-        
-        // Fallback mapping for standard leads so all leads show in admin personalize
-        const names = (l.brideGroomNames || l.name || '').split('&');
-        const groom = names[0]?.trim() || l.name || 'Chú Rể';
-        const bride = names[1]?.trim() || '';
-
-        return {
-          id: l.id,
-          partyTitle: l.notes || `LỄ THÀNH HÔN ${groom} ${bride ? '& ' + bride : ''}`,
-          groomName: groom,
-          brideName: bride,
-          phone: l.phone || 'Chưa cung cấp',
-          eventDate: l.createdAt ? new Date(l.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-          eventTime: '11:00 AM',
-          floorId: 'FLOOR_3',
-          venueName: 'Tầng 3',
-          driveLink: '',
-          ledStatus: 'Chưa tùy chỉnh phông LED',
-          ledTemplateId: 'led-starry-diamond',
-          musicStatus: 'Không có yêu cầu gì',
-          selectedMusic: [],
-          youtubeLinks: {},
-          customNotes: l.notes || 'Khách hàng đăng ký qua hệ thống',
-          createdAt: l.createdAt ? new Date(l.createdAt).toISOString() : new Date().toISOString(),
-          updatedAt: l.updatedAt ? new Date(l.updatedAt).toISOString() : new Date().toISOString(),
-          dbLeadId: l.id
-        };
       } catch (err) {
-        console.error('Error mapping Lead to profile:', err);
+        console.error('Error parsing profile JSON from Lead:', err);
       }
       return null;
     }).filter(Boolean);
@@ -122,9 +151,12 @@ async function readProfiles() {
     });
   }
 
-  const merged = Array.from(map.values()).sort((a, b) => {
+  let merged = Array.from(map.values()).sort((a, b) => {
     return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
   });
+
+  // Automatically clean & purge profiles older than 7 days after the event date
+  merged = await autoCleanExpiredProfiles(merged);
 
   global.gpProfilesCache = merged;
   return merged;
@@ -168,7 +200,10 @@ async function persistProfile(profileData) {
 
     if (cleanPhone && cleanPhone.length >= 8) {
       existingLead = await prisma.lead.findFirst({
-        where: { phone: { contains: cleanPhone } }
+        where: {
+          phone: { contains: cleanPhone },
+          internalNotes: { contains: '[PERSONALIZE_PROFILE]' }
+        }
       });
     }
 
@@ -224,6 +259,10 @@ async function removeProfile(id) {
             phone: { contains: cleanPhone },
             internalNotes: { contains: '[PERSONALIZE_PROFILE]' }
           }
+        });
+      } else if (target.dbLeadId) {
+        await prisma.lead.delete({
+          where: { id: target.dbLeadId }
         });
       }
     } catch (e) {
