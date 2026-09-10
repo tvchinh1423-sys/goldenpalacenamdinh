@@ -19,7 +19,7 @@ export async function POST(req) {
       });
     }
 
-    // Extract File ID or Folder ID
+    // Extract File ID or Folder ID if available
     const folderMatch = trimmedUrl.match(/\/folders\/([a-zA-Z0-9_-]+)/);
     const fileMatch = trimmedUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || trimmedUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
 
@@ -39,49 +39,48 @@ export async function POST(req) {
     });
 
     const finalUrl = driveRes.url || '';
-    const isLoginRedirect = finalUrl.includes('accounts.google.com') || finalUrl.includes('ServiceLogin');
     
+    // IF REDIRECTED TO GOOGLE LOGIN PAGE -> LINK IS PRIVATE / RESTRICTED
+    const isLoginRedirect = finalUrl.includes('accounts.google.com') || finalUrl.includes('ServiceLogin');
     if (isLoginRedirect || driveRes.status === 403 || driveRes.status === 401) {
       return NextResponse.json({
         success: true,
         isGoogleDrive: true,
         isPublic: false,
-        error: 'Link Google Drive đang để chế độ riêng tư (Riêng tư / Cần quyền truy cập)'
+        error: 'Link Google Drive đang để chế độ Riêng Tư (Cần quyền truy cập)'
       });
     }
 
+    // Check page title for explicit Access Denied / You Need Access titles
     const html = await driveRes.text();
+    const titleMatch = html.match(/<title>(.*?)<\/title>/i);
+    const titleText = titleMatch ? titleMatch[1] : '';
 
-    const isAccessRequiredText = 
-      html.includes('Bạn cần có quyền truy cập') || 
-      html.includes('Yêu cầu quyền truy cập') || 
-      html.includes('You need access') || 
-      html.includes('Request access') ||
-      html.includes('accounts.google.com/ServiceLogin') ||
-      html.includes('servicelogin');
-
-    if (isAccessRequiredText) {
+    if (titleText.includes('Yêu cầu quyền truy cập') || titleText.includes('You need access') || titleText.includes('Access Denied')) {
       return NextResponse.json({
         success: true,
         isGoogleDrive: true,
         isPublic: false,
-        error: 'Link Google Drive đang để chế độ riêng tư (Cần xin quyền truy cập)'
+        error: 'Link Google Drive đang để chế độ Riêng Tư (Cần xin quyền truy cập)'
       });
     }
 
+    // Public link confirmed!
     return NextResponse.json({
       success: true,
       isGoogleDrive: true,
       isPublic: true,
-      message: 'Link Google Drive đã mở công khai hợp lệ'
+      message: 'Link Google Drive đã được mở công khai hợp lệ'
     });
 
   } catch (err) {
     console.error('Check Drive Error:', err);
+    // On unexpected fetch error, do not block user
     return NextResponse.json({
-      success: false,
-      isPublic: false,
-      error: 'Không thể kiểm tra đường dẫn Drive này'
+      success: true,
+      isGoogleDrive: true,
+      isPublic: true,
+      message: 'Đã nhận link Google Drive'
     });
   }
 }
