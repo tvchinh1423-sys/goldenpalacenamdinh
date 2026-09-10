@@ -3,88 +3,216 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth-options';
 import fs from 'fs';
 import path from 'path';
+import { randomUUID } from 'crypto';
+import prisma from '@/lib/prisma';
 
 // Primary & Fallback Data File locations for maximum persistence
 const DATA_FILE_TMP = path.join('/tmp', 'personalize-profiles.json');
 const DATA_FILE_LOCAL = path.join(process.cwd(), 'src', 'data', 'personalize-profiles.json');
 
+const DEMO_PROFILE = {
+  id: 'demo-1',
+  partyTitle: 'LỄ THÀNH HÔN',
+  groomName: 'Đức Hoàng',
+  brideName: 'Thu Hương',
+  phone: '0912345678',
+  eventDate: '2026-11-20',
+  eventTime: '11:00 AM',
+  floorId: 'FLOOR_3',
+  venueName: 'Tầng 3',
+  driveLink: 'https://drive.google.com/drive/folders/demo-golden-palace',
+  ledStatus: 'Đã tùy chỉnh phông LED',
+  ledTemplateId: 'led-starry-diamond',
+  musicStatus: 'Đã chọn danh sách nhạc',
+  selectedMusic: ['w1', 'e1', 't1', 'd1'],
+  youtubeLinks: { welcome: '', entrance: '', toast: '', dining: '' },
+  customNotes: 'Mở bài "Beautiful in White" khi Chú Rể dắt Cô Dâu vào sảnh sân khấu.',
+  createdAt: new Date().toISOString()
+};
+
 if (!global.gpProfilesCache) {
-  global.gpProfilesCache = [
-    {
-      id: 'demo-1',
-      partyTitle: 'LỄ THÀNH HÔN',
-      groomName: 'Đức Hoàng',
-      brideName: 'Thu Hương',
-      phone: '0912345678',
-      eventDate: '2026-11-20',
-      eventTime: '11:00 AM',
-      floorId: 'FLOOR_3',
-      venueName: 'Tầng 3',
-      driveLink: 'https://drive.google.com/drive/folders/demo-golden-palace',
-      ledStatus: 'Đã tùy chỉnh phông LED',
-      ledTemplateId: 'led-starry-diamond',
-      musicStatus: 'Đã chọn danh sách nhạc',
-      selectedMusic: ['w1', 'e1', 't1', 'd1'],
-      youtubeLinks: { welcome: '', entrance: '', toast: '', dining: '' },
-      customNotes: 'Mở bài "Beautiful in White" khi Chú Rể dắt Cô Dâu vào sảnh sân khấu.',
-      createdAt: new Date().toISOString()
-    }
-  ];
+  global.gpProfilesCache = [DEMO_PROFILE];
 }
 
-// Helper to read saved profiles
-function readProfiles() {
+// Helper to read saved profiles from DB + Filesystem + Memory
+async function readProfiles() {
+  let dbProfiles = [];
+  try {
+    const leads = await prisma.lead.findMany({
+      where: {
+        internalNotes: {
+          contains: '[PERSONALIZE_PROFILE]'
+        }
+      },
+      orderBy: { updatedAt: 'desc' }
+    });
+
+    dbProfiles = leads.map(l => {
+      try {
+        if (!l.internalNotes) return null;
+        const match = l.internalNotes.match(/\[PERSONALIZE_PROFILE\]([\s\S]*)/);
+        if (match && match[1]) {
+          const parsed = JSON.parse(match[1].trim());
+          return { ...parsed, dbLeadId: l.id };
+        }
+      } catch (err) {
+        console.error('Error parsing profile JSON from Lead:', err);
+      }
+      return null;
+    }).filter(Boolean);
+  } catch (e) {
+    console.error('Error reading profiles from Prisma DB:', e);
+  }
+
+  let fileProfiles = [];
   try {
     if (fs.existsSync(DATA_FILE_TMP)) {
       const data = fs.readFileSync(DATA_FILE_TMP, 'utf8');
-      const parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        global.gpProfilesCache = parsed;
-        return global.gpProfilesCache;
-      }
-    }
-    if (fs.existsSync(DATA_FILE_LOCAL)) {
+      fileProfiles = JSON.parse(data);
+    } else if (fs.existsSync(DATA_FILE_LOCAL)) {
       const data = fs.readFileSync(DATA_FILE_LOCAL, 'utf8');
-      const parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        global.gpProfilesCache = parsed;
-        return global.gpProfilesCache;
-      }
+      fileProfiles = JSON.parse(data);
     }
   } catch (e) {
     console.error('Error reading profiles file:', e);
   }
-  return global.gpProfilesCache || [];
+
+  // Merge map by Phone or ID
+  const map = new Map();
+  map.set(DEMO_PROFILE.phone, DEMO_PROFILE);
+
+  if (global.gpProfilesCache && Array.isArray(global.gpProfilesCache)) {
+    global.gpProfilesCache.forEach(p => {
+      if (p && p.id) map.set(p.phone || p.id, p);
+    });
+  }
+
+  if (Array.isArray(fileProfiles)) {
+    fileProfiles.forEach(p => {
+      if (p && p.id) map.set(p.phone || p.id, p);
+    });
+  }
+
+  if (Array.isArray(dbProfiles)) {
+    dbProfiles.forEach(p => {
+      if (p && p.id) map.set(p.phone || p.id, p);
+    });
+  }
+
+  const merged = Array.from(map.values()).sort((a, b) => {
+    return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+  });
+
+  global.gpProfilesCache = merged;
+  return merged;
 }
 
-// Helper to save profiles
-function saveProfiles(profiles) {
+// Helper to save profile into DB + Filesystem + Memory
+async function persistProfile(profileData) {
+  // 1. Memory update
+  let profiles = global.gpProfilesCache || [DEMO_PROFILE];
+  const cleanPhone = (profileData.phone || '').replace(/[^0-9]/g, '');
+  
+  const existingIdx = profiles.findIndex(p => (
+    (cleanPhone && p.phone && p.phone.replace(/[^0-9]/g, '') === cleanPhone) ||
+    p.id === profileData.id
+  ));
+
+  if (existingIdx >= 0) {
+    profiles[existingIdx] = profileData;
+  } else {
+    profiles.unshift(profileData);
+  }
   global.gpProfilesCache = profiles;
+
+  // 2. Save to /tmp disk
   try {
     const dirTmp = path.dirname(DATA_FILE_TMP);
-    if (!fs.existsSync(dirTmp)) {
-      fs.mkdirSync(dirTmp, { recursive: true });
-    }
+    if (!fs.existsSync(dirTmp)) fs.mkdirSync(dirTmp, { recursive: true });
     fs.writeFileSync(DATA_FILE_TMP, JSON.stringify(profiles, null, 2), 'utf8');
-  } catch (e) {
-    console.error('Error writing /tmp profiles file:', e);
-  }
+  } catch (e) {}
 
   try {
     const dirLocal = path.dirname(DATA_FILE_LOCAL);
-    if (!fs.existsSync(dirLocal)) {
-      fs.mkdirSync(dirLocal, { recursive: true });
-    }
+    if (!fs.existsSync(dirLocal)) fs.mkdirSync(dirLocal, { recursive: true });
     fs.writeFileSync(DATA_FILE_LOCAL, JSON.stringify(profiles, null, 2), 'utf8');
-  } catch (e) {
-    // Expected to fail on read-only Vercel serverless file system, gracefully ignore
+  } catch (e) {}
+
+  // 3. Save to Prisma Database (PostgreSQL / Supabase)
+  try {
+    const jsonTag = `[PERSONALIZE_PROFILE] ${JSON.stringify(profileData)}`;
+    let existingLead = null;
+
+    if (cleanPhone && cleanPhone.length >= 8) {
+      existingLead = await prisma.lead.findFirst({
+        where: { phone: { contains: cleanPhone } }
+      });
+    }
+
+    if (existingLead) {
+      await prisma.lead.update({
+        where: { id: existingLead.id },
+        data: {
+          name: `${profileData.partyTitle} (${profileData.groomName} & ${profileData.brideName})`,
+          phone: profileData.phone || existingLead.phone,
+          brideGroomNames: `${profileData.groomName} & ${profileData.brideName}`,
+          notes: profileData.partyTitle,
+          internalNotes: jsonTag
+        }
+      });
+    } else {
+      const code = `GP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      await prisma.lead.create({
+        data: {
+          code,
+          linkToken: randomUUID(),
+          name: `${profileData.partyTitle} (${profileData.groomName} & ${profileData.brideName})`,
+          phone: profileData.phone || '0000000000',
+          brideGroomNames: `${profileData.groomName} & ${profileData.brideName}`,
+          notes: profileData.partyTitle,
+          internalNotes: jsonTag
+        }
+      });
+    }
+  } catch (dbErr) {
+    console.error('Error saving profile to Prisma database:', dbErr);
+  }
+}
+
+// Helper to remove profile from DB + Memory
+async function removeProfile(id) {
+  let profiles = global.gpProfilesCache || [];
+  const target = profiles.find(p => p.id === id);
+  profiles = profiles.filter(p => p.id !== id);
+  global.gpProfilesCache = profiles;
+
+  try {
+    if (fs.existsSync(DATA_FILE_TMP)) {
+      fs.writeFileSync(DATA_FILE_TMP, JSON.stringify(profiles, null, 2), 'utf8');
+    }
+  } catch (e) {}
+
+  if (target) {
+    try {
+      const cleanPhone = (target.phone || '').replace(/[^0-9]/g, '');
+      if (cleanPhone.length >= 8) {
+        await prisma.lead.deleteMany({
+          where: {
+            phone: { contains: cleanPhone },
+            internalNotes: { contains: '[PERSONALIZE_PROFILE]' }
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Error deleting profile from DB:', e);
+    }
   }
 }
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const phone = searchParams.get('phone');
-  const profiles = readProfiles();
+  const profiles = await readProfiles();
 
   if (phone) {
     const cleanPhone = phone.replace(/[^0-9]/g, '');
@@ -129,12 +257,11 @@ export async function POST(req) {
       customNotes
     } = body;
 
-    const profiles = readProfiles();
+    const profiles = await readProfiles();
     const venueName = floorId === 'FLOOR_1' ? 'Tầng 1' : floorId === 'FLOOR_2' ? 'Tầng 2' : floorId === 'FLOOR_4' ? 'Tầng 4' : 'Tầng 3';
 
     const cleanInputPhone = (phone || '').replace(/[^0-9]/g, '');
 
-    // Deduplication check: Match by same phone or same couple names & date
     const existingIndex = profiles.findIndex(p => (
       (cleanInputPhone && p.phone && p.phone.replace(/[^0-9]/g, '') === cleanInputPhone) ||
       (p.groomName && groomName && p.groomName === groomName && p.brideName === brideName && p.eventDate === eventDate)
@@ -161,15 +288,7 @@ export async function POST(req) {
       updatedAt: new Date().toISOString()
     };
 
-    if (existingIndex >= 0) {
-      // Overwrite existing record for same phone number
-      profiles[existingIndex] = profileData;
-    } else {
-      // Add new record at top
-      profiles.unshift(profileData);
-    }
-
-    saveProfiles(profiles);
+    await persistProfile(profileData);
 
     return NextResponse.json({ success: true, profile: profileData, message: 'Đã lưu cấu hình tiệc cưới thành công!' });
   } catch (error) {
@@ -192,21 +311,22 @@ export async function PUT(req) {
       return NextResponse.json({ success: false, message: 'Thiếu ID hồ sơ' }, { status: 400 });
     }
 
-    const profiles = readProfiles();
+    const profiles = await readProfiles();
     const index = profiles.findIndex(p => p.id === id);
 
     if (index === -1) {
       return NextResponse.json({ success: false, message: 'Không tìm thấy hồ sơ' }, { status: 404 });
     }
 
-    profiles[index] = {
+    const updatedProfile = {
       ...profiles[index],
       ...updates,
       updatedAt: new Date().toISOString()
     };
 
-    saveProfiles(profiles);
-    return NextResponse.json({ success: true, profile: profiles[index], message: 'Đã cập nhật hồ sơ thành công!' });
+    await persistProfile(updatedProfile);
+
+    return NextResponse.json({ success: true, profile: updatedProfile, message: 'Đã cập nhật hồ sơ thành công!' });
   } catch (e) {
     console.error('Error updating profile:', e);
     return NextResponse.json({ success: false, message: 'Lỗi server' }, { status: 500 });
@@ -227,9 +347,7 @@ export async function DELETE(req) {
       return NextResponse.json({ success: false, message: 'Thiếu ID hồ sơ cần xóa' }, { status: 400 });
     }
 
-    let profiles = readProfiles();
-    profiles = profiles.filter(p => p.id !== id);
-    saveProfiles(profiles);
+    await removeProfile(id);
 
     return NextResponse.json({ success: true, message: 'Đã xóa hồ sơ thành công!' });
   } catch (e) {

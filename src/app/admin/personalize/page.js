@@ -36,6 +36,18 @@ export default function AdminPersonalizePage() {
   const [fullscreenLed, setFullscreenLed] = useState(false);
 
   useEffect(() => {
+    // 1. Restore from local cache for instant initial display on reload
+    try {
+      const cached = localStorage.getItem('gp_admin_personalize_cache');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProfiles(parsed);
+          setLoading(false);
+        }
+      }
+    } catch (e) {}
+
     fetchProfiles();
     const timer = setInterval(fetchProfiles, 4000);
     return () => clearInterval(timer);
@@ -45,8 +57,11 @@ export default function AdminPersonalizePage() {
     try {
       const res = await fetch(`/api/personalize?t=${Date.now()}`, { cache: 'no-store' });
       const data = await res.json();
-      if (data.success) {
-        setProfiles(data.profiles || []);
+      if (data.success && Array.isArray(data.profiles)) {
+        setProfiles(data.profiles);
+        try {
+          localStorage.setItem('gp_admin_personalize_cache', JSON.stringify(data.profiles));
+        } catch (e) {}
       }
     } catch (e) {
       console.error(e);
