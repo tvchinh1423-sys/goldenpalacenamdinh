@@ -52,6 +52,10 @@ function PersonalizePageContent() {
   const [touchedFields, setTouchedFields] = useState({});
   const [validationError, setValidationError] = useState('');
 
+  // Drive Accessibility Auto-Checker State
+  const [driveChecking, setDriveChecking] = useState(false);
+  const [driveStatus, setDriveStatus] = useState(null); // { isPublic: boolean, isGoogleDrive: boolean, error?: string, message?: string }
+
   const markTouched = (field) => {
     setTouchedFields(prev => ({ ...prev, [field]: true }));
   };
@@ -59,6 +63,28 @@ function PersonalizePageContent() {
   const shouldShowWarning = (field, val) => {
     const isEmpty = !val || (typeof val === 'string' && !val.trim());
     return isEmpty && (showErrors || touchedFields[field]);
+  };
+
+  // Check Drive Public Access
+  const verifyDriveLink = async (linkUrl) => {
+    if (!linkUrl || !linkUrl.trim()) {
+      setDriveStatus(null);
+      return;
+    }
+    setDriveChecking(true);
+    try {
+      const res = await fetch('/api/check-drive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: linkUrl })
+      });
+      const data = await res.json();
+      setDriveStatus(data);
+    } catch (err) {
+      setDriveStatus({ isPublic: false, error: 'Không thể kiểm tra đường dẫn này' });
+    } finally {
+      setDriveChecking(false);
+    }
   };
 
   // Saving state & Notification
@@ -98,6 +124,14 @@ function PersonalizePageContent() {
       return; // STRICTLY BLOCK SAVING IF REQUIRED FIELDS ARE MISSING!
     }
 
+    // Verify drive link access if provided
+    const effectiveDrive = customOverrides.driveLink !== undefined ? customOverrides.driveLink : driveLink;
+    if (effectiveDrive && effectiveDrive.trim()) {
+      if (!driveStatus || driveStatus.url !== effectiveDrive) {
+        await verifyDriveLink(effectiveDrive);
+      }
+    }
+
     setValidationError('');
     setSaving(true);
     const currentFloorName = getFloorName(selectedFloor);
@@ -116,7 +150,7 @@ function PersonalizePageContent() {
         eventTime: effectiveTime,
         floorId: customOverrides.selectedFloor || selectedFloor,
         venueName: currentFloorName,
-        driveLink: customOverrides.driveLink !== undefined ? customOverrides.driveLink : driveLink,
+        driveLink: effectiveDrive,
         
         // LED & MUSIC CONFIGURATIONS
         ledStatus: customOverrides.ledStatus || `Đã thiết kế phông màn LED sân khấu (${currentFloorName})`,
@@ -433,26 +467,74 @@ function PersonalizePageContent() {
                 />
               </div>
 
-              {/* Link Google Drive (KHÔNG BẮT BUỘC - OPTIONAL) */}
+              {/* Link Google Drive (KHÔNG BẮT BUỘC - AUTOMATIC ACCESSIBILITY CHECK) */}
               <div className="sm:col-span-2 bg-[#1b1b1b] p-3.5 rounded-xl border border-blue-500/30 space-y-1.5">
                 <label className="block text-blue-300 font-bold uppercase tracking-wider flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-base">cloud_upload</span>
                     LINK GOOGLE DRIVE / CLOUD CHỨA ẢNH & VIDEO CƯỚI (KHÔNG BẮT BUỘC):
                   </span>
+                  {driveChecking && (
+                    <span className="text-[10px] text-cyan-300 font-bold flex items-center gap-1 animate-pulse">
+                      <span className="material-symbols-outlined text-xs animate-spin">sync</span>
+                      Đang kiểm tra...
+                    </span>
+                  )}
                 </label>
                 <input
                   type="url"
                   value={driveLink}
-                  onChange={(e) => setDriveLink(e.target.value)}
-                  onBlur={() => markTouched('driveLink')}
+                  onChange={(e) => {
+                    setDriveLink(e.target.value);
+                    if (driveStatus) setDriveStatus(null);
+                  }}
+                  onBlur={() => {
+                    markTouched('driveLink');
+                    if (driveLink.trim()) {
+                      verifyDriveLink(driveLink);
+                    }
+                  }}
                   placeholder="Dán link Google Drive / Dropbox (VD: https://drive.google.com/drive/folders/...)"
-                  className="w-full bg-[#121212] border border-gray-700 focus:border-blue-400 rounded-lg px-3.5 py-2 text-white font-mono outline-none transition-colors"
+                  className={`w-full bg-[#121212] border rounded-lg px-3.5 py-2 text-white font-mono outline-none transition-colors ${
+                    driveStatus && !driveStatus.isPublic
+                      ? 'border-amber-500 bg-amber-500/10'
+                      : driveStatus && driveStatus.isPublic
+                      ? 'border-emerald-500 bg-emerald-500/10'
+                      : 'border-gray-700 focus:border-blue-400'
+                  }`}
                 />
+                
                 <p className="text-[11px] text-blue-300/80 italic flex items-center gap-1 mt-1">
                   <span className="material-symbols-outlined text-xs text-blue-400">info</span>
                   Vui lòng mở quyền chia sẻ "Bất kỳ ai có liên kết" để kỹ thuật xem được file
                 </p>
+
+                {/* Drive Check Status Badges & Warnings */}
+                {driveChecking && (
+                  <p className="text-[11px] text-cyan-300 italic flex items-center gap-1.5 mt-1.5 animate-pulse">
+                    <span className="material-symbols-outlined text-sm animate-spin text-cyan-400">sync</span>
+                    Đang tự động kiểm tra quyền truy cập link Drive...
+                  </p>
+                )}
+
+                {!driveChecking && driveStatus && driveStatus.isPublic && (
+                  <p className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5 mt-1.5 bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/30">
+                    <span className="material-symbols-outlined text-base text-emerald-400">check_circle</span>
+                    {driveStatus.message || 'Link Google Drive đã được mở công khai hợp lệ!'}
+                  </p>
+                )}
+
+                {!driveChecking && driveStatus && !driveStatus.isPublic && (
+                  <div className="p-3 bg-amber-500/15 border border-amber-500/50 rounded-xl text-amber-300 text-xs font-semibold space-y-1 mt-2 animate-pulse">
+                    <div className="flex items-center gap-1.5 text-amber-400 font-bold">
+                      <span className="material-symbols-outlined text-lg">warning</span>
+                      CẢNH BÁO: Link Google Drive đang ở chế độ Riêng Tư / Khóa Quyền!
+                    </div>
+                    <p className="text-[11px] text-amber-200/90 font-normal leading-relaxed">
+                      Vui lòng mở ứng dụng Google Drive ➔ Nhấn nút <strong>Chia Sẻ (Share)</strong> ➔ Chuyển từ "Hạn chế" sang <strong>"Bất kỳ ai có liên kết" (Anyone with the link)</strong> để đội kỹ thuật có thể tải ảnh & video tiệc cưới.
+                    </p>
+                  </div>
+                )}
               </div>
 
             </div>
