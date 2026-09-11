@@ -10,33 +10,34 @@ import React from 'react';
 
 // Image 1 Divider Component
 const WeddingSectionDivider = () => (
-  <div className="flex items-center justify-center my-2 opacity-90">
+  <div className="flex items-center justify-center my-2.5 opacity-90">
     {/* eslint-disable-next-html-element-suppress */}
     <img
       src="/images/wedding-divider.png"
       alt="Wedding Section Divider"
-      className="h-3.5 max-w-[200px] object-contain"
+      className="h-4 max-w-[220px] object-contain"
     />
   </div>
 );
 
-// Dynamic font size calculator for Bride & Groom names so content is NEVER truncated (...)
+// Dynamic font size calculator so Bride & Groom names ALWAYS stay on 1 SINGLE LINE without wrapping or truncation
 const getBrideGroomFontSize = (nameStr) => {
   const len = nameStr ? nameStr.length : 0;
-  if (len > 35) return 'text-[26px]';
-  if (len > 28) return 'text-[30px]';
-  if (len > 22) return 'text-[35px]';
-  if (len > 16) return 'text-[40px]';
-  return 'text-[46px]';
+  if (len > 35) return 'text-[20px]';
+  if (len > 30) return 'text-[24px]';
+  if (len > 24) return 'text-[27px]';
+  if (len > 18) return 'text-[31px]';
+  if (len > 14) return 'text-[36px]';
+  return 'text-[42px]';
 };
 
-// Dynamic font size calculator for Drinks line so long lists stay on 1 line without truncation (...)
+// Dynamic font size calculator for Drinks line so long lists stay on 1 line
 const getDrinkFontSize = (drinkStr) => {
   const len = drinkStr ? drinkStr.length : 0;
-  if (len > 55) return 'text-[11px]';
-  if (len > 45) return 'text-[12px]';
-  if (len > 35) return 'text-[13px]';
-  return 'text-[14.5px]';
+  if (len > 60) return 'text-[12px]';
+  if (len > 48) return 'text-[13px]';
+  if (len > 36) return 'text-[14.5px]';
+  return 'text-[16px]';
 };
 
 export default function WeddingMenuCardCanvas({
@@ -73,20 +74,20 @@ export default function WeddingMenuCardCanvas({
       <div className="absolute inset-0 flex flex-row z-10 w-full h-full">
         
         {/* ═══════════════════════════════════════════════════════════════ */}
-        {/* PAGE 1 (LEFT): DISH MENU CONTENT PAGE */}
+        {/* PAGE 1 (LEFT): DISH MENU CONTENT PAGE (SCALED UP TO FILL SPACE) */}
         {/* ═══════════════════════════════════════════════════════════════ */}
-        <div className="w-1/2 h-full px-[36px] py-[32px] relative flex flex-col justify-between text-center box-border">
+        <div className="w-1/2 h-full px-[36px] py-[28px] relative flex flex-col justify-between text-center box-border">
           
           {/* DISH SECTIONS CONTAINER */}
-          <div className="my-auto space-y-2 px-2 py-1 relative z-10">
+          <div className="my-auto space-y-2.5 px-3 py-1 relative z-10">
             
             {/* 1. KHAI VỊ */}
             {khaiViList.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-[34px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3 className="text-[38px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
                   Khai vị
                 </h3>
-                <div className="space-y-0.5 text-[15px] font-serif text-stone-900 font-semibold italic leading-snug">
+                <div className="space-y-1 text-[17.5px] font-serif text-stone-900 font-semibold italic leading-snug">
                   {khaiViList.map((item, idx) => (
                     <p key={idx}>{item}</p>
                   ))}
@@ -98,10 +99,10 @@ export default function WeddingMenuCardCanvas({
             {/* 2. MÓN CHÍNH */}
             {monChinhList.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-[34px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3 className="text-[38px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
                   Món chính
                 </h3>
-                <div className="space-y-0.5 text-[15px] font-serif text-stone-900 font-semibold italic leading-snug">
+                <div className="space-y-1 text-[17.5px] font-serif text-stone-900 font-semibold italic leading-snug">
                   {monChinhList.map((item, idx) => (
                     <p key={idx}>{item}</p>
                   ))}
@@ -113,10 +114,10 @@ export default function WeddingMenuCardCanvas({
             {/* 3. TRÁNG MIỆNG */}
             {trangMiengList.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-[34px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3 className="text-[38px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
                   Tráng miệng
                 </h3>
-                <div className="space-y-0.5 text-[15px] font-serif text-stone-900 font-semibold italic leading-snug">
+                <div className="space-y-1 text-[17.5px] font-serif text-stone-900 font-semibold italic leading-snug">
                   {trangMiengList.map((item, idx) => (
                     <p key={idx}>{item}</p>
                   ))}
@@ -125,10 +126,10 @@ export default function WeddingMenuCardCanvas({
               </div>
             )}
 
-            {/* 4. ĐỒ UỐNG - ALWAYS SINGLE LINE & FULL TEXT WITHOUT TRUNCATION */}
+            {/* 4. ĐỒ UỐNG - ALWAYS SINGLE LINE */}
             {doUongList.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-[34px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3 className="text-[38px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
                   Đồ uống
                 </h3>
                 <div className="space-y-0.5 font-serif text-stone-900 font-semibold italic leading-snug px-1">
@@ -143,8 +144,8 @@ export default function WeddingMenuCardCanvas({
           </div>
 
           {/* FOOTER BLESSING WISH */}
-          <div className="pb-4 pt-1 z-10">
-            <p className="font-serif text-[18px] font-bold italic text-stone-900 tracking-wide">
+          <div className="pb-3 pt-2 z-10">
+            <p className="font-serif text-[21px] font-bold italic text-stone-900 tracking-wide">
               {footerText}
             </p>
           </div>
@@ -158,25 +159,27 @@ export default function WeddingMenuCardCanvas({
           {/* Top Spacing to account for pre-printed Logo & WEDDING MENU header in image 2 */}
           <div className="h-[270px]"></div>
 
-          {/* DYNAMIC WEDDING DETAILS (PARTY TITLE + FULL BRIDE & GROOM NAMES + DATE) */}
-          <div className="my-auto space-y-3.5 py-1 z-10 flex flex-col items-center justify-center">
+          {/* DYNAMIC WEDDING DETAILS (PARTY TITLE + BRIDE & GROOM NAMES ALWAYS 1 LINE + DATE) */}
+          <div className="my-auto space-y-3 py-1 z-10 flex flex-col items-center justify-center">
             
             {/* 1. Event Type Title (Lễ Thành Hôn / Lễ Vu Quy) */}
             <p className="text-[40px] text-stone-900 font-normal italic leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
               {title}
             </p>
 
-            {/* 2. Full Bride & Groom Names (Dynamic Font Size to NEVER Truncate) */}
-            <h2
-              className={`${getBrideGroomFontSize(brideGroomNames)} text-stone-900 font-bold px-2 py-0.5 leading-snug tracking-wide text-center break-words max-w-[420px]`}
-              style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}
-            >
-              {brideGroomNames}
-            </h2>
+            {/* 2. Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE */}
+            <div className="w-full flex justify-center items-center px-1 overflow-hidden">
+              <h2
+                className={`${getBrideGroomFontSize(brideGroomNames)} text-stone-900 font-bold leading-tight tracking-wide text-center whitespace-nowrap max-w-full`}
+                style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}
+              >
+                {brideGroomNames}
+              </h2>
+            </div>
 
             {/* 3. Event Date (NO TOP AND BOTTOM BORDER LINES) */}
             <div className="pt-3">
-              <span className="font-serif text-[20px] font-bold text-stone-900 tracking-wider">
+              <span className="font-serif text-[21px] font-bold text-stone-900 tracking-wider">
                 {eventDate}
               </span>
             </div>
