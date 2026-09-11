@@ -42,6 +42,7 @@ function AdminLayoutContent({ children }) {
     { name: 'Đồ uống', href: '/admin/beverages', icon: 'local_bar' },
     { name: 'Bài viết & Ưu đãi', href: '/admin/posts', icon: 'article' },
     { name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' },
+    { name: 'Quản Lý Tài Khoản', href: '/admin/users', icon: 'manage_accounts' },
   ];
 
   // Role-based sidebar menu items
