@@ -88,43 +88,66 @@
 @media print {
   @page {
     size: A4 landscape;
-    margin: 0;
+    margin: 0mm;
   }
 
-  body {
-    background: white !important;
-    color: black !important;
+  html, body {
+    width: 297mm !important;
+    height: 210mm !important;
     margin: 0 !important;
     padding: 0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
   }
 
-  /* Hide all elements on page except the menu card */
-  body * {
-    visibility: hidden !important;
+  /* Hide all elements on page except print mount point or printable card */
+  body > *:not(#print-mount-point):not(#printable-wedding-menu-container) {
+    display: none !important;
   }
 
-  /* Exclusively reveal #printable-wedding-menu canvas and its children */
-  #printable-wedding-menu, #printable-wedding-menu * {
-    visibility: visible !important;
-  }
-
-  #printable-wedding-menu {
+  /* Print Mount Point (Cloned to document.body) */
+  #print-mount-point {
+    display: flex !important;
     position: fixed !important;
     left: 0 !important;
     top: 0 !important;
     width: 297mm !important;
     height: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    z-index: 99999999 !important;
+  }
+
+  #print-mount-point #printable-wedding-menu-clone,
+  #printable-wedding-menu {
+    visibility: visible !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    max-width: 297mm !important;
+    max-height: 210mm !important;
     box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 8mm !important;
+    padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    background-color: #fdfbf7 !important;
+    background: #ffffff !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     display: flex !important;
     flex-direction: row !important;
-    z-index: 9999999 !important;
+  }
+
+  #print-mount-point *,
+  #printable-wedding-menu * {
+    visibility: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
 

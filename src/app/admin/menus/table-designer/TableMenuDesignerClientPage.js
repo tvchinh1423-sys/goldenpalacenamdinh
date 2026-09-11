@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { toPng } from 'html-to-image';
 import Link from 'next/link';
-import WeddingMenuCardCanvas from '@/components/admin/WeddingMenuCardCanvas';
+import WeddingMenuCardCanvas, { printWeddingMenuCard } from '@/components/admin/WeddingMenuCardCanvas';
 
 export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
   const [selectedLeadId, setSelectedLeadId] = useState(initialLeadId || (leads[0]?.id || ''));
@@ -229,7 +229,7 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
   };
 
   const handlePrint = () => {
-    window.print();
+    printWeddingMenuCard();
   };
 
   const khaiViList = khaiViText.split('\n').map(s => s.trim()).filter(Boolean);

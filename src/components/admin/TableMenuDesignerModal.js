@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { toPng } from 'html-to-image';
-import WeddingMenuCardCanvas from './WeddingMenuCardCanvas';
+import WeddingMenuCardCanvas, { printWeddingMenuCard } from './WeddingMenuCardCanvas';
 
 export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDefault, eventDateDefault, isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
@@ -217,9 +217,9 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
     }
   };
 
-  // Exclusively print A4 menu card
+  // Exclusively print A4 menu card using universal document body cloner
   const handlePrint = () => {
-    window.print();
+    printWeddingMenuCard();
   };
 
   if (!isOpen) return null;
