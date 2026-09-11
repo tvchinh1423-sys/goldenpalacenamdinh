@@ -26,6 +26,17 @@ const nfc = (str) => {
   return String(str).normalize('NFC');
 };
 
+function formatDateDot(dateStr) {
+  if (!dateStr) return '';
+  let str = String(dateStr).trim();
+  if (str.includes('/')) return str.replace(/\//g, '.');
+  if (str.includes('-')) {
+    const parts = str.split('-');
+    if (parts.length === 3) return `${parts[2]}.${parts[1]}.${parts[0]}`;
+  }
+  return str;
+}
+
 export default function WeddingMenuCardCanvas({
   title = 'Lễ Thành Hôn',
   brideGroomNames = 'Minh Quang & Thu Hiền',
@@ -50,6 +61,7 @@ export default function WeddingMenuCardCanvas({
 
   const dishFontFamily = `var(--font-cormorant), var(--font-lora), 'Cormorant Garamond', 'Lora', 'Playfair Display', Georgia, serif`;
   const titleFontFamily = `var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive`;
+  const dateFontFamily = `var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif`;
 
   return (
     <div
@@ -204,10 +216,18 @@ export default function WeddingMenuCardCanvas({
               </h2>
             </div>
 
-            {/* 3. Event Date (NO TOP AND BOTTOM BORDER LINES) */}
+            {/* 3. Event Date (NO TOP AND BOTTOM BORDER LINES - MATCHING LED STAGE SCREEN FONT & STYLING 100%) */}
             <div className="pt-3">
-              <span className="font-bold text-stone-900 tracking-wider" style={{ fontFamily: dishFontFamily, fontSize: `${eventDateFontSize}px` }}>
-                {normEventDate}
+              <span
+                className="font-bold text-stone-900 inline-block"
+                style={{
+                  fontFamily: dateFontFamily,
+                  fontSize: `${eventDateFontSize}px`,
+                  fontVariantNumeric: "lining-nums tabular-nums",
+                  letterSpacing: "0.14em"
+                }}
+              >
+                {nfc(formatDateDot(eventDate))}
               </span>
             </div>
           </div>
