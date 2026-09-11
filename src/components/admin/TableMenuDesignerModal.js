@@ -23,6 +23,12 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
   const [doUongText, setDoUongText] = useState('Rượu ta + Rượu vang + Bia + Nước ngọt + Nước lọc');
   const [footerText, setFooterText] = useState('Chúc Quý Khách Ngon Miệng!');
 
+  // Customizable Font Sizes (in px)
+  const [brideGroomFontSize, setBrideGroomFontSize] = useState(36);
+  const [sectionTitleFontSize, setSectionTitleFontSize] = useState(38);
+  const [dishItemFontSize, setDishItemFontSize] = useState(17);
+  const [footerFontSize, setFooterFontSize] = useState(21);
+
   // Camera & Quick Input Modals
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isPasteModalOpen, setIsPasteModalOpen] = useState(false);
@@ -422,6 +428,93 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
               </div>
             </div>
 
+            {/* FONT SIZE CONTROLS PANEL */}
+            <div className="bg-stone-950/80 p-3 rounded-2xl border border-amber-500/30 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[11px] font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm">format_size</span> Tùy Chỉnh Kích Thước Chữ
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBrideGroomFontSize(36);
+                    setSectionTitleFontSize(38);
+                    setDishItemFontSize(17);
+                    setFooterFontSize(21);
+                  }}
+                  className="text-[9px] font-bold text-stone-400 hover:text-amber-300 underline"
+                >
+                  Đặt lại
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5 text-[10px]">
+                {/* 1. Tên Cô dâu Chú rể */}
+                <div className="space-y-0.5">
+                  <div className="flex justify-between font-semibold text-stone-300">
+                    <span>👰 Tên Cô dâu Chú rể</span>
+                    <span className="text-amber-400 font-mono font-bold">{brideGroomFontSize}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={18}
+                    max={50}
+                    value={brideGroomFontSize}
+                    onChange={(e) => setBrideGroomFontSize(Number(e.target.value))}
+                    className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                  />
+                </div>
+
+                {/* 2. Tiêu đề Mục (Khai vị, Món chính) */}
+                <div className="space-y-0.5">
+                  <div className="flex justify-between font-semibold text-stone-300">
+                    <span>📜 Tiêu đề Mục</span>
+                    <span className="text-amber-400 font-mono font-bold">{sectionTitleFontSize}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={24}
+                    max={52}
+                    value={sectionTitleFontSize}
+                    onChange={(e) => setSectionTitleFontSize(Number(e.target.value))}
+                    className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                  />
+                </div>
+
+                {/* 3. Tên Món ăn */}
+                <div className="space-y-0.5">
+                  <div className="flex justify-between font-semibold text-stone-300">
+                    <span>🍲 Tên Món Ăn</span>
+                    <span className="text-amber-400 font-mono font-bold">{dishItemFontSize}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={12}
+                    max={26}
+                    value={dishItemFontSize}
+                    onChange={(e) => setDishItemFontSize(Number(e.target.value))}
+                    className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                  />
+                </div>
+
+                {/* 4. Lời chúc chân trang */}
+                <div className="space-y-0.5">
+                  <div className="flex justify-between font-semibold text-stone-300">
+                    <span>❤️ Lời Chúc Chân Trang</span>
+                    <span className="text-amber-400 font-mono font-bold">{footerFontSize}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={14}
+                    max={30}
+                    value={footerFontSize}
+                    onChange={(e) => setFooterFontSize(Number(e.target.value))}
+                    className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* DISH INPUTS */}
             <div className="space-y-3">
               {/* Khai vị */}
@@ -526,6 +619,10 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
                 trangMiengList={trangMiengList}
                 doUongList={doUongList}
                 footerText={footerText}
+                brideGroomFontSize={brideGroomFontSize}
+                sectionTitleFontSize={sectionTitleFontSize}
+                dishItemFontSize={dishItemFontSize}
+                footerFontSize={footerFontSize}
                 menuPreviewRef={menuPreviewRef}
               />
             </div>

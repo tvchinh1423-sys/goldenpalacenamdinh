@@ -4,7 +4,7 @@ import React from 'react';
 
 /**
  * 1-to-1 Wedding Menu Card Canvas built on Image 2 background template
- * Synchronized 100% between On-Screen Live Preview & A4 Landscape Printer Output.
+ * Supports interactive font size customization for each section.
  * Base Dimensions: 297mm x 210mm (Exact A4 Landscape)
  */
 
@@ -20,26 +20,6 @@ const WeddingSectionDivider = () => (
   </div>
 );
 
-// Dynamic font size calculator so Bride & Groom names ALWAYS stay on 1 SINGLE LINE without wrapping or truncation
-const getBrideGroomFontSize = (nameStr) => {
-  const len = nameStr ? nameStr.length : 0;
-  if (len > 35) return 'text-[20px]';
-  if (len > 30) return 'text-[24px]';
-  if (len > 24) return 'text-[27px]';
-  if (len > 18) return 'text-[31px]';
-  if (len > 14) return 'text-[36px]';
-  return 'text-[42px]';
-};
-
-// Dynamic font size calculator for Drinks line so long lists stay on 1 line
-const getDrinkFontSize = (drinkStr) => {
-  const len = drinkStr ? drinkStr.length : 0;
-  if (len > 60) return 'text-[12px]';
-  if (len > 48) return 'text-[13px]';
-  if (len > 36) return 'text-[14.5px]';
-  return 'text-[16px]';
-};
-
 export default function WeddingMenuCardCanvas({
   title = 'Lễ Thành Hôn',
   brideGroomNames = 'Minh Quang & Thu Hiền',
@@ -49,6 +29,11 @@ export default function WeddingMenuCardCanvas({
   trangMiengList = [],
   doUongList = [],
   footerText = 'Chúc Quý Khách Ngon Miệng!',
+  // Customizable Font Sizes (in px)
+  brideGroomFontSize = 36,
+  sectionTitleFontSize = 38,
+  dishItemFontSize = 17,
+  footerFontSize = 21,
   menuPreviewRef
 }) {
   return (
@@ -62,7 +47,6 @@ export default function WeddingMenuCardCanvas({
       }}
     >
       {/* 1. ULTRA HIGH-RES BACKGROUND TEMPLATE IMAGE (IMAGE 2 REPLICA - 2560x1705 Crisp) */}
-      {/* Rendered as <img> so Chrome/Safari print engines never strip it even if "Đồ họa nền" is unchecked */}
       {/* eslint-disable-next-html-element-suppress */}
       <img
         src="/images/wedding-menu-bg.png"
@@ -74,7 +58,7 @@ export default function WeddingMenuCardCanvas({
       <div className="absolute inset-0 flex flex-row z-10 w-full h-full">
         
         {/* ═══════════════════════════════════════════════════════════════ */}
-        {/* PAGE 1 (LEFT): DISH MENU CONTENT PAGE (SCALED UP TO FILL SPACE) */}
+        {/* PAGE 1 (LEFT): DISH MENU CONTENT PAGE */}
         {/* ═══════════════════════════════════════════════════════════════ */}
         <div className="w-1/2 h-full px-[36px] py-[28px] relative flex flex-col justify-between text-center box-border">
           
@@ -84,10 +68,16 @@ export default function WeddingMenuCardCanvas({
             {/* 1. KHAI VỊ */}
             {khaiViList.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-[38px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3
+                  className="text-stone-900 tracking-wide font-normal leading-tight"
+                  style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${sectionTitleFontSize}px` }}
+                >
                   Khai vị
                 </h3>
-                <div className="space-y-1 text-[17.5px] font-serif text-stone-900 font-semibold italic leading-snug">
+                <div
+                  className="space-y-1 font-serif text-stone-900 font-semibold italic leading-snug"
+                  style={{ fontSize: `${dishItemFontSize}px` }}
+                >
                   {khaiViList.map((item, idx) => (
                     <p key={idx}>{item}</p>
                   ))}
@@ -99,10 +89,16 @@ export default function WeddingMenuCardCanvas({
             {/* 2. MÓN CHÍNH */}
             {monChinhList.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-[38px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3
+                  className="text-stone-900 tracking-wide font-normal leading-tight"
+                  style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${sectionTitleFontSize}px` }}
+                >
                   Món chính
                 </h3>
-                <div className="space-y-1 text-[17.5px] font-serif text-stone-900 font-semibold italic leading-snug">
+                <div
+                  className="space-y-1 font-serif text-stone-900 font-semibold italic leading-snug"
+                  style={{ fontSize: `${dishItemFontSize}px` }}
+                >
                   {monChinhList.map((item, idx) => (
                     <p key={idx}>{item}</p>
                   ))}
@@ -114,10 +110,16 @@ export default function WeddingMenuCardCanvas({
             {/* 3. TRÁNG MIỆNG */}
             {trangMiengList.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-[38px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3
+                  className="text-stone-900 tracking-wide font-normal leading-tight"
+                  style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${sectionTitleFontSize}px` }}
+                >
                   Tráng miệng
                 </h3>
-                <div className="space-y-1 text-[17.5px] font-serif text-stone-900 font-semibold italic leading-snug">
+                <div
+                  className="space-y-1 font-serif text-stone-900 font-semibold italic leading-snug"
+                  style={{ fontSize: `${dishItemFontSize}px` }}
+                >
                   {trangMiengList.map((item, idx) => (
                     <p key={idx}>{item}</p>
                   ))}
@@ -129,12 +131,19 @@ export default function WeddingMenuCardCanvas({
             {/* 4. ĐỒ UỐNG - ALWAYS SINGLE LINE */}
             {doUongList.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-[38px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3
+                  className="text-stone-900 tracking-wide font-normal leading-tight"
+                  style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${sectionTitleFontSize}px` }}
+                >
                   Đồ uống
                 </h3>
                 <div className="space-y-0.5 font-serif text-stone-900 font-semibold italic leading-snug px-1">
                   {doUongList.map((item, idx) => (
-                    <p key={idx} className={`${getDrinkFontSize(item)} whitespace-nowrap text-center inline-block max-w-full`}>
+                    <p
+                      key={idx}
+                      className="whitespace-nowrap text-center inline-block max-w-full"
+                      style={{ fontSize: `${Math.min(dishItemFontSize, 15)}px` }}
+                    >
                       {item}
                     </p>
                   ))}
@@ -145,7 +154,10 @@ export default function WeddingMenuCardCanvas({
 
           {/* FOOTER BLESSING WISH */}
           <div className="pb-3 pt-2 z-10">
-            <p className="font-serif text-[21px] font-bold italic text-stone-900 tracking-wide">
+            <p
+              className="font-serif font-bold italic text-stone-900 tracking-wide"
+              style={{ fontSize: `${footerFontSize}px` }}
+            >
               {footerText}
             </p>
           </div>
@@ -167,11 +179,11 @@ export default function WeddingMenuCardCanvas({
               {title}
             </p>
 
-            {/* 2. Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE */}
+            {/* 2. Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE WITH ADJUSTABLE FONT SIZE */}
             <div className="w-full flex justify-center items-center px-1 overflow-hidden">
               <h2
-                className={`${getBrideGroomFontSize(brideGroomNames)} text-stone-900 font-bold leading-tight tracking-wide text-center whitespace-nowrap max-w-full`}
-                style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}
+                className="text-stone-900 font-bold leading-tight tracking-wide text-center whitespace-nowrap max-w-full"
+                style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${brideGroomFontSize}px` }}
               >
                 {brideGroomNames}
               </h2>
