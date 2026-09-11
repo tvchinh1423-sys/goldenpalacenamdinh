@@ -4,18 +4,19 @@ import React from 'react';
 
 /**
  * 1-to-1 Wedding Menu Card Canvas built on Image 2 background template
- * Template file: /images/wedding-menu-bg.png
+ * Template file: /images/wedding-menu-bg.png (Ultra 4K Crisp)
+ * Divider file: /images/wedding-divider.png (Image 1 replica)
  */
 
-// Wedding Section Divider Swirl (matching original menu filigree)
+// Image 1 Divider Component
 const WeddingSectionDivider = () => (
-  <div className="flex items-center justify-center my-1 text-stone-900 opacity-80">
-    <svg className="w-24 h-3 fill-current" viewBox="0 0 140 20">
-      <path d="M 70 3 C 65 3, 60 7, 52 7 C 42 7, 35 1, 20 5 C 10 8, 2 15, 0 10 C 2 5, 12 0, 22 2 C 34 4, 40 10, 50 10 C 58 10, 62 6, 70 6 C 78 6, 82 10, 90 10 C 100 10, 106 4, 118 2 C 128 0, 138 5, 140 10 C 138 15, 130 8, 120 5 C 105 1, 98 7, 88 7 C 80 7, 75 3, 70 3 Z" />
-      <circle cx="70" cy="11" r="2.5" />
-      <circle cx="56" cy="11" r="1.5" />
-      <circle cx="84" cy="11" r="1.5" />
-    </svg>
+  <div className="flex items-center justify-center my-1.5 opacity-90">
+    {/* eslint-disable-next-html-element-suppress */}
+    <img
+      src="/images/wedding-divider.png"
+      alt="Wedding Section Divider"
+      className="h-3 max-w-[160px] object-contain"
+    />
   </div>
 );
 
@@ -39,7 +40,7 @@ export default function WeddingMenuCardCanvas({
         fontFamily: `'Cormorant Garamond', 'Lora', 'Playfair Display', Georgia, serif`,
       }}
     >
-      {/* 1. BACKGROUND TEMPLATE IMAGE (IMAGE 2 REPLICA) */}
+      {/* 1. BACKGROUND TEMPLATE IMAGE (IMAGE 2 REPLICA - HIGH RES Crisp 2560x1705) */}
       {/* Rendered as <img> so Chrome/Safari print engines never strip it even if "Đồ họa nền" is unchecked */}
       {/* eslint-disable-next-html-element-suppress */}
       <img
@@ -54,15 +55,15 @@ export default function WeddingMenuCardCanvas({
         {/* ═══════════════════════════════════════════════════════════════ */}
         {/* PAGE 1 (LEFT): DISH MENU CONTENT */}
         {/* ═══════════════════════════════════════════════════════════════ */}
-        <div className="w-1/2 h-full px-7 py-8 relative flex flex-col justify-between text-center">
+        <div className="w-1/2 h-full px-7 py-7 relative flex flex-col justify-between text-center">
           
           {/* DISH SECTIONS CONTAINER */}
-          <div className="my-auto space-y-1.5 px-2 py-1 relative z-10">
+          <div className="my-auto space-y-1 px-2 py-0.5 relative z-10">
             
             {/* 1. KHAI VỊ */}
             {khaiViList.length > 0 && (
               <div className="space-y-0.5">
-                <h3 className="text-[28px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3 className="text-[27px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
                   Khai vị
                 </h3>
                 <div className="space-y-0.5 text-[13px] font-serif text-stone-900 font-semibold italic leading-snug">
@@ -77,7 +78,7 @@ export default function WeddingMenuCardCanvas({
             {/* 2. MÓN CHÍNH */}
             {monChinhList.length > 0 && (
               <div className="space-y-0.5">
-                <h3 className="text-[28px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3 className="text-[27px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
                   Món chính
                 </h3>
                 <div className="space-y-0.5 text-[13px] font-serif text-stone-900 font-semibold italic leading-snug">
@@ -92,7 +93,7 @@ export default function WeddingMenuCardCanvas({
             {/* 3. TRÁNG MIỆNG */}
             {trangMiengList.length > 0 && (
               <div className="space-y-0.5">
-                <h3 className="text-[28px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3 className="text-[27px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
                   Tráng miệng
                 </h3>
                 <div className="space-y-0.5 text-[13px] font-serif text-stone-900 font-semibold italic leading-snug">
@@ -104,15 +105,15 @@ export default function WeddingMenuCardCanvas({
               </div>
             )}
 
-            {/* 4. ĐỒ UỐNG */}
+            {/* 4. ĐỒ UỐNG - ALWAYS SINGLE LINE WITHOUT WRAPPING */}
             {doUongList.length > 0 && (
               <div className="space-y-0.5">
-                <h3 className="text-[28px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+                <h3 className="text-[27px] text-stone-900 tracking-wide font-normal leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
                   Đồ uống
                 </h3>
-                <div className="space-y-0.5 text-[13px] font-serif text-stone-900 font-semibold italic leading-snug">
+                <div className="space-y-0.5 text-[12px] font-serif text-stone-900 font-semibold italic leading-snug whitespace-nowrap overflow-hidden text-ellipsis px-1">
                   {doUongList.map((item, idx) => (
-                    <p key={idx}>{item}</p>
+                    <p key={idx} className="whitespace-nowrap inline-block max-w-full truncate">{item}</p>
                   ))}
                 </div>
               </div>
@@ -120,7 +121,7 @@ export default function WeddingMenuCardCanvas({
           </div>
 
           {/* FOOTER BLESSING WISH */}
-          <div className="pb-3 pt-1 z-10">
+          <div className="pb-2 pt-1 z-10">
             <p className="font-serif text-[15px] font-bold italic text-stone-900 tracking-wide">
               {footerText}
             </p>
@@ -133,31 +134,31 @@ export default function WeddingMenuCardCanvas({
         <div className="w-1/2 h-full px-7 py-8 relative flex flex-col justify-between text-center">
           
           {/* Top Spacing to account for pre-printed Logo & WEDDING MENU header in image 2 */}
-          <div className="h-[200px]"></div>
+          <div className="h-[195px]"></div>
 
-          {/* DYNAMIC WEDDING DETAILS (PARTY TITLE + NAMES + DATE) */}
-          <div className="my-auto space-y-3 py-1 z-10 flex flex-col items-center justify-center">
+          {/* DYNAMIC WEDDING DETAILS (PARTY TITLE + BRIDE & GROOM NAMES + DATE) */}
+          <div className="my-auto space-y-2.5 py-1 z-10 flex flex-col items-center justify-center">
             
             {/* 1. Event Type Title (Lễ Thành Hôn / Lễ Vu Quy) */}
             <p className="text-[34px] text-stone-900 font-normal italic leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
               {title}
             </p>
 
-            {/* 2. Bride & Groom Names (Minh Quang & Thu Hiền) */}
-            <h2 className="text-[40px] text-stone-900 font-bold px-2 py-0.5 leading-snug tracking-wide" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
+            {/* 2. Bride & Groom Names (Adjusted Size & Proportion) */}
+            <h2 className="text-[36px] text-stone-900 font-bold px-2 py-0.5 leading-snug tracking-wide max-w-[340px] truncate" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
               {brideGroomNames}
             </h2>
 
-            {/* 3. Event Date (02/08/2026) */}
+            {/* 3. Event Date (NO TOP AND BOTTOM BORDER LINES) */}
             <div className="pt-2">
-              <span className="inline-block border-t border-b border-stone-800 px-8 py-0.5 font-serif text-base font-bold text-stone-900 tracking-wider">
+              <span className="font-serif text-[17px] font-bold text-stone-900 tracking-wider">
                 {eventDate}
               </span>
             </div>
           </div>
 
           {/* Bottom Spacing to account for pre-printed Divider & Footer address in image 2 */}
-          <div className="h-[100px]"></div>
+          <div className="h-[95px]"></div>
 
         </div>
       </div>
