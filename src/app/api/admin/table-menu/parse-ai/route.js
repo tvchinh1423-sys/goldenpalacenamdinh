@@ -142,12 +142,13 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất như sau (không kèm markdow
 
         if (jsonText) {
           const parsed = JSON.parse(jsonText);
+          const normArr = (arr) => (Array.isArray(arr) ? arr.map(s => String(s).normalize('NFC')) : []);
           return NextResponse.json({
             success: true,
-            khaiVi: parsed.khaiVi || [],
-            monChinh: parsed.monChinh || [],
-            trangMieng: parsed.trangMieng || [],
-            doUong: parsed.doUong || [],
+            khaiVi: normArr(parsed.khaiVi),
+            monChinh: normArr(parsed.monChinh),
+            trangMieng: normArr(parsed.trangMieng),
+            doUong: normArr(parsed.doUong),
             source: 'gemini-vision'
           });
         }

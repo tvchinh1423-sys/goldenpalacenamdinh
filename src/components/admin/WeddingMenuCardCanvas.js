@@ -20,6 +20,12 @@ const WeddingSectionDivider = () => (
   </div>
 );
 
+// Helper to enforce precomposed Vietnamese Unicode (NFC) - prevents spaced accent bugs on Windows OS
+const nfc = (str) => {
+  if (!str) return '';
+  return String(str).normalize('NFC');
+};
+
 export default function WeddingMenuCardCanvas({
   title = 'Lễ Thành Hôn',
   brideGroomNames = 'Minh Quang & Thu Hiền',
@@ -36,13 +42,21 @@ export default function WeddingMenuCardCanvas({
   footerFontSize = 21,
   menuPreviewRef
 }) {
+  const normTitle = nfc(title);
+  const normBrideGroom = nfc(brideGroomNames);
+  const normEventDate = nfc(eventDate);
+  const normFooter = nfc(footerText);
+
+  const dishFontFamily = `var(--font-cormorant), var(--font-lora), 'Cormorant Garamond', 'Lora', 'Playfair Display', Georgia, serif`;
+  const titleFontFamily = `var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive`;
+
   return (
     <div
       ref={menuPreviewRef}
       id="printable-wedding-menu"
       className="w-[297mm] h-[210mm] min-w-[297mm] min-h-[210mm] relative select-none bg-white overflow-hidden shadow-2xl shrink-0 border border-stone-300"
       style={{
-        fontFamily: `'Cormorant Garamond', 'Lora', 'Playfair Display', Georgia, serif`,
+        fontFamily: dishFontFamily,
         boxSizing: 'border-box'
       }}
     >
@@ -70,16 +84,16 @@ export default function WeddingMenuCardCanvas({
               <div className="space-y-1">
                 <h3
                   className="text-stone-900 tracking-wide font-normal leading-tight"
-                  style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${sectionTitleFontSize}px` }}
+                  style={{ fontFamily: titleFontFamily, fontSize: `${sectionTitleFontSize}px` }}
                 >
                   Khai vị
                 </h3>
                 <div
-                  className="space-y-1 font-serif text-stone-900 font-semibold italic leading-snug"
-                  style={{ fontSize: `${dishItemFontSize}px` }}
+                  className="space-y-1 text-stone-900 font-semibold italic leading-snug"
+                  style={{ fontSize: `${dishItemFontSize}px`, fontFamily: dishFontFamily }}
                 >
                   {khaiViList.map((item, idx) => (
-                    <p key={idx}>{item}</p>
+                    <p key={idx}>{nfc(item)}</p>
                   ))}
                 </div>
                 <WeddingSectionDivider />
@@ -91,16 +105,16 @@ export default function WeddingMenuCardCanvas({
               <div className="space-y-1">
                 <h3
                   className="text-stone-900 tracking-wide font-normal leading-tight"
-                  style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${sectionTitleFontSize}px` }}
+                  style={{ fontFamily: titleFontFamily, fontSize: `${sectionTitleFontSize}px` }}
                 >
                   Món chính
                 </h3>
                 <div
-                  className="space-y-1 font-serif text-stone-900 font-semibold italic leading-snug"
-                  style={{ fontSize: `${dishItemFontSize}px` }}
+                  className="space-y-1 text-stone-900 font-semibold italic leading-snug"
+                  style={{ fontSize: `${dishItemFontSize}px`, fontFamily: dishFontFamily }}
                 >
                   {monChinhList.map((item, idx) => (
-                    <p key={idx}>{item}</p>
+                    <p key={idx}>{nfc(item)}</p>
                   ))}
                 </div>
                 <WeddingSectionDivider />
@@ -112,16 +126,16 @@ export default function WeddingMenuCardCanvas({
               <div className="space-y-1">
                 <h3
                   className="text-stone-900 tracking-wide font-normal leading-tight"
-                  style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${sectionTitleFontSize}px` }}
+                  style={{ fontFamily: titleFontFamily, fontSize: `${sectionTitleFontSize}px` }}
                 >
                   Tráng miệng
                 </h3>
                 <div
-                  className="space-y-1 font-serif text-stone-900 font-semibold italic leading-snug"
-                  style={{ fontSize: `${dishItemFontSize}px` }}
+                  className="space-y-1 text-stone-900 font-semibold italic leading-snug"
+                  style={{ fontSize: `${dishItemFontSize}px`, fontFamily: dishFontFamily }}
                 >
                   {trangMiengList.map((item, idx) => (
-                    <p key={idx}>{item}</p>
+                    <p key={idx}>{nfc(item)}</p>
                   ))}
                 </div>
                 <WeddingSectionDivider />
@@ -133,18 +147,18 @@ export default function WeddingMenuCardCanvas({
               <div className="space-y-1">
                 <h3
                   className="text-stone-900 tracking-wide font-normal leading-tight"
-                  style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${sectionTitleFontSize}px` }}
+                  style={{ fontFamily: titleFontFamily, fontSize: `${sectionTitleFontSize}px` }}
                 >
                   Đồ uống
                 </h3>
-                <div className="space-y-0.5 font-serif text-stone-900 font-semibold italic leading-snug px-1">
+                <div className="space-y-0.5 text-stone-900 font-semibold italic leading-snug px-1">
                   {doUongList.map((item, idx) => (
                     <p
                       key={idx}
                       className="whitespace-nowrap text-center inline-block max-w-full"
-                      style={{ fontSize: `${Math.min(dishItemFontSize, 15)}px` }}
+                      style={{ fontSize: `${Math.min(dishItemFontSize, 15)}px`, fontFamily: dishFontFamily }}
                     >
-                      {item}
+                      {nfc(item)}
                     </p>
                   ))}
                 </div>
@@ -155,10 +169,10 @@ export default function WeddingMenuCardCanvas({
           {/* FOOTER BLESSING WISH */}
           <div className="pb-3 pt-2 z-10">
             <p
-              className="font-serif font-bold italic text-stone-900 tracking-wide"
-              style={{ fontSize: `${footerFontSize}px` }}
+              className="font-bold italic text-stone-900 tracking-wide"
+              style={{ fontSize: `${footerFontSize}px`, fontFamily: dishFontFamily }}
             >
-              {footerText}
+              {normFooter}
             </p>
           </div>
         </div>
@@ -175,24 +189,24 @@ export default function WeddingMenuCardCanvas({
           <div className="my-auto space-y-3 py-1 z-10 flex flex-col items-center justify-center">
             
             {/* 1. Event Type Title (Lễ Thành Hôn / Lễ Vu Quy) */}
-            <p className="text-[40px] text-stone-900 font-normal italic leading-tight" style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive` }}>
-              {title}
+            <p className="text-[40px] text-stone-900 font-normal italic leading-tight" style={{ fontFamily: titleFontFamily }}>
+              {normTitle}
             </p>
 
             {/* 2. Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE WITH ADJUSTABLE FONT SIZE */}
             <div className="w-full flex justify-center items-center px-1 overflow-hidden">
               <h2
                 className="text-stone-900 font-bold leading-tight tracking-wide text-center whitespace-nowrap max-w-full"
-                style={{ fontFamily: `'Great Vibes', 'Alex Brush', cursive`, fontSize: `${brideGroomFontSize}px` }}
+                style={{ fontFamily: titleFontFamily, fontSize: `${brideGroomFontSize}px` }}
               >
-                {brideGroomNames}
+                {normBrideGroom}
               </h2>
             </div>
 
             {/* 3. Event Date (NO TOP AND BOTTOM BORDER LINES) */}
             <div className="pt-3">
-              <span className="font-serif text-[21px] font-bold text-stone-900 tracking-wider">
-                {eventDate}
+              <span className="text-[21px] font-bold text-stone-900 tracking-wider" style={{ fontFamily: dishFontFamily }}>
+                {normEventDate}
               </span>
             </div>
           </div>

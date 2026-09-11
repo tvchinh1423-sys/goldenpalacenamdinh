@@ -230,10 +230,10 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
 
   if (!isOpen) return null;
 
-  const khaiViList = khaiViText.split('\n').map(s => s.trim()).filter(Boolean);
-  const monChinhList = monChinhText.split('\n').map(s => s.trim()).filter(Boolean);
-  const trangMiengList = trangMiengText.split('\n').map(s => s.trim()).filter(Boolean);
-  const doUongList = doUongText.split('\n').map(s => s.trim()).filter(Boolean);
+  const khaiViList = khaiViText.split('\n').map(s => s.trim().normalize('NFC')).filter(Boolean);
+  const monChinhList = monChinhText.split('\n').map(s => s.trim().normalize('NFC')).filter(Boolean);
+  const trangMiengList = trangMiengText.split('\n').map(s => s.trim().normalize('NFC')).filter(Boolean);
+  const doUongList = doUongText.split('\n').map(s => s.trim().normalize('NFC')).filter(Boolean);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-1 sm:p-4 overflow-y-auto">
