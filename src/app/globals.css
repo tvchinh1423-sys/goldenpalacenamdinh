@@ -3,8 +3,11 @@
 @tailwind utilities;
 
 @layer base {
-  body {
+  html, body {
     min-height: max(884px, 100dvh);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 }
 
@@ -54,6 +57,34 @@
   }
   .glow-hover:hover {
       box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+  }
+
+  .font-alexbrush {
+    font-family: var(--font-alexbrush), 'Alex Brush', var(--font-greatvibes), 'Great Vibes', cursive !important;
+  }
+
+  .font-ballet {
+    font-family: var(--font-ballet), 'Ballet', var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive !important;
+  }
+
+  .font-playfair {
+    font-family: var(--font-playfair), 'Playfair Display', 'Cormorant Garamond', Georgia, serif !important;
+  }
+
+  .font-greatvibes {
+    font-family: var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive !important;
+  }
+
+  .font-montserrat {
+    font-family: var(--font-montserrat), 'Montserrat', sans-serif !important;
+  }
+
+  .font-lora {
+    font-family: var(--font-lora), 'Lora', serif !important;
+  }
+
+  .font-cormorant {
+    font-family: var(--font-cormorant), 'Cormorant Garamond', serif !important;
   }
 
   .font-script {

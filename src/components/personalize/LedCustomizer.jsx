@@ -50,6 +50,19 @@ export default function LedCustomizer({
   const [showRings, setShowRings] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  // Interactive LED Font Family & Font Size Sliders State
+  const [selectedFont, setSelectedFont] = useState('alexbrush'); // 'alexbrush' | 'greatvibes' | 'ballet' | 'playfair'
+  const [ledBrideGroomFontSize, setLedBrideGroomFontSize] = useState(48); // default 48px
+  const [ledTitleFontSize, setLedTitleFontSize] = useState(32);           // default 32px
+  const [ledDateFontSize, setLedDateFontSize] = useState(20);            // default 20px
+
+  const LED_FONT_MAP = {
+    alexbrush: "var(--font-alexbrush), 'Alex Brush', var(--font-greatvibes), 'Great Vibes', cursive",
+    greatvibes: "var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive",
+    ballet: "var(--font-ballet), 'Ballet', var(--font-greatvibes), 'Great Vibes', cursive",
+    playfair: "var(--font-playfair), 'Playfair Display', Didot, serif"
+  };
+
   // Handle custom image upload from Canva/Photoshop
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -61,6 +74,8 @@ export default function LedCustomizer({
       reader.readAsDataURL(file);
     }
   };
+
+  const nfc = (s) => (s ? String(s).normalize('NFC') : '');
 
   // Format Date to xx.xx.xxxx format (e.g. 28.12.2025) strictly Arabic digits
   const formatDateDot = (dateStr) => {
@@ -295,6 +310,93 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
               </div>
             </div>
 
+            {/* TÙY CHỈNH CỠ CHỮ & PHÔNG CHỮ MÀN LED (TƯƠNG TỰ BẢNG ĐIỀU KHIỂN MENU TIỆC) */}
+            <div className="pt-4 border-t border-gray-800 space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-base">format_size</span>
+                  Tùy Chỉnh Phông Chữ & Cỡ Chữ LED
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedFont('alexbrush');
+                    setLedBrideGroomFontSize(48);
+                    setLedTitleFontSize(32);
+                    setLedDateFontSize(20);
+                  }}
+                  className="text-[10px] text-gray-400 hover:text-amber-300 underline font-bold cursor-pointer"
+                >
+                  Đặt lại
+                </button>
+              </div>
+
+              {/* 1. Select Font Family */}
+              <div>
+                <label className="block text-gray-300 text-[11px] font-semibold mb-1">
+                  ✒️ Kiểu Phông Chữ Tên Cô Dâu & Chú Rể
+                </label>
+                <select
+                  value={selectedFont}
+                  onChange={(e) => setSelectedFont(e.target.value)}
+                  className="w-full bg-[#161616] border border-gray-700 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-amber-300 font-bold outline-none cursor-pointer"
+                >
+                  <option value="alexbrush">1. Phông Thư Pháp Swash (Alex Brush - Chuẩn Ảnh Chốt)</option>
+                  <option value="greatvibes">2. Phông Cổ Điển (Great Vibes Script)</option>
+                  <option value="ballet">3. Phông Chữ Bay Bổng (Ballet Script)</option>
+                  <option value="playfair">4. Phông Ép Kim Didone (Playfair Serif)</option>
+                </select>
+              </div>
+
+              {/* 2. Slider: Bride & Groom Font Size */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-[11px] font-semibold text-gray-300">
+                  <span>👰 Tên Cô dâu Chú rể</span>
+                  <span className="text-amber-400 font-mono font-bold">{ledBrideGroomFontSize}px</span>
+                </div>
+                <input
+                  type="range"
+                  min={20}
+                  max={90}
+                  value={ledBrideGroomFontSize}
+                  onChange={(e) => setLedBrideGroomFontSize(Number(e.target.value))}
+                  className="w-full accent-amber-500 cursor-pointer h-1.5 bg-gray-800 rounded-lg"
+                />
+              </div>
+
+              {/* 3. Slider: Event Title Font Size */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-[11px] font-semibold text-gray-300">
+                  <span>📜 Tiêu đề Tiệc Cưới</span>
+                  <span className="text-amber-400 font-mono font-bold">{ledTitleFontSize}px</span>
+                </div>
+                <input
+                  type="range"
+                  min={16}
+                  max={64}
+                  value={ledTitleFontSize}
+                  onChange={(e) => setLedTitleFontSize(Number(e.target.value))}
+                  className="w-full accent-amber-500 cursor-pointer h-1.5 bg-gray-800 rounded-lg"
+                />
+              </div>
+
+              {/* 4. Slider: Event Date Font Size */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-[11px] font-semibold text-gray-300">
+                  <span>📅 Ngày Cử Hành Lễ</span>
+                  <span className="text-amber-400 font-mono font-bold">{ledDateFontSize}px</span>
+                </div>
+                <input
+                  type="range"
+                  min={12}
+                  max={40}
+                  value={ledDateFontSize}
+                  onChange={(e) => setLedDateFontSize(Number(e.target.value))}
+                  className="w-full accent-amber-500 cursor-pointer h-1.5 bg-gray-800 rounded-lg"
+                />
+              </div>
+            </div>
+
           </div>
         )}
 
@@ -415,20 +517,26 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
               {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
               <div className="w-full flex items-center justify-center z-20">
                 <div 
-                  className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
-                  style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
+                  className="text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                  style={{ 
+                    fontFamily: "var(--font-playfair), var(--font-cormorant), 'Playfair Display', 'Cormorant Garamond', serif",
+                    fontSize: `${ledTitleFontSize}px`
+                  }}
                 >
-                  {eventTypeTitle || 'LỄ THÀNH HÔN'}
+                  {nfc(eventTypeTitle) || 'LỄ THÀNH HÔN'}
                 </div>
               </div>
 
               {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
               <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
                 <div 
-                  className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                  style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
+                  className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                  style={{ 
+                    fontFamily: LED_FONT_MAP[selectedFont] || LED_FONT_MAP.alexbrush,
+                    fontSize: `${ledBrideGroomFontSize}px`
+                  }}
                 >
-                  <span>{groomName || 'Đức Hoàng'}</span>
+                  <span>{nfc(groomName) || 'Đức Hoàng'}</span>
                   
                   {showRings ? (
                     /* BLACK & WHITE / MONOCHROME LINE ART WEDDING RINGS */
@@ -451,25 +559,26 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
                   ) : (
                     /* AMPERSAND & IN ELEGANT DIDONE ITALIC */
                     <span 
-                      className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
-                      style={{ fontFamily: "'Playfair Display', 'Bodoni Moda', Didot, serif" }}
+                      className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
+                      style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
                     >
                       &
                     </span>
                   )}
 
-                  <span>{brideName || 'Thu Hương'}</span>
+                  <span>{nfc(brideName) || 'Thu Hương'}</span>
                 </div>
               </div>
 
               {/* TẦNG 3: WEDDING DATE ("28.12.2025") */}
               <div className="z-20 w-full flex flex-col items-center">
                 <div 
-                  className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                  className="text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
                   style={{ 
-                    fontFamily: "'Playfair Display', Didot, 'Times New Roman', serif",
+                    fontFamily: "var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif",
                     fontVariantNumeric: "lining-nums tabular-nums",
-                    letterSpacing: "0.14em"
+                    letterSpacing: "0.14em",
+                    fontSize: `${ledDateFontSize}px`
                   }}
                 >
                   {formatDateDot(eventDate)}

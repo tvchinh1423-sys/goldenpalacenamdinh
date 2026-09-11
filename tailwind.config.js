@@ -78,19 +78,25 @@ module.exports = {
         "component-gap": "24px"
       }, 
       fontFamily: {
-        "body-lg": ["var(--font-montserrat)", "sans-serif"], 
-        "body-md": ["var(--font-montserrat)", "sans-serif"], 
-        "display-lg": ["var(--font-playfair)", "serif"], 
-        "headline-md": ["var(--font-playfair)", "serif"], 
-        "price-display": ["var(--font-playfair)", "serif"], 
-        "display-lg-mobile": ["var(--font-playfair)", "serif"], 
-        "headline-sm": ["var(--font-playfair)", "serif"], 
-        "label-md": ["var(--font-montserrat)", "sans-serif"], 
-        "headline": ["var(--font-playfair)", "serif"], 
-        "display": ["var(--font-playfair)", "serif"], 
-        "body": ["var(--font-montserrat)", "sans-serif"], 
-        "label": ["var(--font-montserrat)", "sans-serif"],
-        "slogan": ["var(--font-greatvibes)", "cursive"]
+        "body-lg": ["var(--font-montserrat)", "'Montserrat'", "sans-serif"], 
+        "body-md": ["var(--font-montserrat)", "'Montserrat'", "sans-serif"], 
+        "display-lg": ["var(--font-playfair)", "'Playfair Display'", "serif"], 
+        "headline-md": ["var(--font-playfair)", "'Playfair Display'", "serif"], 
+        "price-display": ["var(--font-playfair)", "'Playfair Display'", "serif"], 
+        "display-lg-mobile": ["var(--font-playfair)", "'Playfair Display'", "serif"], 
+        "headline-sm": ["var(--font-playfair)", "'Playfair Display'", "serif"], 
+        "label-md": ["var(--font-montserrat)", "'Montserrat'", "sans-serif"], 
+        "headline": ["var(--font-playfair)", "'Playfair Display'", "serif"], 
+        "display": ["var(--font-playfair)", "'Playfair Display'", "serif"], 
+        "body": ["var(--font-montserrat)", "'Montserrat'", "sans-serif"], 
+        "label": ["var(--font-montserrat)", "'Montserrat'", "sans-serif"],
+        "slogan": ["var(--font-greatvibes)", "'Great Vibes'", "cursive"],
+        "ballet": ["var(--font-ballet)", "'Ballet'", "var(--font-greatvibes)", "'Great Vibes'", "cursive"],
+        "playfair": ["var(--font-playfair)", "'Playfair Display'", "'Cormorant Garamond'", "serif"],
+        "greatvibes": ["var(--font-greatvibes)", "'Great Vibes'", "'Alex Brush'", "cursive"],
+        "montserrat": ["var(--font-montserrat)", "'Montserrat'", "sans-serif"],
+        "lora": ["var(--font-lora)", "'Lora'", "serif"],
+        "cormorant": ["var(--font-cormorant)", "'Cormorant Garamond'", "serif"]
       }
     }
   },

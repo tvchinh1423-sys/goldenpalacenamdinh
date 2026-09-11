@@ -37,6 +37,19 @@ export default function AdminPersonalizePage() {
   // State for Fullscreen LED visualizer modal
   const [fullscreenLed, setFullscreenLed] = useState(false);
 
+  // LED Backdrop Font Family & Font Size Controls
+  const [selectedLedFont, setSelectedLedFont] = useState('alexbrush');
+  const [ledBrideGroomFontSize, setLedBrideGroomFontSize] = useState(48);
+  const [ledTitleFontSize, setLedTitleFontSize] = useState(32);
+  const [ledDateFontSize, setLedDateFontSize] = useState(20);
+
+  const LED_FONT_MAP = {
+    alexbrush: "var(--font-alexbrush), 'Alex Brush', var(--font-greatvibes), 'Great Vibes', cursive",
+    greatvibes: "var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive",
+    ballet: "var(--font-ballet), 'Ballet', var(--font-greatvibes), 'Great Vibes', cursive",
+    playfair: "var(--font-playfair), 'Playfair Display', Didot, serif"
+  };
+
   useEffect(() => {
     // 1. Restore from local cache for instant initial display on reload
     try {
@@ -156,6 +169,8 @@ export default function AdminPersonalizePage() {
 
     return true;
   });
+
+  const nfc = (s) => (s ? String(s).normalize('NFC') : '');
 
   const handleApplyCustomDates = () => {
     if (startDate || endDate) {
@@ -619,6 +634,89 @@ export default function AdminPersonalizePage() {
                   </div>
                 </div>
 
+                {/* LED Font Family & Font Size Control Sliders Panel */}
+                <div className="bg-stone-950/80 p-3.5 rounded-xl border border-amber-500/30 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-sm">format_size</span>
+                      Tùy Chỉnh Cỡ Chữ & Phông Chữ LED Sân Khấu
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedLedFont('alexbrush');
+                        setLedBrideGroomFontSize(48);
+                        setLedTitleFontSize(32);
+                        setLedDateFontSize(20);
+                      }}
+                      className="text-[10px] text-stone-400 hover:text-amber-300 underline font-bold cursor-pointer"
+                    >
+                      Đặt lại
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-[11px]">
+                    <div>
+                      <label className="text-[10px] font-bold text-stone-300 block mb-1">✒️ Phông Chữ Tên Dâu Rể</label>
+                      <select
+                        value={selectedLedFont}
+                        onChange={(e) => setSelectedLedFont(e.target.value)}
+                        className="w-full bg-stone-900 border border-stone-700 rounded-lg px-2.5 py-1.5 text-xs text-amber-300 font-bold outline-none cursor-pointer"
+                      >
+                        <option value="alexbrush">1. Alex Brush (Chuẩn Ảnh Chốt)</option>
+                        <option value="greatvibes">2. Great Vibes Script</option>
+                        <option value="ballet">3. Ballet Script</option>
+                        <option value="playfair">4. Playfair Serif</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-0.5">
+                      <div className="flex justify-between font-semibold text-stone-300">
+                        <span>👰 Tên Cô dâu Chú rể</span>
+                        <span className="text-amber-400 font-mono font-bold">{ledBrideGroomFontSize}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={20}
+                        max={90}
+                        value={ledBrideGroomFontSize}
+                        onChange={(e) => setLedBrideGroomFontSize(Number(e.target.value))}
+                        className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                      />
+                    </div>
+
+                    <div className="space-y-0.5">
+                      <div className="flex justify-between font-semibold text-stone-300">
+                        <span>📜 Tiêu đề Tiệc Cưới</span>
+                        <span className="text-amber-400 font-mono font-bold">{ledTitleFontSize}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={16}
+                        max={64}
+                        value={ledTitleFontSize}
+                        onChange={(e) => setLedTitleFontSize(Number(e.target.value))}
+                        className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                      />
+                    </div>
+
+                    <div className="space-y-0.5">
+                      <div className="flex justify-between font-semibold text-stone-300">
+                        <span>📅 Ngày Cử Hành Lễ</span>
+                        <span className="text-amber-400 font-mono font-bold">{ledDateFontSize}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={12}
+                        max={40}
+                        value={ledDateFontSize}
+                        onChange={(e) => setLedDateFontSize(Number(e.target.value))}
+                        className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 {/* Mini LED Canvas Visualizer matching LedCustomizer.jsx 100% */}
                 <div 
                   id="led-stage-screen-canvas"
@@ -650,40 +748,47 @@ export default function AdminPersonalizePage() {
                     {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
                     <div className="w-full flex items-center justify-center z-20">
                       <div 
-                        className="text-base sm:text-2xl md:text-3xl lg:text-4xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
-                        style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
+                        className="text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                        style={{ 
+                          fontFamily: "var(--font-playfair), var(--font-cormorant), 'Playfair Display', 'Cormorant Garamond', serif",
+                          fontSize: `${ledTitleFontSize}px`
+                        }}
                       >
-                        {selectedProfile.partyTitle || 'LỄ THÀNH HÔN'}
+                        {nfc(selectedProfile.partyTitle) || 'LỄ THÀNH HÔN'}
                       </div>
                     </div>
 
                     {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
                     <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
                       <div 
-                        className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                        style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
+                        className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                        style={{ 
+                          fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
+                          fontSize: `${ledBrideGroomFontSize}px`
+                        }}
                       >
-                        <span>{selectedProfile.groomName || 'Đức Hoàng'}</span>
+                        <span>{nfc(selectedProfile.groomName) || 'Đức Hoàng'}</span>
                         
                         <span 
-                          className="text-slate-100 text-lg sm:text-2xl md:text-3xl mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
-                          style={{ fontFamily: "'Playfair Display', 'Bodoni Moda', Didot, serif" }}
+                          className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
+                          style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
                         >
                           &
                         </span>
 
-                        <span>{selectedProfile.brideName || 'Thu Hương'}</span>
+                        <span>{nfc(selectedProfile.brideName) || 'Thu Hương'}</span>
                       </div>
                     </div>
 
                     {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
                     <div className="z-20 w-full flex flex-col items-center">
                       <div 
-                        className="text-xs sm:text-base md:text-lg lg:text-xl text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                        className="text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
                         style={{ 
-                          fontFamily: "'Playfair Display', Didot, 'Times New Roman', serif",
+                          fontFamily: "var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif",
                           fontVariantNumeric: "lining-nums tabular-nums",
-                          letterSpacing: "0.14em"
+                          letterSpacing: "0.14em",
+                          fontSize: `${ledDateFontSize}px`
                         }}
                       >
                         {formatDateDot(selectedProfile.eventDate)}
@@ -878,40 +983,47 @@ export default function AdminPersonalizePage() {
               {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
               <div className="w-full flex items-center justify-center z-20">
                 <div 
-                  className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
-                  style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', serif" }}
+                  className="text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                  style={{ 
+                    fontFamily: "var(--font-playfair), var(--font-cormorant), 'Playfair Display', 'Cormorant Garamond', serif",
+                    fontSize: `${ledTitleFontSize * 1.5}px`
+                  }}
                 >
-                  {selectedProfile.partyTitle || 'LỄ THÀNH HÔN'}
+                  {nfc(selectedProfile.partyTitle) || 'LỄ THÀNH HÔN'}
                 </div>
               </div>
 
               {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
               <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
                 <div 
-                  className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                  style={{ fontFamily: "'Ballet', 'Great Vibes', cursive" }}
+                  className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                  style={{ 
+                    fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
+                    fontSize: `${ledBrideGroomFontSize * 1.5}px`
+                  }}
                 >
-                  <span>{selectedProfile.groomName || 'Đức Hoàng'}</span>
+                  <span>{nfc(selectedProfile.groomName) || 'Đức Hoàng'}</span>
                   
                   <span 
-                    className="text-slate-100 text-2xl sm:text-4xl md:text-5xl mx-4 sm:mx-6 font-serif italic font-light tracking-normal"
-                    style={{ fontFamily: "'Playfair Display', 'Bodoni Moda', Didot, serif" }}
+                    className="text-slate-100 mx-4 sm:mx-6 font-serif italic font-light tracking-normal"
+                    style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
                   >
                     &
                   </span>
 
-                  <span>{selectedProfile.brideName || 'Thu Hương'}</span>
+                  <span>{nfc(selectedProfile.brideName) || 'Thu Hương'}</span>
                 </div>
               </div>
 
               {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
               <div className="z-20 w-full flex flex-col items-center">
                 <div 
-                  className="text-base sm:text-2xl md:text-3xl text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                  className="text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
                   style={{ 
-                    fontFamily: "'Playfair Display', Didot, 'Times New Roman', serif",
+                    fontFamily: "var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif",
                     fontVariantNumeric: "lining-nums tabular-nums",
-                    letterSpacing: "0.14em"
+                    letterSpacing: "0.14em",
+                    fontSize: `${ledDateFontSize * 1.4}px`
                   }}
                 >
                   {formatDateDot(selectedProfile.eventDate)}
