@@ -37,16 +37,16 @@ export default function AdminPersonalizePage() {
   // State for Fullscreen LED visualizer modal
   const [fullscreenLed, setFullscreenLed] = useState(false);
 
-  // LED Backdrop Font Family & Font Size Controls
-  const [selectedLedFont, setSelectedLedFont] = useState('alexbrush');
-  const [ledBrideGroomFontSize, setLedBrideGroomFontSize] = useState(48);
-  const [ledTitleFontSize, setLedTitleFontSize] = useState(32);
-  const [ledDateFontSize, setLedDateFontSize] = useState(20);
+  // LED Backdrop Font Family & Font Size Controls derived directly from selectedProfile (or default 'ballet', 59, 32, 24)
+  const selectedLedFont = selectedProfile?.ledFont || 'ballet';
+  const ledBrideGroomFontSize = selectedProfile?.ledBrideGroomFontSize || 59;
+  const ledTitleFontSize = selectedProfile?.ledTitleFontSize || 32;
+  const ledDateFontSize = selectedProfile?.ledDateFontSize || 24;
 
   const LED_FONT_MAP = {
-    alexbrush: "var(--font-alexbrush), 'Alex Brush', var(--font-greatvibes), 'Great Vibes', cursive",
-    greatvibes: "var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive",
     ballet: "var(--font-ballet), 'Ballet', var(--font-greatvibes), 'Great Vibes', cursive",
+    greatvibes: "var(--font-greatvibes), 'Great Vibes', cursive",
+    alexbrush: "var(--font-alexbrush), 'Alex Brush', cursive",
     playfair: "var(--font-playfair), 'Playfair Display', Didot, serif"
   };
 
@@ -631,89 +631,6 @@ export default function AdminPersonalizePage() {
                       <span className="material-symbols-outlined text-sm">fullscreen</span>
                       Mở Trình Chiếu LED Fullscreen
                     </button>
-                  </div>
-                </div>
-
-                {/* LED Font Family & Font Size Control Sliders Panel */}
-                <div className="bg-stone-950/80 p-3.5 rounded-xl border border-amber-500/30 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-sm">format_size</span>
-                      Tùy Chỉnh Cỡ Chữ & Phông Chữ LED Sân Khấu
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedLedFont('alexbrush');
-                        setLedBrideGroomFontSize(48);
-                        setLedTitleFontSize(32);
-                        setLedDateFontSize(20);
-                      }}
-                      className="text-[10px] text-stone-400 hover:text-amber-300 underline font-bold cursor-pointer"
-                    >
-                      Đặt lại
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-[11px]">
-                    <div>
-                      <label className="text-[10px] font-bold text-stone-300 block mb-1">✒️ Phông Chữ Tên Dâu Rể</label>
-                      <select
-                        value={selectedLedFont}
-                        onChange={(e) => setSelectedLedFont(e.target.value)}
-                        className="w-full bg-stone-900 border border-stone-700 rounded-lg px-2.5 py-1.5 text-xs text-amber-300 font-bold outline-none cursor-pointer"
-                      >
-                        <option value="alexbrush">1. Alex Brush (Chuẩn Ảnh Chốt)</option>
-                        <option value="greatvibes">2. Great Vibes Script</option>
-                        <option value="ballet">3. Ballet Script</option>
-                        <option value="playfair">4. Playfair Serif</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-0.5">
-                      <div className="flex justify-between font-semibold text-stone-300">
-                        <span>👰 Tên Cô dâu Chú rể</span>
-                        <span className="text-amber-400 font-mono font-bold">{ledBrideGroomFontSize}px</span>
-                      </div>
-                      <input
-                        type="range"
-                        min={20}
-                        max={90}
-                        value={ledBrideGroomFontSize}
-                        onChange={(e) => setLedBrideGroomFontSize(Number(e.target.value))}
-                        className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
-                      />
-                    </div>
-
-                    <div className="space-y-0.5">
-                      <div className="flex justify-between font-semibold text-stone-300">
-                        <span>📜 Tiêu đề Tiệc Cưới</span>
-                        <span className="text-amber-400 font-mono font-bold">{ledTitleFontSize}px</span>
-                      </div>
-                      <input
-                        type="range"
-                        min={16}
-                        max={64}
-                        value={ledTitleFontSize}
-                        onChange={(e) => setLedTitleFontSize(Number(e.target.value))}
-                        className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
-                      />
-                    </div>
-
-                    <div className="space-y-0.5">
-                      <div className="flex justify-between font-semibold text-stone-300">
-                        <span>📅 Ngày Cử Hành Lễ</span>
-                        <span className="text-amber-400 font-mono font-bold">{ledDateFontSize}px</span>
-                      </div>
-                      <input
-                        type="range"
-                        min={12}
-                        max={40}
-                        value={ledDateFontSize}
-                        onChange={(e) => setLedDateFontSize(Number(e.target.value))}
-                        className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
-                      />
-                    </div>
                   </div>
                 </div>
 

@@ -26,10 +26,11 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
   const [footerText, setFooterText] = useState('Chúc Quý Khách Ngon Miệng!');
 
   // Customizable Font Sizes (in px)
-  const [brideGroomFontSize, setBrideGroomFontSize] = useState(36);
-  const [sectionTitleFontSize, setSectionTitleFontSize] = useState(38);
-  const [dishItemFontSize, setDishItemFontSize] = useState(17);
-  const [footerFontSize, setFooterFontSize] = useState(21);
+  const [brideGroomFontSize, setBrideGroomFontSize] = useState(40);
+  const [sectionTitleFontSize, setSectionTitleFontSize] = useState(30);
+  const [dishItemFontSize, setDishItemFontSize] = useState(22);
+  const [footerFontSize, setFooterFontSize] = useState(27);
+  const [eventDateFontSize, setEventDateFontSize] = useState(42);
 
   // Camera & Quick Input Modals
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -461,10 +462,11 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
               <button
                 type="button"
                 onClick={() => {
-                  setBrideGroomFontSize(36);
-                  setSectionTitleFontSize(38);
-                  setDishItemFontSize(17);
-                  setFooterFontSize(21);
+                  setBrideGroomFontSize(40);
+                  setSectionTitleFontSize(30);
+                  setDishItemFontSize(22);
+                  setFooterFontSize(27);
+                  setEventDateFontSize(42);
                 }}
                 className="text-[9px] font-bold text-stone-400 hover:text-amber-300 underline"
               >
@@ -482,7 +484,7 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
                 <input
                   type="range"
                   min={18}
-                  max={50}
+                  max={60}
                   value={brideGroomFontSize}
                   onChange={(e) => setBrideGroomFontSize(Number(e.target.value))}
                   className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
@@ -497,8 +499,8 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
                 </div>
                 <input
                   type="range"
-                  min={24}
-                  max={52}
+                  min={18}
+                  max={60}
                   value={sectionTitleFontSize}
                   onChange={(e) => setSectionTitleFontSize(Number(e.target.value))}
                   className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
@@ -514,7 +516,7 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
                 <input
                   type="range"
                   min={12}
-                  max={26}
+                  max={32}
                   value={dishItemFontSize}
                   onChange={(e) => setDishItemFontSize(Number(e.target.value))}
                   className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
@@ -530,9 +532,25 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
                 <input
                   type="range"
                   min={14}
-                  max={30}
+                  max={36}
                   value={footerFontSize}
                   onChange={(e) => setFooterFontSize(Number(e.target.value))}
+                  className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                />
+              </div>
+
+              {/* 5. Ngày Tổ Chức */}
+              <div className="space-y-0.5 col-span-2 sm:col-span-1">
+                <div className="flex justify-between font-semibold text-stone-300">
+                  <span>📅 Ngày Tổ Chức</span>
+                  <span className="text-amber-400 font-mono font-bold">{eventDateFontSize}px</span>
+                </div>
+                <input
+                  type="range"
+                  min={18}
+                  max={60}
+                  value={eventDateFontSize}
+                  onChange={(e) => setEventDateFontSize(Number(e.target.value))}
                   className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
                 />
               </div>
@@ -639,6 +657,7 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
               sectionTitleFontSize={sectionTitleFontSize}
               dishItemFontSize={dishItemFontSize}
               footerFontSize={footerFontSize}
+              eventDateFontSize={eventDateFontSize}
               menuPreviewRef={menuPreviewRef}
             />
           </div>

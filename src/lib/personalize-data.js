@@ -45,22 +45,8 @@ export const LED_SCREEN_FLOORS = [
 
 export const LED_STAGE_TEMPLATES = [
   {
-    id: 'led-starry-diamond',
-    name: '1. Bầu Trời Sao Đêm Kim Cương',
-    slogan: '',
-    defaultVenueId: 'tang-3',
-    bgImage: '/images/led-bg/starry-night-1.jpg',
-    borderColor: '#ffffff',
-    glowColor: 'rgba(255, 255, 255, 0.7)',
-    accentColor: '#ffffff',
-    subTextColor: '#e2e8f0',
-    monogramStyle: 'DIDONE_INTERLOCKED',
-    fontFamily: 'font-greatvibes',
-    badge: ''
-  },
-  {
     id: 'led-cosmic-milkyway',
-    name: '2. Dải Ngân Hà Cosmic Galaxy',
+    name: '1. Dải Ngân Hà Cosmic Galaxy',
     slogan: '',
     defaultVenueId: 'tang-2',
     bgImage: '/images/led-bg/starry-night-2.jpg',
@@ -68,6 +54,20 @@ export const LED_STAGE_TEMPLATES = [
     glowColor: 'rgba(255, 255, 255, 0.8)',
     accentColor: '#ffffff',
     subTextColor: '#cbd5e1',
+    monogramStyle: 'DIDONE_INTERLOCKED',
+    fontFamily: 'font-ballet',
+    badge: ''
+  },
+  {
+    id: 'led-starry-diamond',
+    name: '2. Bầu Trời Sao Đêm Kim Cương',
+    slogan: '',
+    defaultVenueId: 'tang-3',
+    bgImage: '/images/led-bg/starry-night-1.jpg',
+    borderColor: '#ffffff',
+    glowColor: 'rgba(255, 255, 255, 0.7)',
+    accentColor: '#ffffff',
+    subTextColor: '#e2e8f0',
     monogramStyle: 'DIDONE_INTERLOCKED',
     fontFamily: 'font-greatvibes',
     badge: ''

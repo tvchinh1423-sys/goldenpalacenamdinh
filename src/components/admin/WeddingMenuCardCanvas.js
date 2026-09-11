@@ -35,11 +35,12 @@ export default function WeddingMenuCardCanvas({
   trangMiengList = [],
   doUongList = [],
   footerText = 'Chúc Quý Khách Ngon Miệng!',
-  // Customizable Font Sizes (in px)
-  brideGroomFontSize = 36,
-  sectionTitleFontSize = 38,
-  dishItemFontSize = 17,
-  footerFontSize = 21,
+  // Customizable Font Sizes (in px) - Defaulted to user requested baseline
+  brideGroomFontSize = 40,
+  sectionTitleFontSize = 30,
+  dishItemFontSize = 22,
+  footerFontSize = 27,
+  eventDateFontSize = 42,
   menuPreviewRef
 }) {
   const normTitle = nfc(title);
@@ -205,7 +206,7 @@ export default function WeddingMenuCardCanvas({
 
             {/* 3. Event Date (NO TOP AND BOTTOM BORDER LINES) */}
             <div className="pt-3">
-              <span className="text-[21px] font-bold text-stone-900 tracking-wider" style={{ fontFamily: dishFontFamily }}>
+              <span className="font-bold text-stone-900 tracking-wider" style={{ fontFamily: dishFontFamily, fontSize: `${eventDateFontSize}px` }}>
                 {normEventDate}
               </span>
             </div>

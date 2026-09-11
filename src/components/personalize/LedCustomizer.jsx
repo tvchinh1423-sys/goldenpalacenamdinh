@@ -50,16 +50,16 @@ export default function LedCustomizer({
   const [showRings, setShowRings] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Interactive LED Font Family & Font Size Sliders State
-  const [selectedFont, setSelectedFont] = useState('alexbrush'); // 'alexbrush' | 'greatvibes' | 'ballet' | 'playfair'
-  const [ledBrideGroomFontSize, setLedBrideGroomFontSize] = useState(48); // default 48px
+  // Interactive LED Font Family & Font Size Sliders State (GLOBAL SYSTEM DEFAULTS AS REQUESTED)
+  const [selectedFont, setSelectedFont] = useState('ballet'); // 'ballet' | 'greatvibes' | 'alexbrush' | 'playfair'
+  const [ledBrideGroomFontSize, setLedBrideGroomFontSize] = useState(59); // default 59px
   const [ledTitleFontSize, setLedTitleFontSize] = useState(32);           // default 32px
-  const [ledDateFontSize, setLedDateFontSize] = useState(20);            // default 20px
+  const [ledDateFontSize, setLedDateFontSize] = useState(24);            // default 24px
 
   const LED_FONT_MAP = {
-    alexbrush: "var(--font-alexbrush), 'Alex Brush', var(--font-greatvibes), 'Great Vibes', cursive",
-    greatvibes: "var(--font-greatvibes), 'Great Vibes', 'Alex Brush', cursive",
     ballet: "var(--font-ballet), 'Ballet', var(--font-greatvibes), 'Great Vibes', cursive",
+    greatvibes: "var(--font-greatvibes), 'Great Vibes', cursive",
+    alexbrush: "var(--font-alexbrush), 'Alex Brush', cursive",
     playfair: "var(--font-playfair), 'Playfair Display', Didot, serif"
   };
 
@@ -320,10 +320,10 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
                 <button
                   type="button"
                   onClick={() => {
-                    setSelectedFont('alexbrush');
-                    setLedBrideGroomFontSize(48);
+                    setSelectedFont('ballet');
+                    setLedBrideGroomFontSize(59);
                     setLedTitleFontSize(32);
-                    setLedDateFontSize(20);
+                    setLedDateFontSize(24);
                   }}
                   className="text-[10px] text-gray-400 hover:text-amber-300 underline font-bold cursor-pointer"
                 >
@@ -341,9 +341,9 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
                   onChange={(e) => setSelectedFont(e.target.value)}
                   className="w-full bg-[#161616] border border-gray-700 focus:border-amber-400 rounded-xl px-3 py-2 text-xs text-amber-300 font-bold outline-none cursor-pointer"
                 >
-                  <option value="alexbrush">1. Phông Thư Pháp Swash (Alex Brush - Chuẩn Ảnh Chốt)</option>
-                  <option value="greatvibes">2. Phông Cổ Điển (Great Vibes Script)</option>
-                  <option value="ballet">3. Phông Chữ Bay Bổng (Ballet Script)</option>
+                  <option value="ballet">3. Phông Chữ Bay Bổng (Ballet Script - Mặc Định Hệ Thống)</option>
+                  <option value="greatvibes">1. Phông Cổ Điển Nghệ Thuật (Great Vibes Script)</option>
+                  <option value="alexbrush">2. Phông Thư Pháp Swash (Alex Brush)</option>
                   <option value="playfair">4. Phông Ép Kim Didone (Playfair Serif)</option>
                 </select>
               </div>
@@ -603,7 +603,18 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
 
             {onSave && (
               <button
-                onClick={() => onSave({ template: selectedTemplate, floor: selectedFloor, groomName, brideName, eventDate, customUploadUrl })}
+                onClick={() => onSave({ 
+                  template: selectedTemplate, 
+                  floor: selectedFloor, 
+                  groomName, 
+                  brideName, 
+                  eventDate, 
+                  customUploadUrl,
+                  ledFont: selectedFont,
+                  ledBrideGroomFontSize,
+                  ledTitleFontSize,
+                  ledDateFontSize
+                })}
                 className="flex-1 px-5 py-3 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-xs uppercase font-bold tracking-wider rounded-xl hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span className="material-symbols-outlined text-base">bookmark</span>
