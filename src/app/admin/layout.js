@@ -19,7 +19,7 @@ function AdminLayoutContent({ children }) {
     if (status === 'authenticated') {
       if (isMember && pathname !== '/admin/personalize' && !pathname.startsWith('/admin/menus/table-designer')) {
         router.replace('/admin/personalize');
-      } else if (isStaff && !pathname.startsWith('/admin/leads') && !pathname.startsWith('/admin/menus/table-designer')) {
+      } else if (isStaff && !pathname.startsWith('/admin/leads') && !pathname.startsWith('/admin/personalize') && !pathname.startsWith('/admin/menus/table-designer')) {
         router.replace('/admin/leads');
       }
     }
@@ -49,12 +49,12 @@ function AdminLayoutContent({ children }) {
   let navItems = allNavItems;
   if (isMember) {
     navItems = [
-      { name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' },
-      { name: 'Menu Tiệc Để Bàn', href: '/admin/menus/table-designer', icon: 'restaurant_menu' }
+      { name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' }
     ];
   } else if (isStaff) {
     navItems = [
       { name: 'Quản lý Khách hàng', href: '/admin/leads', icon: 'group' },
+      { name: 'Kỹ Thuật & Cá Nhân Hóa', href: '/admin/personalize', icon: 'auto_awesome' },
       { name: 'Menu Tiệc Để Bàn', href: '/admin/menus/table-designer', icon: 'restaurant_menu' }
     ];
   }

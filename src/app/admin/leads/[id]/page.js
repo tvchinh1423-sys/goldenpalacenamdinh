@@ -5,7 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { revalidatePath } from 'next/cache';
 import LeadZaloClientActions from './LeadZaloClientActions';
-import LeadMenuDesignerButton from './LeadMenuDesignerButton';
+import DeleteLeadButton from '../DeleteLeadButton';
 
 const formatVietnamTime = (dateVal) => {
   if (!dateVal) return 'N/A';
@@ -183,11 +183,10 @@ export default async function LeadDetailPage({ params }) {
           </div>
 
           <div className="pt-4 border-t border-gray-100 space-y-3">
-            <LeadMenuDesignerButton
+            <DeleteLeadButton
               leadId={lead.id}
               leadName={lead.name}
-              brideGroomNames={lead.brideGroomNames}
-              eventDate={latestProposal?.eventDate ? formatVietnamDateOnly(latestProposal.eventDate) : ''}
+              isDetail={true}
             />
 
             <Link href={`/du-toan-chi-phi/link/${lead.linkToken}`} target="_blank">

@@ -351,17 +351,17 @@ export default function AdminPersonalizePage() {
                           Mở Kịch Bản & Phát Nhạc
                         </button>
 
-                        <button
-                          onClick={() => setMenuModalProfile(prof)}
-                          className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-stone-950 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 shadow-xs cursor-pointer"
-                          title="Tạo & in Menu tiệc để bàn cho tiệc cưới này"
-                        >
-                          <span className="material-symbols-outlined text-xs">restaurant_menu</span>
-                          Menu Để Bàn
-                        </button>
-
                         {!isReadOnly && (
                           <>
+                            <button
+                              onClick={() => setMenuModalProfile(prof)}
+                              className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-stone-950 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 shadow-xs cursor-pointer"
+                              title="Tạo & in Menu tiệc để bàn cho tiệc cưới này"
+                            >
+                              <span className="material-symbols-outlined text-xs">restaurant_menu</span>
+                              Menu Để Bàn
+                            </button>
+
                             <button
                               onClick={() => setEditingProfile(prof)}
                               className="px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-lg text-[11px] transition-colors flex items-center gap-1 border border-stone-300 cursor-pointer"
