@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { toPng } from 'html-to-image';
 import { MUSIC_TRACKS, MUSIC_CATEGORIES, LED_STAGE_TEMPLATES, VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
 import TableMenuDesignerModal from '@/components/admin/TableMenuDesignerModal';
+import AIPersonalizeInputSection from '@/components/admin/AIPersonalizeInputSection';
 
 // Standardized Date Dot Formatter (e.g. "2026-11-20" -> "20.11.2026") matching LedCustomizer.jsx 100%
 function formatDateDot(dateStr) {
@@ -88,14 +89,25 @@ export default function AdminPersonalizePage() {
   const handleDeleteProfile = async (id) => {
     if (!confirm('Anh Chinh có chắc chắn muốn xóa bản ghi tiệc cưới này khỏi hệ thống?')) return;
     try {
+      // Optimistically update UI
+      setProfiles(prev => {
+        const next = prev.filter(p => p.id !== id);
+        try { localStorage.setItem('gp_admin_personalize_cache', JSON.stringify(next)); } catch (e) {}
+        return next;
+      });
+      if (selectedProfile?.id === id) setSelectedProfile(null);
+
       const res = await fetch(`/api/personalize?id=${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
-        if (selectedProfile?.id === id) setSelectedProfile(null);
+        fetchProfiles();
+      } else {
+        alert(data.message || 'Chưa xóa được bản ghi');
         fetchProfiles();
       }
     } catch (e) {
       console.error(e);
+      fetchProfiles();
     }
   };
 
@@ -231,6 +243,9 @@ export default function AdminPersonalizePage() {
           Làm Mới Danh Sách
         </button>
       </div>
+
+      {/* AI Smart Input (MB Style) Section for Kỹ Thuật & Cá Nhân Hóa */}
+      <AIPersonalizeInputSection onProfileCreated={fetchProfiles} />
 
       {/* Date Filter Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-stone-200 shadow-xs text-xs">

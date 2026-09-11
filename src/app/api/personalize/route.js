@@ -133,25 +133,28 @@ async function readProfiles() {
     console.error('Error reading profiles file:', e);
   }
 
-  // Merge map by Phone or ID
   const map = new Map();
-  map.set(DEMO_PROFILE.phone, DEMO_PROFILE);
+
+  // If no profiles exist anywhere, initialize demo profile
+  if (!global.gpProfilesCache && fileProfiles.length === 0 && dbProfiles.length === 0) {
+    map.set(DEMO_PROFILE.id, DEMO_PROFILE);
+  }
 
   if (global.gpProfilesCache && Array.isArray(global.gpProfilesCache)) {
     global.gpProfilesCache.forEach(p => {
-      if (p && p.id) map.set(p.phone || p.id, p);
+      if (p && p.id) map.set(p.id, p);
     });
   }
 
   if (Array.isArray(fileProfiles)) {
     fileProfiles.forEach(p => {
-      if (p && p.id) map.set(p.phone || p.id, p);
+      if (p && p.id) map.set(p.id, p);
     });
   }
 
   if (Array.isArray(dbProfiles)) {
     dbProfiles.forEach(p => {
-      if (p && p.id) map.set(p.phone || p.id, p);
+      if (p && p.id) map.set(p.id, p);
     });
   }
 
@@ -169,12 +172,12 @@ async function readProfiles() {
 // Helper to save profile into DB + Filesystem + Memory
 async function persistProfile(profileData) {
   // 1. Memory update
-  let profiles = global.gpProfilesCache || [DEMO_PROFILE];
+  let profiles = global.gpProfilesCache || [];
   const cleanPhone = (profileData.phone || '').replace(/[^0-9]/g, '');
   
   const existingIdx = profiles.findIndex(p => (
-    (cleanPhone && p.phone && p.phone.replace(/[^0-9]/g, '') === cleanPhone) ||
-    p.id === profileData.id
+    p.id === profileData.id ||
+    (cleanPhone && cleanPhone.length >= 8 && p.phone && p.phone.replace(/[^0-9]/g, '') === cleanPhone)
   ));
 
   if (existingIdx >= 0) {
@@ -184,7 +187,7 @@ async function persistProfile(profileData) {
   }
   global.gpProfilesCache = profiles;
 
-  // 2. Save to /tmp disk
+  // 2. Save to /tmp disk & local disk
   try {
     const dirTmp = path.dirname(DATA_FILE_TMP);
     if (!fs.existsSync(dirTmp)) fs.mkdirSync(dirTmp, { recursive: true });
@@ -241,37 +244,42 @@ async function persistProfile(profileData) {
   }
 }
 
-// Helper to remove profile from DB + Memory
+// Helper to remove profile from DB + Filesystem + Memory
 async function removeProfile(id) {
   let profiles = global.gpProfilesCache || [];
   const target = profiles.find(p => p.id === id);
   profiles = profiles.filter(p => p.id !== id);
   global.gpProfilesCache = profiles;
 
+  // Update both TMP and LOCAL JSON files immediately
   try {
     if (fs.existsSync(DATA_FILE_TMP)) {
       fs.writeFileSync(DATA_FILE_TMP, JSON.stringify(profiles, null, 2), 'utf8');
     }
   } catch (e) {}
 
-  if (target) {
-    try {
-      const cleanPhone = (target.phone || '').replace(/[^0-9]/g, '');
-      if (cleanPhone.length >= 8) {
-        await prisma.lead.deleteMany({
-          where: {
-            phone: { contains: cleanPhone },
-            internalNotes: { contains: '[PERSONALIZE_PROFILE]' }
-          }
-        });
-      } else if (target.dbLeadId) {
-        await prisma.lead.delete({
-          where: { id: target.dbLeadId }
-        });
-      }
-    } catch (e) {
-      console.error('Error deleting profile from DB:', e);
+  try {
+    if (fs.existsSync(DATA_FILE_LOCAL)) {
+      fs.writeFileSync(DATA_FILE_LOCAL, JSON.stringify(profiles, null, 2), 'utf8');
     }
+  } catch (e) {}
+
+  // Delete from Prisma Database
+  try {
+    await prisma.lead.deleteMany({
+      where: {
+        OR: [
+          { internalNotes: { contains: id } },
+          ...(target?.phone && target.phone.replace(/[^0-9]/g, '').length >= 8 ? [{
+            phone: { contains: target.phone.replace(/[^0-9]/g, '') },
+            internalNotes: { contains: '[PERSONALIZE_PROFILE]' }
+          }] : []),
+          ...(target?.dbLeadId ? [{ id: target.dbLeadId }] : [])
+        ]
+      }
+    });
+  } catch (e) {
+    console.error('Error deleting profile from DB:', e);
   }
 }
 
@@ -410,8 +418,8 @@ export async function PUT(req) {
 export async function DELETE(req) {
   try {
     const session = await getServerSession(authOptions);
-    if (session && session.user.role === 'MEMBER') {
-      return NextResponse.json({ success: false, message: 'Tài khoản Kỹ Thuật không có quyền xóa bản ghi!' }, { status: 403 });
+    if (!session) {
+      return NextResponse.json({ success: false, message: 'Chưa đăng nhập' }, { status: 401 });
     }
 
     const { searchParams } = new URL(req.url);

@@ -30,15 +30,40 @@ export async function POST(req) {
     let lead = null;
     for (let attempt = 0; attempt < 5 && !lead; attempt++) {
       try {
+        const createData = {
+          code: generateLeadCode(),
+          linkToken: randomUUID(),
+          name,
+          phone,
+          brideGroomNames: data?.brideGroomNames?.trim() || null,
+          notes: data?.notes?.trim() || null,
+          leadStatus: data?.leadStatus || 'NEW',
+        };
+
+        if (data?.mainTables || data?.eventDate) {
+          const mainTables = Number(data?.mainTables) || 10;
+          const budgetPerTable = Number(data?.budgetPerTable) || 4000000;
+          const totalBase = mainTables * budgetPerTable;
+          const eventDateVal = data?.eventDate ? new Date(data.eventDate) : new Date();
+
+          createData.proposals = {
+            create: {
+              version: 1,
+              guestCount: mainTables * 10,
+              mainTables,
+              reserveTables: Math.ceil(mainTables * 0.1),
+              budgetPerTable,
+              totalBase,
+              totalMax: totalBase * 1.1,
+              eventDate: isNaN(eventDateVal.getTime()) ? new Date() : eventDateVal,
+              eventSession: data?.eventSession || 'TOI',
+              priceEffectiveDate: new Date()
+            }
+          };
+        }
+
         lead = await prisma.lead.create({
-          data: {
-            code: generateLeadCode(),
-            linkToken: randomUUID(),
-            name,
-            phone,
-            brideGroomNames: data?.brideGroomNames?.trim() || null,
-            notes: data?.notes?.trim() || null,
-          },
+          data: createData,
         });
       } catch (err) {
         // P2002 = unique constraint. Chỉ thử lại khi đụng field `code`.
