@@ -51,7 +51,7 @@ export default function WeddingMenuCardCanvas({
   sectionTitleFontSize = 30,
   dishItemFontSize = 22,
   footerFontSize = 27,
-  eventDateFontSize = 42,
+  eventDateFontSize = 30,
   menuPreviewRef
 }) {
   const normTitle = nfc(title);
@@ -85,7 +85,54 @@ export default function WeddingMenuCardCanvas({
       <div className="absolute inset-0 flex flex-row z-10 w-full h-full">
         
         {/* ═══════════════════════════════════════════════════════════════ */}
-        {/* PAGE 1 (LEFT): DISH MENU CONTENT PAGE */}
+        {/* PAGE 1 (LEFT): DYNAMIC COVER OVERLAY PAGE */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        <div className="w-1/2 h-full px-[36px] py-[32px] relative flex flex-col justify-between text-center box-border">
+          
+          {/* Top Spacing to account for pre-printed Logo & WEDDING MENU header in image 2 */}
+          <div className="h-[270px]"></div>
+
+          {/* DYNAMIC WEDDING DETAILS (PARTY TITLE + BRIDE & GROOM NAMES ALWAYS 1 LINE + DATE) */}
+          <div className="my-auto space-y-3 py-1 z-10 flex flex-col items-center justify-center">
+            
+            {/* 1. Event Type Title (Lễ Thành Hôn / Lễ Vu Quy) */}
+            <p className="text-[40px] text-stone-900 font-normal italic leading-tight" style={{ fontFamily: titleFontFamily }}>
+              {normTitle}
+            </p>
+
+            {/* 2. Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE WITH ADJUSTABLE FONT SIZE */}
+            <div className="w-full flex justify-center items-center px-1 overflow-hidden">
+              <h2
+                className="text-stone-900 font-bold leading-tight tracking-wide text-center whitespace-nowrap max-w-full"
+                style={{ fontFamily: titleFontFamily, fontSize: `${brideGroomFontSize}px` }}
+              >
+                {normBrideGroom}
+              </h2>
+            </div>
+
+            {/* 3. Event Date (NO TOP AND BOTTOM BORDER LINES - MATCHING LED STAGE SCREEN FONT & STYLING 100%) */}
+            <div className="pt-3">
+              <span
+                className="font-bold text-stone-900 inline-block"
+                style={{
+                  fontFamily: dateFontFamily,
+                  fontSize: `${eventDateFontSize}px`,
+                  fontVariantNumeric: "lining-nums tabular-nums",
+                  letterSpacing: "0.14em"
+                }}
+              >
+                {nfc(formatDateDot(eventDate))}
+              </span>
+            </div>
+          </div>
+
+          {/* Bottom Spacing to account for pre-printed Divider & Footer address in image 2 */}
+          <div className="h-[135px]"></div>
+
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/* PAGE 2 (RIGHT): DISH MENU CONTENT PAGE */}
         {/* ═══════════════════════════════════════════════════════════════ */}
         <div className="w-1/2 h-full px-[36px] py-[28px] relative flex flex-col justify-between text-center box-border">
           
@@ -169,7 +216,7 @@ export default function WeddingMenuCardCanvas({
                     <p
                       key={idx}
                       className="whitespace-nowrap text-center inline-block max-w-full"
-                      style={{ fontSize: `${Math.min(dishItemFontSize, 15)}px`, fontFamily: dishFontFamily }}
+                      style={{ fontSize: `${dishItemFontSize}px`, fontFamily: dishFontFamily }}
                     >
                       {nfc(item)}
                     </p>
@@ -190,52 +237,6 @@ export default function WeddingMenuCardCanvas({
           </div>
         </div>
 
-        {/* ═══════════════════════════════════════════════════════════════ */}
-        {/* PAGE 2 (RIGHT): DYNAMIC COVER OVERLAY PAGE */}
-        {/* ═══════════════════════════════════════════════════════════════ */}
-        <div className="w-1/2 h-full px-[36px] py-[32px] relative flex flex-col justify-between text-center box-border">
-          
-          {/* Top Spacing to account for pre-printed Logo & WEDDING MENU header in image 2 */}
-          <div className="h-[270px]"></div>
-
-          {/* DYNAMIC WEDDING DETAILS (PARTY TITLE + BRIDE & GROOM NAMES ALWAYS 1 LINE + DATE) */}
-          <div className="my-auto space-y-3 py-1 z-10 flex flex-col items-center justify-center">
-            
-            {/* 1. Event Type Title (Lễ Thành Hôn / Lễ Vu Quy) */}
-            <p className="text-[40px] text-stone-900 font-normal italic leading-tight" style={{ fontFamily: titleFontFamily }}>
-              {normTitle}
-            </p>
-
-            {/* 2. Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE WITH ADJUSTABLE FONT SIZE */}
-            <div className="w-full flex justify-center items-center px-1 overflow-hidden">
-              <h2
-                className="text-stone-900 font-bold leading-tight tracking-wide text-center whitespace-nowrap max-w-full"
-                style={{ fontFamily: titleFontFamily, fontSize: `${brideGroomFontSize}px` }}
-              >
-                {normBrideGroom}
-              </h2>
-            </div>
-
-            {/* 3. Event Date (NO TOP AND BOTTOM BORDER LINES - MATCHING LED STAGE SCREEN FONT & STYLING 100%) */}
-            <div className="pt-3">
-              <span
-                className="font-bold text-stone-900 inline-block"
-                style={{
-                  fontFamily: dateFontFamily,
-                  fontSize: `${eventDateFontSize}px`,
-                  fontVariantNumeric: "lining-nums tabular-nums",
-                  letterSpacing: "0.14em"
-                }}
-              >
-                {nfc(formatDateDot(eventDate))}
-              </span>
-            </div>
-          </div>
-
-          {/* Bottom Spacing to account for pre-printed Divider & Footer address in image 2 */}
-          <div className="h-[135px]"></div>
-
-        </div>
       </div>
     </div>
   );

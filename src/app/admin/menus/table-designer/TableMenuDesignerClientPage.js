@@ -30,7 +30,7 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
   const [sectionTitleFontSize, setSectionTitleFontSize] = useState(30);
   const [dishItemFontSize, setDishItemFontSize] = useState(22);
   const [footerFontSize, setFooterFontSize] = useState(27);
-  const [eventDateFontSize, setEventDateFontSize] = useState(42);
+  const [eventDateFontSize, setEventDateFontSize] = useState(30);
 
   // Camera & Quick Input Modals
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -466,7 +466,7 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
                   setSectionTitleFontSize(30);
                   setDishItemFontSize(22);
                   setFooterFontSize(27);
-                  setEventDateFontSize(42);
+                  setEventDateFontSize(30);
                 }}
                 className="text-[9px] font-bold text-stone-400 hover:text-amber-300 underline"
               >
