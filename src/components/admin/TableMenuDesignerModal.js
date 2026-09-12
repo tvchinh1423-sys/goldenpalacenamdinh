@@ -14,6 +14,7 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
   const [activeTab, setActiveTab] = useState('editor');
 
   // Form State
+  const [weddingMenuHeader, setWeddingMenuHeader] = useState('WEDDING MENU');
   const [title, setTitle] = useState('Lễ Thành Hôn');
   const [brideGroomNames, setBrideGroomNames] = useState(brideGroomDefault || leadName || 'Minh Quang & Thu Hiền');
   const [eventDate, setEventDate] = useState(eventDateDefault || new Date().toLocaleDateString('vi-VN'));
@@ -418,6 +419,17 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
               </div>
 
               <div>
+                <label className="text-[9px] uppercase font-bold text-stone-400 block mb-0.5">Tiêu Đề Trang Bìa (VD: WEDDING MENU / THỰC ĐƠN TIỆC)</label>
+                <input
+                  type="text"
+                  value={weddingMenuHeader}
+                  onChange={(e) => setWeddingMenuHeader(e.target.value)}
+                  placeholder="VD: WEDDING MENU"
+                  className="w-full bg-stone-900 border border-stone-700 rounded-xl px-2.5 py-1.5 text-xs text-amber-200 font-bold outline-none focus:border-amber-500 font-serif tracking-widest uppercase mb-2.5"
+                />
+              </div>
+
+              <div>
                 <label className="text-[9px] uppercase font-bold text-stone-400 block mb-0.5">Tên Cô Dâu & Chú Rể</label>
                 <input
                   type="text"
@@ -629,6 +641,7 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
             {/* SCROLLABLE CANVAS WRAPPER */}
             <div id="printable-wedding-menu-container" className="w-full overflow-x-auto pb-4 flex justify-start lg:justify-center">
               <WeddingMenuCardCanvas
+                weddingMenuHeader={weddingMenuHeader}
                 title={title}
                 brideGroomNames={brideGroomNames}
                 eventDate={eventDate}

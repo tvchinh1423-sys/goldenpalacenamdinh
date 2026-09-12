@@ -38,6 +38,7 @@ function formatDateDot(dateStr) {
 }
 
 export default function WeddingMenuCardCanvas({
+  weddingMenuHeader = 'WEDDING MENU',
   title = 'Lễ Thành Hôn',
   brideGroomNames = 'Minh Quang & Thu Hiền',
   eventDate = '02/08/2026',
@@ -54,6 +55,7 @@ export default function WeddingMenuCardCanvas({
   eventDateFontSize = 30,
   menuPreviewRef
 }) {
+  const normWeddingMenuHeader = nfc(weddingMenuHeader);
   const normTitle = nfc(title);
   const normBrideGroom = nfc(brideGroomNames);
   const normEventDate = nfc(eventDate);
@@ -73,7 +75,7 @@ export default function WeddingMenuCardCanvas({
         boxSizing: 'border-box'
       }}
     >
-      {/* 1. ULTRA HIGH-RES BACKGROUND TEMPLATE IMAGE (IMAGE 2 REPLICA - 2560x1705 Crisp) */}
+      {/* 1. ULTRA HIGH-RES BACKGROUND TEMPLATE IMAGE (NEW ELEGANT BLACK & WHITE TEMPLATE) */}
       {/* eslint-disable-next-html-element-suppress */}
       <img
         src="/images/wedding-menu-bg.png"
@@ -87,20 +89,32 @@ export default function WeddingMenuCardCanvas({
         {/* ═══════════════════════════════════════════════════════════════ */}
         {/* PAGE 1 (LEFT): DYNAMIC COVER OVERLAY PAGE */}
         {/* ═══════════════════════════════════════════════════════════════ */}
-        <div className="w-1/2 h-full px-[36px] py-[32px] relative flex flex-col justify-between text-center box-border">
+        <div className="w-1/2 h-full px-[36px] pt-[125px] pb-[110px] relative flex flex-col justify-between items-center text-center box-border z-10">
           
-          {/* Top Spacing to account for pre-printed Logo & WEDDING MENU header in image 2 */}
-          <div className="h-[270px]"></div>
+          {/* 1. WEDDING MENU HEADER (DYNAMICALLY EDITABLE e.g. "WEDDING MENU") */}
+          {normWeddingMenuHeader && (
+            <div className="w-full flex justify-center items-center pt-2 pb-1">
+              <h1
+                className="text-stone-900 font-bold tracking-[0.24em] uppercase text-center font-serif leading-tight drop-shadow-2xs"
+                style={{
+                  fontFamily: `var(--font-cormorant), var(--font-playfair), 'Cormorant Garamond', 'Playfair Display', Georgia, serif`,
+                  fontSize: `28px`
+                }}
+              >
+                {normWeddingMenuHeader}
+              </h1>
+            </div>
+          )}
 
-          {/* DYNAMIC WEDDING DETAILS (PARTY TITLE + BRIDE & GROOM NAMES ALWAYS 1 LINE + DATE) */}
-          <div className="my-auto space-y-3 py-1 z-10 flex flex-col items-center justify-center">
+          {/* 2. DYNAMIC WEDDING DETAILS (PARTY TITLE + BRIDE & GROOM NAMES ALWAYS 1 LINE + DATE) */}
+          <div className="my-auto space-y-2.5 py-1 w-full flex flex-col items-center justify-center">
             
-            {/* 1. Event Type Title (Lễ Thành Hôn / Lễ Vu Quy) */}
-            <p className="text-[40px] text-stone-900 font-normal italic leading-tight" style={{ fontFamily: titleFontFamily }}>
+            {/* Event Type Title (Lễ Thành Hôn / Lễ Vu Quy) */}
+            <p className="text-[38px] text-stone-900 font-normal italic leading-tight" style={{ fontFamily: titleFontFamily }}>
               {normTitle}
             </p>
 
-            {/* 2. Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE WITH ADJUSTABLE FONT SIZE */}
+            {/* Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE WITH ADJUSTABLE FONT SIZE */}
             <div className="w-full flex justify-center items-center px-1 overflow-hidden">
               <h2
                 className="text-stone-900 font-bold leading-tight tracking-wide text-center whitespace-nowrap max-w-full"
@@ -110,8 +124,8 @@ export default function WeddingMenuCardCanvas({
               </h2>
             </div>
 
-            {/* 3. Event Date (NO TOP AND BOTTOM BORDER LINES - MATCHING LED STAGE SCREEN FONT & STYLING 100%) */}
-            <div className="pt-3">
+            {/* Event Date (NO TOP AND BOTTOM BORDER LINES - MATCHING LED STAGE SCREEN FONT & STYLING 100%) */}
+            <div className="pt-2">
               <span
                 className="font-bold text-stone-900 inline-block"
                 style={{
@@ -125,9 +139,6 @@ export default function WeddingMenuCardCanvas({
               </span>
             </div>
           </div>
-
-          {/* Bottom Spacing to account for pre-printed Divider & Footer address in image 2 */}
-          <div className="h-[135px]"></div>
 
         </div>
 
