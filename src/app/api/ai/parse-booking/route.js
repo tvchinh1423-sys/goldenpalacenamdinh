@@ -125,19 +125,18 @@ export async function POST(request) {
 
     // Image provided + Gemini API Key available
     if (imageBase64 && geminiApiKey) {
-      try {
-        const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+      const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
 
-        const promptText = `
+      const promptText = `
 Bạn là trợ lý AI chuyên nghiệp quản lý đặt tiệc tại Nhà hàng Golden Palace Nam Định.
 Hãy đọc toàn bộ hình ảnh này (có thể là hợp đồng tiệc, phiếu đặt cọc tay, hoặc tin nhắn Zalo của khách hàng).
 Hãy bóc tách chính xác các trường thông tin sau:
 1. name: Tên khách hàng (VD: "Anh Chinh", "Chị Mai"...)
 2. phone: Số điện thoại (10 chữ số)
-3. brideGroomNames: Tên chú rể & cô dâu (nếu là tiệc cưới)
+3. brideGroomNames: Tên chú rể & cô dâu (nếu là tiệc cưới, VD: "Đức Hoàng & Thu Hương")
 4. eventType: Loại tiệc (TIEC_CUOI, HOI_NGHI, SINH_NHAT, KHAC)
 5. eventDate: Ngày tổ chức dạng YYYY-MM-DD (nếu có)
-6. venue: Tên sảnh (VD: "Sảnh Diamond", "Sảnh Ruby"...)
+6. venue: Tên sảnh hoặc tầng (VD: "Tầng 3", "Tầng 2", "Sảnh Diamond"...)
 7. mainTables: Số mâm / số bàn chính (dạng số)
 8. budgetPerTable: Giá mâm dự kiến VND (dạng số)
 9. depositAmount: Số tiền cọc đã nhận VND (dạng số)
@@ -158,59 +157,71 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không có markdown code blo
 }
 `;
 
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: 'user',
-                  parts: [
-                    { text: promptText },
-                    {
-                      inlineData: {
-                        mimeType: 'image/jpeg',
-                        data: cleanBase64
+      // Models to try in order of preference
+      const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
+
+      for (const modelName of modelsToTry) {
+        try {
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiApiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [
+                  {
+                    role: 'user',
+                    parts: [
+                      { text: promptText },
+                      {
+                        inlineData: {
+                          mimeType: 'image/jpeg',
+                          data: cleanBase64
+                        }
                       }
-                    }
-                  ]
+                    ]
+                  }
+                ],
+                generationConfig: {
+                  temperature: 0.1,
+                  responseMimeType: 'application/json'
                 }
-              ],
-              generationConfig: {
-                temperature: 0.1,
-                responseMimeType: 'application/json'
-              }
-            })
+              })
+            }
+          );
+
+          if (!response.ok) {
+            console.warn(`Gemini model ${modelName} returned status ${response.status}`);
+            continue;
           }
-        );
 
-        const data = await response.json();
-        const jsonText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          const data = await response.json();
+          const jsonText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-        if (jsonText) {
-          const parsed = JSON.parse(jsonText);
-          return NextResponse.json({
-            success: true,
-            data: {
-              name: parsed.name || '',
-              phone: parsed.phone || '',
-              brideGroomNames: parsed.brideGroomNames || '',
-              eventType: parsed.eventType || 'TIEC_CUOI',
-              eventDate: parsed.eventDate || '',
-              venue: parsed.venue || '',
-              mainTables: Number(parsed.mainTables) || 0,
-              guestCount: (Number(parsed.mainTables) || 0) * 10,
-              budgetPerTable: Number(parsed.budgetPerTable) || 0,
-              depositAmount: Number(parsed.depositAmount) || 0,
-              notes: parsed.notes || ''
-            },
-            source: 'gemini-vision'
-          });
+          if (jsonText) {
+            const cleanJsonText = jsonText.replace(/```json|```/g, '').trim();
+            const parsed = JSON.parse(cleanJsonText);
+            return NextResponse.json({
+              success: true,
+              data: {
+                name: parsed.name || '',
+                phone: parsed.phone || '',
+                brideGroomNames: parsed.brideGroomNames || '',
+                eventType: parsed.eventType || 'TIEC_CUOI',
+                eventDate: parsed.eventDate || '',
+                venue: parsed.venue || '',
+                mainTables: Number(parsed.mainTables) || 0,
+                guestCount: (Number(parsed.mainTables) || 0) * 10,
+                budgetPerTable: Number(parsed.budgetPerTable) || 0,
+                depositAmount: Number(parsed.depositAmount) || 0,
+                notes: parsed.notes || ''
+              },
+              source: `gemini-vision (${modelName})`
+            });
+          }
+        } catch (err) {
+          console.error(`Gemini Vision Error with model ${modelName}:`, err);
         }
-      } catch (err) {
-        console.error('Gemini Vision Parse Error:', err);
       }
     }
 
