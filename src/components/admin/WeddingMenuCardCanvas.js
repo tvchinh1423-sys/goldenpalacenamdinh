@@ -99,7 +99,7 @@ export default function WeddingMenuCardCanvas({
             {normWeddingMenuHeader && (
               <div className="w-full flex justify-center items-center pb-1">
                 <h1
-                  className="text-stone-900 font-bold tracking-[0.24em] uppercase text-center font-serif leading-tight drop-shadow-2xs"
+                  className="text-stone-900 font-bold tracking-[0.14em] uppercase text-center font-serif leading-tight drop-shadow-2xs"
                   style={{
                     fontFamily: `var(--font-cormorant), var(--font-playfair), 'Cormorant Garamond', 'Playfair Display', Georgia, serif`,
                     fontSize: `${coverHeaderFontSize}px`
