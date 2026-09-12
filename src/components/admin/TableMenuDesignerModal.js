@@ -30,6 +30,7 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
   const [dishItemFontSize, setDishItemFontSize] = useState(22);
   const [footerFontSize, setFooterFontSize] = useState(27);
   const [eventDateFontSize, setEventDateFontSize] = useState(30);
+  const [coverHeaderFontSize, setCoverHeaderFontSize] = useState(36);
 
   // Camera & Quick Input Modals
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -455,6 +456,7 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
                     setDishItemFontSize(22);
                     setFooterFontSize(27);
                     setEventDateFontSize(30);
+                    setCoverHeaderFontSize(36);
                   }}
                   className="text-[9px] font-bold text-stone-400 hover:text-amber-300 underline"
                 >
@@ -528,7 +530,7 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
                 </div>
 
                 {/* 5. Ngày Tổ Chức */}
-                <div className="space-y-0.5 col-span-2 sm:col-span-1">
+                <div className="space-y-0.5">
                   <div className="flex justify-between font-semibold text-stone-300">
                     <span>📅 Ngày Tổ Chức</span>
                     <span className="text-amber-400 font-mono font-bold">{eventDateFontSize}px</span>
@@ -539,6 +541,22 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
                     max={60}
                     value={eventDateFontSize}
                     onChange={(e) => setEventDateFontSize(Number(e.target.value))}
+                    className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
+                  />
+                </div>
+
+                {/* 6. Tiêu Đề Bìa (WEDDING MENU) */}
+                <div className="space-y-0.5">
+                  <div className="flex justify-between font-semibold text-stone-300">
+                    <span>👑 Tiêu Đề Bìa (MENU)</span>
+                    <span className="text-amber-400 font-mono font-bold">{coverHeaderFontSize}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={20}
+                    max={60}
+                    value={coverHeaderFontSize}
+                    onChange={(e) => setCoverHeaderFontSize(Number(e.target.value))}
                     className="w-full accent-amber-500 cursor-pointer h-1.5 bg-stone-800 rounded-lg"
                   />
                 </div>
@@ -655,6 +673,7 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
                 dishItemFontSize={dishItemFontSize}
                 footerFontSize={footerFontSize}
                 eventDateFontSize={eventDateFontSize}
+                coverHeaderFontSize={coverHeaderFontSize}
                 menuPreviewRef={menuPreviewRef}
               />
             </div>

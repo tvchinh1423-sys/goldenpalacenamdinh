@@ -53,6 +53,7 @@ export default function WeddingMenuCardCanvas({
   dishItemFontSize = 22,
   footerFontSize = 27,
   eventDateFontSize = 30,
+  coverHeaderFontSize = 36,
   menuPreviewRef
 }) {
   const normWeddingMenuHeader = nfc(weddingMenuHeader);
@@ -89,32 +90,32 @@ export default function WeddingMenuCardCanvas({
         {/* ═══════════════════════════════════════════════════════════════ */}
         {/* PAGE 1 (LEFT): DYNAMIC COVER OVERLAY PAGE */}
         {/* ═══════════════════════════════════════════════════════════════ */}
-        <div className="w-1/2 h-full px-[36px] pt-[125px] pb-[110px] relative flex flex-col justify-between items-center text-center box-border z-10">
+        <div className="w-1/2 h-full px-[36px] pt-[115px] pb-[105px] relative flex flex-col justify-between items-center text-center box-border z-10">
           
-          {/* 1. WEDDING MENU HEADER (DYNAMICALLY EDITABLE e.g. "WEDDING MENU") */}
-          {normWeddingMenuHeader && (
-            <div className="w-full flex justify-center items-center pt-2 pb-1">
-              <h1
-                className="text-stone-900 font-bold tracking-[0.24em] uppercase text-center font-serif leading-tight drop-shadow-2xs"
-                style={{
-                  fontFamily: `var(--font-cormorant), var(--font-playfair), 'Cormorant Garamond', 'Playfair Display', Georgia, serif`,
-                  fontSize: `28px`
-                }}
-              >
-                {normWeddingMenuHeader}
-              </h1>
-            </div>
-          )}
-
-          {/* 2. DYNAMIC WEDDING DETAILS (PARTY TITLE + BRIDE & GROOM NAMES ALWAYS 1 LINE + DATE) */}
-          <div className="my-auto space-y-2.5 py-1 w-full flex flex-col items-center justify-center">
+          {/* DYNAMIC COVER DETAILS (WEDDING MENU HEADER + PARTY TITLE + BRIDE & GROOM + DATE) */}
+          <div className="my-auto space-y-3.5 py-1 w-full flex flex-col items-center justify-center">
             
-            {/* Event Type Title (Lễ Thành Hôn / Lễ Vu Quy) */}
+            {/* 1. WEDDING MENU HEADER (DYNAMICALLY EDITABLE e.g. "WEDDING MENU") */}
+            {normWeddingMenuHeader && (
+              <div className="w-full flex justify-center items-center pb-1">
+                <h1
+                  className="text-stone-900 font-bold tracking-[0.24em] uppercase text-center font-serif leading-tight drop-shadow-2xs"
+                  style={{
+                    fontFamily: `var(--font-cormorant), var(--font-playfair), 'Cormorant Garamond', 'Playfair Display', Georgia, serif`,
+                    fontSize: `${coverHeaderFontSize}px`
+                  }}
+                >
+                  {normWeddingMenuHeader}
+                </h1>
+              </div>
+            )}
+
+            {/* 2. Event Type Title (Lễ Thành Hôn / Lễ Vu Quy) */}
             <p className="text-[38px] text-stone-900 font-normal italic leading-tight" style={{ fontFamily: titleFontFamily }}>
               {normTitle}
             </p>
 
-            {/* Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE WITH ADJUSTABLE FONT SIZE */}
+            {/* 3. Full Bride & Groom Names - STRICTLY ALWAYS ON 1 SINGLE LINE WITH ADJUSTABLE FONT SIZE */}
             <div className="w-full flex justify-center items-center px-1 overflow-hidden">
               <h2
                 className="text-stone-900 font-bold leading-tight tracking-wide text-center whitespace-nowrap max-w-full"
@@ -124,7 +125,7 @@ export default function WeddingMenuCardCanvas({
               </h2>
             </div>
 
-            {/* Event Date (NO TOP AND BOTTOM BORDER LINES - MATCHING LED STAGE SCREEN FONT & STYLING 100%) */}
+            {/* 4. Event Date (NO TOP AND BOTTOM BORDER LINES - MATCHING LED STAGE SCREEN FONT & STYLING 100%) */}
             <div className="pt-2">
               <span
                 className="font-bold text-stone-900 inline-block"
@@ -138,6 +139,7 @@ export default function WeddingMenuCardCanvas({
                 {nfc(formatDateDot(eventDate))}
               </span>
             </div>
+
           </div>
 
         </div>
