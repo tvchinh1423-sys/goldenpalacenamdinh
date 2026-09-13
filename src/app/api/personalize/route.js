@@ -34,6 +34,10 @@ const DEMO_PROFILE = {
   createdAt: new Date().toISOString()
 };
 
+if (!global.gpDeletedProfileIds) {
+  global.gpDeletedProfileIds = new Set();
+}
+
 if (!global.gpProfilesCache) {
   global.gpProfilesCache = [DEMO_PROFILE];
 }
@@ -90,6 +94,10 @@ async function autoCleanExpiredProfiles(profiles) {
 
 // Helper to read saved profiles from DB + Filesystem + Memory
 async function readProfiles() {
+  if (!global.gpDeletedProfileIds) {
+    global.gpDeletedProfileIds = new Set();
+  }
+
   let dbProfiles = [];
   try {
     // ONLY query records tagged specifically as [PERSONALIZE_PROFILE]
@@ -135,27 +143,43 @@ async function readProfiles() {
 
   const map = new Map();
 
-  // If no profiles exist anywhere, initialize demo profile
-  if (!global.gpProfilesCache && fileProfiles.length === 0 && dbProfiles.length === 0) {
-    map.set(DEMO_PROFILE.id, DEMO_PROFILE);
-  }
+  const isDeleted = (p) => {
+    if (!p) return true;
+    if (p.id && global.gpDeletedProfileIds.has(p.id)) return true;
+    if (p.dbLeadId && global.gpDeletedProfileIds.has(p.dbLeadId)) return true;
+    return false;
+  };
 
-  if (global.gpProfilesCache && Array.isArray(global.gpProfilesCache)) {
-    global.gpProfilesCache.forEach(p => {
-      if (p && p.id) map.set(p.id, p);
-    });
-  }
-
-  if (Array.isArray(fileProfiles)) {
-    fileProfiles.forEach(p => {
-      if (p && p.id) map.set(p.id, p);
-    });
-  }
-
+  // Add DB profiles (authoritative primary store)
   if (Array.isArray(dbProfiles)) {
     dbProfiles.forEach(p => {
-      if (p && p.id) map.set(p.id, p);
+      if (p && p.id && !isDeleted(p)) {
+        map.set(p.id, p);
+      }
     });
+  }
+
+  // Add file profiles if not already deleted and not overriding existing DB profile
+  if (Array.isArray(fileProfiles)) {
+    fileProfiles.forEach(p => {
+      if (p && p.id && !isDeleted(p)) {
+        if (!map.has(p.id)) map.set(p.id, p);
+      }
+    });
+  }
+
+  // Add memory profiles if not deleted and not overriding existing DB profile
+  if (global.gpProfilesCache && Array.isArray(global.gpProfilesCache)) {
+    global.gpProfilesCache.forEach(p => {
+      if (p && p.id && !isDeleted(p)) {
+        if (!map.has(p.id)) map.set(p.id, p);
+      }
+    });
+  }
+
+  // Only seed DEMO_PROFILE if 0 profiles exist anywhere and demo-1 was NOT explicitly deleted
+  if (map.size === 0 && !global.gpDeletedProfileIds.has('demo-1') && dbProfiles.length === 0 && fileProfiles.length === 0) {
+    map.set(DEMO_PROFILE.id, DEMO_PROFILE);
   }
 
   let merged = Array.from(map.values()).sort((a, b) => {
@@ -171,6 +195,10 @@ async function readProfiles() {
 
 // Helper to save profile into DB + Filesystem + Memory
 async function persistProfile(profileData) {
+  if (!global.gpDeletedProfileIds) global.gpDeletedProfileIds = new Set();
+  if (profileData.id) global.gpDeletedProfileIds.delete(profileData.id);
+  if (profileData.dbLeadId) global.gpDeletedProfileIds.delete(profileData.dbLeadId);
+
   // 1. Memory update
   let profiles = global.gpProfilesCache || [];
   const cleanPhone = (profileData.phone || '').replace(/[^0-9]/g, '');
@@ -246,36 +274,75 @@ async function persistProfile(profileData) {
 
 // Helper to remove profile from DB + Filesystem + Memory
 async function removeProfile(id) {
-  let profiles = global.gpProfilesCache || [];
-  const target = profiles.find(p => p.id === id);
-  profiles = profiles.filter(p => p.id !== id);
-  global.gpProfilesCache = profiles;
+  if (!global.gpDeletedProfileIds) global.gpDeletedProfileIds = new Set();
+  global.gpDeletedProfileIds.add(id);
 
-  // Update both TMP and LOCAL JSON files immediately
+  // 1. Query Prisma DB to collect any associated lead IDs matching this profile ID
   try {
-    if (fs.existsSync(DATA_FILE_TMP)) {
-      fs.writeFileSync(DATA_FILE_TMP, JSON.stringify(profiles, null, 2), 'utf8');
-    }
-  } catch (e) {}
-
-  try {
-    if (fs.existsSync(DATA_FILE_LOCAL)) {
-      fs.writeFileSync(DATA_FILE_LOCAL, JSON.stringify(profiles, null, 2), 'utf8');
-    }
-  } catch (e) {}
-
-  // Delete from Prisma Database
-  try {
-    await prisma.lead.deleteMany({
+    const matchingLeads = await prisma.lead.findMany({
       where: {
         OR: [
-          { internalNotes: { contains: id } },
-          ...(target?.phone && target.phone.replace(/[^0-9]/g, '').length >= 8 ? [{
-            phone: { contains: target.phone.replace(/[^0-9]/g, '') },
-            internalNotes: { contains: '[PERSONALIZE_PROFILE]' }
-          }] : []),
-          ...(target?.dbLeadId ? [{ id: target.dbLeadId }] : [])
+          { id: id },
+          { internalNotes: { contains: id } }
         ]
+      }
+    });
+    matchingLeads.forEach(l => {
+      global.gpDeletedProfileIds.add(l.id);
+    });
+  } catch (e) {}
+
+  // 2. Locate target in memory or current profile list
+  const currentProfiles = global.gpProfilesCache || [];
+  const target = currentProfiles.find(p => p.id === id || p.dbLeadId === id);
+  if (target) {
+    if (target.id) global.gpDeletedProfileIds.add(target.id);
+    if (target.dbLeadId) global.gpDeletedProfileIds.add(target.dbLeadId);
+  }
+
+  // 3. Filter memory cache
+  const nextProfiles = (global.gpProfilesCache || []).filter(p => (
+    p.id !== id &&
+    p.dbLeadId !== id &&
+    !global.gpDeletedProfileIds.has(p.id) &&
+    !global.gpDeletedProfileIds.has(p.dbLeadId)
+  ));
+  global.gpProfilesCache = nextProfiles;
+
+  // 4. Update /tmp and local files immediately
+  try {
+    if (fs.existsSync(DATA_FILE_TMP)) {
+      fs.writeFileSync(DATA_FILE_TMP, JSON.stringify(nextProfiles, null, 2), 'utf8');
+    }
+  } catch (e) {}
+  try {
+    if (fs.existsSync(DATA_FILE_LOCAL)) {
+      fs.writeFileSync(DATA_FILE_LOCAL, JSON.stringify(nextProfiles, null, 2), 'utf8');
+    }
+  } catch (e) {}
+
+  // 5. Delete thoroughly from Prisma Database
+  try {
+    const deleteConditions = [
+      { id: id },
+      { internalNotes: { contains: id } }
+    ];
+
+    if (target?.dbLeadId) deleteConditions.push({ id: target.dbLeadId });
+    if (target?.id) deleteConditions.push({ internalNotes: { contains: target.id } });
+    if (target?.phone) {
+      const cleanP = target.phone.replace(/[^0-9]/g, '');
+      if (cleanP.length >= 8) {
+        deleteConditions.push({
+          phone: { contains: cleanP },
+          internalNotes: { contains: '[PERSONALIZE_PROFILE]' }
+        });
+      }
+    }
+
+    await prisma.lead.deleteMany({
+      where: {
+        OR: deleteConditions
       }
     });
   } catch (e) {

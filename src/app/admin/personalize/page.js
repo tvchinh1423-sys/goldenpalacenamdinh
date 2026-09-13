@@ -91,11 +91,11 @@ export default function AdminPersonalizePage() {
     try {
       // Optimistically update UI
       setProfiles(prev => {
-        const next = prev.filter(p => p.id !== id);
+        const next = prev.filter(p => p.id !== id && p.dbLeadId !== id);
         try { localStorage.setItem('gp_admin_personalize_cache', JSON.stringify(next)); } catch (e) {}
         return next;
       });
-      if (selectedProfile?.id === id) setSelectedProfile(null);
+      if (selectedProfile?.id === id || selectedProfile?.dbLeadId === id) setSelectedProfile(null);
 
       const res = await fetch(`/api/personalize?id=${id}`, { method: 'DELETE' });
       const data = await res.json();
