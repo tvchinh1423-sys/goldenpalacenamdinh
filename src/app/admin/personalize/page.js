@@ -30,6 +30,39 @@ export default function AdminPersonalizePage() {
   const [editingProfile, setEditingProfile] = useState(null); // Edit profile modal state
   const [menuModalProfile, setMenuModalProfile] = useState(null); // Table Menu modal state
   
+  // Drive Link verification state for Edit Modal
+  const [editDriveChecking, setEditDriveChecking] = useState(false);
+  const [editDriveStatus, setEditDriveStatus] = useState(null);
+
+  const verifyEditDriveLink = async (linkUrl) => {
+    if (!linkUrl || !linkUrl.trim()) {
+      setEditDriveStatus(null);
+      return;
+    }
+    setEditDriveChecking(true);
+    try {
+      const res = await fetch('/api/check-drive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: linkUrl })
+      });
+      const data = await res.json();
+      setEditDriveStatus(data);
+    } catch (err) {
+      setEditDriveStatus({ isPublic: false, error: 'Không thể kiểm tra đường dẫn này' });
+    } finally {
+      setEditDriveChecking(false);
+    }
+  };
+
+  useEffect(() => {
+    if (editingProfile?.driveLink && editingProfile?.driveLink.trim()) {
+      verifyEditDriveLink(editingProfile.driveLink);
+    } else {
+      setEditDriveStatus(null);
+    }
+  }, [editingProfile?.id]);
+
   // Date Filtering State
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -513,14 +546,69 @@ export default function AdminPersonalizePage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold mb-1">Link Google Drive Ảnh & Video</label>
+              {/* Link Google Drive (Kiểm tra quyền truy cập công khai & định dạng chuẩn như Web) */}
+              <div className="bg-stone-50 border border-stone-200 p-3.5 rounded-xl space-y-1.5">
+                <label className="block text-stone-800 font-bold uppercase tracking-wider text-[11px] flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-base text-blue-600">cloud_upload</span>
+                    <span>Link Google Drive / Cloud chứa Ảnh & Video Cưới (Không bắt buộc):</span>
+                  </span>
+                  {editDriveChecking && (
+                    <span className="text-[10px] text-cyan-600 font-bold flex items-center gap-1 animate-pulse">
+                      <span className="material-symbols-outlined text-xs animate-spin">sync</span>
+                      Đang kiểm tra...
+                    </span>
+                  )}
+                </label>
                 <input
                   type="url"
                   value={editingProfile.driveLink || ''}
-                  onChange={(e) => setEditingProfile({ ...editingProfile, driveLink: e.target.value })}
-                  className="w-full border rounded-lg px-3 py-2 outline-none font-mono"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setEditingProfile({ ...editingProfile, driveLink: val });
+                    if (editDriveStatus) setEditDriveStatus(null);
+                  }}
+                  onBlur={() => {
+                    if (editingProfile.driveLink && editingProfile.driveLink.trim()) {
+                      verifyEditDriveLink(editingProfile.driveLink);
+                    }
+                  }}
+                  placeholder="Dán link Google Drive / Dropbox (VD: https://drive.google.com/drive/folders/...)"
+                  className={`w-full bg-white border rounded-lg px-3.5 py-2 text-stone-900 font-mono outline-none text-xs transition-colors ${
+                    editDriveStatus && !editDriveStatus.isPublic
+                      ? 'border-amber-500 bg-amber-50'
+                      : editDriveStatus && editDriveStatus.isPublic
+                      ? 'border-emerald-500 bg-emerald-50'
+                      : 'border-stone-300 focus:border-blue-500'
+                  }`}
                 />
+                
+                <p className="text-[11px] text-stone-500 italic flex items-center gap-1 mt-1">
+                  <span className="material-symbols-outlined text-xs text-blue-500">info</span>
+                  Vui lòng mở quyền chia sẻ "Bất kỳ ai có liên kết" để kỹ thuật xem được file
+                </p>
+
+                {/* Drive Check Status Badges & Warnings */}
+                {editDriveChecking && (
+                  <p className="text-[11px] text-cyan-700 italic flex items-center gap-1.5 mt-1.5 animate-pulse bg-cyan-50 p-2 rounded-lg border border-cyan-200">
+                    <span className="material-symbols-outlined text-sm animate-spin text-cyan-600">sync</span>
+                    Đang tự động kiểm tra quyền truy cập link Drive...
+                  </p>
+                )}
+
+                {!editDriveChecking && editDriveStatus && editDriveStatus.isPublic && (
+                  <div className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1.5 mt-1.5 bg-emerald-50 p-2.5 rounded-lg border border-emerald-300">
+                    <span className="material-symbols-outlined text-base text-emerald-600">check_circle</span>
+                    <span>{editDriveStatus.message || 'Link Google Drive đã được mở công khai hợp lệ'}</span>
+                  </div>
+                )}
+
+                {!editDriveChecking && editDriveStatus && !editDriveStatus.isPublic && (
+                  <div className="text-[11px] text-amber-800 font-semibold flex items-center gap-1.5 mt-1.5 bg-amber-50 p-2.5 rounded-lg border border-amber-300 animate-pulse">
+                    <span className="material-symbols-outlined text-base text-amber-600">warning</span>
+                    <span>{editDriveStatus.error || 'Link Google Drive đang bị khóa riêng tư! Vui lòng bật "Bất kỳ ai có liên kết"'}</span>
+                  </div>
+                )}
               </div>
 
               <div>

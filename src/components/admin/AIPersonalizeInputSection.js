@@ -9,6 +9,31 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
   const [statusMsg, setStatusMsg] = useState('');
   const [showMenuSection, setShowMenuSection] = useState(true);
 
+  // Drive Link verification state
+  const [driveChecking, setDriveChecking] = useState(false);
+  const [driveStatus, setDriveStatus] = useState(null);
+
+  const verifyDriveLink = async (linkUrl) => {
+    if (!linkUrl || !linkUrl.trim()) {
+      setDriveStatus(null);
+      return;
+    }
+    setDriveChecking(true);
+    try {
+      const res = await fetch('/api/check-drive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: linkUrl })
+      });
+      const data = await res.json();
+      setDriveStatus(data);
+    } catch (err) {
+      setDriveStatus({ isPublic: false, error: 'Không thể kiểm tra đường dẫn này' });
+    } finally {
+      setDriveChecking(false);
+    }
+  };
+
   const [formData, setFormData] = useState({
     id: '',
     partyTitle: 'LỄ THÀNH HÔN',
@@ -333,6 +358,71 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
                       placeholder="11:00 AM"
                     />
                   </div>
+                </div>
+
+                {/* Link Google Drive / Cloud chứa Ảnh & Video Cưới (LIVE VERIFICATION MATCHING WEB) */}
+                <div className="bg-stone-900 p-3.5 rounded-xl border border-blue-500/30 space-y-1.5 mt-2">
+                  <label className="block text-blue-300 font-bold uppercase tracking-wider text-[11px] flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-base">cloud_upload</span>
+                      <span>Link Google Drive / Cloud chứa Ảnh & Video Cưới (Không bắt buộc):</span>
+                    </span>
+                    {driveChecking && (
+                      <span className="text-[10px] text-cyan-300 font-bold flex items-center gap-1 animate-pulse">
+                        <span className="material-symbols-outlined text-xs animate-spin">sync</span>
+                        Đang kiểm tra...
+                      </span>
+                    )}
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.driveLink || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setFormData({ ...formData, driveLink: val });
+                      if (driveStatus) setDriveStatus(null);
+                    }}
+                    onBlur={() => {
+                      if (formData.driveLink && formData.driveLink.trim()) {
+                        verifyDriveLink(formData.driveLink);
+                      }
+                    }}
+                    placeholder="Dán link Google Drive / Dropbox (VD: https://drive.google.com/drive/folders/...)"
+                    className={`w-full bg-stone-950 border rounded-lg px-3.5 py-2 text-white font-mono outline-none text-xs transition-colors ${
+                      driveStatus && !driveStatus.isPublic
+                        ? 'border-amber-500 bg-amber-500/10'
+                        : driveStatus && driveStatus.isPublic
+                        ? 'border-emerald-500 bg-emerald-500/10'
+                        : 'border-stone-700 focus:border-blue-400'
+                    }`}
+                  />
+                  
+                  <p className="text-[11px] text-stone-400 italic flex items-center gap-1 mt-1">
+                    <span className="material-symbols-outlined text-xs text-blue-400">info</span>
+                    Vui lòng mở quyền chia sẻ "Bất kỳ ai có liên kết" để kỹ thuật xem được file
+                  </p>
+
+                  {/* Drive Check Status Badges & Warnings */}
+                  {driveChecking && (
+                    <p className="text-[11px] text-cyan-300 italic flex items-center gap-1.5 mt-1.5 animate-pulse bg-cyan-950/60 p-2 rounded-lg border border-cyan-800/60">
+                      <span className="material-symbols-outlined text-sm animate-spin text-cyan-400">sync</span>
+                      Đang tự động kiểm tra quyền truy cập link Drive...
+                    </p>
+                  )}
+
+                  {!driveChecking && driveStatus && driveStatus.isPublic && (
+                    <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5 mt-1.5 bg-emerald-950/60 p-2.5 rounded-lg border border-emerald-500/40">
+                      <span className="material-symbols-outlined text-base text-emerald-400">check_circle</span>
+                      <span>{driveStatus.message || 'Link Google Drive đã được mở công khai hợp lệ'}</span>
+                    </div>
+                  )}
+
+                  {!driveChecking && driveStatus && !driveStatus.isPublic && (
+                    <div className="text-[11px] text-amber-300 font-semibold flex items-center gap-1.5 mt-1.5 bg-amber-950/60 p-2.5 rounded-lg border border-amber-500/50 animate-pulse">
+                      <span className="material-symbols-outlined text-base text-amber-400">warning</span>
+                      <span>{driveStatus.error || 'Link Google Drive đang bị khóa riêng tư! Vui lòng bật "Bất kỳ ai có liên kết"'}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
