@@ -208,7 +208,7 @@ Hãy đọc toàn bộ hình ảnh này. Đây có thể là Phiếu BEO (Banque
 
 Hãy phân tích kỹ và bóc tách chính xác các trường thông tin sau:
 1. beoCode: Mã BEO nếu có (VD: "BEO-072")
-2. partyTitle: Tiêu đề sự kiện ghi trên phiếu (VD: "Lễ thành hôn Đức Anh & Thùy Dung", "LỄ THÀNH HÔN", "BÁO GIÁ TIỆC CƯỚI")
+2. partyTitle: CHỈ LẤY TIÊU ĐỀ THỦ TỤC LOẠI TIỆC (VD: "Lễ Vu Quy", "Lễ Thành Hôn", "Báo Hỷ", "Lễ Vọng" - TUYỆT ĐỐI KHÔNG GHÉP TÊN CÔ DÂU CHÚ RỂ VÀO NÀY VÌ TÊN ĐÃ CÓ Ô RIÊNG)
 3. groomName: Tên Chú Rể (VD: "Đức Anh")
 4. brideName: Tên Cô Dâu (VD: "Thùy Dung")
 5. brideGroomNames: Tên ghép Chú rể & Cô dâu (VD: "Đức Anh & Thùy Dung")
@@ -217,7 +217,7 @@ Hãy phân tích kỹ và bóc tách chính xác các trường thông tin sau:
 8. saleStaff: Tên nhân viên sale Bên B và SĐT (VD: "Đỗ Thị Thu Trang - 0906195168")
 9. eventType: Loại tiệc (TIEC_CUOI, HOI_NGHI, SINH_NHAT, KHAC)
 10. eventDate: Ngày tổ chức dạng YYYY-MM-DD (VD: "2026-09-12" nếu trên ảnh ghi 12/09/2026)
-11. venue: Tên sảnh hoặc tầng (VD: "Tầng 2", "Tầng 3", "Sảnh Diamond"...)
+11. venue: Tên tầng tổ chức (VD: "Tầng 1", "Tầng 2", "Tầng 3", "Tầng 4")
 12. mainTables: Số mâm / số bàn chính (VD: Nếu ghi "Đảm bảo 450 khách" hoặc viết tay "450" ➔ số mâm chính là 45. Nếu ghi số mâm 30 ➔ 30).
 13. reserveTables: Số mâm dự phòng (VD: 40 khách ➔ 4 mâm).
 14. budgetPerTable: Giá mâm dự kiến VND (VD: 380.000đ/khách ➔ 3.800.000đ/mâm).
@@ -342,8 +342,12 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
             }
 
             const groomName = parsed.groomName || '';
-            const brideName = parsed.brideName || '';
-            const partyTitle = parsed.partyTitle || (groomName && brideName ? `LỄ THÀNH HÔN ${groomName.toUpperCase()} & ${brideName.toUpperCase()}` : 'LỄ THÀNH HÔN');
+            let rawTitle = (parsed.partyTitle || 'LỄ THÀNH HÔN').trim();
+            if (groomName) rawTitle = rawTitle.replace(new RegExp(groomName, 'gi'), '');
+            if (brideName) rawTitle = rawTitle.replace(new RegExp(brideName, 'gi'), '');
+            rawTitle = rawTitle.replace(/&|và|\+|-/gi, '').replace(/\s+/g, ' ').trim();
+            if (!rawTitle || rawTitle.length < 2) rawTitle = 'LỄ THÀNH HÔN';
+            const partyTitle = rawTitle;
 
             return NextResponse.json({
               success: true,

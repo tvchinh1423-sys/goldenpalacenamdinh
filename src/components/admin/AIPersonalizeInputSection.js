@@ -86,7 +86,12 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
       // PRESERVE EXISTING PROFILE SETTINGS (LED Backdrop, Music, Custom Notes, Registration Fields)
       const groomFinal = existingProfile.groomName || groom;
       const brideFinal = existingProfile.brideName || bride;
-      const titleFinal = existingProfile.partyTitle || parsedData.partyTitle || (groomFinal && brideFinal ? `LỄ THÀNH HÔN ${groomFinal.toUpperCase()} & ${brideFinal.toUpperCase()}` : 'LỄ THÀNH HÔN');
+
+      let titleFinal = existingProfile.partyTitle || parsedData.partyTitle || 'LỄ THÀNH HÔN';
+      if (groomFinal) titleFinal = titleFinal.replace(new RegExp(groomFinal, 'gi'), '');
+      if (brideFinal) titleFinal = titleFinal.replace(new RegExp(brideFinal, 'gi'), '');
+      titleFinal = titleFinal.replace(/&|và|\+|-/gi, '').replace(/\s+/g, ' ').trim();
+      if (!titleFinal || titleFinal.length < 2) titleFinal = 'LỄ THÀNH HÔN';
 
       setFormData({
         id: existingProfile.id,
@@ -117,7 +122,11 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
       setStatusMsg(`✦ Nhận diện SĐT ${parsedData.phone || cleanPhone} đã có hồ sơ! Giữ nguyên Phông LED & Kịch bản cũ, bổ sung Thực đơn tiệc.`);
     } else {
       // NEW PROFILE DETECTED
-      const titleFinal = parsedData.partyTitle || (groom && bride ? `LỄ THÀNH HÔN ${groom.toUpperCase()} & ${bride.toUpperCase()}` : 'LỄ THÀNH HÔN');
+      let titleFinal = parsedData.partyTitle || 'LỄ THÀNH HÔN';
+      if (groom) titleFinal = titleFinal.replace(new RegExp(groom, 'gi'), '');
+      if (bride) titleFinal = titleFinal.replace(new RegExp(bride, 'gi'), '');
+      titleFinal = titleFinal.replace(/&|và|\+|-/gi, '').replace(/\s+/g, ' ').trim();
+      if (!titleFinal || titleFinal.length < 2) titleFinal = 'LỄ THÀNH HÔN';
 
       if (!groom && !bride && !parsedData.phone) {
         alert('⚠️ AI chưa nhận diện được tên hoặc SĐT từ hình ảnh. Vui lòng kiểm tra lại ảnh hoặc dán tin nhắn.');
@@ -295,10 +304,10 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
                       onChange={(e) => setFormData({ ...formData, floorId: e.target.value })}
                       className="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white focus:border-amber-400 outline-none font-bold"
                     >
-                      <option value="FLOOR_1">Tầng 1 - Sảnh Sapphire</option>
-                      <option value="FLOOR_2">Tầng 2 - Sảnh Ruby</option>
-                      <option value="FLOOR_3">Tầng 3 - Sảnh Diamond</option>
-                      <option value="FLOOR_4">Tầng 4 - Sảnh VIP</option>
+                      <option value="FLOOR_1">Tầng 1</option>
+                      <option value="FLOOR_2">Tầng 2</option>
+                      <option value="FLOOR_3">Tầng 3</option>
+                      <option value="FLOOR_4">Tầng 4</option>
                     </select>
                   </div>
                 </div>
