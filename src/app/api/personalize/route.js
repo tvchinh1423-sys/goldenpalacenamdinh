@@ -311,80 +311,111 @@ async function persistProfile(profileData) {
 
 // Helper to remove profile from DB + Filesystem + Memory
 async function removeProfile(id) {
+  if (!id) return;
+  const targetId = String(id).trim();
+
   if (!global.gpDeletedProfileIds) global.gpDeletedProfileIds = new Set();
-  global.gpDeletedProfileIds.add(id);
+  global.gpDeletedProfileIds.add(targetId);
 
-  // 1. Query Prisma DB to collect any associated lead IDs matching this profile ID
-  try {
-    const matchingLeads = await prisma.lead.findMany({
-      where: {
-        OR: [
-          { id: id },
-          { internalNotes: { contains: id } }
-        ]
-      }
-    });
-    matchingLeads.forEach(l => {
-      global.gpDeletedProfileIds.add(l.id);
-    });
-  } catch (e) {}
+  // 1. Load all current profiles from DB & Memory to find matching targets
+  const allProfiles = await readProfiles();
+  const target = allProfiles.find(p => p.id === targetId || p.dbLeadId === targetId);
 
-  // 2. Locate target in memory or current profile list
-  const currentProfiles = global.gpProfilesCache || [];
-  const target = currentProfiles.find(p => p.id === id || p.dbLeadId === id);
   if (target) {
     if (target.id) global.gpDeletedProfileIds.add(target.id);
     if (target.dbLeadId) global.gpDeletedProfileIds.add(target.dbLeadId);
   }
 
-  // 3. Filter memory cache
-  const nextProfiles = (global.gpProfilesCache || []).filter(p => (
-    p.id !== id &&
-    p.dbLeadId !== id &&
+  // 2. Build multi-condition query to locate matching leads in Prisma DB
+  const dbOrConditions = [
+    { id: targetId },
+    { internalNotes: { contains: targetId } }
+  ];
+
+  if (target?.dbLeadId) dbOrConditions.push({ id: target.dbLeadId });
+  if (target?.id) dbOrConditions.push({ internalNotes: { contains: target.id } });
+
+  const cleanPhone = (target?.phone || (targetId.length >= 8 ? targetId : '')).replace(/[^0-9]/g, '');
+  if (cleanPhone && cleanPhone.length >= 8) {
+    dbOrConditions.push({ phone: { contains: cleanPhone } });
+  }
+
+  if (target?.groomName && target?.brideName) {
+    dbOrConditions.push({
+      brideGroomNames: { contains: `${target.groomName}` }
+    });
+  }
+
+  let matchingLeads = [];
+  try {
+    matchingLeads = await prisma.lead.findMany({
+      where: { OR: dbOrConditions }
+    });
+  } catch (e) {
+    console.error('Error finding matching leads for deletion:', e);
+  }
+
+  const leadIdsToDelete = new Set();
+  matchingLeads.forEach(l => leadIdsToDelete.add(l.id));
+  if (target?.dbLeadId) leadIdsToDelete.add(target.dbLeadId);
+  leadIdsToDelete.forEach(lId => global.gpDeletedProfileIds.add(lId));
+
+  // 3. Delete from DB (TableMenu, Proposal, and Lead)
+  if (leadIdsToDelete.size > 0) {
+    const idsArray = Array.from(leadIdsToDelete);
+    try {
+      await prisma.tableMenu.deleteMany({
+        where: { leadId: { in: idsArray } }
+      });
+    } catch (e) {}
+
+    try {
+      await prisma.proposal.deleteMany({
+        where: { leadId: { in: idsArray } }
+      });
+    } catch (e) {}
+
+    try {
+      await prisma.lead.deleteMany({
+        where: { id: { in: idsArray } }
+      });
+      console.log(`Successfully deleted leads from DB:`, idsArray);
+    } catch (e) {
+      console.error('Error deleting leads by ID array from DB:', e);
+    }
+  }
+
+  // Fallback direct deleteMany for internalNotes / OR conditions
+  try {
+    await prisma.lead.deleteMany({
+      where: { OR: dbOrConditions }
+    });
+  } catch (e) {
+    console.error('Error executing fallback deleteMany on leads:', e);
+  }
+
+  // 4. Update in-memory cache
+  const nextCache = (global.gpProfilesCache || []).filter(p => (
+    p.id !== targetId &&
+    p.dbLeadId !== targetId &&
+    !leadIdsToDelete.has(p.dbLeadId) &&
+    !leadIdsToDelete.has(p.id) &&
     !global.gpDeletedProfileIds.has(p.id) &&
     !global.gpDeletedProfileIds.has(p.dbLeadId)
   ));
-  global.gpProfilesCache = nextProfiles;
+  global.gpProfilesCache = nextCache;
 
-  // 4. Update /tmp and local files immediately
+  // 5. Sync to files
   try {
     if (fs.existsSync(DATA_FILE_TMP)) {
-      fs.writeFileSync(DATA_FILE_TMP, JSON.stringify(nextProfiles, null, 2), 'utf8');
+      fs.writeFileSync(DATA_FILE_TMP, JSON.stringify(nextCache, null, 2), 'utf8');
     }
   } catch (e) {}
   try {
     if (fs.existsSync(DATA_FILE_LOCAL)) {
-      fs.writeFileSync(DATA_FILE_LOCAL, JSON.stringify(nextProfiles, null, 2), 'utf8');
+      fs.writeFileSync(DATA_FILE_LOCAL, JSON.stringify(nextCache, null, 2), 'utf8');
     }
   } catch (e) {}
-
-  // 5. Delete thoroughly from Prisma Database
-  try {
-    const deleteConditions = [
-      { id: id },
-      { internalNotes: { contains: id } }
-    ];
-
-    if (target?.dbLeadId) deleteConditions.push({ id: target.dbLeadId });
-    if (target?.id) deleteConditions.push({ internalNotes: { contains: target.id } });
-    if (target?.phone) {
-      const cleanP = target.phone.replace(/[^0-9]/g, '');
-      if (cleanP.length >= 8) {
-        deleteConditions.push({
-          phone: { contains: cleanP },
-          internalNotes: { contains: '[PERSONALIZE_PROFILE]' }
-        });
-      }
-    }
-
-    await prisma.lead.deleteMany({
-      where: {
-        OR: deleteConditions
-      }
-    });
-  } catch (e) {
-    console.error('Error deleting profile from DB:', e);
-  }
 }
 
 export async function GET(req) {
