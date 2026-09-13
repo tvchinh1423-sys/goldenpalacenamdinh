@@ -49,8 +49,26 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
 
     const title = parsedData.partyTitle || (groom && bride ? `LỄ THÀNH HÔN ${groom.toUpperCase()} & ${bride.toUpperCase()}` : 'LỄ THÀNH HÔN');
 
+    // Format full Menu & Beverage Breakdown extracted from BEO
+    const menuFormatted = [];
+    if (parsedData.khaiVi && parsedData.khaiVi.length > 0) {
+      menuFormatted.push(`🥗 KHAI VỊ: ${parsedData.khaiVi.join(' • ')}`);
+    }
+    if (parsedData.monChinh && parsedData.monChinh.length > 0) {
+      menuFormatted.push(`🍲 MÓN CHÍNH: ${parsedData.monChinh.join(' • ')}`);
+    }
+    if (parsedData.trangMieng && parsedData.trangMieng.length > 0) {
+      menuFormatted.push(`🍮 TRÁNG MIỆNG: ${parsedData.trangMieng.join(' • ')}`);
+    }
+    if (parsedData.doUong && parsedData.doUong.length > 0) {
+      menuFormatted.push(`🍺 ĐỒ UỐNG: ${parsedData.doUong.join(' • ')}`);
+    }
+
     let notes = parsedData.notes || '';
-    if (parsedData.beoCode) notes = `Mã BEO: ${parsedData.beoCode} | Khách: ${parsedData.name || ''} (${parsedData.phone || ''}). ${notes}`;
+    if (parsedData.beoCode) notes = `Mã BEO: ${parsedData.beoCode} | Khách: ${parsedData.name || ''} (${parsedData.phone || ''})\n` + notes;
+    if (menuFormatted.length > 0) {
+      notes = `${notes}\n\n[THỰC ĐƠN BEO & ĐỒ UỐNG]\n${menuFormatted.join('\n')}`;
+    }
 
     setFormData({
       partyTitle: title,
@@ -61,7 +79,11 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
       eventTime: '11:00 AM',
       floorId: floor,
       customNotes: notes || 'Trích xuất từ AI Smart Input',
-      driveLink: ''
+      driveLink: '',
+      khaiViText: parsedData.khaiVi ? parsedData.khaiVi.join('\n') : '',
+      monChinhText: parsedData.monChinh ? parsedData.monChinh.join('\n') : '',
+      trangMiengText: parsedData.trangMieng ? parsedData.trangMieng.join('\n') : '',
+      doUongText: parsedData.doUong ? parsedData.doUong.join('\n') : ''
     });
     setIsOpenModal(true);
   };

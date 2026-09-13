@@ -242,8 +242,9 @@ async function persistProfile(profileData) {
       });
     }
 
+    let targetLead = null;
     if (existingLead) {
-      await prisma.lead.update({
+      targetLead = await prisma.lead.update({
         where: { id: existingLead.id },
         data: {
           name: `${profileData.partyTitle} (${profileData.groomName} & ${profileData.brideName})`,
@@ -255,7 +256,7 @@ async function persistProfile(profileData) {
       });
     } else {
       const code = `GP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
-      await prisma.lead.create({
+      targetLead = await prisma.lead.create({
         data: {
           code,
           linkToken: randomUUID(),
@@ -266,6 +267,42 @@ async function persistProfile(profileData) {
           internalNotes: jsonTag
         }
       });
+    }
+
+    // Auto-upsert TableMenu in database if menu categories exist
+    if (targetLead && (profileData.khaiViText || profileData.monChinhText || profileData.doUongText)) {
+      const splitArr = (txt) => txt ? txt.split('\n').map(s => s.trim()).filter(Boolean) : [];
+      const jsonStr = (txt) => JSON.stringify(splitArr(txt));
+
+      const existingMenu = await prisma.tableMenu.findFirst({
+        where: { leadId: targetLead.id }
+      });
+
+      const menuData = {
+        title: profileData.partyTitle || 'WEDDING MENU',
+        brideGroomNames: `${profileData.groomName} & ${profileData.brideName}`,
+        eventDate: profileData.eventDate || '',
+        khaiVi: jsonStr(profileData.khaiViText),
+        monChinh: jsonStr(profileData.monChinhText),
+        trangMieng: jsonStr(profileData.trangMiengText),
+        doUong: jsonStr(profileData.doUongText),
+        footerText: 'Chúc Quý Khách Ngon Miệng!',
+        notes: profileData.customNotes || ''
+      };
+
+      if (existingMenu) {
+        await prisma.tableMenu.update({
+          where: { id: existingMenu.id },
+          data: menuData
+        });
+      } else {
+        await prisma.tableMenu.create({
+          data: {
+            leadId: targetLead.id,
+            ...menuData
+          }
+        });
+      }
     }
   } catch (dbErr) {
     console.error('Error saving profile to Prisma database:', dbErr);

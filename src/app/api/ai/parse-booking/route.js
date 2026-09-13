@@ -148,8 +148,12 @@ Hãy phân tích kỹ và bóc tách chính xác các trường thông tin sau:
 14. budgetPerTable: Giá mâm dự kiến VND (VD: 380.000đ/khách ➔ 3.800.000đ/mâm).
 15. totalAmount: Tổng tạm tính VND (VD: 166400000)
 16. depositAmount: Số tiền cọc đã nhận VND (VD: "Đã cọc 5.000.000đ" ➔ 5000000).
-17. menuDishes: Danh sách các món ăn thực đơn mâm (VD: ["Súp gà ngô nấm", "Salad trứng cá hồi", ...])
-18. notes: Ghi chú dịch vụ yêu cầu (MC, Pháo điện, Màn hình LED 30m2, Bong bóng...)
+17. menuDishes: Toàn bộ danh sách các món ăn thực đơn mâm
+18. khaiVi: Danh sách các món khai vị (súp, salad, gỏi, nộm, chả giò...) dạng mảng
+19. monChinh: Danh sách các món chính (gà, cá, tôm, dê, hải sản, bò, canh, xôi, cơm...) dạng mảng
+20. trangMieng: Danh sách món tráng miệng (caramen, chè, bánh, trái cây...) dạng mảng
+21. doUong: Danh sách đồ uống kèm số lượng/đơn vị từ mục ĐỒ UỐNG (nước suối, bia sài gòn, coca, rượu ta, nước cam...) dạng mảng
+22. notes: Ghi chú dịch vụ yêu cầu (MC, Pháo điện, Màn hình LED 30m2, Bong bóng...)
 
 Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code block, không thêm văn bản khác):
 {
@@ -169,6 +173,10 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
   "budgetPerTable": 3800000,
   "totalAmount": 166400000,
   "depositAmount": 5000000,
+  "khaiVi": ["Súp gà ngô nấm", "Salad trứng cá hồi"],
+  "monChinh": ["Gà rút xương sốt sâm nấm", "Cá lăng hấp xì dầu", "Dê chiên riềng", "Tôm ủ mây", "Hải sản xào sốt XO ( không mực)", "Rau xào theo mùa", "Canh mọc bò viên", "Cơm tám", "Xôi hoàng phố ruốc bông"],
+  "trangMieng": ["Tráng miệng : Caramen"],
+  "doUong": ["Nước suối (2 Chai)", "Bia sài gòn (4 Chai)", "Coca (2 Lon)", "Rượu ta khách mang vào (1 Lít)", "Nước cam (2 Lon)"],
   "menuDishes": [
     "Súp gà ngô nấm",
     "Salad trứng cá hồi",
@@ -252,6 +260,10 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
                 totalAmount: Number(parsed.totalAmount) || 0,
                 depositAmount: Number(parsed.depositAmount) || 0,
                 menuDishes: Array.isArray(parsed.menuDishes) ? parsed.menuDishes : [],
+                khaiVi: Array.isArray(parsed.khaiVi) ? parsed.khaiVi : [],
+                monChinh: Array.isArray(parsed.monChinh) ? parsed.monChinh : [],
+                trangMieng: Array.isArray(parsed.trangMieng) ? parsed.trangMieng : [],
+                doUong: Array.isArray(parsed.doUong) ? parsed.doUong : [],
                 notes: parsed.notes || ''
               },
               source: `gemini-vision (${modelName})`
