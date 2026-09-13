@@ -350,9 +350,16 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
             }
 
             const groomName = parsed.groomName || '';
+            const brideName = parsed.brideName || '';
             let rawTitle = (parsed.partyTitle || 'LỄ THÀNH HÔN').trim();
-            if (groomName) rawTitle = rawTitle.replace(new RegExp(groomName, 'gi'), '');
-            if (brideName) rawTitle = rawTitle.replace(new RegExp(brideName, 'gi'), '');
+            if (groomName) {
+              const safeGroom = groomName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              rawTitle = rawTitle.replace(new RegExp(safeGroom, 'gi'), '');
+            }
+            if (brideName) {
+              const safeBride = brideName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              rawTitle = rawTitle.replace(new RegExp(safeBride, 'gi'), '');
+            }
             rawTitle = rawTitle.replace(/&|và|\+|-/gi, '').replace(/\s+/g, ' ').trim();
             if (!rawTitle || rawTitle.length < 2) rawTitle = 'LỄ THÀNH HÔN';
             const partyTitle = rawTitle;

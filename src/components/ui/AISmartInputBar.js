@@ -199,9 +199,17 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
   const startCamera = async () => {
     setShowCameraModal(true);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
-      });
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+      } catch (e) {
+        // Fallback for Windows desktop/laptop webcams without facingMode 'environment'
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+      }
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
