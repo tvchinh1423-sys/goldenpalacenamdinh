@@ -185,11 +185,6 @@ function smartParseBookingText(text) {
 
 export async function POST(request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await request.json();
     const { imageBase64, rawText } = body;
 
@@ -275,7 +270,7 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
 }
 `;
 
-      const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+      const modelsToTry = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash', 'gemini-1.5-flash'];
       let lastError = '';
 
       for (const modelName of modelsToTry) {

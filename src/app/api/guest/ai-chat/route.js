@@ -100,39 +100,44 @@ export async function POST(request) {
     const geminiApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY;
 
     if (geminiApiKey) {
-      try {
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiApiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: 'user',
-                  parts: [
-                    { text: activeSystemPrompt },
-                    ...messages.map(m => ({
-                      text: `${m.role === 'user' ? 'Khách hàng' : 'Trợ lý AI'}: ${m.content}`
-                    }))
-                  ]
-                }
-              ]
-            })
+      const modelsToTry = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash'];
+      for (const modelName of modelsToTry) {
+        try {
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiApiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [
+                  {
+                    role: 'user',
+                    parts: [
+                      { text: activeSystemPrompt },
+                      ...messages.map(m => ({
+                        text: `${m.role === 'user' ? 'Khách hàng' : 'Trợ lý AI'}: ${m.content}`
+                      }))
+                    ]
+                  }
+                ]
+              })
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (aiText) {
+              return NextResponse.json({
+                reply: aiText,
+                suggestions: generateContextualSuggestions(lowerMsg)
+              });
+            }
           }
-        );
-
-        const data = await response.json();
-        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-        if (aiText) {
-          return NextResponse.json({
-            reply: aiText,
-            suggestions: generateContextualSuggestions(lowerMsg)
-          });
+        } catch (err) {
+          console.error(`Gemini API call error (${modelName}):`, err);
         }
-      } catch (err) {
-        console.error('Gemini API call error, using fallback:', err);
       }
     }
 

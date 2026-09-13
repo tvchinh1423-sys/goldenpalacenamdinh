@@ -71,11 +71,6 @@ function smartClassifyMenuText(text) {
 
 export async function POST(request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await request.json();
     const { imageBase64, rawText } = body;
 
@@ -111,35 +106,43 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất như sau (không kèm markdow
 }
 `;
 
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: 'user',
-                  parts: [
-                    { text: promptText },
+        const modelsToTry = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+        let data = null;
+        for (const modelName of modelsToTry) {
+          try {
+            const res = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${geminiApiKey}`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  contents: [
                     {
-                      inlineData: {
-                        mimeType,
-                        data: cleanBase64
-                      }
+                      role: 'user',
+                      parts: [
+                        { text: promptText },
+                        {
+                          inlineData: {
+                            mimeType,
+                            data: cleanBase64
+                          }
+                        }
+                      ]
                     }
-                  ]
-                }
-              ],
-              generationConfig: {
-                temperature: 0.1,
-                responseMimeType: 'application/json'
+                  ],
+                  generationConfig: {
+                    temperature: 0.1,
+                    responseMimeType: 'application/json'
+                  }
+                })
               }
-            })
-          }
-        );
-
-        const data = await response.json();
+            );
+            if (res.ok) {
+              data = await res.json();
+              break;
+            }
+          } catch (e) {}
+        }
         const jsonText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (jsonText) {
