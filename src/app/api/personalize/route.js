@@ -419,6 +419,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const {
+      id,
       partyTitle,
       groomName,
       brideName,
@@ -436,43 +437,84 @@ export async function POST(req) {
       ledDateFontSize,
       selectedMusic,
       youtubeLinks,
-      customNotes
+      customNotes,
+      khaiViText,
+      monChinhText,
+      trangMiengText,
+      doUongText
     } = body;
 
     const profiles = await readProfiles();
-    const venueName = floorId === 'FLOOR_1' ? 'Tầng 1' : floorId === 'FLOOR_2' ? 'Tầng 2' : floorId === 'FLOOR_4' ? 'Tầng 4' : 'Tầng 3';
-
     const cleanInputPhone = (phone || '').replace(/[^0-9]/g, '');
 
     const existingIndex = profiles.findIndex(p => (
-      (cleanInputPhone && p.phone && p.phone.replace(/[^0-9]/g, '') === cleanInputPhone) ||
-      (p.groomName && groomName && p.groomName === groomName && p.brideName === brideName && p.eventDate === eventDate)
+      (id && p.id === id) ||
+      (cleanInputPhone && cleanInputPhone.length >= 8 && p.phone && p.phone.replace(/[^0-9]/g, '') === cleanInputPhone)
     ));
 
-    const profileData = {
-      id: existingIndex >= 0 ? profiles[existingIndex].id : `prof-${Date.now()}`,
-      partyTitle: partyTitle || `LỄ THÀNH HÔN ${groomName || 'Đức Hoàng'} & ${brideName || 'Thu Hương'}`,
-      groomName: groomName || 'Đức Hoàng',
-      brideName: brideName || 'Thu Hương',
-      phone: phone || 'Chưa cung cấp',
-      eventDate: eventDate || new Date().toISOString().split('T')[0],
-      eventTime: eventTime || '11:00 AM',
-      floorId: floorId || 'FLOOR_3',
-      venueName,
-      driveLink: driveLink || '',
-      ledStatus: ledStatus || 'Đã tùy chỉnh phông LED',
-      ledTemplateId: ledTemplateId || 'led-cosmic-milkyway',
-      ledFont: ledFont || (existingIndex >= 0 && profiles[existingIndex].ledFont) || 'ballet',
-      ledBrideGroomFontSize: ledBrideGroomFontSize ?? (existingIndex >= 0 ? profiles[existingIndex].ledBrideGroomFontSize : 59) ?? 59,
-      ledTitleFontSize: ledTitleFontSize ?? (existingIndex >= 0 ? profiles[existingIndex].ledTitleFontSize : 32) ?? 32,
-      ledDateFontSize: ledDateFontSize ?? (existingIndex >= 0 ? profiles[existingIndex].ledDateFontSize : 24) ?? 24,
-      musicStatus: (selectedMusic && selectedMusic.length > 0) || Object.values(youtubeLinks || {}).some(Boolean) ? 'Đã chọn danh sách nhạc' : 'Không có yêu cầu gì',
-      selectedMusic: selectedMusic || [],
-      youtubeLinks: youtubeLinks || {},
-      customNotes: customNotes || 'Không có ghi chú thêm',
-      createdAt: existingIndex >= 0 ? profiles[existingIndex].createdAt : new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+    const venueName = floorId === 'FLOOR_1' ? 'Tầng 1' : floorId === 'FLOOR_2' ? 'Tầng 2' : floorId === 'FLOOR_4' ? 'Tầng 4' : 'Tầng 3';
+
+    let profileData;
+
+    if (existingIndex >= 0) {
+      // PRESERVE EXISTING PROFILE SETTINGS (LED, Music, Notes) & MERGE MISSING INFO
+      const old = profiles[existingIndex];
+      profileData = {
+        ...old,
+        partyTitle: partyTitle || old.partyTitle,
+        groomName: groomName || old.groomName,
+        brideName: brideName || old.brideName,
+        phone: phone || old.phone,
+        eventDate: eventDate || old.eventDate,
+        eventTime: eventTime || old.eventTime,
+        floorId: floorId || old.floorId,
+        venueName,
+        driveLink: driveLink || old.driveLink,
+        ledTemplateId: old.ledTemplateId || ledTemplateId || 'led-cosmic-milkyway',
+        ledFont: old.ledFont || ledFont || 'ballet',
+        ledBrideGroomFontSize: old.ledBrideGroomFontSize ?? ledBrideGroomFontSize ?? 59,
+        ledTitleFontSize: old.ledTitleFontSize ?? ledTitleFontSize ?? 32,
+        ledDateFontSize: old.ledDateFontSize ?? ledDateFontSize ?? 24,
+        selectedMusic: (old.selectedMusic && old.selectedMusic.length > 0) ? old.selectedMusic : (selectedMusic || []),
+        youtubeLinks: (old.youtubeLinks && Object.values(old.youtubeLinks).some(Boolean)) ? old.youtubeLinks : (youtubeLinks || {}),
+        customNotes: (old.customNotes && old.customNotes !== 'Không có ghi chú thêm') ? old.customNotes : (customNotes || ''),
+        khaiViText: old.khaiViText ? old.khaiViText : (khaiViText || ''),
+        monChinhText: old.monChinhText ? old.monChinhText : (monChinhText || ''),
+        trangMiengText: old.trangMiengText ? old.trangMiengText : (trangMiengText || ''),
+        doUongText: old.doUongText ? old.doUongText : (doUongText || ''),
+        updatedAt: new Date().toISOString()
+      };
+    } else {
+      // NEW PROFILE CREATION
+      profileData = {
+        id: id || `prof-${Date.now()}`,
+        partyTitle: partyTitle || `LỄ THÀNH HÔN ${groomName || ''} & ${brideName || ''}`.trim(),
+        groomName: groomName || '',
+        brideName: brideName || '',
+        phone: phone || '',
+        eventDate: eventDate || new Date().toISOString().split('T')[0],
+        eventTime: eventTime || '11:00 AM',
+        floorId: floorId || 'FLOOR_3',
+        venueName,
+        driveLink: driveLink || '',
+        ledStatus: 'Tự động tạo phông LED mặc định',
+        ledTemplateId: ledTemplateId || 'led-cosmic-milkyway',
+        ledFont: ledFont || 'ballet',
+        ledBrideGroomFontSize: ledBrideGroomFontSize ?? 59,
+        ledTitleFontSize: ledTitleFontSize ?? 32,
+        ledDateFontSize: ledDateFontSize ?? 24,
+        musicStatus: (selectedMusic && selectedMusic.length > 0) ? 'Đã chọn danh sách nhạc' : 'Không có yêu cầu gì',
+        selectedMusic: selectedMusic || [],
+        youtubeLinks: youtubeLinks || {},
+        customNotes: customNotes || '',
+        khaiViText: khaiViText || '',
+        monChinhText: monChinhText || '',
+        trangMiengText: trangMiengText || '',
+        doUongText: doUongText || '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+    }
 
     await persistProfile(profileData);
 
