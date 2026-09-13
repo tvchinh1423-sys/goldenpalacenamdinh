@@ -280,13 +280,21 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
     }
 
     // Fallback if image provided but OCR failed or Gemini API key missing
-    if (imageBase64 || rawText) {
-      const parsed = smartParseBookingText(rawText || '');
+    if (imageBase64 && !geminiApiKey) {
+      return NextResponse.json({
+        success: false,
+        error: 'Chưa cấu hình GEMINI_API_KEY trên Vercel. Vui lòng vào Vercel Dashboard > Settings > Environment Variables thêm GEMINI_API_KEY để AI đọc ảnh tự động.',
+        isApiKeyMissing: true
+      }, { status: 400 });
+    }
+
+    if (rawText) {
+      const parsed = smartParseBookingText(rawText);
       return NextResponse.json({ success: true, data: parsed, source: 'rule-parser-fallback' });
     }
 
     return NextResponse.json(
-      { error: 'Vui lòng cung cấp văn bản hoặc hình ảnh hợp lệ để AI xử lý.' },
+      { error: 'Không nhận diện được nội dung từ hình ảnh. Vui lòng thử lại với ảnh rõ nét hơn hoặc dán tin nhắn Zalo.' },
       { status: 400 }
     );
   } catch (error) {

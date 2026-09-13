@@ -70,15 +70,19 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
       notes = `${notes}\n\n[THỰC ĐƠN BEO & ĐỒ UỐNG]\n${menuFormatted.join('\n')}`;
     }
 
+    if (!groom && !bride && !parsedData.phone) {
+      alert('⚠️ Chưa nhận diện được chữ từ hình ảnh. Vui lòng kiểm tra lại cấu hình GEMINI_API_KEY trên Vercel hoặc dán văn bản tin nhắn Zalo để AI xử lý.');
+    }
+
     setFormData({
       partyTitle: title,
-      groomName: groom || 'Đức Anh',
-      brideName: bride || 'Thùy Dung',
+      groomName: groom || '',
+      brideName: bride || '',
       phone: parsedData.phone || '',
       eventDate: parsedData.eventDate || new Date().toISOString().split('T')[0],
       eventTime: '11:00 AM',
       floorId: floor,
-      customNotes: notes || 'Trích xuất từ AI Smart Input',
+      customNotes: notes || '',
       driveLink: '',
       khaiViText: parsedData.khaiVi ? parsedData.khaiVi.join('\n') : '',
       monChinhText: parsedData.monChinh ? parsedData.monChinh.join('\n') : '',
