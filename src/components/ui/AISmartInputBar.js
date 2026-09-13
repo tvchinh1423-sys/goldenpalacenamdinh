@@ -2,6 +2,54 @@
 
 import { useState, useRef, useEffect } from 'react';
 
+// Cross-Platform Canvas Image Auto-Compressor & HEIC/PNG/JPEG Normalizer
+function compressImageToJpeg(file, maxWidth = 1600, maxHeight = 1600, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type || file.type.includes('pdf')) {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth || height > maxHeight) {
+          if (width > height) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          } else {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const jpegBase64 = canvas.toDataURL('image/jpeg', quality);
+        resolve(jpegBase64);
+      };
+      img.onerror = () => {
+        // Fallback to raw base64 if canvas drawing fails
+        resolve(e.target.result);
+      };
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function AISmartInputBar({ onParsed, className = '' }) {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -30,12 +78,6 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
             return;
           }
         }
-      }
-
-      // 2. Check for Text in Clipboard if focused or pasted
-      const pastedText = clipboardData.getData('text');
-      if (pastedText && pastedText.trim().length > 5) {
-        // If user is pasting into text input, let default event update state or process if clicked Paste button
       }
     };
 
@@ -76,40 +118,38 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
   };
 
   // Process image file (upload or capture or paste)
-  const processImageFile = (file) => {
+  const processImageFile = async (file) => {
     if (!file) return;
 
     setIsLoading(true);
-    setStatusMessage('✦ AI đang đọc chữ từ hình ảnh...');
+    setStatusMessage('✦ AI đang chuẩn hóa & đọc chữ từ hình ảnh...');
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64Data = e.target.result;
-      try {
-        const res = await fetch('/api/ai/parse-booking', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            imageBase64: base64Data,
-            rawText: inputText
-          })
-        });
-        const result = await res.json();
+    try {
+      // Compress & convert iOS HEIC / Android WebP / Windows PNG to standard JPEG
+      const base64Data = await compressImageToJpeg(file);
 
-        if (res.ok && result.success && result.data) {
-          setStatusMessage('✨ AI đã nhận diện hình ảnh thành công!');
-          if (onParsed) onParsed(result.data);
-        } else {
-          setStatusMessage(result.error || 'AI chưa nhận diện được thông tin trên ảnh.');
-        }
-      } catch (err) {
-        console.error('Error processing image:', err);
-        setStatusMessage('Lỗi khi gửi ảnh tới máy chủ AI.');
-      } finally {
-        setIsLoading(false);
+      const res = await fetch('/api/ai/parse-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageBase64: base64Data,
+          rawText: inputText
+        })
+      });
+      const result = await res.json();
+
+      if (res.ok && result.success && result.data) {
+        setStatusMessage('✨ AI đã nhận diện hình ảnh thành công!');
+        if (onParsed) onParsed(result.data);
+      } else {
+        setStatusMessage(result.error || 'AI chưa nhận diện được thông tin trên ảnh.');
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      console.error('Error processing image:', err);
+      setStatusMessage('Lỗi khi gửi ảnh tới máy chủ AI.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Handle Paste Button Click
@@ -126,7 +166,7 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
     } catch (err) {
       console.log('Clipboard API read error, fallback to focus:', err);
     }
-    setStatusMessage('Vui lòng nhấn Ctrl+V (hoặc Cmd+V) để dán văn bản / ảnh vào đây.');
+    setStatusMessage('Vui lòng dán văn bản / hình ảnh trực tiếp vào đây.');
   };
 
   // Handle File Input Change
@@ -134,18 +174,13 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
     const file = e.target.files?.[0];
     if (file) {
       processImageFile(file);
+      // Reset input value so re-selecting same file triggers onChange
+      e.target.value = '';
     }
   };
 
-  // Camera Live Stream Modal handlers
+  // Camera Live Stream Modal handlers (for Webcams on desktop/laptop)
   const startCamera = async () => {
-    // Check if mobile device, fallback to native capture input for simple native UI
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile && cameraFileInputRef.current) {
-      cameraFileInputRef.current.click();
-      return;
-    }
-
     setShowCameraModal(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -156,7 +191,6 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
       }
     } catch (err) {
       console.error('Camera access error:', err);
-      // Fallback to camera file input
       setShowCameraModal(false);
       if (cameraFileInputRef.current) {
         cameraFileInputRef.current.click();
@@ -193,19 +227,21 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
 
   return (
     <div className={`w-full font-inter ${className}`}>
-      {/* Hidden File Inputs */}
+      {/* Hidden File Inputs for native triggers */}
       <input
         type="file"
+        id="gp-ai-file-upload"
         ref={fileInputRef}
         onChange={handleFileChange}
-        accept="image/*,.pdf"
+        accept="image/*,image/heic,image/heif,.heic,.heif,.pdf"
         className="hidden"
       />
       <input
         type="file"
+        id="gp-ai-camera-upload"
         ref={cameraFileInputRef}
         onChange={handleFileChange}
-        accept="image/*"
+        accept="image/*,image/heic,image/heif"
         capture="environment"
         className="hidden"
       />
@@ -237,7 +273,7 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleParseText();
             }}
-            placeholder="Ví dụ: Anh Chinh 0912345678 tiệc cưới sảnh Diamond 20/10 30 mâm cọc 10tr..."
+            placeholder="Ví dụ: Anh Chinh 0912345678 tiệc cưới sảnh Tầng 2 20/10 30 mâm cọc 10tr..."
             className="w-full bg-transparent px-3 py-2 text-xs sm:text-sm text-slate-100 placeholder-slate-400 focus:outline-none font-medium"
             disabled={isLoading}
           />
@@ -256,27 +292,23 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
           </button>
         </div>
 
-        {/* Action Buttons Row (MB Bank Style: Chụp ảnh | Tải ảnh | Dán) */}
+        {/* Action Buttons Row (Native Labels for 100% Cross-Platform iOS/Android/Windows/Mac Compatibility) */}
         <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1 border-t border-slate-800/80">
-          <button
-            type="button"
-            onClick={startCamera}
-            disabled={isLoading}
+          <label
+            htmlFor="gp-ai-camera-upload"
             className="flex items-center justify-center gap-1.5 py-2 px-2 sm:px-3 rounded-xl bg-slate-800/60 hover:bg-amber-500/20 text-slate-200 hover:text-amber-300 border border-slate-700/50 hover:border-amber-500/40 text-xs font-semibold transition-all cursor-pointer group"
           >
             <span className="material-symbols-outlined text-base text-amber-400 group-hover:scale-110 transition-transform">photo_camera</span>
             <span className="truncate">Chụp ảnh</span>
-          </button>
+          </label>
 
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isLoading}
+          <label
+            htmlFor="gp-ai-file-upload"
             className="flex items-center justify-center gap-1.5 py-2 px-2 sm:px-3 rounded-xl bg-slate-800/60 hover:bg-amber-500/20 text-slate-200 hover:text-amber-300 border border-slate-700/50 hover:border-amber-500/40 text-xs font-semibold transition-all cursor-pointer group"
           >
             <span className="material-symbols-outlined text-base text-amber-400 group-hover:scale-110 transition-transform">image</span>
             <span className="truncate">Tải ảnh</span>
-          </button>
+          </label>
 
           <button
             type="button"

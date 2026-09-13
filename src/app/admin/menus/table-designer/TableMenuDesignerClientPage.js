@@ -123,11 +123,28 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
   const handleImageFileSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      sendImageToAI(event.target.result);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          if (w > 1600 || h > 1600) {
+            if (w > h) { h = Math.round((h * 1600) / w); w = 1600; }
+            else { w = Math.round((w * 1600) / h); h = 1600; }
+          }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          sendImageToAI(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = () => sendImageToAI(evt.target.result);
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const sendImageToAI = async (base64Image) => {

@@ -198,8 +198,11 @@ export async function POST(request) {
 
     // Image provided + Gemini API Key available
     if (imageBase64 && geminiApiKey) {
-      const mimeMatch = imageBase64.match(/^data:(image\/[a-zA-Z0-9.-]+);base64,/);
-      const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+      const mimeMatch = imageBase64.match(/^data:([a-zA-Z0-9.-]+\/[a-zA-Z0-9.-]+);base64,/);
+      let mimeType = mimeMatch ? mimeMatch[1].toLowerCase() : 'image/jpeg';
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(mimeType)) {
+        mimeType = 'image/jpeg';
+      }
       const cleanBase64 = imageBase64.replace(/^data:[^;]+;base64,/, '');
 
       const promptText = `
