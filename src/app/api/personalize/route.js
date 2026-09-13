@@ -10,36 +10,12 @@ import prisma from '@/lib/prisma';
 const DATA_FILE_TMP = path.join('/tmp', 'personalize-profiles.json');
 const DATA_FILE_LOCAL = path.join(process.cwd(), 'src', 'data', 'personalize-profiles.json');
 
-const DEMO_PROFILE = {
-  id: 'demo-1',
-  partyTitle: 'LỄ THÀNH HÔN',
-  groomName: 'Đức Hoàng',
-  brideName: 'Thu Hương',
-  phone: '0912345678',
-  eventDate: '2026-11-20',
-  eventTime: '11:00 AM',
-  floorId: 'FLOOR_3',
-  venueName: 'Tầng 3',
-  driveLink: 'https://drive.google.com/drive/folders/demo-golden-palace',
-  ledStatus: 'Đã tùy chỉnh phông LED',
-  ledTemplateId: 'led-cosmic-milkyway',
-  ledFont: 'ballet',
-  ledBrideGroomFontSize: 59,
-  ledTitleFontSize: 32,
-  ledDateFontSize: 24,
-  musicStatus: 'Đã chọn danh sách nhạc',
-  selectedMusic: ['w1', 'e1', 't1', 'd1'],
-  youtubeLinks: { welcome: '', entrance: '', toast: '', dining: '' },
-  customNotes: 'Mở bài "Beautiful in White" khi Chú Rể dắt Cô Dâu vào sảnh sân khấu.',
-  createdAt: new Date().toISOString()
-};
-
 if (!global.gpDeletedProfileIds) {
   global.gpDeletedProfileIds = new Set();
 }
 
 if (!global.gpProfilesCache) {
-  global.gpProfilesCache = [DEMO_PROFILE];
+  global.gpProfilesCache = [];
 }
 
 // Auto-delete profiles 7 days after the eventDate
@@ -52,7 +28,7 @@ async function autoCleanExpiredProfiles(profiles) {
   const expiredDbIds = [];
 
   for (const p of profiles) {
-    if (!p.eventDate || p.id === 'demo-1') {
+    if (!p.eventDate) {
       activeProfiles.push(p);
       continue;
     }
@@ -177,10 +153,7 @@ async function readProfiles() {
     });
   }
 
-  // Only seed DEMO_PROFILE if 0 profiles exist anywhere and demo-1 was NOT explicitly deleted
-  if (map.size === 0 && !global.gpDeletedProfileIds.has('demo-1') && dbProfiles.length === 0 && fileProfiles.length === 0) {
-    map.set(DEMO_PROFILE.id, DEMO_PROFILE);
-  }
+
 
   let merged = Array.from(map.values()).sort((a, b) => {
     return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
