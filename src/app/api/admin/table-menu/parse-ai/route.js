@@ -90,7 +90,9 @@ export async function POST(request) {
     // Option B: Image provided + Gemini API Key available
     if (imageBase64 && geminiApiKey) {
       try {
-        const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+        const mimeMatch = imageBase64.match(/^data:(image\/[a-zA-Z0-9.-]+);base64,/);
+        const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+        const cleanBase64 = imageBase64.replace(/^data:[^;]+;base64,/, '');
 
         const promptText = `
 Bạn là chuyên gia nhận diện hình ảnh và phân loại thực đơn tiệc cưới tại Việt Nam.
@@ -122,7 +124,7 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất như sau (không kèm markdow
                     { text: promptText },
                     {
                       inlineData: {
-                        mimeType: 'image/jpeg',
+                        mimeType,
                         data: cleanBase64
                       }
                     }

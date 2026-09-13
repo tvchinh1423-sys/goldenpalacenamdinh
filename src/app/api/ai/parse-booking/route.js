@@ -41,7 +41,6 @@ function smartParseBookingText(text) {
     } else if (unit.includes('k')) {
       depositAmount = num * 1000;
     } else if (num < 1000) {
-      // If someone writes cọc 10 -> assume 10 million
       depositAmount = num * 1000000;
     } else {
       depositAmount = num;
@@ -117,7 +116,7 @@ export async function POST(request) {
 
     const geminiApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY;
 
-    // Direct rawText parse if no image provided or fallback
+    // Direct rawText parse if no image provided
     if (rawText && !imageBase64) {
       const parsed = smartParseBookingText(rawText);
       return NextResponse.json({ success: true, data: parsed, source: 'rule-parser' });
@@ -125,7 +124,9 @@ export async function POST(request) {
 
     // Image provided + Gemini API Key available
     if (imageBase64 && geminiApiKey) {
-      const cleanBase64 = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+      const mimeMatch = imageBase64.match(/^data:(image\/[a-zA-Z0-9.-]+);base64,/);
+      const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+      const cleanBase64 = imageBase64.replace(/^data:[^;]+;base64,/, '');
 
       const promptText = `
 Bạn là trợ lý AI chuyên nghiệp quản lý đặt tiệc tại Nhà hàng Golden Palace Nam Định.
@@ -195,8 +196,8 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
 }
 `;
 
-      // Models to try in order of preference
       const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+      let lastError = '';
 
       for (const modelName of modelsToTry) {
         try {
@@ -213,7 +214,7 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
                       { text: promptText },
                       {
                         inlineData: {
-                          mimeType: 'image/jpeg',
+                          mimeType,
                           data: cleanBase64
                         }
                       }
@@ -229,7 +230,9 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
           );
 
           if (!response.ok) {
-            console.warn(`Gemini model ${modelName} returned status ${response.status}`);
+            const errText = await response.text();
+            lastError = `Gemini (${modelName}): ${response.status} - ${errText.slice(0, 200)}`;
+            console.warn(lastError);
             continue;
           }
 
@@ -265,7 +268,12 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
                 trangMieng: Array.isArray(parsed.trangMieng) ? parsed.trangMieng : [],
                 doUong: Array.isArray(parsed.doUong)
                   ? parsed.doUong
-                      .map(s => String(s).replace(/\s*\(\s*\d+.*?\)/g, '').replace(/\s*\d+\s*(chai|lon|lít|lit|chai\/lon|chai\/bàn|hộp).*/gi, '').trim())
+                      .map(s => String(s)
+                        .replace(/\s*\(\s*\d+.*?\)/g, '')
+                        .replace(/\s*\d+\s*(chai|lon|lít|lit|chai\/lon|chai\/bàn|hộp|thùng).*/gi, '')
+                        .replace(/^(băng|số lượng|sl)\s*:\s*/gi, '')
+                        .trim()
+                      )
                       .filter(Boolean)
                   : [],
                 notes: parsed.notes || ''
@@ -275,7 +283,12 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
           }
         } catch (err) {
           console.error(`Gemini Vision Error with model ${modelName}:`, err);
+          lastError = err.message || String(err);
         }
+      }
+
+      if (lastError) {
+        console.error('All Gemini vision models failed:', lastError);
       }
     }
 
@@ -302,3 +315,4 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
     return NextResponse.json({ error: 'Không thể phân tích dữ liệu' }, { status: 500 });
   }
 }
+
