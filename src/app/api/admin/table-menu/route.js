@@ -2,6 +2,26 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
+import fs from 'fs';
+import path from 'path';
+
+const DATA_FILE_TMP = path.join('/tmp', 'personalize-profiles.json');
+const DATA_FILE_LOCAL = path.join(process.cwd(), 'src', 'data', 'personalize-profiles.json');
+
+function getCachedProfiles() {
+  if (global.gpProfilesCache && Array.isArray(global.gpProfilesCache)) {
+    return global.gpProfilesCache;
+  }
+  try {
+    if (fs.existsSync(DATA_FILE_TMP)) {
+      return JSON.parse(fs.readFileSync(DATA_FILE_TMP, 'utf8'));
+    }
+    if (fs.existsSync(DATA_FILE_LOCAL)) {
+      return JSON.parse(fs.readFileSync(DATA_FILE_LOCAL, 'utf8'));
+    }
+  } catch (e) {}
+  return [];
+}
 
 // GET /api/admin/table-menu?leadId=...
 export async function GET(request) {
@@ -18,27 +38,45 @@ export async function GET(request) {
       return NextResponse.json({ error: 'leadId là bắt buộc' }, { status: 400 });
     }
 
-    // Fetch lead with latest proposal
-    const lead = await prisma.lead.findUnique({
+    // 1. Fetch lead by ID or by internalNotes / phone matching leadId
+    let lead = await prisma.lead.findUnique({
       where: { id: leadId },
       include: {
-        proposals: {
-          orderBy: { version: 'desc' },
-          take: 1
-        },
-        tableMenus: {
-          orderBy: { updatedAt: 'desc' },
-          take: 1
-        }
+        proposals: { orderBy: { version: 'desc' }, take: 1 },
+        tableMenus: { orderBy: { updatedAt: 'desc' }, take: 1 }
       }
     });
 
     if (!lead) {
-      return NextResponse.json({ error: 'Không tìm thấy tiệc / khách hàng' }, { status: 404 });
+      const cleanP = leadId.replace(/[^0-9]/g, '');
+      const searchConditions = [
+        { internalNotes: { contains: leadId } }
+      ];
+      if (cleanP.length >= 8) searchConditions.push({ phone: { contains: cleanP } });
+
+      const matches = await prisma.lead.findMany({
+        where: { OR: searchConditions },
+        include: {
+          proposals: { orderBy: { version: 'desc' }, take: 1 },
+          tableMenus: { orderBy: { updatedAt: 'desc' }, take: 1 }
+        },
+        take: 1
+      });
+      if (matches.length > 0) lead = matches[0];
     }
 
-    const savedMenu = lead.tableMenus[0] || null;
-    const latestProposal = lead.proposals[0];
+    // 2. Fetch profile from cache/file store
+    const profiles = getCachedProfiles();
+    const cleanLId = leadId.replace(/[^0-9]/g, '');
+    const foundProfile = profiles.find(p => (
+      p.id === leadId ||
+      p.dbLeadId === leadId ||
+      (lead && (p.id === lead.id || p.dbLeadId === lead.id)) ||
+      (cleanLId && cleanLId.length >= 8 && p.phone && p.phone.replace(/[^0-9]/g, '') === cleanLId)
+    ));
+
+    const savedMenu = lead?.tableMenus?.[0] || null;
+    const latestProposal = lead?.proposals?.[0];
 
     // Format event date
     let formattedDate = '';
@@ -50,33 +88,30 @@ export async function GET(request) {
       });
     }
 
+    const splitText = (txt) => txt ? txt.split('\n').map(s => s.trim()).filter(Boolean) : [];
+
+    const profileKhaiVi = foundProfile ? splitText(foundProfile.khaiViText) : [];
+    const profileMonChinh = foundProfile ? splitText(foundProfile.monChinhText) : [];
+    const profileTrangMieng = foundProfile ? splitText(foundProfile.trangMiengText) : [];
+    const profileDoUong = foundProfile ? splitText(foundProfile.doUongText) : [];
+
+    const brideGroomFinal = savedMenu?.brideGroomNames
+      || (foundProfile?.groomName && foundProfile?.brideName ? `${foundProfile.groomName} & ${foundProfile.brideName}` : null)
+      || lead?.brideGroomNames
+      || lead?.name
+      || 'Chú Rể & Cô Dâu';
+
     const responseData = {
-      leadId: lead.id,
-      code: lead.code,
-      name: lead.name,
-      brideGroomNames: savedMenu?.brideGroomNames || lead.brideGroomNames || lead.name || 'Minh Quang & Thu Hiền',
-      eventDate: savedMenu?.eventDate || formattedDate || new Date().toLocaleDateString('vi-VN'),
-      title: savedMenu?.title || 'Lễ Thành Hôn',
-      khaiVi: savedMenu ? JSON.parse(savedMenu.khaiVi || '[]') : [
-        'Súp nấm đông trùng hạ thảo',
-        'Salad trứng cá hồi'
-      ],
-      monChinh: savedMenu ? JSON.parse(savedMenu.monChinh || '[]') : [
-        'Cá hồi áp chảo sốt chanh leo',
-        'Tôm hùm chiên bơ tỏi',
-        'Bò hầm vang + bánh mì chuột',
-        'Gà rút xương sốt nấm',
-        'Củ quả luộc chấm kho quẹt',
-        'Canh mọc bò nấm tươi',
-        'Cơm tám',
-        'Xôi hoàng phố ruốc bỏng'
-      ],
-      trangMieng: savedMenu ? JSON.parse(savedMenu.trangMieng || '[]') : [
-        'Sữa chua'
-      ],
-      doUong: savedMenu ? JSON.parse(savedMenu.doUong || '[]') : [
-        'Rượu ta + Rượu vang + Bia + Nước ngọt + Nước lọc'
-      ],
+      leadId: lead?.id || leadId,
+      code: lead?.code || 'GP-PROFILE',
+      name: lead?.name || foundProfile?.partyTitle || 'Khách Đặt Tiệc',
+      brideGroomNames: brideGroomFinal,
+      eventDate: savedMenu?.eventDate || foundProfile?.eventDate || formattedDate || '',
+      title: savedMenu?.title || foundProfile?.partyTitle || 'Lễ Thành Hôn',
+      khaiVi: savedMenu ? JSON.parse(savedMenu.khaiVi || '[]') : profileKhaiVi,
+      monChinh: savedMenu ? JSON.parse(savedMenu.monChinh || '[]') : profileMonChinh,
+      trangMieng: savedMenu ? JSON.parse(savedMenu.trangMieng || '[]') : profileTrangMieng,
+      doUong: savedMenu ? JSON.parse(savedMenu.doUong || '[]') : profileDoUong,
       footerText: savedMenu?.footerText || 'Chúc Quý Khách Ngon Miệng!',
       notes: savedMenu?.notes || '',
       updatedAt: savedMenu?.updatedAt || null

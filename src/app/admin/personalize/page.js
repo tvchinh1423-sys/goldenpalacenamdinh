@@ -971,7 +971,7 @@ export default function AdminPersonalizePage() {
       {/* Table Menu Designer Modal */}
       {menuModalProfile && (
         <TableMenuDesignerModal
-          leadId={menuModalProfile.leadId || menuModalProfile.id}
+          leadId={menuModalProfile.dbLeadId || menuModalProfile.leadId || menuModalProfile.id}
           leadName={menuModalProfile.partyTitle || `${menuModalProfile.groomName} & ${menuModalProfile.brideName}`}
           brideGroomDefault={`${menuModalProfile.groomName} & ${menuModalProfile.brideName}`}
           eventDateDefault={formatDateDot(menuModalProfile.eventDate)}

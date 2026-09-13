@@ -16,12 +16,12 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
   // Form State
   const [weddingMenuHeader, setWeddingMenuHeader] = useState('WEDDING MENU');
   const [title, setTitle] = useState('Lễ Thành Hôn');
-  const [brideGroomNames, setBrideGroomNames] = useState(brideGroomDefault || leadName || 'Minh Quang & Thu Hiền');
-  const [eventDate, setEventDate] = useState(eventDateDefault || new Date().toLocaleDateString('vi-VN'));
-  const [khaiViText, setKhaiViText] = useState('Súp nấm đông trùng hạ thảo\nSalad trứng cá hồi');
-  const [monChinhText, setMonChinhText] = useState('Cá hồi áp chảo sốt chanh leo\nTôm hùm chiên bơ tỏi\nBò hầm vang + bánh mì chuột\nGà rút xương sốt nấm\nCủ quả luộc chấm kho quẹt\nCanh mọc bò nấm tươi\nCơm tám\nXôi hoàng phố ruốc bỏng');
-  const [trangMiengText, setTrangMiengText] = useState('Sữa chua');
-  const [doUongText, setDoUongText] = useState('Rượu ta + Rượu vang + Bia + Nước ngọt + Nước lọc');
+  const [brideGroomNames, setBrideGroomNames] = useState(brideGroomDefault || leadName || '');
+  const [eventDate, setEventDate] = useState(eventDateDefault || '');
+  const [khaiViText, setKhaiViText] = useState('');
+  const [monChinhText, setMonChinhText] = useState('');
+  const [trangMiengText, setTrangMiengText] = useState('');
+  const [doUongText, setDoUongText] = useState('');
   const [footerText, setFooterText] = useState('Chúc Quý Khách Ngon Miệng!');
 
   // Customizable Font Sizes (in px)

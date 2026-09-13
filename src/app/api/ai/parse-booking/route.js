@@ -2,6 +2,64 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth-options';
 
+// Categorize a flat array of dishes into 4 menu groups
+function categorizeDishesList(dishesList = []) {
+  const khaiVi = [];
+  const monChinh = [];
+  const trangMieng = [];
+  const doUong = [];
+
+  dishesList.forEach(item => {
+    if (!item || typeof item !== 'string') return;
+    const clean = item.trim();
+    if (!clean) return;
+    const lower = clean.toLowerCase();
+
+    // Check Do Uong
+    if (/rượu|bia|nước\s*suối|coca|pepsi|7up|nước\s*ngọt|nước\s*lọc|nước\s*cam|nước\s*chanh|hanoibeer|tiger|saigon|sài\s*gòn|heineken/i.test(lower)) {
+      const cleanBeverage = clean
+        .replace(/\s*\(\s*\d+.*?\)/g, '')
+        .replace(/\s*\d+\s*(chai|lon|lít|lit|chai\/lon|chai\/bàn|hộp|thùng).*/gi, '')
+        .replace(/^(băng|số lượng|sl)\s*:\s*/gi, '')
+        .trim();
+      if (cleanBeverage) doUong.push(cleanBeverage);
+    }
+    // Check Khai Vi
+    else if (/súp|soup|salad|gỏi|nộm|chả\s*giò|nem|khai\s*vị/i.test(lower)) {
+      khaiVi.push(clean);
+    }
+    // Check Trang Mieng
+    else if (/tráng\s*miệng|caramen|sữa\s*chua|trái\s*cây|hoa\s*quả|chè|bánh|kem|xôi\s*xoài/i.test(lower)) {
+      trangMieng.push(clean);
+    }
+    // Otherwise Mon Chinh
+    else {
+      monChinh.push(clean);
+    }
+  });
+
+  return { khaiVi, monChinh, trangMieng, doUong };
+}
+
+// Extract dish lines from raw text
+function extractDishesFromBookingText(text) {
+  if (!text) return [];
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const dishes = [];
+
+  lines.forEach(line => {
+    if (/(sđt|điện thoại|ngày|sảnh|tầng|bàn|mâm|cọc|chuyển khoản|giá|tổng|hợp đồng|bên a|bên b|khách)/i.test(line) && !/(gà|cá|tôm|bò|dê|súp|salad|gỏi|nộm|xôi|canh|bia|rượu|chả|nem|lợn|heo|mực)/i.test(line)) {
+      return;
+    }
+    const clean = line.replace(/^[\d\.\-\*\+•\)\s]+/, '').trim();
+    if (clean.length >= 3 && clean.length <= 60 && /(gà|cá|tôm|bò|dê|súp|salad|gỏi|nộm|xôi|canh|bia|rượu|chả|nem|lợn|heo|mực|trái cây|caramen|nước)/i.test(clean)) {
+      dishes.push(clean);
+    }
+  });
+
+  return dishes;
+}
+
 // Smart rule-based parser for Vietnamese booking notes & Zalo text
 function smartParseBookingText(text) {
   if (!text) return {};
@@ -71,6 +129,8 @@ function smartParseBookingText(text) {
 
   // 7. Extract Name / Bride & Groom
   let name = '';
+  let groomName = '';
+  let brideName = '';
   let brideGroomNames = '';
 
   const nameMatch = cleanText.match(/(?:anh|chị|chú|bác|khách|ông|bà)\s+([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-zA-Z\s]{2,25})/i);
@@ -81,25 +141,44 @@ function smartParseBookingText(text) {
   const bgMatch = cleanText.match(/(?:cưới|tiệc cưới|chú rể|cô dâu)\s+([^\.\,\n]+)/i);
   if (bgMatch) {
     brideGroomNames = bgMatch[1].trim();
+    const parts = brideGroomNames.split(/&|và|-|\+/i);
+    if (parts.length >= 2) {
+      groomName = parts[0].trim();
+      brideName = parts[1].trim();
+    }
   }
 
-  // 8. Event Type
-  let eventType = 'TIEC_CUOI';
-  if (lower.includes('sinh nhật') || lower.includes('thượng thọ')) eventType = 'SINH_NHAT';
-  else if (lower.includes('hội nghị') || lower.includes('công ty') || lower.includes('tổng kết')) eventType = 'HOI_NGHI';
-  else if (lower.includes('tiệc cưới') || lower.includes('lễ cưới') || lower.includes('thành hôn')) eventType = 'TIEC_CUOI';
+  let partyTitle = '';
+  const titleMatch = cleanText.match(/(lễ thành hôn|lễ tân hôn|lễ báo hỷ|tiệc cưới|lễ vu quy)/i);
+  if (titleMatch) {
+    partyTitle = (groomName && brideName)
+      ? `${titleMatch[0].toUpperCase()} ${groomName.toUpperCase()} & ${brideName.toUpperCase()}`
+      : titleMatch[0].toUpperCase();
+  }
+
+  // Extract menu dishes from text if present
+  const rawDishes = extractDishesFromBookingText(cleanText);
+  const categorized = categorizeDishesList(rawDishes);
 
   return {
+    partyTitle: partyTitle || (groomName && brideName ? `LỄ THÀNH HÔN ${groomName.toUpperCase()} & ${brideName.toUpperCase()}` : 'LỄ THÀNH HÔN'),
+    groomName,
+    brideName,
     name: name || (brideGroomNames ? `Khách đặt tiệc (${brideGroomNames})` : 'Khách Đặt Tiệc'),
     phone,
     brideGroomNames,
-    eventType,
+    eventType: 'TIEC_CUOI',
     eventDate,
     venue,
     mainTables: mainTables || 0,
     guestCount: mainTables ? mainTables * 10 : 0,
     budgetPerTable,
     depositAmount,
+    menuDishes: rawDishes,
+    khaiVi: categorized.khaiVi,
+    monChinh: categorized.monChinh,
+    trangMieng: categorized.trangMieng,
+    doUong: categorized.doUong,
     notes: cleanText
   };
 }
@@ -134,7 +213,7 @@ Hãy đọc toàn bộ hình ảnh này. Đây có thể là Phiếu BEO (Banque
 
 Hãy phân tích kỹ và bóc tách chính xác các trường thông tin sau:
 1. beoCode: Mã BEO nếu có (VD: "BEO-072")
-2. partyTitle: Tiêu đề sự kiện (VD: "Lễ thành hôn Đức Anh & Thùy Dung")
+2. partyTitle: Tiêu đề sự kiện ghi trên phiếu (VD: "Lễ thành hôn Đức Anh & Thùy Dung", "LỄ THÀNH HÔN", "BÁO GIÁ TIỆC CƯỚI")
 3. groomName: Tên Chú Rể (VD: "Đức Anh")
 4. brideName: Tên Cô Dâu (VD: "Thùy Dung")
 5. brideGroomNames: Tên ghép Chú rể & Cô dâu (VD: "Đức Anh & Thùy Dung")
@@ -149,7 +228,7 @@ Hãy phân tích kỹ và bóc tách chính xác các trường thông tin sau:
 14. budgetPerTable: Giá mâm dự kiến VND (VD: 380.000đ/khách ➔ 3.800.000đ/mâm).
 15. totalAmount: Tổng tạm tính VND (VD: 166400000)
 16. depositAmount: Số tiền cọc đã nhận VND (VD: "Đã cọc 5.000.000đ" ➔ 5000000).
-17. menuDishes: Toàn bộ danh sách các món ăn thực đơn mâm
+17. menuDishes: Toàn bộ danh sách các món ăn thực đơn mâm dạng mảng
 18. khaiVi: Danh sách các món khai vị (súp, salad, gỏi, nộm, chả giò...) dạng mảng
 19. monChinh: Danh sách các món chính (gà, cá, tôm, dê, hải sản, bò, canh, xôi, cơm...) dạng mảng
 20. trangMieng: Danh sách món tráng miệng (caramen, chè, bánh, trái cây...) dạng mảng
@@ -242,16 +321,45 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
           if (jsonText) {
             const cleanJsonText = jsonText.replace(/```json|```/g, '').trim();
             const parsed = JSON.parse(cleanJsonText);
+
+            let khaiVi = Array.isArray(parsed.khaiVi) ? parsed.khaiVi : [];
+            let monChinh = Array.isArray(parsed.monChinh) ? parsed.monChinh : [];
+            let trangMieng = Array.isArray(parsed.trangMieng) ? parsed.trangMieng : [];
+            let doUong = Array.isArray(parsed.doUong)
+              ? parsed.doUong
+                  .map(s => String(s)
+                    .replace(/\s*\(\s*\d+.*?\)/g, '')
+                    .replace(/\s*\d+\s*(chai|lon|lít|lit|chai\/lon|chai\/bàn|hộp|thùng).*/gi, '')
+                    .replace(/^(băng|số lượng|sl)\s*:\s*/gi, '')
+                    .trim()
+                  )
+                  .filter(Boolean)
+              : [];
+            let menuDishes = Array.isArray(parsed.menuDishes) ? parsed.menuDishes : [];
+
+            // FALLBACK DISH CATEGORIZATION: If individual category arrays are empty, auto-group from menuDishes!
+            if ((khaiVi.length === 0 && monChinh.length === 0 && doUong.length === 0) && menuDishes.length > 0) {
+              const autoCat = categorizeDishesList(menuDishes);
+              khaiVi = autoCat.khaiVi;
+              monChinh = autoCat.monChinh;
+              trangMieng = autoCat.trangMieng;
+              doUong = autoCat.doUong;
+            }
+
+            const groomName = parsed.groomName || '';
+            const brideName = parsed.brideName || '';
+            const partyTitle = parsed.partyTitle || (groomName && brideName ? `LỄ THÀNH HÔN ${groomName.toUpperCase()} & ${brideName.toUpperCase()}` : 'LỄ THÀNH HÔN');
+
             return NextResponse.json({
               success: true,
               data: {
                 beoCode: parsed.beoCode || '',
-                partyTitle: parsed.partyTitle || '',
-                groomName: parsed.groomName || '',
-                brideName: parsed.brideName || '',
+                partyTitle,
+                groomName,
+                brideName,
                 name: parsed.name || '',
                 phone: parsed.phone || '',
-                brideGroomNames: parsed.brideGroomNames || (parsed.groomName && parsed.brideName ? `${parsed.groomName} & ${parsed.brideName}` : ''),
+                brideGroomNames: parsed.brideGroomNames || (groomName && brideName ? `${groomName} & ${brideName}` : ''),
                 saleStaff: parsed.saleStaff || '',
                 eventType: parsed.eventType || 'TIEC_CUOI',
                 eventDate: parsed.eventDate || '',
@@ -262,20 +370,11 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
                 budgetPerTable: Number(parsed.budgetPerTable) || 0,
                 totalAmount: Number(parsed.totalAmount) || 0,
                 depositAmount: Number(parsed.depositAmount) || 0,
-                menuDishes: Array.isArray(parsed.menuDishes) ? parsed.menuDishes : [],
-                khaiVi: Array.isArray(parsed.khaiVi) ? parsed.khaiVi : [],
-                monChinh: Array.isArray(parsed.monChinh) ? parsed.monChinh : [],
-                trangMieng: Array.isArray(parsed.trangMieng) ? parsed.trangMieng : [],
-                doUong: Array.isArray(parsed.doUong)
-                  ? parsed.doUong
-                      .map(s => String(s)
-                        .replace(/\s*\(\s*\d+.*?\)/g, '')
-                        .replace(/\s*\d+\s*(chai|lon|lít|lit|chai\/lon|chai\/bàn|hộp|thùng).*/gi, '')
-                        .replace(/^(băng|số lượng|sl)\s*:\s*/gi, '')
-                        .trim()
-                      )
-                      .filter(Boolean)
-                  : [],
+                menuDishes,
+                khaiVi,
+                monChinh,
+                trangMieng,
+                doUong,
                 notes: parsed.notes || ''
               },
               source: `gemini-vision (${modelName})`
@@ -315,4 +414,5 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
     return NextResponse.json({ error: 'Không thể phân tích dữ liệu' }, { status: 500 });
   }
 }
+
 
