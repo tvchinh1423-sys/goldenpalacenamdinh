@@ -129,31 +129,61 @@ export async function POST(request) {
 
       const promptText = `
 Bạn là trợ lý AI chuyên nghiệp quản lý đặt tiệc tại Nhà hàng Golden Palace Nam Định.
-Hãy đọc toàn bộ hình ảnh này (có thể là hợp đồng tiệc, phiếu đặt cọc tay, hoặc tin nhắn Zalo của khách hàng).
-Hãy bóc tách chính xác các trường thông tin sau:
-1. name: Tên khách hàng (VD: "Anh Chinh", "Chị Mai"...)
-2. phone: Số điện thoại (10 chữ số)
-3. brideGroomNames: Tên chú rể & cô dâu (nếu là tiệc cưới, VD: "Đức Hoàng & Thu Hương")
-4. eventType: Loại tiệc (TIEC_CUOI, HOI_NGHI, SINH_NHAT, KHAC)
-5. eventDate: Ngày tổ chức dạng YYYY-MM-DD (nếu có)
-6. venue: Tên sảnh hoặc tầng (VD: "Tầng 3", "Tầng 2", "Sảnh Diamond"...)
-7. mainTables: Số mâm / số bàn chính (dạng số)
-8. budgetPerTable: Giá mâm dự kiến VND (dạng số)
-9. depositAmount: Số tiền cọc đã nhận VND (dạng số)
-10. notes: Ghi chú quan trọng trích xuất từ ảnh
+Hãy đọc toàn bộ hình ảnh này. Đây có thể là Phiếu BEO (Banquet Event Order), hợp đồng tiệc cưới, phiếu đặt cọc tay, hoặc tin nhắn Zalo của nhà hàng Golden Palace.
 
-Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không có markdown code block, không thêm văn bản khác):
+Hãy phân tích kỹ và bóc tách chính xác các trường thông tin sau:
+1. beoCode: Mã BEO nếu có (VD: "BEO-072")
+2. partyTitle: Tiêu đề sự kiện (VD: "Lễ thành hôn Đức Anh & Thùy Dung")
+3. groomName: Tên Chú Rể (VD: "Đức Anh")
+4. brideName: Tên Cô Dâu (VD: "Thùy Dung")
+5. brideGroomNames: Tên ghép Chú rể & Cô dâu (VD: "Đức Anh & Thùy Dung")
+6. name: Tên Khách hàng Bên A (VD: "Cô Ngọc")
+7. phone: Số điện thoại liên hệ Bên A (10 chữ số, VD: "0912162426")
+8. saleStaff: Tên nhân viên sale Bên B và SĐT (VD: "Đỗ Thị Thu Trang - 0906195168")
+9. eventType: Loại tiệc (TIEC_CUOI, HOI_NGHI, SINH_NHAT, KHAC)
+10. eventDate: Ngày tổ chức dạng YYYY-MM-DD (VD: "2026-09-12" nếu trên ảnh ghi 12/09/2026)
+11. venue: Tên sảnh hoặc tầng (VD: "Tầng 2", "Tầng 3", "Sảnh Diamond"...)
+12. mainTables: Số mâm / số bàn chính (VD: Nếu ghi "Đảm bảo 450 khách" hoặc viết tay "450" ➔ số mâm chính là 45. Nếu ghi số mâm 30 ➔ 30).
+13. reserveTables: Số mâm dự phòng (VD: 40 khách ➔ 4 mâm).
+14. budgetPerTable: Giá mâm dự kiến VND (VD: 380.000đ/khách ➔ 3.800.000đ/mâm).
+15. totalAmount: Tổng tạm tính VND (VD: 166400000)
+16. depositAmount: Số tiền cọc đã nhận VND (VD: "Đã cọc 5.000.000đ" ➔ 5000000).
+17. menuDishes: Danh sách các món ăn thực đơn mâm (VD: ["Súp gà ngô nấm", "Salad trứng cá hồi", ...])
+18. notes: Ghi chú dịch vụ yêu cầu (MC, Pháo điện, Màn hình LED 30m2, Bong bóng...)
+
+Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code block, không thêm văn bản khác):
 {
-  "name": "...",
-  "phone": "...",
-  "brideGroomNames": "...",
+  "beoCode": "BEO-072",
+  "partyTitle": "Lễ thành hôn Đức Anh & Thùy Dung",
+  "groomName": "Đức Anh",
+  "brideName": "Thùy Dung",
+  "brideGroomNames": "Đức Anh & Thùy Dung",
+  "name": "Cô Ngọc",
+  "phone": "0912162426",
+  "saleStaff": "Đỗ Thị Thu Trang",
   "eventType": "TIEC_CUOI",
-  "eventDate": "2026-10-20",
-  "venue": "...",
-  "mainTables": 30,
-  "budgetPerTable": 4500000,
-  "depositAmount": 10000000,
-  "notes": "..."
+  "eventDate": "2026-09-12",
+  "venue": "Tầng 2",
+  "mainTables": 45,
+  "reserveTables": 4,
+  "budgetPerTable": 3800000,
+  "totalAmount": 166400000,
+  "depositAmount": 5000000,
+  "menuDishes": [
+    "Súp gà ngô nấm",
+    "Salad trứng cá hồi",
+    "Gà rút xương sốt sâm nấm",
+    "Cá lăng hấp xì dầu",
+    "Dê chiên riềng",
+    "Tôm ủ mây",
+    "Hải sản xào sốt XO ( không mực)",
+    "Rau xào theo mùa",
+    "Canh mọc bò viên",
+    "Cơm tám",
+    "Xôi hoàng phố ruốc bông",
+    "Tráng miệng : Caramen"
+  ],
+  "notes": "Trang trí & Kỹ thuật: Cổng hoa, Pháo điện 6 quả, LED 30m2, LED 10m2, MC 800k..."
 }
 `;
 
@@ -204,16 +234,24 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không có markdown code blo
             return NextResponse.json({
               success: true,
               data: {
+                beoCode: parsed.beoCode || '',
+                partyTitle: parsed.partyTitle || '',
+                groomName: parsed.groomName || '',
+                brideName: parsed.brideName || '',
                 name: parsed.name || '',
                 phone: parsed.phone || '',
-                brideGroomNames: parsed.brideGroomNames || '',
+                brideGroomNames: parsed.brideGroomNames || (parsed.groomName && parsed.brideName ? `${parsed.groomName} & ${parsed.brideName}` : ''),
+                saleStaff: parsed.saleStaff || '',
                 eventType: parsed.eventType || 'TIEC_CUOI',
                 eventDate: parsed.eventDate || '',
                 venue: parsed.venue || '',
                 mainTables: Number(parsed.mainTables) || 0,
+                reserveTables: Number(parsed.reserveTables) || 0,
                 guestCount: (Number(parsed.mainTables) || 0) * 10,
                 budgetPerTable: Number(parsed.budgetPerTable) || 0,
+                totalAmount: Number(parsed.totalAmount) || 0,
                 depositAmount: Number(parsed.depositAmount) || 0,
+                menuDishes: Array.isArray(parsed.menuDishes) ? parsed.menuDishes : [],
                 notes: parsed.notes || ''
               },
               source: `gemini-vision (${modelName})`

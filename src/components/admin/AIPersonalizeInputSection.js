@@ -21,23 +21,24 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
   });
 
   const handleParsed = (parsedData) => {
-    // Split bride and groom names if extracted together
-    let groom = '';
-    let bride = '';
+    let groom = parsedData.groomName || '';
+    let bride = parsedData.brideName || '';
 
-    if (parsedData.brideGroomNames) {
-      const bg = parsedData.brideGroomNames.replace(/chú rể|cô dâu/gi, '').split(/&|và|-|\+/i);
-      if (bg.length >= 2) {
-        groom = bg[0].trim();
-        bride = bg[1].trim();
-      } else {
-        groom = parsedData.brideGroomNames.trim();
+    if (!groom || !bride) {
+      if (parsedData.brideGroomNames) {
+        const bg = parsedData.brideGroomNames.replace(/chú rể|cô dâu/gi, '').split(/&|và|-|\+/i);
+        if (bg.length >= 2) {
+          groom = groom || bg[0].trim();
+          bride = bride || bg[1].trim();
+        } else {
+          groom = groom || parsedData.brideGroomNames.trim();
+        }
+      } else if (parsedData.name) {
+        groom = groom || parsedData.name.replace(/anh|chị|khách/gi, '').trim();
       }
-    } else if (parsedData.name) {
-      groom = parsedData.name.replace(/anh|chị|khách/gi, '').trim();
     }
 
-    let floor = 'FLOOR_3';
+    let floor = 'FLOOR_2';
     if (parsedData.venue) {
       const v = parsedData.venue.toLowerCase();
       if (v.includes('1')) floor = 'FLOOR_1';
@@ -46,15 +47,20 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
       else floor = 'FLOOR_3';
     }
 
+    const title = parsedData.partyTitle || (groom && bride ? `LỄ THÀNH HÔN ${groom.toUpperCase()} & ${bride.toUpperCase()}` : 'LỄ THÀNH HÔN');
+
+    let notes = parsedData.notes || '';
+    if (parsedData.beoCode) notes = `Mã BEO: ${parsedData.beoCode} | Khách: ${parsedData.name || ''} (${parsedData.phone || ''}). ${notes}`;
+
     setFormData({
-      partyTitle: 'LỄ THÀNH HÔN',
-      groomName: groom || 'Đức Hoàng',
-      brideName: bride || 'Thu Hương',
+      partyTitle: title,
+      groomName: groom || 'Đức Anh',
+      brideName: bride || 'Thùy Dung',
       phone: parsedData.phone || '',
       eventDate: parsedData.eventDate || new Date().toISOString().split('T')[0],
       eventTime: '11:00 AM',
       floorId: floor,
-      customNotes: parsedData.notes || 'Trích xuất từ AI Smart Input',
+      customNotes: notes || 'Trích xuất từ AI Smart Input',
       driveLink: ''
     });
     setIsOpenModal(true);
