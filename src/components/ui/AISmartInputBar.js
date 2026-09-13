@@ -5,7 +5,10 @@ import { useState, useRef, useEffect } from 'react';
 // Cross-Platform Canvas Image Auto-Compressor & HEIC/PNG/JPEG Normalizer
 function compressImageToJpeg(file, maxWidth = 1600, maxHeight = 1600, quality = 0.85) {
   return new Promise((resolve, reject) => {
-    if (!file || !file.type || file.type.includes('pdf')) {
+    if (!file) return reject(new Error('No file selected'));
+
+    const isPdf = (file.name && file.name.toLowerCase().endsWith('.pdf')) || (file.type && file.type.toLowerCase().includes('pdf'));
+    if (isPdf) {
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target.result);
       reader.onerror = reject;
@@ -40,8 +43,11 @@ function compressImageToJpeg(file, maxWidth = 1600, maxHeight = 1600, quality = 
         resolve(jpegBase64);
       };
       img.onerror = () => {
-        // Fallback to raw base64 if canvas drawing fails
-        resolve(e.target.result);
+        let res = e.target.result || '';
+        if (typeof res === 'string' && res.startsWith('data:;base64,')) {
+          res = res.replace('data:;base64,', 'data:image/jpeg;base64,');
+        }
+        resolve(res);
       };
       img.src = e.target.result;
     };
@@ -174,12 +180,22 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
     const file = e.target.files?.[0];
     if (file) {
       processImageFile(file);
-      // Reset input value so re-selecting same file triggers onChange
       e.target.value = '';
     }
   };
 
-  // Camera Live Stream Modal handlers (for Webcams on desktop/laptop)
+  // Camera Handler: Mobile uses native camera file input; Windows/Mac Desktop uses Live Webcam Stream Modal
+  const handleCameraClick = (e) => {
+    e?.preventDefault();
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile && cameraFileInputRef.current) {
+      cameraFileInputRef.current.click();
+    } else {
+      startCamera();
+    }
+  };
+
+  // Camera Live Stream Modal handlers (for Webcams on Windows/Mac desktop/laptop)
   const startCamera = async () => {
     setShowCameraModal(true);
     try {
@@ -192,8 +208,9 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
     } catch (err) {
       console.error('Camera access error:', err);
       setShowCameraModal(false);
-      if (cameraFileInputRef.current) {
-        cameraFileInputRef.current.click();
+      // Fallback to opening file dialog if webcam access is denied or unavailable
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
       }
     }
   };
@@ -227,10 +244,9 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
 
   return (
     <div className={`w-full font-inter ${className}`}>
-      {/* Hidden File Inputs for native triggers */}
+      {/* Hidden File Inputs */}
       <input
         type="file"
-        id="gp-ai-file-upload"
         ref={fileInputRef}
         onChange={handleFileChange}
         accept="image/*,image/heic,image/heif,.heic,.heif,.pdf"
@@ -238,7 +254,6 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
       />
       <input
         type="file"
-        id="gp-ai-camera-upload"
         ref={cameraFileInputRef}
         onChange={handleFileChange}
         accept="image/*,image/heic,image/heif"
@@ -292,23 +307,27 @@ export default function AISmartInputBar({ onParsed, className = '' }) {
           </button>
         </div>
 
-        {/* Action Buttons Row (Native Labels for 100% Cross-Platform iOS/Android/Windows/Mac Compatibility) */}
+        {/* Action Buttons Row */}
         <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1 border-t border-slate-800/80">
-          <label
-            htmlFor="gp-ai-camera-upload"
+          <button
+            type="button"
+            onClick={handleCameraClick}
+            disabled={isLoading}
             className="flex items-center justify-center gap-1.5 py-2 px-2 sm:px-3 rounded-xl bg-slate-800/60 hover:bg-amber-500/20 text-slate-200 hover:text-amber-300 border border-slate-700/50 hover:border-amber-500/40 text-xs font-semibold transition-all cursor-pointer group"
           >
             <span className="material-symbols-outlined text-base text-amber-400 group-hover:scale-110 transition-transform">photo_camera</span>
             <span className="truncate">Chụp ảnh</span>
-          </label>
+          </button>
 
-          <label
-            htmlFor="gp-ai-file-upload"
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading}
             className="flex items-center justify-center gap-1.5 py-2 px-2 sm:px-3 rounded-xl bg-slate-800/60 hover:bg-amber-500/20 text-slate-200 hover:text-amber-300 border border-slate-700/50 hover:border-amber-500/40 text-xs font-semibold transition-all cursor-pointer group"
           >
             <span className="material-symbols-outlined text-base text-amber-400 group-hover:scale-110 transition-transform">image</span>
             <span className="truncate">Tải ảnh</span>
-          </label>
+          </button>
 
           <button
             type="button"

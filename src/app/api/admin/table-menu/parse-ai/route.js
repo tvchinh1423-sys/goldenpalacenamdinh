@@ -85,12 +85,17 @@ export async function POST(request) {
     // Option B: Image provided + Gemini API Key available
     if (imageBase64 && geminiApiKey) {
       try {
-        const mimeMatch = imageBase64.match(/^data:([a-zA-Z0-9.-]+\/[a-zA-Z0-9.-]+);base64,/);
-        let mimeType = mimeMatch ? mimeMatch[1].toLowerCase() : 'image/jpeg';
-        if (!['image/jpeg', 'image/png', 'image/webp'].includes(mimeType)) {
-          mimeType = 'image/jpeg';
+        let mimeType = 'image/jpeg';
+        const mimeMatch = imageBase64.match(/^data:([a-zA-Z0-9.-]+\/[a-zA-Z0-9.-]+);base64,/i);
+        if (mimeMatch && ['image/png', 'image/webp'].includes(mimeMatch[1].toLowerCase())) {
+          mimeType = mimeMatch[1].toLowerCase();
         }
-        const cleanBase64 = imageBase64.replace(/^data:[^;]+;base64,/, '');
+
+        let cleanBase64 = imageBase64;
+        if (cleanBase64.includes(';base64,')) {
+          cleanBase64 = cleanBase64.split(';base64,')[1];
+        }
+        cleanBase64 = cleanBase64.trim();
 
         const promptText = `
 Bạn là chuyên gia nhận diện hình ảnh và phân loại thực đơn tiệc cưới tại Việt Nam.
