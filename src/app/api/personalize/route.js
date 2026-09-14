@@ -504,7 +504,7 @@ export async function POST(req) {
         venueName,
         driveLink: driveLink || '',
         ledStatus: 'Tự động tạo phông LED mặc định',
-        ledTemplateId: ledTemplateId || 'led-cosmic-milkyway',
+        ledTemplateId: ledTemplateId || 'led-video-sao-roi',
         ledBgVideo: ledBgVideo || '',
         ledFont: ledFont || 'ballet',
         ledBrideGroomFontSize: ledBrideGroomFontSize ?? 59,

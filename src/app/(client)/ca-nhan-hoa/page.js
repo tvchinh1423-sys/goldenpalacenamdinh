@@ -75,8 +75,8 @@ function PersonalizePageContent() {
   const [selectedFloor, setSelectedFloor] = useState('FLOOR_3');
   const [driveLink, setDriveLink] = useState('');
 
-  // LED State
-  const [selectedLedTemplate, setSelectedLedTemplate] = useState('led-starry-diamond');
+  // LED State (Default: Video Loop Sao Rơi từ Drive)
+  const [selectedLedTemplate, setSelectedLedTemplate] = useState('led-video-sao-roi');
 
   // Music selector state - EMPTY ARRAY BY DEFAULT (NO PRE-SELECTED TRACKS)
   const [selectedTracks, setSelectedTracks] = useState([]);
@@ -239,7 +239,7 @@ function PersonalizePageContent() {
         
         // LED & MUSIC CONFIGURATIONS
         ledStatus: customOverrides.ledStatus || `Đã thiết kế phông màn LED sân khấu (${currentFloorName})`,
-        ledTemplateId: customOverrides.ledTemplateId || selectedLedTemplate || 'led-starry-diamond',
+        ledTemplateId: customOverrides.ledTemplateId || selectedLedTemplate || 'led-video-sao-roi',
         ledBgVideo: customOverrides.ledBgVideo || '',
         ledFont: customOverrides.ledFont || 'ballet',
         ledBrideGroomFontSize: customOverrides.ledBrideGroomFontSize !== undefined ? customOverrides.ledBrideGroomFontSize : 59,
