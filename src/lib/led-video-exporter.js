@@ -1,5 +1,4 @@
-// LED Stage Screen Video Exporter — Robust Cross-Platform Live Video + Clean Transparent Overlay (35Mbps Full HD MP4)
-import { toCanvas } from 'html-to-image';
+// LED Stage Screen Video Exporter — Direct Vector Canvas Engine (Zero Black Box, 100% Moving Video, 35Mbps Full HD MP4)
 
 export async function exportLedVideoWithOverlay({
   videoUrl,
@@ -21,26 +20,21 @@ export async function exportLedVideoWithOverlay({
 }) {
   return new Promise(async (resolve, reject) => {
     try {
-      // Ensure web fonts are loaded into browser engine
-      if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
+      // 1. Load Web Fonts into browser engine
+      if (typeof document !== 'undefined' && document.fonts) {
         try {
+          await Promise.all([
+            document.fonts.load('400 180px "Ballet"'),
+            document.fonts.load('400 180px "Great Vibes"'),
+            document.fonts.load('400 180px "Alex Brush"'),
+            document.fonts.load('900 100px "Playfair Display"'),
+            document.fonts.load('italic 300 130px "Playfair Display"')
+          ]);
           await document.fonts.ready;
         } catch (e) {}
       }
 
-      // 1. Locate live DOM preview node on screen
-      let domNode = document.getElementById(targetNodeId) || 
-                    document.getElementById(fallbackNodeId) || 
-                    document.getElementById(secondaryNodeId);
-
-      if (!domNode) {
-        domNode = document.querySelector('#fullscreen-led-stage-screen') ||
-                  document.querySelector('#led-stage-screen-canvas') ||
-                  document.querySelector('#led-stage-customizer-preview') ||
-                  document.querySelector('[id*="led-stage"]');
-      }
-
-      // Output resolution setup (Full HD 1920x1080 scale matching stage aspect ratio)
+      // 2. Setup Full HD 1920x1080 Output Canvas
       const targetWidth = 1920;
       let ratioMultiplier = 384 / 704;
       if (aspectRatio.includes('336')) ratioMultiplier = 336 / 704;
@@ -53,33 +47,42 @@ export async function exportLedVideoWithOverlay({
       recordCanvas.height = targetHeight;
       const recordCtx = recordCanvas.getContext('2d');
 
-      let overlayCanvas = null;
+      // 3. Load Logo Image
+      const logoImg = new Image();
+      logoImg.crossOrigin = 'anonymous';
+      logoImg.src = '/logo-icon.png';
 
-      // 2. Capture Transparent DOM Overlay by filtering out the <video> tag cleanly (Zero DOM mutations, 100% reliable)
-      if (domNode) {
-        try {
-          overlayCanvas = await toCanvas(domNode, {
-            quality: 1.0,
-            pixelRatio: 2,
-            backgroundColor: null,
-            cacheBust: false,
-            filter: (node) => {
-              // Exclude background <video> and fallback background image divs so overlay is 100% transparent!
-              if (node.tagName === 'VIDEO') return false;
-              if (node.classList && (node.classList.contains('bg-cover') || node.className?.includes?.('bg-cover'))) {
-                return false;
-              }
-              return true;
-            }
-          });
-        } catch (e) {
-          console.warn('DOM Snapshot warning, using clean overlay canvas fallback:', e);
-        }
+      // 4. Find or Create Video Element
+      let domNode = document.getElementById(targetNodeId) || 
+                    document.getElementById(fallbackNodeId) || 
+                    document.getElementById(secondaryNodeId);
+
+      if (!domNode) {
+        domNode = document.querySelector('#fullscreen-led-stage-screen') ||
+                  document.querySelector('#led-stage-screen-canvas') ||
+                  document.querySelector('#led-stage-customizer-preview') ||
+                  document.querySelector('[id*="led-stage"]');
       }
 
-      const videoEl = domNode ? domNode.querySelector('video') : null;
+      let videoEl = domNode ? domNode.querySelector('video') : null;
 
-      // Fallback font setup if overlayCanvas is null
+      if (!videoEl && videoUrl) {
+        videoEl = document.createElement('video');
+        videoEl.crossOrigin = 'anonymous';
+        videoEl.muted = true;
+        videoEl.loop = true;
+        videoEl.playsInline = true;
+        videoEl.src = videoUrl;
+      }
+
+      // Load static background image as fallback
+      const bgImg = new Image();
+      if (imageUrl && !videoUrl) {
+        bgImg.crossOrigin = 'anonymous';
+        bgImg.src = imageUrl;
+      }
+
+      // Font Mapping
       const fontNameMap = {
         ballet: '"Ballet", "Great Vibes", cursive',
         greatvibes: '"Great Vibes", cursive',
@@ -97,8 +100,38 @@ export async function exportLedVideoWithOverlay({
         return dStr;
       };
 
-      const renderFallbackOverlay = () => {
-        // Vertical Spotlight Beam
+      // 5. Pre-warm Video playback
+      if (videoEl) {
+        try {
+          if (videoEl.paused) await videoEl.play();
+        } catch (e) {}
+
+        let retry = 0;
+        while ((videoEl.readyState < 2 || videoEl.currentTime < 0.05) && retry < 30) {
+          await new Promise(r => setTimeout(r, 50));
+          retry++;
+        }
+      }
+
+      // 6. Direct Vector Canvas Frame Renderer (Zero Black Box, Pure Crisp Overlay)
+      const renderVectorFrame = () => {
+        recordCtx.clearRect(0, 0, targetWidth, targetHeight);
+
+        // A. Draw Live Background Video Frame
+        if (videoEl && videoEl.readyState >= 2) {
+          recordCtx.drawImage(videoEl, 0, 0, targetWidth, targetHeight);
+        } else if (bgImg.complete && bgImg.naturalWidth > 0) {
+          recordCtx.drawImage(bgImg, 0, 0, targetWidth, targetHeight);
+        } else {
+          recordCtx.fillStyle = '#050508';
+          recordCtx.fillRect(0, 0, targetWidth, targetHeight);
+        }
+
+        // B. Dark Tint Overlay (25%)
+        recordCtx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        recordCtx.fillRect(0, 0, targetWidth, targetHeight);
+
+        // C. Vertical Spotlight Radial Beam
         const gradient = recordCtx.createRadialGradient(
           targetWidth / 2, 0, 10,
           targetWidth / 2, targetHeight / 2, targetHeight
@@ -109,76 +142,102 @@ export async function exportLedVideoWithOverlay({
         recordCtx.fillStyle = gradient;
         recordCtx.fillRect(0, 0, targetWidth, targetHeight);
 
-        // Content
+        // D. Top-Left Logo Icon
+        if (logoImg.complete && logoImg.naturalWidth > 0) {
+          const logoH = Math.round(targetHeight * 0.14);
+          const logoW = Math.round(logoImg.naturalWidth * (logoH / logoImg.naturalHeight));
+          recordCtx.save();
+          recordCtx.shadowColor = 'rgba(227, 166, 56, 0.85)';
+          recordCtx.shadowBlur = 20;
+          recordCtx.drawImage(logoImg, 75, 55, logoW, logoH);
+          recordCtx.restore();
+        }
+
+        // E. Text Strings
         const normTitle = (partyTitle || 'LỄ THÀNH HÔN').normalize('NFC').toUpperCase();
         const groomNorm = (groomName || 'Đức Hoàng').normalize('NFC');
         const brideNorm = (brideName || 'Thu Hương').normalize('NFC');
         const dateStr = formatDateDot(eventDate);
 
-        // Title
-        const titlePx = Math.round(titleFontSize * 2.8);
-        recordCtx.save();
-        recordCtx.textAlign = 'center';
-        recordCtx.textBaseline = 'middle';
-        recordCtx.fillStyle = '#f8fafc';
-        recordCtx.shadowColor = 'rgba(0, 0, 0, 0.98)';
-        recordCtx.shadowBlur = 20;
-        recordCtx.shadowOffsetY = 4;
-        recordCtx.font = `900 ${titlePx}px "Playfair Display", "Cormorant Garamond", "Times New Roman", serif`;
-        recordCtx.fillText(normTitle, targetWidth / 2, targetHeight * 0.20);
-        recordCtx.restore();
-
-        // Names
-        const groomPx = Math.round(groomFontSize * 2.8);
-        const coupleY = targetHeight * 0.44;
-
-        recordCtx.save();
-        recordCtx.textBaseline = 'middle';
-        recordCtx.shadowColor = 'rgba(0, 0, 0, 0.98)';
-        recordCtx.shadowBlur = 25;
-
-        recordCtx.font = `400 ${groomPx}px ${canvasScriptFont}`;
-        const groomW = recordCtx.measureText(groomNorm).width;
-        const brideW = recordCtx.measureText(brideNorm).width;
-
-        const ampPx = Math.round(groomPx * 0.72);
-        recordCtx.font = `italic 300 ${ampPx}px "Playfair Display", "Times New Roman", serif`;
-        const ampText = '   &   ';
-        const ampW = recordCtx.measureText(ampText).width;
-
-        const totW = groomW + ampW + brideW;
-        let sX = (targetWidth - totW) / 2;
-
-        recordCtx.textAlign = 'left';
-        recordCtx.font = `400 ${groomPx}px ${canvasScriptFont}`;
-        recordCtx.fillStyle = '#f8fafc';
-        recordCtx.fillText(groomNorm, sX, coupleY);
-        sX += groomW;
-
-        recordCtx.font = `italic 300 ${ampPx}px "Playfair Display", "Times New Roman", serif`;
-        recordCtx.fillStyle = '#f1f5f9';
-        recordCtx.fillText(ampText, sX, coupleY);
-        sX += ampW;
-
-        recordCtx.font = `400 ${groomPx}px ${canvasScriptFont}`;
-        recordCtx.fillStyle = '#f8fafc';
-        recordCtx.fillText(brideNorm, sX, coupleY);
-        recordCtx.restore();
-
-        // Date
-        const datePx = Math.round(dateFontSize * 2.6);
+        // 1. Party Title (e.g. LỄ VU QUY)
+        const titlePx = Math.round((titleFontSize || 32) * 3.0);
         recordCtx.save();
         recordCtx.textAlign = 'center';
         recordCtx.textBaseline = 'middle';
         recordCtx.fillStyle = '#f8fafc';
         recordCtx.shadowColor = 'rgba(0, 0, 0, 0.98)';
         recordCtx.shadowBlur = 22;
-        recordCtx.font = `bold ${datePx}px "Playfair Display", "Times New Roman", serif`;
-        recordCtx.fillText(dateStr, targetWidth / 2, targetHeight * 0.68);
+        recordCtx.shadowOffsetY = 5;
+        recordCtx.font = `900 ${titlePx}px "Playfair Display", "Cormorant Garamond", "Times New Roman", serif`;
+        recordCtx.fillText(normTitle, targetWidth / 2, targetHeight * 0.20);
+        recordCtx.restore();
+
+        // 2. Bride & Groom Names (e.g. Đình Minh & Thu Thảo)
+        const groomPx = Math.round((groomFontSize || 59) * 3.2);
+        const coupleY = targetHeight * 0.45;
+
+        recordCtx.save();
+        recordCtx.textBaseline = 'middle';
+        recordCtx.shadowColor = 'rgba(0, 0, 0, 0.98)';
+        recordCtx.shadowBlur = 30;
+        recordCtx.shadowOffsetY = 6;
+
+        // Groom Width
+        recordCtx.font = `400 ${groomPx}px ${canvasScriptFont}`;
+        const groomW = recordCtx.measureText(groomNorm).width;
+
+        // Bride Width
+        const brideW = recordCtx.measureText(brideNorm).width;
+
+        // Ampersand '&' Width in Playfair Display Italic Serif Font
+        const ampPx = Math.round(groomPx * 0.72);
+        recordCtx.font = `italic 300 ${ampPx}px "Playfair Display", "Times New Roman", Didot, serif`;
+        const ampText = '   &   ';
+        const ampW = recordCtx.measureText(ampText).width;
+
+        const totW = groomW + ampW + brideW;
+        let currentX = (targetWidth - totW) / 2;
+
+        // Draw Groom Name (Script Font)
+        recordCtx.textAlign = 'left';
+        recordCtx.font = `400 ${groomPx}px ${canvasScriptFont}`;
+        recordCtx.fillStyle = '#f8fafc';
+        recordCtx.fillText(groomNorm, currentX, coupleY);
+        currentX += groomW;
+
+        // Draw Ampersand '&' (Playfair Display Italic Serif Font)
+        recordCtx.font = `italic 300 ${ampPx}px "Playfair Display", "Times New Roman", Didot, serif`;
+        recordCtx.fillStyle = '#f1f5f9';
+        recordCtx.fillText(ampText, currentX, coupleY);
+        currentX += ampW;
+
+        // Draw Bride Name (Script Font)
+        recordCtx.font = `400 ${groomPx}px ${canvasScriptFont}`;
+        recordCtx.fillStyle = '#f8fafc';
+        recordCtx.fillText(brideNorm, currentX, coupleY);
+        recordCtx.restore();
+
+        // 3. Wedding Date (e.g. 19.09.2026)
+        const datePx = Math.round((dateFontSize || 24) * 2.8);
+        recordCtx.save();
+        recordCtx.textAlign = 'center';
+        recordCtx.textBaseline = 'middle';
+        recordCtx.fillStyle = '#f8fafc';
+        recordCtx.shadowColor = 'rgba(0, 0, 0, 0.98)';
+        recordCtx.shadowBlur = 25;
+        recordCtx.shadowOffsetY = 5;
+        recordCtx.font = `bold ${datePx}px "Playfair Display", "Times New Roman", Didot, serif`;
+        recordCtx.fillText(dateStr, targetWidth / 2, targetHeight * 0.70);
         recordCtx.restore();
       };
 
-      // 3. MediaRecorder stream setup
+      // Render initial 3 warm-up frames
+      for (let i = 0; i < 3; i++) {
+        renderVectorFrame();
+        await new Promise(r => setTimeout(r, 16));
+      }
+
+      // 7. MediaRecorder Stream Recording
       const stream = recordCanvas.captureStream(30);
 
       let mimeType = 'video/mp4';
@@ -210,39 +269,13 @@ export async function exportLedVideoWithOverlay({
         if (e.data && e.data.size > 0) chunks.push(e.data);
       };
 
-      const totalFrames = durationSeconds * 30; // 6s @ 30 FPS = 180 frames
+      const totalFrames = durationSeconds * 30; // 6s @ 30 FPS
       let currentFrame = 0;
-
-      // Ensure video is playing live
-      if (videoEl) {
-        try {
-          if (videoEl.paused) await videoEl.play();
-        } catch (e) {}
-      }
 
       mediaRecorder.start(100);
 
-      // Frame compositor loop: Live Video + Pure Transparent Text Overlay
       const frameInterval = setInterval(() => {
-        recordCtx.clearRect(0, 0, targetWidth, targetHeight);
-
-        // A. Draw live moving background video frame
-        if (videoEl && videoEl.readyState >= 2) {
-          recordCtx.drawImage(videoEl, 0, 0, targetWidth, targetHeight);
-          // Dark tint layer over background video
-          recordCtx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-          recordCtx.fillRect(0, 0, targetWidth, targetHeight);
-        } else {
-          recordCtx.fillStyle = '#050508';
-          recordCtx.fillRect(0, 0, targetWidth, targetHeight);
-        }
-
-        // B. Draw transparent text & logo overlay on top
-        if (overlayCanvas) {
-          recordCtx.drawImage(overlayCanvas, 0, 0, targetWidth, targetHeight);
-        } else {
-          renderFallbackOverlay();
-        }
+        renderVectorFrame();
 
         currentFrame++;
         if (onProgress) onProgress(Math.min(100, Math.round((currentFrame / totalFrames) * 100)));
