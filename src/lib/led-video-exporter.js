@@ -1,4 +1,4 @@
-// LED Stage Screen Video Exporter — 100% Cross-Platform (Windows, macOS, iOS, Android)
+// LED Stage Screen Video Exporter — 100% Cross-Platform (Windows, macOS, iOS, Android) & Seamless Video Loop
 export async function exportLedVideoWithOverlay({
   videoUrl,
   imageUrl,
@@ -286,31 +286,54 @@ export async function exportLedVideoWithOverlay({
         mediaRecorder.start(100);
       };
 
+      const prepareAndStart = async () => {
+        if (videoEl) {
+          try {
+            videoEl.currentTime = 0;
+            await videoEl.play();
+          } catch (e) {}
+
+          // Poll until video decoder has actually loaded and decoded the first valid frame
+          let retry = 0;
+          while ((videoEl.readyState < 2 || videoEl.currentTime < 0.08) && retry < 40) {
+            await new Promise(r => setTimeout(r, 40));
+            retry++;
+          }
+        }
+
+        // Render 5 initial warm-up frames to ensure background, spotlight, logo, and overlay text are 100% active on Frame 0
+        for (let i = 0; i < 5; i++) {
+          renderFrame();
+          await new Promise(r => setTimeout(r, 16));
+        }
+
+        // Now start recording with frame 0 already fully rendered & warm!
+        startRecording();
+      };
+
       if (videoEl) {
         let started = false;
-        videoEl.oncanplaythrough = () => {
+        videoEl.oncanplaythrough = async () => {
           if (!started) {
             started = true;
-            videoEl.play().catch(() => {});
-            startRecording();
+            await prepareAndStart();
           }
         };
-        videoEl.onerror = () => {
+        videoEl.onerror = async () => {
           if (!started) {
             started = true;
-            startRecording();
+            await prepareAndStart();
           }
         };
         videoEl.load();
-        setTimeout(() => {
+        setTimeout(async () => {
           if (!started) {
             started = true;
-            videoEl.play().catch(() => {});
-            startRecording();
+            await prepareAndStart();
           }
         }, 1500);
       } else {
-        startRecording();
+        await prepareAndStart();
       }
     } catch (err) {
       reject(err);
