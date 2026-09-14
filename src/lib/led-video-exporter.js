@@ -1,4 +1,4 @@
-// LED Stage Screen Video Exporter — Renders background video + text overlay + logo onto Canvas & records to 35Mbps Ultra HD MP4
+// LED Stage Screen Video Exporter — 100% Cross-Platform (Windows, macOS, iOS, Android)
 export async function exportLedVideoWithOverlay({
   videoUrl,
   imageUrl,
@@ -24,7 +24,7 @@ export async function exportLedVideoWithOverlay({
         } catch (e) {}
       }
 
-      // 1. Setup Canvas resolution (2560px Ultra 2K QHD scale for max sharpness)
+      // 1. Setup Canvas resolution (2560px Ultra 2K QHD scale)
       const canvas = document.createElement('canvas');
       const targetWidth = 2560;
       let ratioMultiplier = 384 / 704; // default 1.83:1 (Tầng 3)
@@ -59,12 +59,12 @@ export async function exportLedVideoWithOverlay({
         videoEl.src = videoUrl;
       }
 
-      // Font mapping for Canvas ctx.font
+      // Cross-platform Font Mapping (Windows, macOS, iOS, Android fallback fonts)
       const fontNameMap = {
         ballet: '"Ballet", "Great Vibes", cursive',
         greatvibes: '"Great Vibes", cursive',
         alexbrush: '"Alex Brush", cursive',
-        playfair: '"Playfair Display", Didot, serif'
+        playfair: '"Playfair Display", "Times New Roman", Didot, serif'
       };
       const canvasScriptFont = fontNameMap[fontKey] || fontNameMap.ballet;
 
@@ -104,7 +104,7 @@ export async function exportLedVideoWithOverlay({
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Top-Left Logo (Matching h-14 / top-5 left-6 on Web)
+        // Top-Left Logo
         if (logoImg.complete && logoImg.naturalWidth > 0) {
           const logoH = Math.round(canvas.height * 0.14);
           const logoW = Math.round(logoImg.naturalWidth * (logoH / logoImg.naturalHeight));
@@ -122,7 +122,6 @@ export async function exportLedVideoWithOverlay({
         const dateStr = formatDateDot(eventDate);
 
         // 1. Party Title Header (e.g. LỄ VU QUY)
-        // Scaled for 2560px canvas
         const titlePx = Math.round(titleFontSize * 3.7);
         ctx.save();
         ctx.textAlign = 'center';
@@ -131,12 +130,11 @@ export async function exportLedVideoWithOverlay({
         ctx.shadowColor = 'rgba(0, 0, 0, 0.98)';
         ctx.shadowBlur = 25;
         ctx.shadowOffsetY = 6;
-        ctx.font = `900 ${titlePx}px "Playfair Display", "Cormorant Garamond", Didot, serif`;
+        ctx.font = `900 ${titlePx}px "Playfair Display", "Cormorant Garamond", "Times New Roman", serif`;
         ctx.fillText(normTitle, canvas.width / 2, canvas.height * 0.20);
         ctx.restore();
 
         // 2. Bride & Groom Names (e.g. Đình Minh & Thu Thảo)
-        // Scaled for 2560px canvas
         const groomPx = Math.round(groomFontSize * 3.7);
         const coupleY = canvas.height * 0.44;
 
@@ -153,36 +151,35 @@ export async function exportLedVideoWithOverlay({
         // Measure Bride Text Width in Script Font
         const brideWidth = ctx.measureText(brideNorm).width;
 
-        // Measure Ampersand Width in Playfair Display Italic Serif Font (Exact Web Match)
+        // Measure Ampersand Width in Playfair Display Italic Serif Font
         const ampPx = Math.round(groomPx * 0.72);
-        ctx.font = `italic 300 ${ampPx}px "Playfair Display", Didot, serif`;
+        ctx.font = `italic 300 ${ampPx}px "Playfair Display", "Times New Roman", serif`;
         const ampText = '   &   ';
         const ampWidth = ctx.measureText(ampText).width;
 
         const totalWidth = groomWidth + ampWidth + brideWidth;
         let startX = (canvas.width - totalWidth) / 2;
 
-        // Draw Groom Name (Script Font)
+        // Draw Groom Name
         ctx.textAlign = 'left';
         ctx.font = `400 ${groomPx}px ${canvasScriptFont}`;
         ctx.fillStyle = '#f8fafc';
         ctx.fillText(groomNorm, startX, coupleY);
         startX += groomWidth;
 
-        // Draw Ampersand '&' (Playfair Display Italic Serif Font)
-        ctx.font = `italic 300 ${ampPx}px "Playfair Display", Didot, serif`;
+        // Draw Ampersand '&'
+        ctx.font = `italic 300 ${ampPx}px "Playfair Display", "Times New Roman", serif`;
         ctx.fillStyle = '#f1f5f9';
         ctx.fillText(ampText, startX, coupleY);
         startX += ampWidth;
 
-        // Draw Bride Name (Script Font)
+        // Draw Bride Name
         ctx.font = `400 ${groomPx}px ${canvasScriptFont}`;
         ctx.fillStyle = '#f8fafc';
         ctx.fillText(brideNorm, startX, coupleY);
         ctx.restore();
 
         // 3. Wedding Date (e.g. 19.09.2026)
-        // Scaled for 2560px canvas
         const datePx = Math.round(dateFontSize * 3.5);
         ctx.save();
         ctx.textAlign = 'center';
@@ -191,13 +188,12 @@ export async function exportLedVideoWithOverlay({
         ctx.shadowColor = 'rgba(0, 0, 0, 0.98)';
         ctx.shadowBlur = 28;
         ctx.shadowOffsetY = 6;
-        ctx.font = `bold ${datePx}px "Playfair Display", Didot, serif`;
+        ctx.font = `bold ${datePx}px "Playfair Display", "Times New Roman", serif`;
         ctx.fillText(dateStr, canvas.width / 2, canvas.height * 0.68);
         ctx.restore();
       };
 
       const startRecording = () => {
-        // Capture 60 FPS Stream
         const stream = canvas.captureStream(60);
         
         let mimeType = 'video/mp4';
@@ -213,13 +209,22 @@ export async function exportLedVideoWithOverlay({
           }
         }
 
-        // Set 35 Mbps Ultra HD Bitrate for Cinema Sharpness
-        const mediaRecorder = new MediaRecorder(stream, { 
-          mimeType,
-          videoBitsPerSecond: 35000000 
-        });
-        const chunks = [];
+        // Hardware-adaptive Bitrate Selection for maximum cross-platform compatibility
+        let targetBitrate = 35000000;
+        let mediaRecorder = null;
 
+        try {
+          mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: targetBitrate });
+        } catch (e) {
+          try {
+            targetBitrate = 15000000;
+            mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: targetBitrate });
+          } catch (e2) {
+            mediaRecorder = new MediaRecorder(stream, { mimeType });
+          }
+        }
+
+        const chunks = [];
         mediaRecorder.ondataavailable = (e) => {
           if (e.data && e.data.size > 0) chunks.push(e.data);
         };
@@ -239,7 +244,6 @@ export async function exportLedVideoWithOverlay({
         }, 1000 / 60);
 
         mediaRecorder.onstop = () => {
-          // Force MP4 container type so browser saves direct MP4 file to local hard drive
           const blob = new Blob(chunks, { type: 'video/mp4' });
           const url = URL.createObjectURL(blob);
 
@@ -247,18 +251,30 @@ export async function exportLedVideoWithOverlay({
           const brideClean = (brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
           const fileName = `phong-led-san-khau-${groomClean}-${brideClean}.mp4`;
 
-          // Trigger standard browser file download directly to computer drive
-          const link = document.createElement('a');
-          link.style.display = 'none';
-          link.href = url;
-          link.setAttribute('download', fileName);
-          document.body.appendChild(link);
-          link.click();
+          // Detect iOS Safari / iPadOS
+          const isIOS = typeof navigator !== 'undefined' && (
+            /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+          );
 
-          setTimeout(() => {
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-          }, 2500);
+          if (isIOS) {
+            // Mobile Safari fallback trigger
+            const newWin = window.open(url, '_blank');
+            if (!newWin) window.location.href = url;
+          } else {
+            // Desktop (Windows, macOS) & Android cross-browser trigger
+            const link = document.createElement('a');
+            link.style.display = 'none';
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+
+            setTimeout(() => {
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+            }, 3000);
+          }
 
           if (videoEl) {
             videoEl.pause();
