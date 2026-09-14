@@ -1,4 +1,6 @@
-// LED Stage Screen Video Exporter — 100% Cross-Platform (Windows, macOS, iOS, Android) & Seamless Video Loop
+// LED Stage Screen Video Exporter — Direct Live DOM Capture (100% Exact Web Preview Match)
+import { toCanvas } from 'html-to-image';
+
 export async function exportLedVideoWithOverlay({
   videoUrl,
   imageUrl,
@@ -13,6 +15,9 @@ export async function exportLedVideoWithOverlay({
   aspectRatio = '704/384',
   durationSeconds = 8,
   showRings = false,
+  targetNodeId = 'fullscreen-led-stage-screen',
+  fallbackNodeId = 'led-stage-screen-canvas',
+  secondaryNodeId = 'led-stage-customizer-preview',
   onProgress
 }) {
   return new Promise(async (resolve, reject) => {
@@ -24,31 +29,154 @@ export async function exportLedVideoWithOverlay({
         } catch (e) {}
       }
 
-      // 1. Setup Canvas resolution (2560px Ultra 2K QHD scale)
+      // 1. Locate the EXACT live DOM preview container on screen
+      let domNode = document.getElementById(targetNodeId) || 
+                    document.getElementById(fallbackNodeId) || 
+                    document.getElementById(secondaryNodeId);
+
+      if (!domNode) {
+        domNode = document.querySelector('#fullscreen-led-stage-screen') ||
+                  document.querySelector('#led-stage-screen-canvas') ||
+                  document.querySelector('#led-stage-customizer-preview') ||
+                  document.querySelector('[id*="led-stage"]');
+      }
+
+      // MODE A: DIRECT LIVE DOM CAPTURE (100% PIXEL-PERFECT MATCH WITH WEB PREVIEW)
+      if (domNode) {
+        let initialCanvas;
+        try {
+          initialCanvas = await toCanvas(domNode, { quality: 1.0, pixelRatio: 2, cacheBust: false });
+        } catch (e) {
+          await new Promise(r => setTimeout(r, 150));
+          initialCanvas = await toCanvas(domNode, { quality: 1.0, pixelRatio: 2, cacheBust: false });
+        }
+
+        const width = initialCanvas.width;
+        const height = initialCanvas.height;
+
+        const recordCanvas = document.createElement('canvas');
+        recordCanvas.width = width;
+        recordCanvas.height = height;
+        const recordCtx = recordCanvas.getContext('2d');
+
+        // Draw initial frame immediately (Zero black initial frame at 00:00!)
+        recordCtx.drawImage(initialCanvas, 0, 0);
+
+        const videoEl = domNode.querySelector('video');
+
+        const stream = recordCanvas.captureStream(30);
+
+        let mimeType = 'video/mp4';
+        if (typeof MediaRecorder !== 'undefined') {
+          if (MediaRecorder.isTypeSupported('video/mp4;codecs=avc1.42E01E')) {
+            mimeType = 'video/mp4;codecs=avc1.42E01E';
+          } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+            mimeType = 'video/mp4';
+          } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+            mimeType = 'video/webm;codecs=vp9';
+          } else {
+            mimeType = 'video/webm';
+          }
+        }
+
+        let mediaRecorder = null;
+        try {
+          mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 25000000 });
+        } catch (e) {
+          mediaRecorder = new MediaRecorder(stream, { mimeType });
+        }
+
+        const chunks = [];
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        const totalFrames = durationSeconds * 30;
+        let currentFrame = 0;
+
+        mediaRecorder.start(100);
+
+        const frameInterval = setInterval(async () => {
+          try {
+            // Capture live DOM element frame directly from web page
+            const frameCanvas = await toCanvas(domNode, { quality: 1.0, pixelRatio: 2, cacheBust: false });
+            recordCtx.clearRect(0, 0, width, height);
+
+            if (videoEl && videoEl.readyState >= 2) {
+              recordCtx.drawImage(videoEl, 0, 0, width, height);
+            }
+            recordCtx.drawImage(frameCanvas, 0, 0, width, height);
+
+            currentFrame++;
+            const pct = Math.min(100, Math.round((currentFrame / totalFrames) * 100));
+            if (onProgress) onProgress(pct);
+
+            if (currentFrame >= totalFrames) {
+              clearInterval(frameInterval);
+              mediaRecorder.stop();
+            }
+          } catch (err) {
+            console.error('DOM Frame capture error:', err);
+          }
+        }, 1000 / 30);
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'video/mp4' });
+          const url = URL.createObjectURL(blob);
+
+          const groomClean = (groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+          const brideClean = (brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+          const fileName = `phong-led-san-khau-${groomClean}-${brideClean}.mp4`;
+
+          const isIOS = typeof navigator !== 'undefined' && (
+            /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+          );
+
+          if (isIOS) {
+            const newWin = window.open(url, '_blank');
+            if (!newWin) window.location.href = url;
+          } else {
+            const link = document.createElement('a');
+            link.style.display = 'none';
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+
+            setTimeout(() => {
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+            }, 3000);
+          }
+
+          resolve({ success: true, url, fileName });
+        };
+        return;
+      }
+
+      // MODE B: FALLBACK CANVAS RENDERER IF DOM NODE NOT MOUNTED
       const canvas = document.createElement('canvas');
       const targetWidth = 2560;
-      let ratioMultiplier = 384 / 704; // default 1.83:1 (Tầng 3)
-      if (aspectRatio.includes('336')) ratioMultiplier = 336 / 704; // Tầng 2
-      if (aspectRatio.includes('272')) ratioMultiplier = 272 / 512; // Tầng 1/4
+      let ratioMultiplier = 384 / 704;
+      if (aspectRatio.includes('336')) ratioMultiplier = 336 / 704;
+      if (aspectRatio.includes('272')) ratioMultiplier = 272 / 512;
       
       const targetHeight = Math.round(targetWidth * ratioMultiplier);
       canvas.width = targetWidth;
       canvas.height = targetHeight;
       const ctx = canvas.getContext('2d');
 
-      // 2. Load Logo Image
       const logoImg = new Image();
       logoImg.crossOrigin = 'anonymous';
       logoImg.src = '/logo-icon.png';
 
-      // 3. Load Static Background Image fallback
       const bgImg = new Image();
       if (imageUrl && !videoUrl) {
         bgImg.crossOrigin = 'anonymous';
         bgImg.src = imageUrl;
       }
 
-      // 4. Create Video element if videoUrl exists
       let videoEl = null;
       if (videoUrl) {
         videoEl = document.createElement('video');
@@ -59,7 +187,6 @@ export async function exportLedVideoWithOverlay({
         videoEl.src = videoUrl;
       }
 
-      // Cross-platform Font Mapping (Windows, macOS, iOS, Android fallback fonts)
       const fontNameMap = {
         ballet: '"Ballet", "Great Vibes", cursive',
         greatvibes: '"Great Vibes", cursive',
@@ -68,7 +195,6 @@ export async function exportLedVideoWithOverlay({
       };
       const canvasScriptFont = fontNameMap[fontKey] || fontNameMap.ballet;
 
-      // Formatting date dot strictly xx.xx.xxxx
       const formatDateDot = (dStr) => {
         if (!dStr) return '20.11.2026';
         if (dStr.includes('-')) {
@@ -79,7 +205,6 @@ export async function exportLedVideoWithOverlay({
       };
 
       const renderFrame = () => {
-        // Draw background (Video or Image)
         if (videoEl && videoEl.readyState >= 2) {
           ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
         } else if (bgImg.complete && bgImg.naturalWidth > 0) {
@@ -89,11 +214,9 @@ export async function exportLedVideoWithOverlay({
           ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Overlay black tint (25%)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Vertical Spotlight Beam
         const gradient = ctx.createRadialGradient(
           canvas.width / 2, 0, 10,
           canvas.width / 2, canvas.height / 2, canvas.height
@@ -104,7 +227,6 @@ export async function exportLedVideoWithOverlay({
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Top-Left Logo
         if (logoImg.complete && logoImg.naturalWidth > 0) {
           const logoH = Math.round(canvas.height * 0.14);
           const logoW = Math.round(logoImg.naturalWidth * (logoH / logoImg.naturalHeight));
@@ -115,13 +237,11 @@ export async function exportLedVideoWithOverlay({
           ctx.restore();
         }
 
-        // --- FOREGROUND CONTENT LAYER ---
         const normTitle = (partyTitle || 'LỄ THÀNH HÔN').normalize('NFC').toUpperCase();
         const groomNorm = (groomName || 'Đức Hoàng').normalize('NFC');
         const brideNorm = (brideName || 'Thu Hương').normalize('NFC');
         const dateStr = formatDateDot(eventDate);
 
-        // 1. Party Title Header (e.g. LỄ VU QUY)
         const titlePx = Math.round(titleFontSize * 3.7);
         ctx.save();
         ctx.textAlign = 'center';
@@ -134,7 +254,6 @@ export async function exportLedVideoWithOverlay({
         ctx.fillText(normTitle, canvas.width / 2, canvas.height * 0.20);
         ctx.restore();
 
-        // 2. Bride & Groom Names (e.g. Đình Minh & Thu Thảo)
         const groomPx = Math.round(groomFontSize * 3.7);
         const coupleY = canvas.height * 0.44;
 
@@ -144,14 +263,10 @@ export async function exportLedVideoWithOverlay({
         ctx.shadowBlur = 32;
         ctx.shadowOffsetY = 7;
 
-        // Measure Groom Text Width in Script Font
         ctx.font = `400 ${groomPx}px ${canvasScriptFont}`;
         const groomWidth = ctx.measureText(groomNorm).width;
-
-        // Measure Bride Text Width in Script Font
         const brideWidth = ctx.measureText(brideNorm).width;
 
-        // Measure Ampersand Width in Playfair Display Italic Serif Font
         const ampPx = Math.round(groomPx * 0.72);
         ctx.font = `italic 300 ${ampPx}px "Playfair Display", "Times New Roman", serif`;
         const ampText = '   &   ';
@@ -160,26 +275,22 @@ export async function exportLedVideoWithOverlay({
         const totalWidth = groomWidth + ampWidth + brideWidth;
         let startX = (canvas.width - totalWidth) / 2;
 
-        // Draw Groom Name
         ctx.textAlign = 'left';
         ctx.font = `400 ${groomPx}px ${canvasScriptFont}`;
         ctx.fillStyle = '#f8fafc';
         ctx.fillText(groomNorm, startX, coupleY);
         startX += groomWidth;
 
-        // Draw Ampersand '&'
         ctx.font = `italic 300 ${ampPx}px "Playfair Display", "Times New Roman", serif`;
         ctx.fillStyle = '#f1f5f9';
         ctx.fillText(ampText, startX, coupleY);
         startX += ampWidth;
 
-        // Draw Bride Name
         ctx.font = `400 ${groomPx}px ${canvasScriptFont}`;
         ctx.fillStyle = '#f8fafc';
         ctx.fillText(brideNorm, startX, coupleY);
         ctx.restore();
 
-        // 3. Wedding Date (e.g. 19.09.2026)
         const datePx = Math.round(dateFontSize * 3.5);
         ctx.save();
         ctx.textAlign = 'center';
@@ -209,19 +320,11 @@ export async function exportLedVideoWithOverlay({
           }
         }
 
-        // Hardware-adaptive Bitrate Selection for maximum cross-platform compatibility
-        let targetBitrate = 35000000;
         let mediaRecorder = null;
-
         try {
-          mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: targetBitrate });
+          mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 25000000 });
         } catch (e) {
-          try {
-            targetBitrate = 15000000;
-            mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: targetBitrate });
-          } catch (e2) {
-            mediaRecorder = new MediaRecorder(stream, { mimeType });
-          }
+          mediaRecorder = new MediaRecorder(stream, { mimeType });
         }
 
         const chunks = [];
@@ -251,90 +354,30 @@ export async function exportLedVideoWithOverlay({
           const brideClean = (brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
           const fileName = `phong-led-san-khau-${groomClean}-${brideClean}.mp4`;
 
-          // Detect iOS Safari / iPadOS
-          const isIOS = typeof navigator !== 'undefined' && (
-            /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-          );
+          const link = document.createElement('a');
+          link.style.display = 'none';
+          link.href = url;
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
 
-          if (isIOS) {
-            // Mobile Safari fallback trigger
-            const newWin = window.open(url, '_blank');
-            if (!newWin) window.location.href = url;
-          } else {
-            // Desktop (Windows, macOS) & Android cross-browser trigger
-            const link = document.createElement('a');
-            link.style.display = 'none';
-            link.href = url;
-            link.setAttribute('download', fileName);
-            document.body.appendChild(link);
-            link.click();
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 3000);
 
-            setTimeout(() => {
-              document.body.removeChild(link);
-              URL.revokeObjectURL(url);
-            }, 3000);
-          }
-
-          if (videoEl) {
-            videoEl.pause();
-            videoEl.src = '';
-          }
           resolve({ success: true, url, fileName });
         };
 
         mediaRecorder.start(100);
       };
 
-      const prepareAndStart = async () => {
-        if (videoEl) {
-          try {
-            videoEl.currentTime = 0;
-            await videoEl.play();
-          } catch (e) {}
-
-          // Poll until video decoder has actually loaded and decoded the first valid frame
-          let retry = 0;
-          while ((videoEl.readyState < 2 || videoEl.currentTime < 0.08) && retry < 40) {
-            await new Promise(r => setTimeout(r, 40));
-            retry++;
-          }
-        }
-
-        // Render 5 initial warm-up frames to ensure background, spotlight, logo, and overlay text are 100% active on Frame 0
-        for (let i = 0; i < 5; i++) {
-          renderFrame();
-          await new Promise(r => setTimeout(r, 16));
-        }
-
-        // Now start recording with frame 0 already fully rendered & warm!
-        startRecording();
-      };
-
       if (videoEl) {
-        let started = false;
-        videoEl.oncanplaythrough = async () => {
-          if (!started) {
-            started = true;
-            await prepareAndStart();
-          }
-        };
-        videoEl.onerror = async () => {
-          if (!started) {
-            started = true;
-            await prepareAndStart();
-          }
-        };
-        videoEl.load();
-        setTimeout(async () => {
-          if (!started) {
-            started = true;
-            await prepareAndStart();
-          }
-        }, 1500);
-      } else {
-        await prepareAndStart();
+        videoEl.currentTime = 0;
+        await videoEl.play().catch(() => {});
+        await new Promise(r => setTimeout(r, 200));
       }
+      startRecording();
     } catch (err) {
       reject(err);
     }

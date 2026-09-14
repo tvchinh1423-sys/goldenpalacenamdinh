@@ -562,6 +562,7 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
 
           {/* LED Stage Screen Canvas Container */}
           <div 
+            id="led-stage-customizer-preview"
             className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500"
             style={{ aspectRatio: `${selectedFloor.widthMeters} / ${selectedFloor.heightMeters}` }}
           >
