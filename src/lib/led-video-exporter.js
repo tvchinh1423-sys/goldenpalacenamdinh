@@ -44,28 +44,33 @@ export async function exportLedVideoWithOverlay({
 
       const videoEl = domNode.querySelector('video');
 
-      // 3. Temporarily set container background to transparent to capture 100% PURE TRANSPARENT OVERLAY from live Web DOM!
-      const origBgColor = domNode.style.backgroundColor;
-      const origBackground = domNode.style.background;
+      // 3. Target .led-overlay-layer directly to ensure 100% PURE TRANSPARENT OVERLAY (Alpha = 0 for empty space)
+      const overlayNode = domNode.querySelector('.led-overlay-layer') || domNode;
+
+      const origBgColor = overlayNode.style.backgroundColor;
+      const origBackground = overlayNode.style.background;
+      const origDomBg = domNode.style.backgroundColor;
+      
+      overlayNode.style.backgroundColor = 'transparent';
+      overlayNode.style.background = 'none';
       domNode.style.backgroundColor = 'transparent';
-      domNode.style.background = 'none';
 
       let overlayCanvas;
       try {
-        overlayCanvas = await toCanvas(domNode, {
+        overlayCanvas = await toCanvas(overlayNode, {
           quality: 1.0,
           pixelRatio: 2.5, // 2.5x Ultra HD resolution
           backgroundColor: null,
           cacheBust: false,
           filter: (node) => {
-            // Exclude video element so overlay is 100% see-through
+            // Exclude video elements or solid container elements
             if (node.tagName === 'VIDEO') return false;
             return true;
           }
         });
       } catch (e) {
         await new Promise(r => setTimeout(r, 100));
-        overlayCanvas = await toCanvas(domNode, {
+        overlayCanvas = await toCanvas(overlayNode, {
           quality: 1.0,
           pixelRatio: 2.5,
           backgroundColor: null,
@@ -74,8 +79,9 @@ export async function exportLedVideoWithOverlay({
         });
       } finally {
         // Restore container background immediately
-        domNode.style.backgroundColor = origBgColor;
-        domNode.style.background = origBackground;
+        overlayNode.style.backgroundColor = origBgColor;
+        overlayNode.style.background = origBackground;
+        domNode.style.backgroundColor = origDomBg;
       }
 
       // 4. Setup Full HD 1920x1080 Output Canvas

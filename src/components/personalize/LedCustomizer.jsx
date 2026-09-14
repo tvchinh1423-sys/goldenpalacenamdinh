@@ -583,94 +583,97 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
                 style={{ backgroundImage: `url(${customUploadUrl || selectedTemplate.bgImage})` }}
               ></div>
             )}
-            <div className="absolute inset-0 bg-black/25"></div>
+            {/* FOREGROUND OVERLAY LAYER (CONTAINING TINT, SPOTLIGHT, LOGO & TEXT ONLY) */}
+            <div className="led-overlay-layer absolute inset-0 pointer-events-none" style={{ backgroundColor: 'transparent' }}>
+              <div className="absolute inset-0 bg-black/25"></div>
 
-            {/* VERTICAL SPOTLIGHT GLOW BEAM */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
+              {/* VERTICAL SPOTLIGHT GLOW BEAM */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
-            {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
-            <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
-              <img 
-                src="/logo-icon.png" 
-                alt="Golden Palace Icon Logo" 
-                className="h-7 sm:h-10 md:h-12 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(227,166,56,0.85)]" 
-              />
-            </div>
-
-            {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
-            <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
-
-              {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
-              <div className="w-full flex items-center justify-center z-20">
-                <div 
-                  className="text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
-                  style={{ 
-                    fontFamily: "var(--font-playfair), var(--font-cormorant), 'Playfair Display', 'Cormorant Garamond', serif",
-                    fontSize: `${ledTitleFontSize}px`
-                  }}
-                >
-                  {nfc(eventTypeTitle) || 'LỄ THÀNH HÔN'}
-                </div>
+              {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
+              <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
+                <img 
+                  src="/logo-icon.png" 
+                  alt="Golden Palace Icon Logo" 
+                  className="h-7 sm:h-10 md:h-12 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(227,166,56,0.85)]" 
+                />
               </div>
 
-              {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
-              <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
-                <div 
-                  className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                  style={{ 
-                    fontFamily: LED_FONT_MAP[selectedFont] || LED_FONT_MAP.alexbrush,
-                    fontSize: `${ledBrideGroomFontSize}px`
-                  }}
-                >
-                  <span>{nfc(groomName) || 'Đức Hoàng'}</span>
-                  
-                  {showRings ? (
-                    /* BLACK & WHITE / MONOCHROME LINE ART WEDDING RINGS */
-                    <span className="inline-flex items-center mx-3 sm:mx-5 align-middle">
-                      <svg 
-                        className="w-8 h-8 sm:w-12 sm:h-12 filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]" 
-                        viewBox="0 0 100 100" 
-                        fill="none"
+              {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
+              <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
+
+                {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
+                <div className="w-full flex items-center justify-center z-20">
+                  <div 
+                    className="text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                    style={{ 
+                      fontFamily: "var(--font-playfair), var(--font-cormorant), 'Playfair Display', 'Cormorant Garamond', serif",
+                      fontSize: `${ledTitleFontSize}px`
+                    }}
+                  >
+                    {nfc(eventTypeTitle) || 'LỄ THÀNH HÔN'}
+                  </div>
+                </div>
+
+                {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
+                <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
+                  <div 
+                    className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                    style={{ 
+                      fontFamily: LED_FONT_MAP[selectedFont] || LED_FONT_MAP.alexbrush,
+                      fontSize: `${ledBrideGroomFontSize}px`
+                    }}
+                  >
+                    <span>{nfc(groomName) || 'Đức Hoàng'}</span>
+                    
+                    {showRings ? (
+                      /* BLACK & WHITE / MONOCHROME LINE ART WEDDING RINGS */
+                      <span className="inline-flex items-center mx-3 sm:mx-5 align-middle">
+                        <svg 
+                          className="w-8 h-8 sm:w-12 sm:h-12 filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]" 
+                          viewBox="0 0 100 100" 
+                          fill="none"
+                        >
+                          <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#000000" strokeWidth="8" fill="none" />
+                          <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#000000" strokeWidth="8" fill="none" />
+                          <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
+                          <ellipse cx="38" cy="46" rx="20" ry="10" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="3" fill="none" />
+                          <polygon points="26,30 32,25 38,30 32,35" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+                          <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
+                          <ellipse cx="60" cy="56" rx="20" ry="10" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="3" fill="none" />
+                          <polygon points="68,62 74,57 80,62 74,67" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+                        </svg>
+                      </span>
+                    ) : (
+                      /* AMPERSAND & IN ELEGANT DIDONE ITALIC */
+                      <span 
+                        className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
+                        style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
                       >
-                        <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#000000" strokeWidth="8" fill="none" />
-                        <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#000000" strokeWidth="8" fill="none" />
-                        <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
-                        <ellipse cx="38" cy="46" rx="20" ry="10" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="3" fill="none" />
-                        <polygon points="26,30 32,25 38,30 32,35" fill="#ffffff" stroke="#000000" strokeWidth="2" />
-                        <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
-                        <ellipse cx="60" cy="56" rx="20" ry="10" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="3" fill="none" />
-                        <polygon points="68,62 74,57 80,62 74,67" fill="#ffffff" stroke="#000000" strokeWidth="2" />
-                      </svg>
-                    </span>
-                  ) : (
-                    /* AMPERSAND & IN ELEGANT DIDONE ITALIC */
-                    <span 
-                      className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
-                      style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
-                    >
-                      &
-                    </span>
-                  )}
+                        &
+                      </span>
+                    )}
 
-                  <span>{nfc(brideName) || 'Thu Hương'}</span>
+                    <span>{nfc(brideName) || 'Thu Hương'}</span>
+                  </div>
                 </div>
-              </div>
 
-              {/* TẦNG 3: WEDDING DATE ("28.12.2025") */}
-              <div className="z-20 w-full flex flex-col items-center">
-                <div 
-                  className="text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
-                  style={{ 
-                    fontFamily: "var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif",
-                    fontVariantNumeric: "lining-nums tabular-nums",
-                    letterSpacing: "0.14em",
-                    fontSize: `${ledDateFontSize}px`
-                  }}
-                >
-                  {formatDateDot(eventDate)}
+                {/* TẦNG 3: WEDDING DATE ("28.12.2025") */}
+                <div className="z-20 w-full flex flex-col items-center">
+                  <div 
+                    className="text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                    style={{ 
+                      fontFamily: "var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif",
+                      fontVariantNumeric: "lining-nums tabular-nums",
+                      letterSpacing: "0.14em",
+                      fontSize: `${ledDateFontSize}px`
+                    }}
+                  >
+                    {formatDateDot(eventDate)}
+                  </div>
                 </div>
-              </div>
 
+              </div>
             </div>
 
           </div>

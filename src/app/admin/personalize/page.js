@@ -818,73 +818,76 @@ export default function AdminPersonalizePage() {
                       style={{ backgroundImage: `url(${currentLedTemplate?.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
                     ></div>
                   )}
-                  <div className="absolute inset-0 bg-black/25"></div>
+                  {/* FOREGROUND OVERLAY LAYER (CONTAINING TINT, SPOTLIGHT, LOGO & TEXT ONLY) */}
+                  <div className="led-overlay-layer absolute inset-0 pointer-events-none" style={{ backgroundColor: 'transparent', background: 'none' }}>
+                    <div className="absolute inset-0 bg-black/25"></div>
 
-                  {/* VERTICAL SPOTLIGHT GLOW BEAM */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
+                    {/* VERTICAL SPOTLIGHT GLOW BEAM */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
-                  {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
-                  <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
-                    <img 
-                      src="/logo-icon.png" 
-                      alt="Golden Palace Icon Logo" 
-                      className="h-7 sm:h-10 md:h-12 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(227,166,56,0.85)]" 
-                    />
-                  </div>
-
-                  {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
-                  <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
-
-                    {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
-                    <div className="w-full flex items-center justify-center z-20">
-                      <div 
-                        className="text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
-                        style={{ 
-                          fontFamily: "var(--font-playfair), var(--font-cormorant), 'Playfair Display', 'Cormorant Garamond', serif",
-                          fontSize: `${ledTitleFontSize}px`
-                        }}
-                      >
-                        {nfc(selectedProfile.partyTitle) || 'LỄ THÀNH HÔN'}
-                      </div>
+                    {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
+                    <div className="absolute top-3 left-4 sm:top-5 sm:left-6 z-40">
+                      <img 
+                        src="/logo-icon.png" 
+                        alt="Golden Palace Icon Logo" 
+                        className="h-7 sm:h-10 md:h-12 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(227,166,56,0.85)]" 
+                      />
                     </div>
 
-                    {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
-                    <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
-                      <div 
-                        className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                        style={{ 
-                          fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
-                          fontSize: `${ledBrideGroomFontSize}px`
-                        }}
-                      >
-                        <span>{nfc(selectedProfile.groomName) || 'Đức Hoàng'}</span>
-                        
-                        <span 
-                          className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
-                          style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
+                    {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
+                    <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
+
+                      {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
+                      <div className="w-full flex items-center justify-center z-20">
+                        <div 
+                          className="text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                          style={{ 
+                            fontFamily: "var(--font-playfair), var(--font-cormorant), 'Playfair Display', 'Cormorant Garamond', serif",
+                            fontSize: `${ledTitleFontSize}px`
+                          }}
                         >
-                          &
-                        </span>
-
-                        <span>{nfc(selectedProfile.brideName) || 'Thu Hương'}</span>
+                          {nfc(selectedProfile.partyTitle) || 'LỄ THÀNH HÔN'}
+                        </div>
                       </div>
-                    </div>
 
-                    {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
-                    <div className="z-20 w-full flex flex-col items-center">
-                      <div 
-                        className="text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
-                        style={{ 
-                          fontFamily: "var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif",
-                          fontVariantNumeric: "lining-nums tabular-nums",
-                          letterSpacing: "0.14em",
-                          fontSize: `${ledDateFontSize}px`
-                        }}
-                      >
-                        {formatDateDot(selectedProfile.eventDate)}
+                      {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
+                      <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
+                        <div 
+                          className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                          style={{ 
+                            fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
+                            fontSize: `${ledBrideGroomFontSize}px`
+                          }}
+                        >
+                          <span>{nfc(selectedProfile.groomName) || 'Đức Hoàng'}</span>
+                          
+                          <span 
+                            className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
+                            style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
+                          >
+                            &
+                          </span>
+
+                          <span>{nfc(selectedProfile.brideName) || 'Thu Hương'}</span>
+                        </div>
                       </div>
-                    </div>
 
+                      {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
+                      <div className="z-20 w-full flex flex-col items-center">
+                        <div 
+                          className="text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                          style={{ 
+                            fontFamily: "var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif",
+                            fontVariantNumeric: "lining-nums tabular-nums",
+                            letterSpacing: "0.14em",
+                            fontSize: `${ledDateFontSize}px`
+                          }}
+                        >
+                          {formatDateDot(selectedProfile.eventDate)}
+                        </div>
+                      </div>
+
+                    </div>
                   </div>
 
                 </div>
@@ -1083,73 +1086,76 @@ export default function AdminPersonalizePage() {
                 style={{ backgroundImage: `url(${currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
               ></div>
             )}
-            <div className="absolute inset-0 bg-black/25"></div>
+            {/* FOREGROUND OVERLAY LAYER */}
+            <div className="led-overlay-layer absolute inset-0 pointer-events-none" style={{ backgroundColor: 'transparent', background: 'none' }}>
+              <div className="absolute inset-0 bg-black/25"></div>
 
-            {/* VERTICAL SPOTLIGHT GLOW BEAM */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
+              {/* VERTICAL SPOTLIGHT GLOW BEAM */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 sm:w-1/2 h-full bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.25)_0%,_rgba(255,255,255,0.08)_45%,_transparent_75%)] pointer-events-none z-10"></div>
 
-            {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
-            <div className="absolute top-5 left-6 z-40">
-              <img 
-                src="/logo-icon.png" 
-                alt="Golden Palace Icon Logo" 
-                className="h-10 sm:h-14 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(227,166,56,0.85)]" 
-              />
-            </div>
-
-            {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
-            <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
-
-              {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
-              <div className="w-full flex items-center justify-center z-20">
-                <div 
-                  className="text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
-                  style={{ 
-                    fontFamily: "var(--font-playfair), var(--font-cormorant), 'Playfair Display', 'Cormorant Garamond', serif",
-                    fontSize: `${ledTitleFontSize * 1.5}px`
-                  }}
-                >
-                  {nfc(selectedProfile.partyTitle) || 'LỄ THÀNH HÔN'}
-                </div>
+              {/* TOP-LEFT CORNER: Golden Palace Pure Transparent PNG Logo Icon ONLY */}
+              <div className="absolute top-5 left-6 z-40">
+                <img 
+                  src="/logo-icon.png" 
+                  alt="Golden Palace Icon Logo" 
+                  className="h-10 sm:h-14 w-auto object-contain filter drop-shadow-[0_0_12px_rgba(227,166,56,0.85)]" 
+                />
               </div>
 
-              {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
-              <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
-                <div 
-                  className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                  style={{ 
-                    fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
-                    fontSize: `${ledBrideGroomFontSize * 1.5}px`
-                  }}
-                >
-                  <span>{nfc(selectedProfile.groomName) || 'Đức Hoàng'}</span>
-                  
-                  <span 
-                    className="text-slate-100 mx-4 sm:mx-6 font-serif italic font-light tracking-normal"
-                    style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
+              {/* FOREGROUND CONTENT LAYER: JUSTIFY-EVENLY FOR 100% EQUAL VERTICAL SPACING ACROSS 70% HEIGHT */}
+              <div className="relative z-30 w-full h-[70%] flex flex-col items-center justify-evenly text-center px-4 py-2">
+
+                {/* TẦNG 1: EVENT TITLE HEADER ("LỄ THÀNH HÔN") */}
+                <div className="w-full flex items-center justify-center z-20">
+                  <div 
+                    className="text-slate-50 font-black tracking-wider uppercase drop-shadow-[0_4px_18px_rgba(0,0,0,0.98)]"
+                    style={{ 
+                      fontFamily: "var(--font-playfair), var(--font-cormorant), 'Playfair Display', 'Cormorant Garamond', serif",
+                      fontSize: `${ledTitleFontSize * 1.5}px`
+                    }}
                   >
-                    &
-                  </span>
-
-                  <span>{nfc(selectedProfile.brideName) || 'Thu Hương'}</span>
+                    {nfc(selectedProfile.partyTitle) || 'LỄ THÀNH HÔN'}
+                  </div>
                 </div>
-              </div>
 
-              {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
-              <div className="z-20 w-full flex flex-col items-center">
-                <div 
-                  className="text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
-                  style={{ 
-                    fontFamily: "var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif",
-                    fontVariantNumeric: "lining-nums tabular-nums",
-                    letterSpacing: "0.14em",
-                    fontSize: `${ledDateFontSize * 1.4}px`
-                  }}
-                >
-                  {formatDateDot(selectedProfile.eventDate)}
+                {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
+                <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
+                  <div 
+                    className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                    style={{ 
+                      fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
+                      fontSize: `${ledBrideGroomFontSize * 1.5}px`
+                    }}
+                  >
+                    <span>{nfc(selectedProfile.groomName) || 'Đức Hoàng'}</span>
+                    
+                    <span 
+                      className="text-slate-100 mx-4 sm:mx-6 font-serif italic font-light tracking-normal"
+                      style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
+                    >
+                      &
+                    </span>
+
+                    <span>{nfc(selectedProfile.brideName) || 'Thu Hương'}</span>
+                  </div>
                 </div>
-              </div>
 
+                {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
+                <div className="z-20 w-full flex flex-col items-center">
+                  <div 
+                    className="text-slate-50 font-serif drop-shadow-[0_4px_20px_rgba(0,0,0,0.98)] px-6 font-bold inline-block"
+                    style={{ 
+                      fontFamily: "var(--font-playfair), 'Playfair Display', Didot, 'Times New Roman', serif",
+                      fontVariantNumeric: "lining-nums tabular-nums",
+                      letterSpacing: "0.14em",
+                      fontSize: `${ledDateFontSize * 1.4}px`
+                    }}
+                  >
+                    {formatDateDot(selectedProfile.eventDate)}
+                  </div>
+                </div>
+
+              </div>
             </div>
 
           </div>
