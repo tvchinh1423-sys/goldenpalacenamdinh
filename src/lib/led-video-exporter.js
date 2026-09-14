@@ -1,4 +1,4 @@
-// LED Stage Screen Video Exporter — Dynamic Moving Video + Razor-Sharp 1080p Live Overlay (35Mbps Full HD MP4)
+// LED Stage Screen Video Exporter — Fluid Moving Video + 100% Pure Transparent DOM Text Overlay (35Mbps Full HD MP4)
 import { toCanvas } from 'html-to-image';
 
 export async function exportLedVideoWithOverlay({
@@ -21,14 +21,14 @@ export async function exportLedVideoWithOverlay({
 }) {
   return new Promise(async (resolve, reject) => {
     try {
-      // Ensure web fonts are completely loaded into browser font engine
+      // Ensure web fonts are loaded into font engine
       if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
         try {
           await document.fonts.ready;
         } catch (e) {}
       }
 
-      // 1. Find live DOM node on screen
+      // 1. Locate live DOM preview node on screen
       let domNode = document.getElementById(targetNodeId) || 
                     document.getElementById(fallbackNodeId) || 
                     document.getElementById(secondaryNodeId);
@@ -46,10 +46,22 @@ export async function exportLedVideoWithOverlay({
 
       const videoEl = domNode.querySelector('video');
 
-      // 2. Temporarily hide video element to capture 100% TRANSPARENT PNG snapshot of text, logo & spotlight
+      // 2. Hide video AND static background images/divs to capture 100% PURE TRANSPARENT OVERLAY (No background blocking video!)
+      const bgEls = domNode.querySelectorAll('div[style*="background-image"], div[class*="bg-cover"], div[class*="bg-[#"]');
+      const origDisplays = [];
+
       if (videoEl) {
-        videoEl.style.visibility = 'hidden';
+        origDisplays.push({ el: videoEl, val: videoEl.style.display });
+        videoEl.style.display = 'none';
       }
+
+      bgEls.forEach(el => {
+        origDisplays.push({ el, val: el.style.display });
+        el.style.display = 'none';
+      });
+
+      const origBg = domNode.style.backgroundColor;
+      domNode.style.backgroundColor = 'transparent';
 
       let overlayCanvas;
       try {
@@ -68,9 +80,11 @@ export async function exportLedVideoWithOverlay({
           cacheBust: false
         });
       } finally {
-        if (videoEl) {
-          videoEl.style.visibility = 'visible';
-        }
+        // Restore all background elements immediately!
+        origDisplays.forEach(item => {
+          item.el.style.display = item.val || '';
+        });
+        domNode.style.backgroundColor = origBg;
       }
 
       // Output resolution setup (Full HD 1920x1080 scale matching stage aspect ratio)
@@ -124,17 +138,18 @@ export async function exportLedVideoWithOverlay({
       // Ensure video element is playing live
       if (videoEl) {
         try {
+          videoEl.currentTime = 0;
           if (videoEl.paused) await videoEl.play();
         } catch (e) {}
       }
 
       mediaRecorder.start(100);
 
-      // Frame compositor loop: Live Video + Razor-Sharp Transparent DOM Text Overlay
+      // Frame compositor loop: Live Video + Pure Transparent DOM Text Overlay
       const frameInterval = setInterval(() => {
         recordCtx.clearRect(0, 0, targetWidth, targetHeight);
 
-        // 1. Draw live moving video frame
+        // 1. Draw live moving video frame (fluid motion!)
         if (videoEl && videoEl.readyState >= 2) {
           recordCtx.drawImage(videoEl, 0, 0, targetWidth, targetHeight);
         } else {
@@ -142,7 +157,7 @@ export async function exportLedVideoWithOverlay({
           recordCtx.fillRect(0, 0, targetWidth, targetHeight);
         }
 
-        // 2. Draw razor-sharp transparent text overlay snapshot on top
+        // 2. Draw pure transparent text & logo overlay on top (No background blocking video!)
         recordCtx.drawImage(overlayCanvas, 0, 0, targetWidth, targetHeight);
 
         currentFrame++;
