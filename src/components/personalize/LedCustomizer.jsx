@@ -300,9 +300,16 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
                           : 'border-gray-800 bg-[#161616] hover:border-gray-700'
                       }`}
                     >
-                      <div className="text-xs font-bold text-white flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"></span>
-                        {tmpl.name}
+                      <div className="text-xs font-bold text-white flex items-center justify-between w-full">
+                        <span className="flex items-center gap-2">
+                          <span className={`w-2.5 h-2.5 rounded-full ${tmpl.type === 'video' ? 'bg-cyan-400 shadow-[0_0_8px_#38bdf8] animate-pulse' : 'bg-amber-400 shadow-[0_0_8px_#f59e0b]'}`}></span>
+                          {tmpl.name}
+                        </span>
+                        {tmpl.badge && (
+                          <span className={`text-[9px] px-2 py-0.5 rounded font-mono font-bold ${tmpl.type === 'video' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-amber-500/10 text-amber-300 border border-amber-500/20'}`}>
+                            {tmpl.badge}
+                          </span>
+                        )}
                       </div>
                     </div>
                   );
@@ -424,41 +431,75 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
               </a>
             </div>
 
-            {/* Box 2: File Upload */}
-            <div className="bg-[#161616] p-4 rounded-2xl border border-amber-500/30">
-              <label className="block text-amber-300 text-xs font-bold mb-3 uppercase tracking-wider flex items-center gap-2">
-                <span className="material-symbols-outlined text-base">upload_file</span>
-                <span>TẢI TỆP ẢNH THIẾT KẾ ĐÃ XUẤT</span>
+            {/* Box 2: File Upload / Link Google Drive Video */}
+            <div className="bg-[#161616] p-4 rounded-2xl border border-amber-500/30 space-y-3">
+              <label className="block text-amber-300 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">video_library</span>
+                <span>TẢI TỆP VIDEO / ẢNH HOẶC DÁN LINK GOOGLE DRIVE</span>
               </label>
               
               <input
                 type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
+                accept="image/*,video/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => setCustomUploadUrl(reader.result);
+                    reader.readAsDataURL(file);
+                  }
+                }}
                 id="canva-image-input-21"
                 className="hidden"
               />
 
               <label
                 htmlFor="canva-image-input-21"
-                className="w-full py-4 px-4 bg-[#202020] hover:bg-[#2a2a2a] border border-dashed border-amber-500/50 hover:border-amber-400 rounded-xl text-xs text-gray-200 flex items-center justify-center gap-2.5 cursor-pointer transition-colors"
+                className="w-full py-3.5 px-4 bg-[#202020] hover:bg-[#2a2a2a] border border-dashed border-amber-500/50 hover:border-amber-400 rounded-xl text-xs text-gray-200 flex items-center justify-center gap-2.5 cursor-pointer transition-colors"
               >
-                <span className="material-symbols-outlined text-xl text-amber-400">add_photo_alternate</span>
-                <span className="font-bold text-xs">Bấm chọn tệp PNG / JPG từ Canva</span>
+                <span className="material-symbols-outlined text-xl text-amber-400">upload_file</span>
+                <span className="font-bold text-xs">Bấm chọn tệp Video (.mp4, .webm) hoặc Ảnh từ thiết bị</span>
               </label>
+
+              {/* Ô dán trực tiếp Link Google Drive Video */}
+              <div className="pt-2 border-t border-gray-800">
+                <label className="block text-gray-400 text-[11px] font-semibold mb-1">
+                  Hoặc dán Link Google Drive chứa Video nền tại đây:
+                </label>
+                <input
+                  type="url"
+                  value={customUploadUrl && !customUploadUrl.startsWith('data:') ? customUploadUrl : ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (!val) {
+                      setCustomUploadUrl(null);
+                      return;
+                    }
+                    // Auto-convert Google Drive view link to direct download/stream link
+                    const driveMatch = val.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || val.match(/id=([a-zA-Z0-9_-]+)/);
+                    if (driveMatch && driveMatch[1]) {
+                      setCustomUploadUrl(`https://drive.google.com/uc?export=download&id=${driveMatch[1]}`);
+                    } else {
+                      setCustomUploadUrl(val);
+                    }
+                  }}
+                  placeholder="https://drive.google.com/file/d/.../view"
+                  className="w-full bg-[#121212] border border-gray-700 focus:border-amber-400 rounded-xl px-3.5 py-2 text-white font-mono text-xs outline-none"
+                />
+              </div>
 
               {customUploadUrl && (
                 <div className="mt-3 flex items-center justify-between bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl text-xs text-amber-300 font-semibold">
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-1.5 truncate">
                     <span className="material-symbols-outlined text-base text-emerald-400">check_circle</span>
-                    Đã tải tệp ảnh lên thành công!
+                    {customUploadUrl.startsWith('data:video') ? 'Đã nạp file Video thành công!' : customUploadUrl.startsWith('data:image') ? 'Đã nạp file Ảnh thành công!' : 'Đã kết nối Link Video Drive!'}
                   </span>
                   <button
                     type="button"
                     onClick={() => setCustomUploadUrl(null)}
-                    className="text-red-400 hover:text-red-300 underline cursor-pointer"
+                    className="text-red-400 hover:text-red-300 underline cursor-pointer shrink-0 ml-2"
                   >
-                    Xóa ảnh
+                    Xóa
                   </button>
                 </div>
               )}
@@ -492,11 +533,22 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
             style={{ aspectRatio: `${selectedFloor.widthMeters} / ${selectedFloor.heightMeters}` }}
           >
             
-            {/* STARRY BACKGROUND */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-              style={{ backgroundImage: `url(${selectedTemplate.bgImage})` }}
-            ></div>
+            {/* BACKGROUND LAYER (DYNAMIC VIDEO LOOP OR STATIC IMAGE) */}
+            {selectedTemplate?.bgVideo || (customUploadUrl && customUploadUrl.startsWith('data:video')) ? (
+              <video
+                src={selectedTemplate?.bgVideo || customUploadUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 pointer-events-none"
+              />
+            ) : (
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+                style={{ backgroundImage: `url(${customUploadUrl || selectedTemplate.bgImage})` }}
+              ></div>
+            )}
             <div className="absolute inset-0 bg-black/25"></div>
 
             {/* VERTICAL SPOTLIGHT GLOW BEAM */}

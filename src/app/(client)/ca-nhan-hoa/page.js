@@ -240,6 +240,7 @@ function PersonalizePageContent() {
         // LED & MUSIC CONFIGURATIONS
         ledStatus: customOverrides.ledStatus || `Đã thiết kế phông màn LED sân khấu (${currentFloorName})`,
         ledTemplateId: customOverrides.ledTemplateId || selectedLedTemplate || 'led-starry-diamond',
+        ledBgVideo: customOverrides.ledBgVideo || '',
         ledFont: customOverrides.ledFont || 'ballet',
         ledBrideGroomFontSize: customOverrides.ledBrideGroomFontSize !== undefined ? customOverrides.ledBrideGroomFontSize : 59,
         ledTitleFontSize: customOverrides.ledTitleFontSize !== undefined ? customOverrides.ledTitleFontSize : 32,
@@ -747,6 +748,7 @@ function PersonalizePageContent() {
               handleSaveProfile({
                 ledStatus: `Đã thiết kế phông màn LED (${getFloorName(selectedFloor)}) - Mẫu: ${ledData?.template?.name || 'Sao đêm'}`,
                 ledTemplateId: ledData?.template?.id || 'led-starry-diamond',
+                ledBgVideo: ledData?.template?.bgVideo || '',
                 ledFont: ledData?.ledFont || 'ballet',
                 ledBrideGroomFontSize: ledData?.ledBrideGroomFontSize || 59,
                 ledTitleFontSize: ledData?.ledTitleFontSize || 32,

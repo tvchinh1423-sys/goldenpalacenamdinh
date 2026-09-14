@@ -743,11 +743,22 @@ export default function AdminPersonalizePage() {
                   className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500"
                   style={{ aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384' }}
                 >
-                  {/* STARRY BACKGROUND */}
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-                    style={{ backgroundImage: `url(${currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
-                  ></div>
+                  {/* BACKGROUND LAYER (DYNAMIC VIDEO LOOP OR STATIC IMAGE) */}
+                  {currentLedTemplate?.bgVideo || selectedProfile?.ledBgVideo ? (
+                    <video
+                      src={selectedProfile?.ledBgVideo || currentLedTemplate?.bgVideo}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="absolute inset-0 w-full h-full object-cover transition-all duration-700 pointer-events-none"
+                    />
+                  ) : (
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+                      style={{ backgroundImage: `url(${currentLedTemplate?.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
+                    ></div>
+                  )}
                   <div className="absolute inset-0 bg-black/25"></div>
 
                   {/* VERTICAL SPOTLIGHT GLOW BEAM */}
@@ -978,11 +989,22 @@ export default function AdminPersonalizePage() {
             className="w-full max-w-6xl relative rounded-3xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508]"
             style={{ aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384' }}
           >
-            {/* STARRY BACKGROUND */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-              style={{ backgroundImage: `url(${currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
-            ></div>
+            {/* BACKGROUND LAYER (DYNAMIC VIDEO LOOP OR STATIC IMAGE) */}
+            {currentLedTemplate?.bgVideo || selectedProfile?.ledBgVideo ? (
+              <video
+                src={selectedProfile?.ledBgVideo || currentLedTemplate?.bgVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover transition-all duration-700 pointer-events-none"
+              />
+            ) : (
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+                style={{ backgroundImage: `url(${currentLedTemplate.bgImage || '/images/led-bg/starry-night-1.jpg'})` }}
+              ></div>
+            )}
             <div className="absolute inset-0 bg-black/25"></div>
 
             {/* VERTICAL SPOTLIGHT GLOW BEAM */}

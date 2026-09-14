@@ -45,8 +45,41 @@ export const LED_SCREEN_FLOORS = [
 
 export const LED_STAGE_TEMPLATES = [
   {
+    id: 'led-video-sao-roi',
+    name: '1. Phông LED Cưới Sao Rơi Full HD (Video Drive 🎬)',
+    type: 'video',
+    slogan: '',
+    defaultVenueId: 'tang-3',
+    bgVideo: '/videos/led-bg/YTSave_YouTube_background-cuoi-led-sao-roi_Media_4N3w7Us4CLs_001_1080p.mp4',
+    bgImage: '/images/led-bg/starry-night-1.jpg',
+    borderColor: '#ffffff',
+    glowColor: 'rgba(255, 255, 255, 0.9)',
+    accentColor: '#ffffff',
+    subTextColor: '#e2e8f0',
+    monogramStyle: 'DIDONE_INTERLOCKED',
+    fontFamily: 'font-ballet',
+    badge: 'Video Loop 🎬'
+  },
+  {
+    id: 'led-video-hat-vang',
+    name: '2. Phông LED Hạt Vàng Lấp Lánh (Video Drive 🎬)',
+    type: 'video',
+    slogan: '',
+    defaultVenueId: 'tang-2',
+    bgVideo: '/videos/led-bg/183279-870457579_medium.mp4',
+    bgImage: '/images/led-bg/starry-night-2.jpg',
+    borderColor: '#ffffff',
+    glowColor: 'rgba(255, 215, 0, 0.85)',
+    accentColor: '#ffffff',
+    subTextColor: '#fef08a',
+    monogramStyle: 'DIDONE_INTERLOCKED',
+    fontFamily: 'font-greatvibes',
+    badge: 'Video Loop 🎬'
+  },
+  {
     id: 'led-cosmic-milkyway',
-    name: '1. Dải Ngân Hà Cosmic Galaxy',
+    name: '3. Dải Ngân Hà Cosmic Galaxy (Ảnh Tĩnh 🖼️)',
+    type: 'image',
     slogan: '',
     defaultVenueId: 'tang-2',
     bgImage: '/images/led-bg/starry-night-2.jpg',
@@ -56,11 +89,12 @@ export const LED_STAGE_TEMPLATES = [
     subTextColor: '#cbd5e1',
     monogramStyle: 'DIDONE_INTERLOCKED',
     fontFamily: 'font-ballet',
-    badge: ''
+    badge: 'Ảnh Tĩnh 🖼️'
   },
   {
     id: 'led-starry-diamond',
-    name: '2. Bầu Trời Sao Đêm Kim Cương',
+    name: '4. Bầu Trời Sao Đêm Kim Cương (Ảnh Tĩnh 🖼️)',
+    type: 'image',
     slogan: '',
     defaultVenueId: 'tang-3',
     bgImage: '/images/led-bg/starry-night-1.jpg',
@@ -70,11 +104,12 @@ export const LED_STAGE_TEMPLATES = [
     subTextColor: '#e2e8f0',
     monogramStyle: 'DIDONE_INTERLOCKED',
     fontFamily: 'font-greatvibes',
-    badge: ''
+    badge: 'Ảnh Tĩnh 🖼️'
   },
   {
     id: 'led-constellation-magic',
-    name: '3. Mạn Sao Huyền Ảo Constellation',
+    name: '5. Mạn Sao Huyền Ảo Constellation (Ảnh Tĩnh 🖼️)',
+    type: 'image',
     slogan: '',
     defaultVenueId: 'tang-4',
     bgImage: '/images/led-bg/starry-night-3.jpg',
@@ -84,7 +119,7 @@ export const LED_STAGE_TEMPLATES = [
     subTextColor: '#94a3b8',
     monogramStyle: 'DIDONE_INTERLOCKED',
     fontFamily: 'font-greatvibes',
-    badge: ''
+    badge: 'Ảnh Tĩnh 🖼️'
   }
 ];
 
