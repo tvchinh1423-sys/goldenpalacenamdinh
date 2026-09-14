@@ -228,11 +228,29 @@ export default function AdminPersonalizePage() {
     ? (LED_STAGE_TEMPLATES.find(t => t.id === selectedProfile.ledTemplateId) || LED_STAGE_TEMPLATES[0])
     : LED_STAGE_TEMPLATES[0];
 
-  // Helper function to export/download exact 100% snapshot of live LED element using html-to-image
-  const handleDownloadLedBackdrop = async () => {
+  // Helper function to export/download exact 100% snapshot or MP4 video file of live LED stage screen
+  const handleDownloadLedBackdrop = async (formatMode = 'auto') => {
     if (!selectedProfile) return;
     
-    // Priority: capture fullscreen LED container or main LED container
+    const activeVideo = selectedProfile.ledBgVideo || currentLedTemplate.bgVideo;
+    const groomClean = (selectedProfile.groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+    const brideClean = (selectedProfile.brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+
+    // If forced video download OR (auto mode and template/profile has a video URL)
+    if (formatMode === 'video' || (formatMode === 'auto' && (activeVideo || currentLedTemplate.type === 'video'))) {
+      if (activeVideo) {
+        const link = document.createElement('a');
+        link.href = activeVideo;
+        link.download = `video-phong-led-san-khau-${groomClean}-${brideClean}.mp4`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return;
+      }
+    }
+
+    // Default: capture live DOM snapshot as HD PNG
     const node = document.getElementById('fullscreen-led-stage-screen') || document.getElementById('led-stage-screen-canvas');
     if (!node) return;
 
@@ -244,8 +262,6 @@ export default function AdminPersonalizePage() {
       });
 
       const link = document.createElement('a');
-      const groomClean = (selectedProfile.groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-      const brideClean = (selectedProfile.brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
       link.download = `phong-led-san-khau-${groomClean}-${brideClean}.png`;
       link.href = dataUrl;
       link.click();
@@ -720,13 +736,34 @@ export default function AdminPersonalizePage() {
                     Phông Màn LED Sân Khấu P3 Full HD
                   </div>
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleDownloadLedBackdrop}
-                      className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs hover:bg-emerald-500 transition-colors flex items-center gap-1 cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-sm">download</span>
-                      Tải File Ảnh Phông LED (1920x1080)
-                    </button>
+                    {currentLedTemplate?.type === 'video' || currentLedTemplate?.bgVideo || selectedProfile?.ledBgVideo ? (
+                      <>
+                        <button
+                          onClick={() => handleDownloadLedBackdrop('video')}
+                          className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs hover:bg-emerald-500 transition-colors flex items-center gap-1 cursor-pointer shadow-sm"
+                          title="Tải tệp video MP4 gốc để chiếu trên màn LED"
+                        >
+                          <span className="material-symbols-outlined text-sm">video_file</span>
+                          Tải File Video MP4 (Chuẩn Màn LED)
+                        </button>
+                        <button
+                          onClick={() => handleDownloadLedBackdrop('image')}
+                          className="px-3 py-1.5 bg-stone-800 text-stone-200 font-bold rounded-lg text-xs hover:bg-stone-700 transition-colors flex items-center gap-1 cursor-pointer border border-stone-700"
+                          title="Tải ảnh snapshot PNG của phông LED"
+                        >
+                          <span className="material-symbols-outlined text-sm">image</span>
+                          Tải Ảnh Snapshot PNG
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => handleDownloadLedBackdrop('image')}
+                        className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs hover:bg-emerald-500 transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-sm">download</span>
+                        Tải File Ảnh Phông LED (1920x1080)
+                      </button>
+                    )}
                     <button
                       onClick={() => setFullscreenLed(true)}
                       className="px-3 py-1.5 bg-amber-500 text-black font-bold rounded-lg text-xs hover:bg-amber-400 transition-colors flex items-center gap-1 cursor-pointer"
@@ -968,13 +1005,32 @@ export default function AdminPersonalizePage() {
       {fullscreenLed && selectedProfile && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-4">
           <div className="absolute top-6 right-6 z-50 flex items-center gap-3">
-            <button
-              onClick={handleDownloadLedBackdrop}
-              className="px-4 py-2 bg-emerald-600 text-white font-bold text-xs uppercase rounded-full border border-emerald-400 hover:bg-emerald-500 flex items-center gap-1 cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-base">download</span>
-              Tải File Ảnh Phông LED
-            </button>
+            {currentLedTemplate?.type === 'video' || currentLedTemplate?.bgVideo || selectedProfile?.ledBgVideo ? (
+              <>
+                <button
+                  onClick={() => handleDownloadLedBackdrop('video')}
+                  className="px-4 py-2 bg-emerald-600 text-white font-bold text-xs uppercase rounded-full border border-emerald-400 hover:bg-emerald-500 flex items-center gap-1 cursor-pointer shadow-lg"
+                >
+                  <span className="material-symbols-outlined text-base">video_file</span>
+                  Tải File Video MP4
+                </button>
+                <button
+                  onClick={() => handleDownloadLedBackdrop('image')}
+                  className="px-4 py-2 bg-stone-900/90 text-stone-200 font-bold text-xs uppercase rounded-full border border-stone-700 hover:bg-stone-800 flex items-center gap-1 cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-base">image</span>
+                  Tải Ảnh Snapshot PNG
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => handleDownloadLedBackdrop('image')}
+                className="px-4 py-2 bg-emerald-600 text-white font-bold text-xs uppercase rounded-full border border-emerald-400 hover:bg-emerald-500 flex items-center gap-1 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-base">download</span>
+                Tải File Ảnh Phông LED
+              </button>
+            )}
             <button
               onClick={() => setFullscreenLed(false)}
               className="px-4 py-2 bg-stone-900/90 text-white font-bold text-xs uppercase rounded-full border border-amber-500/40 hover:bg-stone-800 flex items-center gap-1 cursor-pointer"
