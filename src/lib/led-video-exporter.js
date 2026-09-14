@@ -1,0 +1,228 @@
+// LED Stage Screen Video Exporter — Renders background video + text overlay + logo onto Canvas & records to WebM/MP4
+export async function exportLedVideoWithOverlay({
+  videoUrl,
+  imageUrl,
+  partyTitle = 'LỄ THÀNH HÔN',
+  groomName = 'Đức Hoàng',
+  brideName = 'Thu Hương',
+  eventDate = '2026-11-20',
+  fontKey = 'ballet',
+  titleFontSize = 32,
+  groomFontSize = 59,
+  dateFontSize = 24,
+  aspectRatio = '704/384',
+  durationSeconds = 8,
+  showRings = false,
+  onProgress
+}) {
+  return new Promise((resolve, reject) => {
+    try {
+      // 1. Setup Canvas resolution (1920x1080 Full HD scale)
+      const canvas = document.createElement('canvas');
+      const targetWidth = 1920;
+      let ratioMultiplier = 384 / 704; // default 1.83:1 (Tầng 3)
+      if (aspectRatio.includes('336')) ratioMultiplier = 336 / 704; // Tầng 2
+      if (aspectRatio.includes('272')) ratioMultiplier = 272 / 512; // Tầng 1/4
+      
+      const targetHeight = Math.round(targetWidth * ratioMultiplier);
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext('2d');
+
+      // 2. Load Logo Image
+      const logoImg = new Image();
+      logoImg.crossOrigin = 'anonymous';
+      logoImg.src = '/logo-icon.png';
+
+      // 3. Load Static Background Image fallback
+      const bgImg = new Image();
+      if (imageUrl && !videoUrl) {
+        bgImg.crossOrigin = 'anonymous';
+        bgImg.src = imageUrl;
+      }
+
+      // 4. Create Video element if videoUrl exists
+      let videoEl = null;
+
+      if (videoUrl) {
+        videoEl = document.createElement('video');
+        videoEl.crossOrigin = 'anonymous';
+        videoEl.muted = true;
+        videoEl.loop = true;
+        videoEl.playsInline = true;
+        videoEl.src = videoUrl;
+      }
+
+      // Font mapping for Canvas ctx.font
+      const fontNameMap = {
+        ballet: '"Ballet", cursive',
+        greatvibes: '"Great Vibes", cursive',
+        alexbrush: '"Alex Brush", cursive',
+        playfair: '"Playfair Display", Didot, serif'
+      };
+      const canvasFont = fontNameMap[fontKey] || fontNameMap.ballet;
+
+      // Formatting date dot
+      const formatDateDot = (dStr) => {
+        if (!dStr) return '20.11.2026';
+        if (dStr.includes('-')) {
+          const parts = dStr.split('-');
+          if (parts.length === 3) return `${parts[2]}.${parts[1]}.${parts[0]}`;
+        }
+        return dStr;
+      };
+
+      const renderFrame = () => {
+        // Draw background (Video or Image)
+        if (videoEl && videoEl.readyState >= 2) {
+          ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+        } else if (bgImg.complete && bgImg.naturalWidth > 0) {
+          ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+        } else {
+          ctx.fillStyle = '#050508';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Overlay black tint (25%)
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Vertical Spotlight Beam
+        const gradient = ctx.createRadialGradient(
+          canvas.width / 2, 0, 10,
+          canvas.width / 2, canvas.height / 2, canvas.height
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.25)');
+        gradient.addColorStop(0.45, 'rgba(255, 255, 255, 0.08)');
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Top-Left Logo
+        if (logoImg.complete && logoImg.naturalWidth > 0) {
+          const logoH = Math.round(canvas.height * 0.12);
+          const logoW = Math.round(logoImg.naturalWidth * (logoH / logoImg.naturalHeight));
+          ctx.save();
+          ctx.shadowColor = 'rgba(227, 166, 56, 0.85)';
+          ctx.shadowBlur = 15;
+          ctx.drawImage(logoImg, 50, 40, logoW, logoH);
+          ctx.restore();
+        }
+
+        // Text Properties
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#f8fafc';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.98)';
+        ctx.shadowOffsetY = 4;
+
+        // 1. Party Title (e.g., LỄ VU QUY) - Vertical Center at ~ 26%
+        const titlePx = Math.round(titleFontSize * 1.8);
+        ctx.font = `900 ${titlePx}px "Playfair Display", "Cormorant Garamond", serif`;
+        ctx.shadowBlur = 18;
+        const normTitle = (partyTitle || 'LỄ THÀNH HÔN').normalize('NFC').toUpperCase();
+        ctx.fillText(normTitle, canvas.width / 2, canvas.height * 0.26);
+
+        // 2. Bride & Groom Names - Vertical Center at ~ 48%
+        const groomPx = Math.round(groomFontSize * 2.0);
+        ctx.font = `400 ${groomPx}px ${canvasFont}`;
+        ctx.shadowBlur = 25;
+
+        const groomNorm = (groomName || 'Đức Hoàng').normalize('NFC');
+        const brideNorm = (brideName || 'Thu Hương').normalize('NFC');
+
+        const fullCoupleText = `${groomNorm}   &   ${brideNorm}`;
+        ctx.fillText(fullCoupleText, canvas.width / 2, canvas.height * 0.48);
+
+        // 3. Wedding Date - Vertical Center at ~ 72%
+        const datePx = Math.round(dateFontSize * 1.8);
+        ctx.font = `bold ${datePx}px "Playfair Display", Didot, serif`;
+        ctx.shadowBlur = 20;
+        ctx.fillText(formatDateDot(eventDate), canvas.width / 2, canvas.height * 0.72);
+      };
+
+      const startRecording = () => {
+        const stream = canvas.captureStream(30);
+        
+        let mimeType = 'video/webm;codecs=vp9';
+        if (typeof MediaRecorder !== 'undefined') {
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+          if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/mp4';
+        }
+
+        const mediaRecorder = new MediaRecorder(stream, { mimeType });
+        const chunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        const startTime = Date.now();
+        const interval = setInterval(() => {
+          renderFrame();
+          const elapsed = (Date.now() - startTime) / 1000;
+          if (onProgress) {
+            const pct = Math.min(100, Math.round((elapsed / durationSeconds) * 100));
+            onProgress(pct);
+          }
+          if (elapsed >= durationSeconds) {
+            clearInterval(interval);
+            mediaRecorder.stop();
+          }
+        }, 1000 / 30);
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: mimeType });
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement('a');
+          const groomClean = (groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+          const brideClean = (brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+          
+          const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+          link.download = `video-phong-led-da-ghep-chu-${groomClean}-${brideClean}.${ext}`;
+          link.href = url;
+          link.click();
+          
+          if (videoEl) {
+            videoEl.pause();
+            videoEl.src = '';
+          }
+          resolve({ success: true, url, ext });
+        };
+
+        mediaRecorder.start(100);
+      };
+
+      if (videoEl) {
+        let started = false;
+        videoEl.oncanplaythrough = () => {
+          if (!started) {
+            started = true;
+            videoEl.play().catch(() => {});
+            startRecording();
+          }
+        };
+        videoEl.onerror = () => {
+          if (!started) {
+            started = true;
+            startRecording();
+          }
+        };
+        videoEl.load();
+        // Safety fallback if video takes long to trigger canplaythrough
+        setTimeout(() => {
+          if (!started) {
+            started = true;
+            videoEl.play().catch(() => {});
+            startRecording();
+          }
+        }, 1500);
+      } else {
+        startRecording();
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
+}

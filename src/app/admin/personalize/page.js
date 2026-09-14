@@ -6,6 +6,7 @@ import { toPng } from 'html-to-image';
 import { MUSIC_TRACKS, MUSIC_CATEGORIES, LED_STAGE_TEMPLATES, VENUE_FLOOR_OPTIONS } from '@/lib/personalize-data';
 import TableMenuDesignerModal from '@/components/admin/TableMenuDesignerModal';
 import AIPersonalizeInputSection from '@/components/admin/AIPersonalizeInputSection';
+import { exportLedVideoWithOverlay } from '@/lib/led-video-exporter';
 
 // Standardized Date Dot Formatter (e.g. "2026-11-20" -> "20.11.2026") matching LedCustomizer.jsx 100%
 function formatDateDot(dateStr) {
@@ -228,6 +229,10 @@ export default function AdminPersonalizePage() {
     ? (LED_STAGE_TEMPLATES.find(t => t.id === selectedProfile.ledTemplateId) || LED_STAGE_TEMPLATES[0])
     : LED_STAGE_TEMPLATES[0];
 
+  // State for rendering video export progress
+  const [renderingVideo, setRenderingVideo] = useState(false);
+  const [renderProgress, setRenderProgress] = useState(0);
+
   // Helper function to export/download exact 100% snapshot or MP4 video file of live LED stage screen
   const handleDownloadLedBackdrop = async (formatMode = 'auto') => {
     if (!selectedProfile) return;
@@ -236,18 +241,32 @@ export default function AdminPersonalizePage() {
     const groomClean = (selectedProfile.groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
     const brideClean = (selectedProfile.brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
 
-    // If forced video download OR (auto mode and template/profile has a video URL)
+    // If format is forced video OR (auto mode and template/profile has a video URL)
     if (formatMode === 'video' || (formatMode === 'auto' && (activeVideo || currentLedTemplate.type === 'video'))) {
-      if (activeVideo) {
-        const link = document.createElement('a');
-        link.href = activeVideo;
-        link.download = `video-phong-led-san-khau-${groomClean}-${brideClean}.mp4`;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        return;
+      try {
+        setRenderingVideo(true);
+        setRenderProgress(0);
+        await exportLedVideoWithOverlay({
+          videoUrl: activeVideo,
+          imageUrl: currentLedTemplate.bgImage,
+          partyTitle: selectedProfile.partyTitle || 'LỄ THÀNH HÔN',
+          groomName: selectedProfile.groomName || 'Đức Hoàng',
+          brideName: selectedProfile.brideName || 'Thu Hương',
+          eventDate: selectedProfile.eventDate || '2026-11-20',
+          fontKey: selectedProfile.ledFont || 'ballet',
+          titleFontSize: selectedProfile.ledTitleFontSize || 32,
+          groomFontSize: selectedProfile.ledBrideGroomFontSize || 59,
+          dateFontSize: selectedProfile.ledDateFontSize || 24,
+          aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704/336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512/272' : '704/384',
+          durationSeconds: 8,
+          onProgress: (pct) => setRenderProgress(pct)
+        });
+      } catch (err) {
+        console.error('Error rendering overlay video:', err);
+      } finally {
+        setRenderingVideo(false);
       }
+      return;
     }
 
     // Default: capture live DOM snapshot as HD PNG
@@ -1144,6 +1163,21 @@ export default function AdminPersonalizePage() {
           isOpen={!!menuModalProfile}
           onClose={() => setMenuModalProfile(null)}
         />
+      )}
+
+      {/* Video Rendering Progress Toast Modal */}
+      {renderingVideo && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-white text-center">
+          <div className="bg-stone-900 border border-amber-500/40 p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-4">
+            <span className="material-symbols-outlined text-5xl text-amber-400 animate-spin">movie_edit</span>
+            <h3 className="text-lg font-bold font-playfair text-amber-300">Đang Xuất Video Phông LED (Đã Ghép Tên Dâu Rể & Logo)</h3>
+            <p className="text-xs text-stone-300">Hệ thống đang render video 1080p tích hợp tên Dâu Rể, Tiêu đề tiệc & Ngày cử hành lễ...</p>
+            <div className="w-full bg-stone-800 rounded-full h-3 overflow-hidden border border-stone-700">
+              <div className="bg-gradient-to-r from-amber-500 to-amber-300 h-full transition-all duration-300" style={{ width: `${renderProgress}%` }}></div>
+            </div>
+            <div className="text-xs font-mono font-bold text-amber-400">{renderProgress}% Hoàn Tất</div>
+          </div>
+        </div>
       )}
 
     </div>

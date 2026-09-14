@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { LED_STAGE_TEMPLATES, LED_SCREEN_FLOORS } from '@/lib/personalize-data';
+import { exportLedVideoWithOverlay } from '@/lib/led-video-exporter';
 
 const EVENT_TITLE_OPTIONS = [
   'LỄ THÀNH HÔN',
@@ -55,6 +56,38 @@ export default function LedCustomizer({
   const [ledBrideGroomFontSize, setLedBrideGroomFontSize] = useState(59); // default 59px
   const [ledTitleFontSize, setLedTitleFontSize] = useState(32);           // default 32px
   const [ledDateFontSize, setLedDateFontSize] = useState(24);            // default 24px
+
+  // Video Rendering Export State
+  const [renderingVideo, setRenderingVideo] = useState(false);
+  const [renderProgress, setRenderProgress] = useState(0);
+
+  const handleExportRenderedVideo = async () => {
+    setRenderingVideo(true);
+    setRenderProgress(0);
+    try {
+      await exportLedVideoWithOverlay({
+        videoUrl: selectedTemplate?.bgVideo || (customUploadUrl?.startsWith('data:video') ? customUploadUrl : null),
+        imageUrl: customUploadUrl || selectedTemplate?.bgImage,
+        partyTitle: eventTypeTitle || 'LỄ THÀNH HÔN',
+        groomName: groomName || 'Đức Hoàng',
+        brideName: brideName || 'Thu Hương',
+        eventDate: eventDate || '2026-11-20',
+        fontKey: selectedFont,
+        titleFontSize: ledTitleFontSize,
+        groomFontSize: ledBrideGroomFontSize,
+        dateFontSize: ledDateFontSize,
+        aspectRatio: `${selectedFloor.widthMeters}/${selectedFloor.heightMeters}`,
+        durationSeconds: 8,
+        showRings: showRings,
+        onProgress: (pct) => setRenderProgress(pct)
+      });
+    } catch (err) {
+      console.error('Error exporting LED video:', err);
+      alert('Không thể xuất tệp video. Vui lòng thử lại!');
+    } finally {
+      setRenderingVideo(false);
+    }
+  };
 
   const LED_FONT_MAP = {
     ballet: "var(--font-ballet), 'Ballet', var(--font-greatvibes), 'Great Vibes', cursive",
@@ -644,13 +677,22 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
           {/* Action Buttons below Visualizer */}
           <div className="w-full flex flex-wrap gap-3 mt-4">
             <button
+              onClick={handleExportRenderedVideo}
+              disabled={renderingVideo}
+              className="w-full sm:flex-1 px-5 py-3.5 bg-gradient-to-r from-amber-500 via-amber-400 to-[#e3a638] text-black text-xs uppercase font-extrabold tracking-wider rounded-xl hover:shadow-[0_0_25px_rgba(227,166,56,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg disabled:opacity-50"
+            >
+              <span className="material-symbols-outlined text-lg">download_for_offline</span>
+              <span>Tải Video Phông LED Ghép Chữ (Loop MP4/WebM)</span>
+            </button>
+
+            <button
               onClick={handleCopyConfig}
-              className="flex-1 px-5 py-3 bg-[#1e1e1e] hover:bg-[#2a2a2a] text-white text-xs uppercase font-bold tracking-wider rounded-xl border border-gray-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="px-4 py-3 bg-[#1e1e1e] hover:bg-[#2a2a2a] text-white text-xs uppercase font-bold tracking-wider rounded-xl border border-gray-700 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
             >
               <span className="material-symbols-outlined text-base text-amber-400">
                 {copied ? 'check_circle' : 'content_copy'}
               </span>
-              {copied ? 'Đã Sao Chép Cấu Hình!' : 'Sao Chép Cấu Hình Kỹ Thuật LED'}
+              {copied ? 'Đã Sao Chép!' : 'Sao Chép Cấu Hình'}
             </button>
 
             {onSave && (
@@ -667,10 +709,10 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
                   ledTitleFontSize,
                   ledDateFontSize
                 })}
-                className="flex-1 px-5 py-3 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-xs uppercase font-bold tracking-wider rounded-xl hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="px-4 py-3 bg-[#262626] hover:bg-[#333] text-amber-300 text-xs uppercase font-bold tracking-wider rounded-xl border border-amber-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
               >
                 <span className="material-symbols-outlined text-base">bookmark</span>
-                Lưu Vào Dự Toán
+                Lưu Dự Toán
               </button>
             )}
           </div>
@@ -683,6 +725,21 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
           <p className="text-xs text-gray-400 max-w-md leading-relaxed">
             Bạn có thể dùng nút <strong className="text-cyan-300">MỞ CANVA</strong> ở bên trái để thiết kế đúng kích thước <span className="text-amber-300 font-bold">{selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m</span>, sau đó tải tệp ảnh lên.
           </p>
+        </div>
+      )}
+
+      {/* Video Rendering Progress Toast Modal */}
+      {renderingVideo && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-white text-center">
+          <div className="bg-[#18181b] border border-amber-500/40 p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-4">
+            <span className="material-symbols-outlined text-5xl text-amber-400 animate-spin">movie_edit</span>
+            <h3 className="text-lg font-bold font-playfair text-amber-300">Đang Xuất Video Phông LED (Đã Ghép Chữ & Logo)</h3>
+            <p className="text-xs text-stone-300">Hệ thống đang xuất video 1080p có chuyển động hoàn chỉnh tích hợp tên Dâu Rể, Tiêu đề tiệc & Ngày cử hành...</p>
+            <div className="w-full bg-stone-800 rounded-full h-3 overflow-hidden border border-stone-700">
+              <div className="bg-gradient-to-r from-amber-500 to-amber-300 h-full transition-all duration-300" style={{ width: `${renderProgress}%` }}></div>
+            </div>
+            <div className="text-xs font-mono font-bold text-amber-400">{renderProgress}% Hoàn Tất</div>
+          </div>
         </div>
       )}
 
