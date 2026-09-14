@@ -680,10 +680,12 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
             <button
               onClick={handleExportRenderedVideo}
               disabled={renderingVideo}
-              className="w-full sm:flex-1 px-5 py-3.5 bg-gradient-to-r from-amber-500 via-amber-400 to-[#e3a638] text-black text-xs uppercase font-extrabold tracking-wider rounded-xl hover:shadow-[0_0_25px_rgba(227,166,56,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg disabled:opacity-50"
+              className="w-full sm:flex-1 px-5 py-3.5 bg-gradient-to-r from-amber-500 via-amber-400 to-[#e3a638] text-black text-xs uppercase font-extrabold tracking-wider rounded-xl hover:shadow-[0_0_25px_rgba(227,166,56,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg disabled:opacity-75"
             >
-              <span className="material-symbols-outlined text-lg">download_for_offline</span>
-              <span>Tải Video Phông LED Ghép Chữ (Loop MP4/WebM)</span>
+              <span className={`material-symbols-outlined text-lg ${renderingVideo ? 'animate-spin' : ''}`}>
+                {renderingVideo ? 'sync' : 'download_for_offline'}
+              </span>
+              <span>{renderingVideo ? `Đang Tải Video MP4 (${renderProgress}%)...` : 'Tải File Video MP4 (Chuẩn Màn LED)'}</span>
             </button>
 
             <button
@@ -726,21 +728,6 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
           <p className="text-xs text-gray-400 max-w-md leading-relaxed">
             Bạn có thể dùng nút <strong className="text-cyan-300">MỞ CANVA</strong> ở bên trái để thiết kế đúng kích thước <span className="text-amber-300 font-bold">{selectedFloor.widthMeters}m × {selectedFloor.heightMeters}m</span>, sau đó tải tệp ảnh lên.
           </p>
-        </div>
-      )}
-
-      {/* Video Rendering Progress Toast Modal */}
-      {renderingVideo && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-white text-center">
-          <div className="bg-[#18181b] border border-amber-500/40 p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-4">
-            <span className="material-symbols-outlined text-5xl text-amber-400 animate-spin">movie_edit</span>
-            <h3 className="text-lg font-bold font-playfair text-amber-300">Đang Xuất Video Phông LED (Đã Ghép Chữ & Logo)</h3>
-            <p className="text-xs text-stone-300">Hệ thống đang xuất video 1080p có chuyển động hoàn chỉnh tích hợp tên Dâu Rể, Tiêu đề tiệc & Ngày cử hành...</p>
-            <div className="w-full bg-stone-800 rounded-full h-3 overflow-hidden border border-stone-700">
-              <div className="bg-gradient-to-r from-amber-500 to-amber-300 h-full transition-all duration-300" style={{ width: `${renderProgress}%` }}></div>
-            </div>
-            <div className="text-xs font-mono font-bold text-amber-400">{renderProgress}% Hoàn Tất</div>
-          </div>
         </div>
       )}
 

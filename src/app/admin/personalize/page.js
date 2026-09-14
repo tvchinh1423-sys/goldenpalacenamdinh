@@ -1165,21 +1165,6 @@ export default function AdminPersonalizePage() {
         />
       )}
 
-      {/* Video Rendering Progress Toast Modal */}
-      {renderingVideo && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-white text-center">
-          <div className="bg-stone-900 border border-amber-500/40 p-8 rounded-3xl max-w-md w-full shadow-2xl space-y-4">
-            <span className="material-symbols-outlined text-5xl text-amber-400 animate-spin">movie_edit</span>
-            <h3 className="text-lg font-bold font-playfair text-amber-300">Đang Xuất Video Phông LED (Đã Ghép Tên Dâu Rể & Logo)</h3>
-            <p className="text-xs text-stone-300">Hệ thống đang render video 1080p tích hợp tên Dâu Rể, Tiêu đề tiệc & Ngày cử hành lễ...</p>
-            <div className="w-full bg-stone-800 rounded-full h-3 overflow-hidden border border-stone-700">
-              <div className="bg-gradient-to-r from-amber-500 to-amber-300 h-full transition-all duration-300" style={{ width: `${renderProgress}%` }}></div>
-            </div>
-            <div className="text-xs font-mono font-bold text-amber-400">{renderProgress}% Hoàn Tất</div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }
