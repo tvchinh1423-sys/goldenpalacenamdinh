@@ -1,4 +1,4 @@
-// LED Stage Screen Video Exporter — Fast Single-Pass DOM Snapshot Compositor (4-Second Loop, Ultra HD MP4)
+// LED Stage Screen Video Exporter — Dynamic Moving Video + Razor-Sharp 1080p Live Overlay (35Mbps Full HD MP4)
 import { toCanvas } from 'html-to-image';
 
 export async function exportLedVideoWithOverlay({
@@ -13,8 +13,7 @@ export async function exportLedVideoWithOverlay({
   groomFontSize = 59,
   dateFontSize = 24,
   aspectRatio = '704/384',
-  durationSeconds = 4,
-  showRings = false,
+  durationSeconds = 6,
   targetNodeId = 'fullscreen-led-stage-screen',
   fallbackNodeId = 'led-stage-screen-canvas',
   secondaryNodeId = 'led-stage-customizer-preview',
@@ -22,14 +21,14 @@ export async function exportLedVideoWithOverlay({
 }) {
   return new Promise(async (resolve, reject) => {
     try {
-      // Ensure web fonts are loaded
+      // Ensure web fonts are completely loaded into browser font engine
       if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
         try {
           await document.fonts.ready;
         } catch (e) {}
       }
 
-      // 1. Locate live DOM node on screen
+      // 1. Find live DOM node on screen
       let domNode = document.getElementById(targetNodeId) || 
                     document.getElementById(fallbackNodeId) || 
                     document.getElementById(secondaryNodeId);
@@ -45,25 +44,49 @@ export async function exportLedVideoWithOverlay({
         throw new Error('Không tìm thấy khung xem trước phông LED.');
       }
 
-      // 2. Capture single-pass DOM Snapshot (100% exact text, fonts, ampersand, logo & layout in ~30ms)
-      let snapshotCanvas;
-      try {
-        snapshotCanvas = await toCanvas(domNode, { quality: 1.0, pixelRatio: 2, cacheBust: false });
-      } catch (e) {
-        await new Promise(r => setTimeout(r, 100));
-        snapshotCanvas = await toCanvas(domNode, { quality: 1.0, pixelRatio: 2, cacheBust: false });
-      }
-
-      const width = snapshotCanvas.width;
-      const height = snapshotCanvas.height;
-
-      const recordCanvas = document.createElement('canvas');
-      recordCanvas.width = width;
-      recordCanvas.height = height;
-      const recordCtx = recordCanvas.getContext('2d');
-
       const videoEl = domNode.querySelector('video');
 
+      // 2. Temporarily hide video element to capture 100% TRANSPARENT PNG snapshot of text, logo & spotlight
+      if (videoEl) {
+        videoEl.style.visibility = 'hidden';
+      }
+
+      let overlayCanvas;
+      try {
+        overlayCanvas = await toCanvas(domNode, {
+          quality: 1.0,
+          pixelRatio: 3, // Ultra-sharp 3K render scale for text & logo crispness
+          backgroundColor: null,
+          cacheBust: false
+        });
+      } catch (e) {
+        await new Promise(r => setTimeout(r, 100));
+        overlayCanvas = await toCanvas(domNode, {
+          quality: 1.0,
+          pixelRatio: 3,
+          backgroundColor: null,
+          cacheBust: false
+        });
+      } finally {
+        if (videoEl) {
+          videoEl.style.visibility = 'visible';
+        }
+      }
+
+      // Output resolution setup (Full HD 1920x1080 scale matching stage aspect ratio)
+      const targetWidth = 1920;
+      let ratioMultiplier = 384 / 704;
+      if (aspectRatio.includes('336')) ratioMultiplier = 336 / 704;
+      if (aspectRatio.includes('272')) ratioMultiplier = 272 / 512;
+
+      const targetHeight = Math.round(targetWidth * ratioMultiplier);
+
+      const recordCanvas = document.createElement('canvas');
+      recordCanvas.width = targetWidth;
+      recordCanvas.height = targetHeight;
+      const recordCtx = recordCanvas.getContext('2d');
+
+      // Stream setup at 30 FPS
       const stream = recordCanvas.captureStream(30);
 
       let mimeType = 'video/mp4';
@@ -81,9 +104,13 @@ export async function exportLedVideoWithOverlay({
 
       let mediaRecorder;
       try {
-        mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 25000000 });
+        mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 35000000 });
       } catch (e) {
-        mediaRecorder = new MediaRecorder(stream, { mimeType });
+        try {
+          mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 15000000 });
+        } catch (e2) {
+          mediaRecorder = new MediaRecorder(stream, { mimeType });
+        }
       }
 
       const chunks = [];
@@ -91,19 +118,32 @@ export async function exportLedVideoWithOverlay({
         if (e.data && e.data.size > 0) chunks.push(e.data);
       };
 
-      const totalFrames = durationSeconds * 30; // 4s @ 30fps = 120 frames
+      const totalFrames = durationSeconds * 30; // 6 seconds @ 30 FPS
       let currentFrame = 0;
+
+      // Ensure video element is playing live
+      if (videoEl) {
+        try {
+          if (videoEl.paused) await videoEl.play();
+        } catch (e) {}
+      }
 
       mediaRecorder.start(100);
 
-      // Fast frame loop (0.1ms per frame!)
+      // Frame compositor loop: Live Video + Razor-Sharp Transparent DOM Text Overlay
       const frameInterval = setInterval(() => {
+        recordCtx.clearRect(0, 0, targetWidth, targetHeight);
+
+        // 1. Draw live moving video frame
         if (videoEl && videoEl.readyState >= 2) {
-          recordCtx.drawImage(videoEl, 0, 0, width, height);
-          recordCtx.drawImage(snapshotCanvas, 0, 0, width, height);
+          recordCtx.drawImage(videoEl, 0, 0, targetWidth, targetHeight);
         } else {
-          recordCtx.drawImage(snapshotCanvas, 0, 0, width, height);
+          recordCtx.fillStyle = '#050508';
+          recordCtx.fillRect(0, 0, targetWidth, targetHeight);
         }
+
+        // 2. Draw razor-sharp transparent text overlay snapshot on top
+        recordCtx.drawImage(overlayCanvas, 0, 0, targetWidth, targetHeight);
 
         currentFrame++;
         if (onProgress) onProgress(Math.min(100, Math.round((currentFrame / totalFrames) * 100)));

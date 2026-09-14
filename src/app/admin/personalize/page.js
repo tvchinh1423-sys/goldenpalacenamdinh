@@ -759,11 +759,14 @@ export default function AdminPersonalizePage() {
                       <>
                         <button
                           onClick={() => handleDownloadLedBackdrop('video')}
-                          className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs hover:bg-emerald-500 transition-colors flex items-center gap-1 cursor-pointer shadow-sm"
+                          disabled={renderingVideo}
+                          className="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs hover:bg-emerald-500 transition-colors flex items-center gap-1 cursor-pointer shadow-sm disabled:opacity-75"
                           title="Tải tệp video MP4 gốc để chiếu trên màn LED"
                         >
-                          <span className="material-symbols-outlined text-sm">video_file</span>
-                          Tải File Video MP4 (Chuẩn Màn LED)
+                          <span className={`material-symbols-outlined text-sm ${renderingVideo ? 'animate-spin' : ''}`}>
+                            {renderingVideo ? 'sync' : 'video_file'}
+                          </span>
+                          {renderingVideo ? `Đang tải (${renderProgress}%)...` : 'Tải File Video MP4 (Chuẩn Màn LED)'}
                         </button>
                         <button
                           onClick={() => handleDownloadLedBackdrop('image')}
