@@ -646,6 +646,56 @@ export default function AdminPersonalizePage() {
                 )}
               </div>
 
+              {/* Menu Categories Section */}
+              <div className="bg-stone-50 border border-stone-200 p-3.5 rounded-xl space-y-2">
+                <div className="text-xs font-bold text-amber-700 uppercase tracking-wider flex items-center gap-1.5 border-b border-stone-200 pb-1.5">
+                  <span className="material-symbols-outlined text-base">restaurant_menu</span>
+                  <span>Thực Đơn Tiệc (Tự Động Trích Xuất Từ Ảnh Hợp Đồng)</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="block font-bold text-stone-700 mb-1 text-[11px]">1. Món Khai Vị</label>
+                    <textarea
+                      rows={3}
+                      value={editingProfile.khaiViText || ''}
+                      onChange={(e) => setEditingProfile({ ...editingProfile, khaiViText: e.target.value })}
+                      className="w-full bg-white border border-stone-300 rounded-lg p-2 outline-none font-sans text-xs"
+                      placeholder="Súp gà ngô nấm&#10;Salad trứng cá hồi"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-stone-700 mb-1 text-[11px]">2. Món Chính</label>
+                    <textarea
+                      rows={3}
+                      value={editingProfile.monChinhText || ''}
+                      onChange={(e) => setEditingProfile({ ...editingProfile, monChinhText: e.target.value })}
+                      className="w-full bg-white border border-stone-300 rounded-lg p-2 outline-none font-sans text-xs"
+                      placeholder="Gà hấp lá chanh&#10;Tôm ủ mây"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-stone-700 mb-1 text-[11px]">3. Tráng Miệng</label>
+                    <textarea
+                      rows={2}
+                      value={editingProfile.trangMiengText || ''}
+                      onChange={(e) => setEditingProfile({ ...editingProfile, trangMiengText: e.target.value })}
+                      className="w-full bg-white border border-stone-300 rounded-lg p-2 outline-none font-sans text-xs"
+                      placeholder="Caramen / Trái cây"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-stone-700 mb-1 text-[11px]">4. Đồ Uống</label>
+                    <textarea
+                      rows={2}
+                      value={editingProfile.doUongText || ''}
+                      onChange={(e) => setEditingProfile({ ...editingProfile, doUongText: e.target.value })}
+                      className="w-full bg-white border border-stone-300 rounded-lg p-2 outline-none font-sans text-xs"
+                      placeholder="Nước suối&#10;Bia sài gòn"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="block font-bold mb-1">Ghi Chú Kịch Bản & Yêu Cầu Riêng</label>
                 <textarea

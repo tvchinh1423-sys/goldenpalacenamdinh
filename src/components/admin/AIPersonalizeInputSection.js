@@ -136,11 +136,11 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
         ledDateFontSize: existingProfile.ledDateFontSize || 24,
         selectedMusic: existingProfile.selectedMusic || [],
         youtubeLinks: existingProfile.youtubeLinks || {},
-        // MERGE / SUPPLEMENT MISSING MENU CATEGORIES
-        khaiViText: existingProfile.khaiViText ? existingProfile.khaiViText : parsedKhaiVi,
-        monChinhText: existingProfile.monChinhText ? existingProfile.monChinhText : parsedMonChinh,
-        trangMiengText: existingProfile.trangMiengText ? existingProfile.trangMiengText : parsedTrangMieng,
-        doUongText: existingProfile.doUongText ? existingProfile.doUongText : parsedDoUong,
+        // MERGE / SUPPLEMENT MISSING MENU CATEGORIES (Prioritize newly parsed AI dishes from image)
+        khaiViText: parsedKhaiVi || existingProfile.khaiViText || '',
+        monChinhText: parsedMonChinh || existingProfile.monChinhText || '',
+        trangMiengText: parsedTrangMieng || existingProfile.trangMiengText || '',
+        doUongText: parsedDoUong || existingProfile.doUongText || '',
         isExistingProfile: true
       });
 

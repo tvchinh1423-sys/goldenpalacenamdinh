@@ -484,10 +484,10 @@ export async function POST(req) {
         selectedMusic: (old.selectedMusic && old.selectedMusic.length > 0) ? old.selectedMusic : (selectedMusic || []),
         youtubeLinks: (old.youtubeLinks && Object.values(old.youtubeLinks).some(Boolean)) ? old.youtubeLinks : (youtubeLinks || {}),
         customNotes: (old.customNotes && old.customNotes !== 'Không có ghi chú thêm') ? old.customNotes : (customNotes || ''),
-        khaiViText: old.khaiViText ? old.khaiViText : (khaiViText || ''),
-        monChinhText: old.monChinhText ? old.monChinhText : (monChinhText || ''),
-        trangMiengText: old.trangMiengText ? old.trangMiengText : (trangMiengText || ''),
-        doUongText: old.doUongText ? old.doUongText : (doUongText || ''),
+        khaiViText: (khaiViText !== undefined && khaiViText !== null && khaiViText !== '') ? khaiViText : (old.khaiViText || ''),
+        monChinhText: (monChinhText !== undefined && monChinhText !== null && monChinhText !== '') ? monChinhText : (old.monChinhText || ''),
+        trangMiengText: (trangMiengText !== undefined && trangMiengText !== null && trangMiengText !== '') ? trangMiengText : (old.trangMiengText || ''),
+        doUongText: (doUongText !== undefined && doUongText !== null && doUongText !== '') ? doUongText : (old.doUongText || ''),
         updatedAt: new Date().toISOString()
       };
     } else {
