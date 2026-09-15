@@ -6,6 +6,9 @@ import path from 'path';
 import { randomUUID } from 'crypto';
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Primary & Fallback Data File locations for maximum persistence
 const DATA_FILE_TMP = path.join('/tmp', 'personalize-profiles.json');
 const DATA_FILE_LOCAL = path.join(process.cwd(), 'src', 'data', 'personalize-profiles.json');
@@ -178,6 +181,7 @@ async function persistProfile(profileData) {
   
   const existingIdx = profiles.findIndex(p => (
     p.id === profileData.id ||
+    (profileData.dbLeadId && (p.dbLeadId === profileData.dbLeadId || p.id === profileData.dbLeadId)) ||
     (cleanPhone && cleanPhone.length >= 8 && p.phone && p.phone.replace(/[^0-9]/g, '') === cleanPhone)
   ));
 
@@ -203,10 +207,24 @@ async function persistProfile(profileData) {
 
   // 3. Save to Prisma Database (PostgreSQL / Supabase)
   try {
-    const jsonTag = `[PERSONALIZE_PROFILE] ${JSON.stringify(profileData)}`;
     let existingLead = null;
+    const searchTargetId = profileData.dbLeadId || profileData.id;
 
-    if (cleanPhone && cleanPhone.length >= 8) {
+    if (searchTargetId && !searchTargetId.startsWith('prof-')) {
+      existingLead = await prisma.lead.findUnique({
+        where: { id: searchTargetId }
+      });
+    }
+
+    if (!existingLead && searchTargetId) {
+      existingLead = await prisma.lead.findFirst({
+        where: {
+          internalNotes: { contains: searchTargetId }
+        }
+      });
+    }
+
+    if (!existingLead && cleanPhone && cleanPhone.length >= 8) {
       existingLead = await prisma.lead.findFirst({
         where: {
           phone: { contains: cleanPhone },
@@ -217,6 +235,9 @@ async function persistProfile(profileData) {
 
     let targetLead = null;
     if (existingLead) {
+      profileData.dbLeadId = existingLead.id;
+      const jsonTag = `[PERSONALIZE_PROFILE] ${JSON.stringify(profileData)}`;
+
       targetLead = await prisma.lead.update({
         where: { id: existingLead.id },
         data: {
@@ -229,6 +250,8 @@ async function persistProfile(profileData) {
       });
     } else {
       const code = `GP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const jsonTag = `[PERSONALIZE_PROFILE] ${JSON.stringify(profileData)}`;
+
       targetLead = await prisma.lead.create({
         data: {
           code,
@@ -240,10 +263,19 @@ async function persistProfile(profileData) {
           internalNotes: jsonTag
         }
       });
+
+      if (targetLead) {
+        profileData.dbLeadId = targetLead.id;
+        const updatedJsonTag = `[PERSONALIZE_PROFILE] ${JSON.stringify(profileData)}`;
+        await prisma.lead.update({
+          where: { id: targetLead.id },
+          data: { internalNotes: updatedJsonTag }
+        });
+      }
     }
 
     // Auto-upsert TableMenu in database if menu categories exist
-    if (targetLead && (profileData.khaiViText || profileData.monChinhText || profileData.doUongText)) {
+    if (targetLead && (profileData.khaiViText !== undefined || profileData.monChinhText !== undefined || profileData.doUongText !== undefined || profileData.trangMiengText !== undefined)) {
       const splitArr = (txt) => txt ? txt.split('\n').map(s => s.trim()).filter(Boolean) : [];
       const jsonStr = (txt) => JSON.stringify(splitArr(txt));
 

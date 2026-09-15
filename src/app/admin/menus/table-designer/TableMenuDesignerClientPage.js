@@ -63,7 +63,7 @@ export default function TableMenuDesignerClientPage({ leads, initialLeadId }) {
   const fetchSavedMenu = async (leadId) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/table-menu?leadId=${leadId}`);
+      const res = await fetch(`/api/admin/table-menu?leadId=${leadId}&t=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (data.title) setTitle(data.title);
