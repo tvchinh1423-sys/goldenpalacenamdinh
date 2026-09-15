@@ -126,7 +126,7 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
         brideName: brideFinal,
         phone: existingProfile.phone || parsedData.phone || '',
         eventDate: existingProfile.eventDate || parsedData.eventDate || new Date().toISOString().split('T')[0],
-        eventTime: existingProfile.eventTime || '11:00 AM',
+        eventTime: parsedData.eventTime || existingProfile.eventTime || '11:00 AM',
         floorId: existingProfile.floorId || floor,
         customNotes: existingProfile.customNotes || '', // ABSOLUTELY PRESERVE EXISTING CUSTOM NOTES (MUSIC/SCRIPT)!
         driveLink: existingProfile.driveLink || '',
@@ -166,7 +166,7 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
         brideName: bride || '',
         phone: parsedData.phone || '',
         eventDate: parsedData.eventDate || new Date().toISOString().split('T')[0],
-        eventTime: '11:00 AM',
+        eventTime: parsedData.eventTime || '11:00 AM',
         floorId: floor,
         customNotes: '', // Clean notes reserved for user's music script (DO NOT dump contract notes)
         driveLink: '',

@@ -71,7 +71,7 @@ function smartParseBookingText(text) {
   const phoneMatch = cleanText.match(/(?:\+84|0)[3|5|7|8|9][0-9]{8}\b/);
   const phone = phoneMatch ? phoneMatch[0] : '';
 
-  // 2. Extract Event Date (DD/MM/YYYY or DD-MM-YYYY or DD/MM)
+  // 2. Extract Event Date & Time
   let eventDate = '';
   const dateMatch = cleanText.match(/\b([0-3]?\d)[\/\.\-]([0-1]?\d)(?:[\/\.\-](20\d{2}|\d{2}))?\b/);
   if (dateMatch) {
@@ -79,6 +79,29 @@ function smartParseBookingText(text) {
     const month = dateMatch[2].padStart(2, '0');
     const year = dateMatch[3] ? (dateMatch[3].length === 2 ? `20${dateMatch[3]}` : dateMatch[3]) : new Date().getFullYear();
     eventDate = `${year}-${month}-${day}`;
+  }
+
+  // Extract Event Time (VD: 11h00, 11:30, 16h30, 17h30, 18h, 19h, 11:00 AM, 16:30 PM)
+  let eventTime = '';
+  const timeMatch = cleanText.match(/(?:đón khách|làm lễ|nhập tiệc|tiệc|thời gian|giờ|lúc)\s*[:\-]?\s*(\d{1,2})[h:](\d{2})?\s*(trưa|chiều|tối|am|pm)?/i) || cleanText.match(/\b([0-2]?\d)[h:]([0-5]\d)\b/i);
+  if (timeMatch) {
+    let hour = parseInt(timeMatch[1], 10);
+    const min = timeMatch[2] ? timeMatch[2].padStart(2, '0') : '00';
+    const modifier = (timeMatch[3] || '').toLowerCase();
+    
+    if (modifier.includes('chiều') || modifier.includes('tối') || modifier === 'pm') {
+      if (hour < 12) hour += 12;
+    }
+    const formattedHour = String(hour).padStart(2, '0');
+    if (hour >= 12 && hour < 14) {
+      eventTime = `Trưa (${formattedHour}:${min})`;
+    } else if (hour >= 14 && hour < 18) {
+      eventTime = `Chiều (${formattedHour}:${min})`;
+    } else if (hour >= 18) {
+      eventTime = `Tối (${formattedHour}:${min})`;
+    } else {
+      eventTime = `${formattedHour}:${min}`;
+    }
   }
 
   // 3. Extract Tables (Số mâm / Số bàn / Bàn / Mâm)
@@ -169,6 +192,7 @@ function smartParseBookingText(text) {
     brideGroomNames,
     eventType: 'TIEC_CUOI',
     eventDate,
+    eventTime: eventTime || '11:00 AM',
     venue,
     mainTables: mainTables || 0,
     guestCount: mainTables ? mainTables * 10 : 0,
@@ -225,18 +249,19 @@ Hãy phân tích kỹ và bóc tách chính xác các trường thông tin sau:
 8. saleStaff: Tên nhân viên sale Bên B và SĐT (VD: "Đỗ Thị Thu Trang - 0906195168")
 9. eventType: Loại tiệc (TIEC_CUOI, HOI_NGHI, SINH_NHAT, KHAC)
 10. eventDate: Ngày tổ chức dạng YYYY-MM-DD (VD: "2026-09-12" nếu trên ảnh ghi 12/09/2026)
-11. venue: Tên tầng tổ chức (VD: "Tầng 1", "Tầng 2", "Tầng 3", "Tầng 4")
-12. mainTables: Số mâm / số bàn chính (VD: Nếu ghi "Đảm bảo 450 khách" hoặc viết tay "450" ➔ số mâm chính là 45. Nếu ghi số mâm 30 ➔ 30).
-13. reserveTables: Số mâm dự phòng (VD: 40 khách ➔ 4 mâm).
-14. budgetPerTable: Giá mâm dự kiến VND (VD: 380.000đ/khách ➔ 3.800.000đ/mâm).
-15. totalAmount: Tổng tạm tính VND (VD: 166400000)
-16. depositAmount: Số tiền cọc đã nhận VND (VD: "Đã cọc 5.000.000đ" ➔ 5000000).
-17. menuDishes: Toàn bộ danh sách các món ăn thực đơn mâm dạng mảng
-18. khaiVi: Danh sách các món khai vị (súp, salad, gỏi, nộm, chả giò...) dạng mảng
-19. monChinh: Danh sách các món chính (gà, cá, tôm, dê, hải sản, bò, canh, xôi, cơm...) dạng mảng
-20. trangMieng: Danh sách món tráng miệng (caramen, chè, bánh, trái cây...) dạng mảng
-21. doUong: CHỈ LIỆT KÊ TÊN ĐỒ UỐNG (tuyệt đối KHÔNG kèm số lượng, đơn vị tính hay số chai/lon. VD: ["Nước suối", "Bia sài gòn", "Coca", "Rượu ta", "Nước cam"]) dạng mảng
-22. notes: Ghi chú dịch vụ yêu cầu (MC, Pháo điện, Màn hình LED 30m2, Bong bóng...)
+11. eventTime: Giờ/Thời gian đón khách hoặc làm lễ tổ chức tiệc (VD: "11:00 AM", "11:30 AM", "16:30 PM", "17:30 PM", "18:00 PM", "19:00 PM", "Trưa (11:00)", "Chiều (16:30)", "Tối (18:00)"). Phân tích kỹ giờ đón khách hoặc giờ làm lễ ghi trên phiếu BEO / hợp đồng / tin nhắn.
+12. venue: Tên tầng tổ chức (VD: "Tầng 1", "Tầng 2", "Tầng 3", "Tầng 4")
+13. mainTables: Số mâm / số bàn chính (VD: Nếu ghi "Đảm bảo 450 khách" hoặc viết tay "450" ➔ số mâm chính là 45. Nếu ghi số mâm 30 ➔ 30).
+14. reserveTables: Số mâm dự phòng (VD: 40 khách ➔ 4 mâm).
+15. budgetPerTable: Giá mâm dự kiến VND (VD: 380.000đ/khách ➔ 3.800.000đ/mâm).
+16. totalAmount: Tổng tạm tính VND (VD: 166400000)
+17. depositAmount: Số tiền cọc đã nhận VND (VD: "Đã cọc 5.000.000đ" ➔ 5000000).
+18. menuDishes: Toàn bộ danh sách các món ăn thực đơn mâm dạng mảng
+19. khaiVi: Danh sách các món khai vị (súp, salad, gỏi, nộm, chả giò...) dạng mảng
+20. monChinh: Danh sách các món chính (gà, cá, tôm, dê, hải sản, bò, canh, xôi, cơm...) dạng mảng
+21. trangMieng: Danh sách món tráng miệng (caramen, chè, bánh, trái cây...) dạng mảng
+22. doUong: CHỈ LIỆT KÊ TÊN ĐỒ UỐNG (tuyệt đối KHÔNG kèm số lượng, đơn vị tính hay số chai/lon. VD: ["Nước suối", "Bia sài gòn", "Coca", "Rượu ta", "Nước cam"]) dạng mảng
+23. notes: Ghi chú dịch vụ yêu cầu (MC, Pháo điện, Màn hình LED 30m2, Bong bóng...)
 
 Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code block, không thêm văn bản khác):
 {
@@ -250,6 +275,7 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
   "saleStaff": "Đỗ Thị Thu Trang",
   "eventType": "TIEC_CUOI",
   "eventDate": "2026-09-12",
+  "eventTime": "11:00 AM",
   "venue": "Tầng 2",
   "mainTables": 45,
   "reserveTables": 4,
@@ -377,6 +403,7 @@ Trả về ĐÚNG 1 ĐỊNH DẠNG JSON duy nhất (không chứa markdown code 
                 saleStaff: parsed.saleStaff || '',
                 eventType: parsed.eventType || 'TIEC_CUOI',
                 eventDate: parsed.eventDate || '',
+                eventTime: parsed.eventTime || '11:00 AM',
                 venue: parsed.venue || '',
                 mainTables: Number(parsed.mainTables) || 0,
                 reserveTables: Number(parsed.reserveTables) || 0,
