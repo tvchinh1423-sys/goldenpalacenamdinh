@@ -224,9 +224,9 @@ export default function AdminPersonalizePage() {
     }
   };
 
-  // Find LED Template Object for selected profile
+  // Find LED Template Object for selected profile (Default to 1. Phông LED Cưới Sao Rơi Full HD)
   const currentLedTemplate = selectedProfile
-    ? (LED_STAGE_TEMPLATES.find(t => t.id === selectedProfile.ledTemplateId) || LED_STAGE_TEMPLATES[0])
+    ? (LED_STAGE_TEMPLATES.find(t => t.id === (selectedProfile.ledTemplateId === 'led-cosmic-milkyway' ? 'led-video-sao-roi' : selectedProfile.ledTemplateId)) || LED_STAGE_TEMPLATES[0])
     : LED_STAGE_TEMPLATES[0];
 
   // State for rendering video export progress

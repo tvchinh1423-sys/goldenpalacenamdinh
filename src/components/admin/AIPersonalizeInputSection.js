@@ -45,11 +45,12 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
     floorId: 'FLOOR_2',
     customNotes: '',
     driveLink: '',
-    ledTemplateId: 'led-cosmic-milkyway',
+    ledTemplateId: 'led-video-sao-roi',
     ledFont: 'ballet',
     ledBrideGroomFontSize: 59,
     ledTitleFontSize: 32,
     ledDateFontSize: 24,
+    showRings: false,
     selectedMusic: [],
     youtubeLinks: {},
     khaiViText: '',
@@ -129,11 +130,12 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
         floorId: existingProfile.floorId || floor,
         customNotes: existingProfile.customNotes || '', // ABSOLUTELY PRESERVE EXISTING CUSTOM NOTES (MUSIC/SCRIPT)!
         driveLink: existingProfile.driveLink || '',
-        ledTemplateId: existingProfile.ledTemplateId || 'led-cosmic-milkyway',
+        ledTemplateId: existingProfile.ledTemplateId || 'led-video-sao-roi',
         ledFont: existingProfile.ledFont || 'ballet',
         ledBrideGroomFontSize: existingProfile.ledBrideGroomFontSize || 59,
         ledTitleFontSize: existingProfile.ledTitleFontSize || 32,
         ledDateFontSize: existingProfile.ledDateFontSize || 24,
+        showRings: existingProfile.showRings !== undefined ? existingProfile.showRings : false,
         selectedMusic: existingProfile.selectedMusic || [],
         youtubeLinks: existingProfile.youtubeLinks || {},
         // MERGE / SUPPLEMENT MISSING MENU CATEGORIES (Prioritize newly parsed AI dishes from image)
@@ -168,11 +170,12 @@ export default function AIPersonalizeInputSection({ onProfileCreated }) {
         floorId: floor,
         customNotes: '', // Clean notes reserved for user's music script (DO NOT dump contract notes)
         driveLink: '',
-        ledTemplateId: 'led-cosmic-milkyway', // Default LED Stage Backdrop
-        ledFont: 'ballet', // Default Font
+        ledTemplateId: 'led-video-sao-roi', // Default LED Stage Backdrop: Phông LED Cưới Sao Rơi Full HD (Video Loop)
+        ledFont: 'ballet', // Default Font: Ballet Script
         ledBrideGroomFontSize: 59,
         ledTitleFontSize: 32,
         ledDateFontSize: 24,
+        showRings: false,
         selectedMusic: [],
         youtubeLinks: {},
         khaiViText: parsedKhaiVi,

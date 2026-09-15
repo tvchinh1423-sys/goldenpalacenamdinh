@@ -440,6 +440,7 @@ export async function POST(req) {
       ledBrideGroomFontSize,
       ledTitleFontSize,
       ledDateFontSize,
+      showRings,
       selectedMusic,
       youtubeLinks,
       customNotes,
@@ -475,12 +476,13 @@ export async function POST(req) {
         floorId: floorId || old.floorId,
         venueName,
         driveLink: driveLink || old.driveLink,
-        ledTemplateId: ledTemplateId || old.ledTemplateId || 'led-cosmic-milkyway',
+        ledTemplateId: (ledTemplateId && ledTemplateId !== 'led-cosmic-milkyway') ? ledTemplateId : (old.ledTemplateId && old.ledTemplateId !== 'led-cosmic-milkyway' ? old.ledTemplateId : 'led-video-sao-roi'),
         ledBgVideo: ledBgVideo !== undefined ? ledBgVideo : (old.ledBgVideo || ''),
         ledFont: ledFont || old.ledFont || 'ballet',
         ledBrideGroomFontSize: old.ledBrideGroomFontSize ?? ledBrideGroomFontSize ?? 59,
         ledTitleFontSize: old.ledTitleFontSize ?? ledTitleFontSize ?? 32,
         ledDateFontSize: old.ledDateFontSize ?? ledDateFontSize ?? 24,
+        showRings: showRings !== undefined ? showRings : (old.showRings !== undefined ? old.showRings : false),
         selectedMusic: (old.selectedMusic && old.selectedMusic.length > 0) ? old.selectedMusic : (selectedMusic || []),
         youtubeLinks: (old.youtubeLinks && Object.values(old.youtubeLinks).some(Boolean)) ? old.youtubeLinks : (youtubeLinks || {}),
         customNotes: (old.customNotes && old.customNotes !== 'Không có ghi chú thêm') ? old.customNotes : (customNotes || ''),
@@ -491,7 +493,7 @@ export async function POST(req) {
         updatedAt: new Date().toISOString()
       };
     } else {
-      // NEW PROFILE CREATION
+      // NEW PROFILE CREATION WITH SYSTEM DEFAULT SETTINGS
       profileData = {
         id: id || `prof-${Date.now()}`,
         partyTitle: partyTitle || `LỄ THÀNH HÔN ${groomName || ''} & ${brideName || ''}`.trim(),
@@ -504,12 +506,13 @@ export async function POST(req) {
         venueName,
         driveLink: driveLink || '',
         ledStatus: 'Tự động tạo phông LED mặc định',
-        ledTemplateId: ledTemplateId || 'led-video-sao-roi',
+        ledTemplateId: (ledTemplateId && ledTemplateId !== 'led-cosmic-milkyway') ? ledTemplateId : 'led-video-sao-roi',
         ledBgVideo: ledBgVideo || '',
         ledFont: ledFont || 'ballet',
         ledBrideGroomFontSize: ledBrideGroomFontSize ?? 59,
         ledTitleFontSize: ledTitleFontSize ?? 32,
         ledDateFontSize: ledDateFontSize ?? 24,
+        showRings: showRings !== undefined ? showRings : false,
         musicStatus: (selectedMusic && selectedMusic.length > 0) ? 'Đã chọn danh sách nhạc' : 'Không có yêu cầu gì',
         selectedMusic: selectedMusic || [],
         youtubeLinks: youtubeLinks || {},
