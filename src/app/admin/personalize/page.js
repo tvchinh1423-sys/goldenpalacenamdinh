@@ -797,6 +797,105 @@ export default function AdminPersonalizePage() {
                 </div>
               )}
 
+              {/* SECTION: THỰC ĐƠN MÂM TIỆC CƯỚI (ĐÃ TRÍCH XUẤT TỪ AI / HỢP ĐỒNG) */}
+              <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2 border-b border-stone-800 pb-3">
+                  <div className="flex items-center gap-2 text-amber-400 font-bold uppercase tracking-wider text-xs">
+                    <span className="material-symbols-outlined text-base">restaurant_menu</span>
+                    <span>Thực Đơn Mâm Tiệc Cưới (Đã trích xuất từ AI / Ảnh hợp đồng)</span>
+                  </div>
+                  <button
+                    onClick={() => setMenuModalProfile(selectedProfile)}
+                    className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-bold rounded-lg text-xs hover:brightness-110 transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-sm">print</span>
+                    <span>Mở Menu Để Bàn In Ấn</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                  {/* 1. Khai vị */}
+                  <div className="bg-stone-950/80 p-3 rounded-xl border border-stone-800">
+                    <span className="font-bold text-amber-300 block mb-1.5 flex items-center gap-1 border-b border-stone-800/80 pb-1 text-[11px] uppercase tracking-wider">
+                      <span className="material-symbols-outlined text-sm text-amber-400">soup_kitchen</span>
+                      <span>1. Món Khai Vị</span>
+                    </span>
+                    {selectedProfile.khaiViText ? (
+                      <ul className="space-y-1 text-stone-200 font-medium">
+                        {selectedProfile.khaiViText.split('\n').filter(Boolean).map((dish, idx) => (
+                          <li key={idx} className="flex items-start gap-1">
+                            <span className="text-amber-400">•</span>
+                            <span className="break-words">{dish}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span className="text-stone-500 italic text-[11px]">Chưa có thông tin</span>
+                    )}
+                  </div>
+
+                  {/* 2. Món chính */}
+                  <div className="bg-stone-950/80 p-3 rounded-xl border border-stone-800">
+                    <span className="font-bold text-amber-300 block mb-1.5 flex items-center gap-1 border-b border-stone-800/80 pb-1 text-[11px] uppercase tracking-wider">
+                      <span className="material-symbols-outlined text-sm text-amber-400">dinner_dining</span>
+                      <span>2. Món Chính</span>
+                    </span>
+                    {selectedProfile.monChinhText ? (
+                      <ul className="space-y-1 text-stone-200 font-medium">
+                        {selectedProfile.monChinhText.split('\n').filter(Boolean).map((dish, idx) => (
+                          <li key={idx} className="flex items-start gap-1">
+                            <span className="text-amber-400">•</span>
+                            <span className="break-words">{dish}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span className="text-stone-500 italic text-[11px]">Chưa có thông tin</span>
+                    )}
+                  </div>
+
+                  {/* 3. Tráng miệng */}
+                  <div className="bg-stone-950/80 p-3 rounded-xl border border-stone-800">
+                    <span className="font-bold text-amber-300 block mb-1.5 flex items-center gap-1 border-b border-stone-800/80 pb-1 text-[11px] uppercase tracking-wider">
+                      <span className="material-symbols-outlined text-sm text-amber-400">icecream</span>
+                      <span>3. Tráng Miệng</span>
+                    </span>
+                    {selectedProfile.trangMiengText ? (
+                      <ul className="space-y-1 text-stone-200 font-medium">
+                        {selectedProfile.trangMiengText.split('\n').filter(Boolean).map((dish, idx) => (
+                          <li key={idx} className="flex items-start gap-1">
+                            <span className="text-amber-400">•</span>
+                            <span className="break-words">{dish}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span className="text-stone-500 italic text-[11px]">Chưa có thông tin</span>
+                    )}
+                  </div>
+
+                  {/* 4. Đồ uống */}
+                  <div className="bg-stone-950/80 p-3 rounded-xl border border-stone-800">
+                    <span className="font-bold text-amber-300 block mb-1.5 flex items-center gap-1 border-b border-stone-800/80 pb-1 text-[11px] uppercase tracking-wider">
+                      <span className="material-symbols-outlined text-sm text-amber-400">local_bar</span>
+                      <span>4. Đồ Uống</span>
+                    </span>
+                    {selectedProfile.doUongText ? (
+                      <ul className="space-y-1 text-stone-200 font-medium">
+                        {selectedProfile.doUongText.split('\n').filter(Boolean).map((dish, idx) => (
+                          <li key={idx} className="flex items-start gap-1">
+                            <span className="text-amber-400">•</span>
+                            <span className="break-words">{dish}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span className="text-stone-500 italic text-[11px]">Chưa có thông tin</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* SECTION 1: PHÔNG MÀN LED SÂN KHẤU (EXACT 100% MATCH WITH WEB LedCustomizer.jsx) */}
               <div className="bg-stone-900 border border-amber-500/30 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
@@ -841,16 +940,19 @@ export default function AdminPersonalizePage() {
                       className="px-3 py-1.5 bg-amber-500 text-black font-bold rounded-lg text-xs hover:bg-amber-400 transition-colors flex items-center gap-1 cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-sm">fullscreen</span>
-                      Mở Trình Chiếu LED Fullscreen
+                      Mở Trực Tiếp Màn LED Fullscreen
                     </button>
                   </div>
                 </div>
 
-                {/* Mini LED Canvas Visualizer matching LedCustomizer.jsx 100% */}
+                {/* LED STAGE CONTAINER WITH DYNAMIC FLOOR RATIOS */}
                 <div 
                   id="led-stage-screen-canvas"
-                  className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500"
-                  style={{ aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384' }}
+                  className="w-full relative rounded-2xl overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.95)] bg-[#050508] transition-all duration-500 bg-cover bg-center"
+                  style={{ 
+                    aspectRatio: selectedProfile.floorId === 'FLOOR_2' ? '704 / 336' : selectedProfile.floorId === 'FLOOR_1' || selectedProfile.floorId === 'FLOOR_4' ? '512 / 272' : '704 / 384',
+                    backgroundImage: `url(${currentLedTemplate?.bgImage || '/images/led-bg/starry-night-1.jpg'})`
+                  }}
                 >
                   {/* BACKGROUND LAYER (DYNAMIC VIDEO LOOP OR STATIC IMAGE) */}
                   {currentLedTemplate?.bgVideo || selectedProfile?.ledBgVideo ? (
@@ -860,6 +962,8 @@ export default function AdminPersonalizePage() {
                       loop
                       muted
                       playsInline
+                      preload="metadata"
+                      poster={currentLedTemplate?.bgImage || '/images/led-bg/starry-night-1.jpg'}
                       className="absolute inset-0 w-full h-full object-cover transition-all duration-700 pointer-events-none"
                     />
                   ) : (
@@ -1128,6 +1232,8 @@ export default function AdminPersonalizePage() {
                 loop
                 muted
                 playsInline
+                preload="metadata"
+                poster={currentLedTemplate?.bgImage || '/images/led-bg/starry-night-1.jpg'}
                 className="absolute inset-0 w-full h-full object-cover transition-all duration-700 pointer-events-none"
               />
             ) : (
