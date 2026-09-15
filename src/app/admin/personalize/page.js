@@ -1219,6 +1219,10 @@ export default function AdminPersonalizePage() {
           leadName={menuModalProfile.partyTitle || `${menuModalProfile.groomName} & ${menuModalProfile.brideName}`}
           brideGroomDefault={`${menuModalProfile.groomName} & ${menuModalProfile.brideName}`}
           eventDateDefault={formatDateDot(menuModalProfile.eventDate)}
+          khaiViDefault={menuModalProfile.khaiViText || ''}
+          monChinhDefault={menuModalProfile.monChinhText || ''}
+          trangMiengDefault={menuModalProfile.trangMiengText || ''}
+          doUongDefault={menuModalProfile.doUongText || ''}
           isOpen={!!menuModalProfile}
           onClose={() => setMenuModalProfile(null)}
         />

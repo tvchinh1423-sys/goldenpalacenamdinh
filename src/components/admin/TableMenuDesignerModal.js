@@ -4,7 +4,18 @@ import { useState, useEffect, useRef } from 'react';
 import { toPng } from 'html-to-image';
 import WeddingMenuCardCanvas, { printWeddingMenuCard } from './WeddingMenuCardCanvas';
 
-export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDefault, eventDateDefault, isOpen, onClose }) {
+export default function TableMenuDesignerModal({
+  leadId,
+  leadName,
+  brideGroomDefault,
+  eventDateDefault,
+  khaiViDefault,
+  monChinhDefault,
+  trangMiengDefault,
+  doUongDefault,
+  isOpen,
+  onClose
+}) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [aiParsing, setAiParsing] = useState(false);
@@ -18,10 +29,10 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
   const [title, setTitle] = useState('Lễ Thành Hôn');
   const [brideGroomNames, setBrideGroomNames] = useState(brideGroomDefault || leadName || '');
   const [eventDate, setEventDate] = useState(eventDateDefault || '');
-  const [khaiViText, setKhaiViText] = useState('');
-  const [monChinhText, setMonChinhText] = useState('');
-  const [trangMiengText, setTrangMiengText] = useState('');
-  const [doUongText, setDoUongText] = useState('');
+  const [khaiViText, setKhaiViText] = useState(khaiViDefault || '');
+  const [monChinhText, setMonChinhText] = useState(monChinhDefault || '');
+  const [trangMiengText, setTrangMiengText] = useState(trangMiengDefault || '');
+  const [doUongText, setDoUongText] = useState(doUongDefault || '');
   const [footerText, setFooterText] = useState('Chúc Quý Khách Ngon Miệng!');
 
   // Customizable Font Sizes (in px)
@@ -48,10 +59,16 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
   };
 
   useEffect(() => {
-    if (isOpen && leadId) {
-      fetchMenuData();
+    if (isOpen) {
+      if (brideGroomDefault) setBrideGroomNames(brideGroomDefault);
+      if (eventDateDefault) setEventDate(eventDateDefault);
+      if (khaiViDefault) setKhaiViText(khaiViDefault);
+      if (monChinhDefault) setMonChinhText(monChinhDefault);
+      if (trangMiengDefault) setTrangMiengText(trangMiengDefault);
+      if (doUongDefault) setDoUongText(doUongDefault);
+      if (leadId) fetchMenuData();
     }
-  }, [isOpen, leadId]);
+  }, [isOpen, leadId, khaiViDefault, monChinhDefault, trangMiengDefault, doUongDefault]);
 
   const fetchMenuData = async () => {
     setLoading(true);
@@ -62,10 +79,10 @@ export default function TableMenuDesignerModal({ leadId, leadName, brideGroomDef
         if (data.title) setTitle(data.title);
         if (data.brideGroomNames) setBrideGroomNames(data.brideGroomNames);
         if (data.eventDate) setEventDate(data.eventDate);
-        if (Array.isArray(data.khaiVi)) setKhaiViText(data.khaiVi.join('\n'));
-        if (Array.isArray(data.monChinh)) setMonChinhText(data.monChinh.join('\n'));
-        if (Array.isArray(data.trangMieng)) setTrangMiengText(data.trangMieng.join('\n'));
-        if (Array.isArray(data.doUong)) setDoUongText(data.doUong.join('\n'));
+        if (Array.isArray(data.khaiVi) && data.khaiVi.length > 0) setKhaiViText(data.khaiVi.join('\n'));
+        if (Array.isArray(data.monChinh) && data.monChinh.length > 0) setMonChinhText(data.monChinh.join('\n'));
+        if (Array.isArray(data.trangMieng) && data.trangMieng.length > 0) setTrangMiengText(data.trangMieng.join('\n'));
+        if (Array.isArray(data.doUong) && data.doUong.length > 0) setDoUongText(data.doUong.join('\n'));
         if (data.footerText) setFooterText(data.footerText);
       }
     } catch (err) {
