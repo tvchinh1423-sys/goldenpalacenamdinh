@@ -121,11 +121,16 @@ export default function LedCustomizer({
   };
 
   const handleCopyConfig = () => {
+    const isVuQuy = (eventTypeTitle || '').toLowerCase().includes('vu quy');
+    const dâuRểStr = isVuQuy
+      ? `${brideName || 'Thu Hương'} & ${groomName || 'Đức Hoàng'}`
+      : `${groomName || 'Đức Hoàng'} & ${brideName || 'Thu Hương'}`;
+
     const info = `PHÔNG MÀN LED SÂN KHẤU - GOLDEN PALACE
 Mẫu thiết kế: ${selectedTemplate.name}
 Sảnh & Kích thước Màn LED: ${selectedFloor.name} (${selectedFloor.widthMeters}m x ${selectedFloor.heightMeters}m)
 Tiêu đề tiệc: ${eventTypeTitle}
-Tên Dâu Rể: ${brideName || 'Thu Hương'} & ${groomName || 'Đức Hoàng'}
+Tên Dâu Rể: ${dâuRểStr}
 Ngày Cưới: ${formatDateDot(eventDate)}`;
     navigator.clipboard.writeText(info);
     setCopied(true);
@@ -615,48 +620,55 @@ Ngày Cưới: ${formatDateDot(eventDate)}`;
                   </div>
                 </div>
 
-                {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
-                <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
-                  <div 
-                    className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                    style={{ 
-                      fontFamily: LED_FONT_MAP[selectedFont] || LED_FONT_MAP.alexbrush,
-                      fontSize: `${ledBrideGroomFontSize}px`
-                    }}
-                  >
-                    <span>{nfc(groomName) || 'Đức Hoàng'}</span>
-                    
-                    {showRings ? (
-                      /* BLACK & WHITE / MONOCHROME LINE ART WEDDING RINGS */
-                      <span className="inline-flex items-center mx-3 sm:mx-5 align-middle">
-                        <svg 
-                          className="w-8 h-8 sm:w-12 sm:h-12 filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]" 
-                          viewBox="0 0 100 100" 
-                          fill="none"
-                        >
-                          <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#000000" strokeWidth="8" fill="none" />
-                          <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#000000" strokeWidth="8" fill="none" />
-                          <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
-                          <ellipse cx="38" cy="46" rx="20" ry="10" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="3" fill="none" />
-                          <polygon points="26,30 32,25 38,30 32,35" fill="#ffffff" stroke="#000000" strokeWidth="2" />
-                          <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
-                          <ellipse cx="60" cy="56" rx="20" ry="10" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="3" fill="none" />
-                          <polygon points="68,62 74,57 80,62 74,67" fill="#ffffff" stroke="#000000" strokeWidth="2" />
-                        </svg>
-                      </span>
-                    ) : (
-                      /* AMPERSAND & IN ELEGANT DIDONE ITALIC */
-                      <span 
-                        className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
-                        style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
+                {/* TẦNG 2: COUPLE NAMES (If Vu Quy: Bride & Groom, Else: Groom & Bride) */}
+                {(() => {
+                  const isVuQuy = (eventTypeTitle || '').toLowerCase().includes('vu quy');
+                  const firstName = isVuQuy ? (nfc(brideName) || 'Thu Hương') : (nfc(groomName) || 'Đức Hoàng');
+                  const secondName = isVuQuy ? (nfc(groomName) || 'Đức Hoàng') : (nfc(brideName) || 'Thu Hương');
+                  return (
+                    <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
+                      <div 
+                        className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                        style={{ 
+                          fontFamily: LED_FONT_MAP[selectedFont] || LED_FONT_MAP.alexbrush,
+                          fontSize: `${ledBrideGroomFontSize}px`
+                        }}
                       >
-                        &
-                      </span>
-                    )}
+                        <span>{firstName}</span>
+                        
+                        {showRings ? (
+                          /* BLACK & WHITE / MONOCHROME LINE ART WEDDING RINGS */
+                          <span className="inline-flex items-center mx-3 sm:mx-5 align-middle">
+                            <svg 
+                              className="w-8 h-8 sm:w-12 sm:h-12 filter drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]" 
+                              viewBox="0 0 100 100" 
+                              fill="none"
+                            >
+                              <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#000000" strokeWidth="8" fill="none" />
+                              <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#000000" strokeWidth="8" fill="none" />
+                              <ellipse cx="38" cy="46" rx="26" ry="15" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
+                              <ellipse cx="38" cy="46" rx="20" ry="10" transform="rotate(-28 38 46)" stroke="#ffffff" strokeWidth="3" fill="none" />
+                              <polygon points="26,30 32,25 38,30 32,35" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+                              <ellipse cx="60" cy="56" rx="26" ry="15" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="4.5" fill="none" />
+                              <ellipse cx="60" cy="56" rx="20" ry="10" transform="rotate(18 60 56)" stroke="#ffffff" strokeWidth="3" fill="none" />
+                              <polygon points="68,62 74,57 80,62 74,67" fill="#ffffff" stroke="#000000" strokeWidth="2" />
+                            </svg>
+                          </span>
+                        ) : (
+                          /* AMPERSAND & IN ELEGANT DIDONE ITALIC */
+                          <span 
+                            className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
+                            style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
+                          >
+                            &
+                          </span>
+                        )}
 
-                    <span>{nfc(brideName) || 'Thu Hương'}</span>
-                  </div>
-                </div>
+                        <span>{secondName}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* TẦNG 3: WEDDING DATE ("28.12.2025") */}
                 <div className="z-20 w-full flex flex-col items-center">

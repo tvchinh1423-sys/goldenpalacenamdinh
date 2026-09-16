@@ -234,6 +234,11 @@ async function persistProfile(profileData) {
     }
 
     let targetLead = null;
+    const isVuQuy = (profileData.partyTitle || '').toLowerCase().includes('vu quy');
+    const bgNamesFormatted = isVuQuy
+      ? `${profileData.brideName || ''} & ${profileData.groomName || ''}`
+      : `${profileData.groomName || ''} & ${profileData.brideName || ''}`;
+
     if (existingLead) {
       profileData.dbLeadId = existingLead.id;
       const jsonTag = `[PERSONALIZE_PROFILE] ${JSON.stringify(profileData)}`;
@@ -241,9 +246,9 @@ async function persistProfile(profileData) {
       targetLead = await prisma.lead.update({
         where: { id: existingLead.id },
         data: {
-          name: `${profileData.partyTitle} (${profileData.groomName} & ${profileData.brideName})`,
+          name: `${profileData.partyTitle} (${bgNamesFormatted})`,
           phone: profileData.phone || existingLead.phone,
-          brideGroomNames: `${profileData.groomName} & ${profileData.brideName}`,
+          brideGroomNames: bgNamesFormatted,
           notes: profileData.partyTitle,
           internalNotes: jsonTag
         }
@@ -256,9 +261,9 @@ async function persistProfile(profileData) {
         data: {
           code,
           linkToken: randomUUID(),
-          name: `${profileData.partyTitle} (${profileData.groomName} & ${profileData.brideName})`,
+          name: `${profileData.partyTitle} (${bgNamesFormatted})`,
           phone: profileData.phone || '0000000000',
-          brideGroomNames: `${profileData.groomName} & ${profileData.brideName}`,
+          brideGroomNames: bgNamesFormatted,
           notes: profileData.partyTitle,
           internalNotes: jsonTag
         }

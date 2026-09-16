@@ -178,9 +178,12 @@ export async function exportLedVideoWithOverlay({
         const blob = new Blob(chunks, { type: 'video/mp4' });
         const url = URL.createObjectURL(blob);
 
+        const isVuQuy = (partyTitle || '').toLowerCase().includes('vu quy');
         const groomClean = (groomName || 'chinh').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
         const brideClean = (brideName || 'ha').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-        const fileName = `phong-led-san-khau-${groomClean}-${brideClean}.mp4`;
+        const fileName = isVuQuy
+          ? `phong-led-san-khau-vu-quy-${brideClean}-${groomClean}.mp4`
+          : `phong-led-san-khau-${groomClean}-${brideClean}.mp4`;
 
         const isIOS = typeof navigator !== 'undefined' && (
           /iPad|iPhone|iPod/.test(navigator.userAgent) ||

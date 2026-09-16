@@ -412,7 +412,11 @@ export default function AdminPersonalizePage() {
                     <td className="p-4">
                       <div className="font-bold text-sm text-stone-900">{prof.partyTitle}</div>
                       <div className="text-[11px] text-amber-700 font-medium">
-                        Chú Rể: <strong>{prof.groomName}</strong> • Cô Dâu: <strong>{prof.brideName}</strong>
+                        {(prof.partyTitle || '').toLowerCase().includes('vu quy') ? (
+                          <>Cô Dâu: <strong>{prof.brideName}</strong> • Chú Rể: <strong>{prof.groomName}</strong></>
+                        ) : (
+                          <>Chú Rể: <strong>{prof.groomName}</strong> • Cô Dâu: <strong>{prof.brideName}</strong></>
+                        )}
                       </div>
                     </td>
                     <td className="p-4 font-mono font-medium">
@@ -767,7 +771,11 @@ export default function AdminPersonalizePage() {
                 </div>
                 <div>
                   <span className="text-gray-400 block text-[10px]">Gia Chủ (Chú Rể & Cô Dâu):</span>
-                  <strong className="text-amber-400 font-bold">{selectedProfile.groomName} ❤️ {selectedProfile.brideName}</strong>
+                  <strong className="text-amber-400 font-bold">
+                    {(selectedProfile.partyTitle || '').toLowerCase().includes('vu quy')
+                      ? `${selectedProfile.brideName} ❤️ ${selectedProfile.groomName}`
+                      : `${selectedProfile.groomName} ❤️ ${selectedProfile.brideName}`}
+                  </strong>
                 </div>
                 <div>
                   <span className="text-gray-400 block text-[10px]">Hotline Gia Chủ:</span>
@@ -900,27 +908,34 @@ export default function AdminPersonalizePage() {
                         </div>
                       </div>
 
-                      {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
-                      <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
-                        <div 
-                          className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                          style={{ 
-                            fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
-                            fontSize: `${ledBrideGroomFontSize}px`
-                          }}
-                        >
-                          <span>{nfc(selectedProfile.groomName) || 'Đức Hoàng'}</span>
-                          
-                          <span 
-                            className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
-                            style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
-                          >
-                            &
-                          </span>
+                      {/* TẦNG 2: COUPLE NAMES (If Vu Quy: Bride & Groom, Else: Groom & Bride) */}
+                      {(() => {
+                        const isVuQuy = (selectedProfile.partyTitle || '').toLowerCase().includes('vu quy');
+                        const firstName = isVuQuy ? (nfc(selectedProfile.brideName) || 'Thu Hương') : (nfc(selectedProfile.groomName) || 'Đức Hoàng');
+                        const secondName = isVuQuy ? (nfc(selectedProfile.groomName) || 'Đức Hoàng') : (nfc(selectedProfile.brideName) || 'Thu Hương');
+                        return (
+                          <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
+                            <div 
+                              className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                              style={{ 
+                                fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
+                                fontSize: `${ledBrideGroomFontSize}px`
+                              }}
+                            >
+                              <span>{firstName}</span>
+                              
+                              <span 
+                                className="text-slate-100 mx-3 sm:mx-4 font-serif italic font-light tracking-normal"
+                                style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
+                              >
+                                &
+                              </span>
 
-                          <span>{nfc(selectedProfile.brideName) || 'Thu Hương'}</span>
-                        </div>
-                      </div>
+                              <span>{secondName}</span>
+                            </div>
+                          </div>
+                        );
+                      })()}
 
                       {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
                       <div className="z-20 w-full flex flex-col items-center">
@@ -1168,27 +1183,34 @@ export default function AdminPersonalizePage() {
                   </div>
                 </div>
 
-                {/* TẦNG 2: COUPLE NAMES ("Đức Hoàng & Thu Hương") */}
-                <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
-                  <div 
-                    className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
-                    style={{ 
-                      fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
-                      fontSize: `${ledBrideGroomFontSize * 1.5}px`
-                    }}
-                  >
-                    <span>{nfc(selectedProfile.groomName) || 'Đức Hoàng'}</span>
-                    
-                    <span 
-                      className="text-slate-100 mx-4 sm:mx-6 font-serif italic font-light tracking-normal"
-                      style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
-                    >
-                      &
-                    </span>
+                {/* TẦNG 2: COUPLE NAMES (If Vu Quy: Bride & Groom, Else: Groom & Bride) */}
+                {(() => {
+                  const isVuQuy = (selectedProfile.partyTitle || '').toLowerCase().includes('vu quy');
+                  const firstName = isVuQuy ? (nfc(selectedProfile.brideName) || 'Thu Hương') : (nfc(selectedProfile.groomName) || 'Đức Hoàng');
+                  const secondName = isVuQuy ? (nfc(selectedProfile.groomName) || 'Đức Hoàng') : (nfc(selectedProfile.brideName) || 'Thu Hương');
+                  return (
+                    <div className="w-[75%] max-w-[75%] flex items-center justify-center z-20">
+                      <div 
+                        className="font-normal tracking-wide text-slate-50 drop-shadow-[0_4px_25px_rgba(0,0,0,0.98)] leading-tight whitespace-nowrap flex items-center justify-center"
+                        style={{ 
+                          fontFamily: LED_FONT_MAP[selectedLedFont] || LED_FONT_MAP.alexbrush,
+                          fontSize: `${ledBrideGroomFontSize * 1.5}px`
+                        }}
+                      >
+                        <span>{firstName}</span>
+                        
+                        <span 
+                          className="text-slate-100 mx-4 sm:mx-6 font-serif italic font-light tracking-normal"
+                          style={{ fontFamily: "var(--font-playfair), 'Playfair Display', Didot, serif" }}
+                        >
+                          &
+                        </span>
 
-                    <span>{nfc(selectedProfile.brideName) || 'Thu Hương'}</span>
-                  </div>
-                </div>
+                        <span>{secondName}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* TẦNG 3: WEDDING DATE ("20.11.2026") */}
                 <div className="z-20 w-full flex flex-col items-center">
@@ -1217,7 +1239,11 @@ export default function AdminPersonalizePage() {
         <TableMenuDesignerModal
           leadId={menuModalProfile.dbLeadId || menuModalProfile.leadId || menuModalProfile.id}
           leadName={menuModalProfile.partyTitle || `${menuModalProfile.groomName} & ${menuModalProfile.brideName}`}
-          brideGroomDefault={`${menuModalProfile.groomName} & ${menuModalProfile.brideName}`}
+          brideGroomDefault={
+            (menuModalProfile.partyTitle || '').toLowerCase().includes('vu quy')
+              ? `${menuModalProfile.brideName} & ${menuModalProfile.groomName}`
+              : `${menuModalProfile.groomName} & ${menuModalProfile.brideName}`
+          }
           eventDateDefault={formatDateDot(menuModalProfile.eventDate)}
           khaiViDefault={menuModalProfile.khaiViText || ''}
           monChinhDefault={menuModalProfile.monChinhText || ''}
