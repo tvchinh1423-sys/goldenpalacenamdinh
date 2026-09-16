@@ -500,7 +500,7 @@ export async function POST(req) {
     let profileData;
 
     if (existingIndex >= 0) {
-      // PRESERVE EXISTING PROFILE SETTINGS (LED, Music, Notes) & MERGE MISSING INFO
+      // PRESERVE EXISTING PROFILE SETTINGS & MERGE / OVERRIDE WITH NEWLY SUPPLIED INFO
       const old = profiles[existingIndex];
       profileData = {
         ...old,
@@ -512,17 +512,19 @@ export async function POST(req) {
         eventTime: eventTime || old.eventTime,
         floorId: floorId || old.floorId,
         venueName,
-        driveLink: driveLink || old.driveLink,
+        driveLink: (driveLink !== undefined && driveLink !== '') ? driveLink : (old.driveLink || ''),
+        ledStatus: ledStatus || old.ledStatus,
         ledTemplateId: (ledTemplateId && ledTemplateId !== 'led-cosmic-milkyway') ? ledTemplateId : (old.ledTemplateId && old.ledTemplateId !== 'led-cosmic-milkyway' ? old.ledTemplateId : 'led-video-sao-roi'),
         ledBgVideo: ledBgVideo !== undefined ? ledBgVideo : (old.ledBgVideo || ''),
         ledFont: ledFont || old.ledFont || 'ballet',
-        ledBrideGroomFontSize: old.ledBrideGroomFontSize ?? ledBrideGroomFontSize ?? 59,
-        ledTitleFontSize: old.ledTitleFontSize ?? ledTitleFontSize ?? 32,
-        ledDateFontSize: old.ledDateFontSize ?? ledDateFontSize ?? 24,
+        ledBrideGroomFontSize: ledBrideGroomFontSize ?? old.ledBrideGroomFontSize ?? 59,
+        ledTitleFontSize: ledTitleFontSize ?? old.ledTitleFontSize ?? 32,
+        ledDateFontSize: ledDateFontSize ?? old.ledDateFontSize ?? 24,
         showRings: showRings !== undefined ? showRings : (old.showRings !== undefined ? old.showRings : false),
-        selectedMusic: (old.selectedMusic && old.selectedMusic.length > 0) ? old.selectedMusic : (selectedMusic || []),
-        youtubeLinks: (old.youtubeLinks && Object.values(old.youtubeLinks).some(Boolean)) ? old.youtubeLinks : (youtubeLinks || {}),
-        customNotes: (old.customNotes && old.customNotes !== 'Không có ghi chú thêm') ? old.customNotes : (customNotes || ''),
+        musicStatus: musicStatus || old.musicStatus,
+        selectedMusic: (selectedMusic !== undefined && Array.isArray(selectedMusic) && selectedMusic.length > 0) ? selectedMusic : (old.selectedMusic || []),
+        youtubeLinks: (youtubeLinks !== undefined && typeof youtubeLinks === 'object' && Object.values(youtubeLinks).some(Boolean)) ? youtubeLinks : (old.youtubeLinks || {}),
+        customNotes: (customNotes !== undefined && customNotes !== null && customNotes !== '') ? customNotes : (old.customNotes || ''),
         khaiViText: (khaiViText !== undefined && khaiViText !== null && khaiViText !== '') ? khaiViText : (old.khaiViText || ''),
         monChinhText: (monChinhText !== undefined && monChinhText !== null && monChinhText !== '') ? monChinhText : (old.monChinhText || ''),
         trangMiengText: (trangMiengText !== undefined && trangMiengText !== null && trangMiengText !== '') ? trangMiengText : (old.trangMiengText || ''),

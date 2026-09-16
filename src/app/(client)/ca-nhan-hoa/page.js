@@ -260,9 +260,14 @@ function PersonalizePageContent() {
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      if (data.success) {
+      if (data.success && data.profile) {
+        const p = data.profile;
+        if (p.customNotes !== undefined) setCustomNotes(p.customNotes);
+        if (p.selectedMusic) setSelectedTracks(p.selectedMusic);
+        if (p.youtubeLinks) setYoutubeLinks(p.youtubeLinks);
+
         try {
-          localStorage.setItem('gp_saved_wedding_profile', JSON.stringify(payload));
+          localStorage.setItem('gp_saved_wedding_profile', JSON.stringify(p));
         } catch (err) {}
         setSavedNotification(true);
         setTimeout(() => setSavedNotification(false), 4500);
@@ -771,7 +776,9 @@ function PersonalizePageContent() {
             onSave={() => {
               handleSaveProfile({
                 musicStatus: selectedTracks.length > 0 ? `Đã chọn ${selectedTracks.length} bài hát & gửi kịch bản nhạc` : 'Không có yêu cầu gì',
-                selectedMusic: selectedTracks
+                selectedMusic: selectedTracks,
+                customNotes: customNotes,
+                youtubeLinks: youtubeLinks
               });
             }}
           />
