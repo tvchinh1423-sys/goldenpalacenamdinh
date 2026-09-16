@@ -783,6 +783,19 @@ export default function AdminPersonalizePage() {
                 </div>
               </div>
 
+              {/* Ghi Chú Kịch Bản & Yêu Cầu Riêng */}
+              {selectedProfile.customNotes && selectedProfile.customNotes !== 'Không có ghi chú thêm' && (
+                <div className="p-4 bg-stone-900 border border-blue-500/30 rounded-2xl space-y-1">
+                  <div className="font-bold text-blue-400 text-xs uppercase flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-base">edit_note</span>
+                    Ghi Chú Kịch Bản & Yêu Cầu Riêng Từ Gia Chủ
+                  </div>
+                  <p className="text-xs text-stone-200 leading-relaxed italic bg-stone-950 p-3 rounded-xl border border-stone-800">
+                    "{selectedProfile.customNotes}"
+                  </p>
+                </div>
+              )}
+
               {/* Link Drive chứa Ảnh / Video Cưới nếu có */}
               {selectedProfile.driveLink && (
                 <div className="p-3.5 bg-blue-950/40 border border-blue-500/40 rounded-xl flex items-center justify-between gap-3 text-blue-300">
@@ -1050,18 +1063,6 @@ export default function AdminPersonalizePage() {
                 )}
               </div>
 
-              {/* SECTION 3: GHI CHÚ KỊCH BẢN & YÊU CẦU RIÊNG */}
-              {selectedProfile.customNotes && selectedProfile.customNotes !== 'Không có ghi chú thêm' && (
-                <div className="p-4 bg-stone-900 border border-blue-500/30 rounded-2xl space-y-1">
-                  <div className="font-bold text-blue-400 text-xs uppercase flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-base">edit_note</span>
-                    Ghi Chú Kịch Bản & Yêu Cầu Riêng Từ Gia Chủ
-                  </div>
-                  <p className="text-xs text-stone-200 leading-relaxed italic bg-stone-950 p-3 rounded-xl border border-stone-800">
-                    "{selectedProfile.customNotes}"
-                  </p>
-                </div>
-              )}
 
             </div>
 
