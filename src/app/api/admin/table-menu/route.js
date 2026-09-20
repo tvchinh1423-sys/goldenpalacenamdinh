@@ -69,11 +69,6 @@ const noCacheHeaders = {
 // GET /api/admin/table-menu?leadId=...
 export async function GET(request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: noCacheHeaders });
-    }
-
     const { searchParams } = new URL(request.url);
     const leadId = searchParams.get('leadId');
 
@@ -196,8 +191,8 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: noCacheHeaders });
+    if (session && session.user?.role === 'MEMBER') {
+      return NextResponse.json({ error: 'Tài khoản Kỹ Thuật không có quyền sửa thực đơn!' }, { status: 403, headers: noCacheHeaders });
     }
 
     const body = await request.json();
