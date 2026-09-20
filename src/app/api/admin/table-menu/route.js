@@ -217,15 +217,53 @@ export async function POST(request) {
     // Check if leadId exists as DB ID or matching lead
     let lead = await prisma.lead.findUnique({ where: { id: leadId } });
     if (!lead) {
-      const cleanP = leadId.replace(/[^0-9]/g, '');
+      const isPhoneLike = /^[0-9+ ]{8,15}$/.test(leadId.trim());
       const searchConditions = [{ internalNotes: { contains: leadId } }];
-      if (cleanP.length >= 8) searchConditions.push({ phone: { contains: cleanP } });
+      if (isPhoneLike) {
+        const cleanP = leadId.replace(/[^0-9]/g, '');
+        if (cleanP.length >= 8) searchConditions.push({ phone: { contains: cleanP } });
+      }
 
       const matches = await prisma.lead.findMany({ where: { OR: searchConditions }, take: 1 });
       if (matches.length > 0) {
         lead = matches[0];
         targetLeadId = lead.id;
       }
+    }
+
+    // Auto-create Lead record if it does not exist in DB to satisfy Foreign Key Constraint
+    if (!lead) {
+      const isVuQuy = (title || '').toLowerCase().includes('vu quy');
+      const bgParts = (brideGroomNames || '').split(/&|và|\+/);
+      const groomName = isVuQuy ? (bgParts[1] || '').trim() : (bgParts[0] || '').trim();
+      const brideName = isVuQuy ? (bgParts[0] || '').trim() : (bgParts[1] || '').trim();
+
+      const profileObj = {
+        id: leadId,
+        partyTitle: title || 'Lễ Thành Hôn',
+        groomName,
+        brideName,
+        eventDate: eventDate || '',
+        khaiViText: (Array.isArray(khaiVi) ? khaiVi : []).join('\n'),
+        monChinhText: (Array.isArray(monChinh) ? monChinh : []).join('\n'),
+        trangMiengText: (Array.isArray(trangMieng) ? trangMieng : []).join('\n'),
+        doUongText: (Array.isArray(doUong) ? doUong : []).join('\n'),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const code = `GP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      lead = await prisma.lead.create({
+        data: {
+          code,
+          name: `${title || 'Lễ Thành Hôn'} (${brideGroomNames})`,
+          phone: '0000000000',
+          brideGroomNames: brideGroomNames || '',
+          notes: title || 'Lễ Thành Hôn',
+          internalNotes: `[PERSONALIZE_PROFILE] ${JSON.stringify(profileObj)}`
+        }
+      });
+      targetLeadId = lead.id;
     }
 
     const existingMenu = await prisma.tableMenu.findFirst({
@@ -279,13 +317,8 @@ export async function POST(request) {
             }
           });
 
-          // Update memory cache
-          if (global.gpProfilesCache && Array.isArray(global.gpProfilesCache)) {
-            const idx = global.gpProfilesCache.findIndex(p => p.id === profile.id || p.dbLeadId === lead.id);
-            if (idx >= 0) {
-              global.gpProfilesCache[idx] = profile;
-            }
-          }
+          // Invalidate memory cache so next read fetches fresh DB data
+          global.gpProfilesCache = null;
         }
       } catch (e) {}
     }
