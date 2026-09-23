@@ -174,9 +174,10 @@ async function main() {
     { name: 'Bóng bay kích nổ (Làm từ 4 quả)', description: '900.000 VNĐ / quả', displayOrder: 9, status: 'PUBLISHED' },
     { name: 'Flycam trao nhẫn cưới', description: '1.000.000 VNĐ / lần', displayOrder: 10, status: 'PUBLISHED' },
     { name: 'Bướm dẫn đường cô dâu', description: '3.000.000 VNĐ / con', displayOrder: 11, status: 'PUBLISHED' },
-    { name: 'Photobooth Gói 1 (1.5 giờ, 200 ảnh nhỏ/100 ảnh to)', description: '3.400.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 12, status: 'PUBLISHED' },
-    { name: 'Photobooth Gói 2 (2 giờ, Không giới hạn ảnh)', description: '4.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 13, status: 'PUBLISHED' },
-    { name: 'Photobooth Gói 3 (3 giờ, Không giới hạn ảnh)', description: '5.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 14, status: 'PUBLISHED' }
+    { name: 'Rót gạo / Tranh cát', description: '800.000 VNĐ / Hộp', displayOrder: 12, status: 'PUBLISHED' },
+    { name: 'Photobooth Gói 1 (1.5 giờ, 200 ảnh nhỏ/100 ảnh to)', description: '3.400.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 13, status: 'PUBLISHED' },
+    { name: 'Photobooth Gói 2 (2 giờ, Không giới hạn ảnh)', description: '4.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 14, status: 'PUBLISHED' },
+    { name: 'Photobooth Gói 3 (3 giờ, Không giới hạn ảnh)', description: '5.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 15, status: 'PUBLISHED' }
   ];
 
   for (const item of addOnsData) {

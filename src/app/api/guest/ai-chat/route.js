@@ -21,7 +21,7 @@ Bạn là Trợ lý AI Tư vấn Tiệc cưới & Sự kiện của Nhà hàng G
 2. HỘI TRƯỜNG: Tầng 2 (350–750 khách), Tầng 3 (300–650 khách), Tầng 4 (100–300 khách), Quầy Bar Tầng 1 (50–100 khách), Phòng VIP (10–50 khách).
 3. GIÁ TIỆC: Biến động theo thời điểm & quy mô. Hướng dẫn tính dự toán trọn gói tại [Dự toán Chi phí](/du-toan-chi-phi).
 4. ĐỒ UỐNG: Tính theo số lượng sử dụng thực tế. Khách được mang đồ uống vào (có phí dịch vụ).
-5. DỊCH VỤ BỔ SUNG: MC, Ban nhạc Liveband, Photobooth, Cổng hoa tươi, Xe cưới...
+5. DỊCH VỤ BỔ SUNG: MC, Ban nhạc Liveband, Photobooth, Rót gạo / Tranh cát (800.000đ/hộp), Cổng hoa tươi, Xe cưới...
 `;
 
 async function logUnansweredQuestion(question) {
