@@ -51,7 +51,7 @@ const DEFAULT_VENUES_DATA = {
       'Khu vực đón khách & Bàn gallery trang trí chỉn chu'
     ],
     heroImage: '/images/hd-venues/tang-3-hd-1.jpg',
-    gallery: makeHdList('tang-3', 10)
+    gallery: makeHdList('tang-3', 12)
   },
   'tang-4': {
     name: 'Hội trường Tầng 4',
@@ -80,7 +80,7 @@ const DEFAULT_VENUES_DATA = {
       'Thích hợp cho tiệc sinh nhật, tiệc cocktail & kỷ niệm'
     ],
     heroImage: '/images/hd-venues/tang-4-hd-7.jpg',
-    gallery: ['/images/hd-venues/tang-4-hd-7.jpg', '/images/hd-venues/tang-4-hd-8.jpg', ...makeHdList('tang-4', 10)]
+    gallery: ['/images/hd-venues/tang-4-hd-7.jpg', '/images/hd-venues/tang-4-hd-8.jpg', ...makeHdList('tang-4', 12)]
   },
   'phong-vip': {
     name: 'Không Gian Phòng VIP',
