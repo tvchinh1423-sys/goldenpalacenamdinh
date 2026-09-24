@@ -36,7 +36,7 @@ const DEFAULT_VENUES_DATA = {
       'Phông chụp ảnh lưu niệm & Cổng hoa chào đón độc quyền'
     ],
     heroImage: '/images/hd-venues/tang-2-hd-1.jpg',
-    gallery: makeHdList('tang-2', 12)
+    gallery: makeHdList('tang-2', 31)
   },
   'tang-3': {
     name: 'Hội trường Tầng 3',
@@ -51,7 +51,7 @@ const DEFAULT_VENUES_DATA = {
       'Khu vực đón khách & Bàn gallery trang trí chỉn chu'
     ],
     heroImage: '/images/hd-venues/tang-3-hd-1.jpg',
-    gallery: makeHdList('tang-3', 12)
+    gallery: makeHdList('tang-3', 10)
   },
   'tang-4': {
     name: 'Hội trường Tầng 4',
