@@ -57,8 +57,6 @@ for folder_name in os.listdir(SOURCE_DIR):
             files = sorted(os.listdir(folder_path))
             for file in files:
                 if file.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    if count >= 12: # Lấy tối đa 12 ảnh
-                        break
                     count += 1
                     src_file = os.path.join(folder_path, file)
                     if resize_and_save(src_file, slug, count):

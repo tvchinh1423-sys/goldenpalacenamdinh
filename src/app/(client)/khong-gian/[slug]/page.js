@@ -36,7 +36,7 @@ const DEFAULT_VENUES_DATA = {
       'Phông chụp ảnh lưu niệm & Cổng hoa chào đón độc quyền'
     ],
     heroImage: '/images/hd-venues/tang-2-hd-1.jpg',
-    gallery: makeHdList('tang-2', 12)
+    gallery: makeHdList('tang-2', 31)
   },
   'tang-3': {
     name: 'Hội trường Tầng 3',
@@ -51,7 +51,7 @@ const DEFAULT_VENUES_DATA = {
       'Khu vực đón khách & Bàn gallery trang trí chỉn chu'
     ],
     heroImage: '/images/hd-venues/tang-3-hd-1.jpg',
-    gallery: makeHdList('tang-3', 12)
+    gallery: makeHdList('tang-3', 30)
   },
   'tang-4': {
     name: 'Hội trường Tầng 4',
@@ -66,7 +66,7 @@ const DEFAULT_VENUES_DATA = {
       'Hoa lụa 2 bên sân khấu & Phông lưu niệm lãng mạn'
     ],
     heroImage: '/images/hd-venues/quay-bar-hd-7.jpg',
-    gallery: makeHdList('quay-bar', 12)
+    gallery: makeHdList('quay-bar', 26)
   },
   'quay-bar': {
     name: 'Quầy Bar Tầng 1',
@@ -80,7 +80,7 @@ const DEFAULT_VENUES_DATA = {
       'Thích hợp cho tiệc sinh nhật, tiệc cocktail & kỷ niệm'
     ],
     heroImage: '/images/hd-venues/tang-4-hd-7.jpg',
-    gallery: ['/images/hd-venues/tang-4-hd-7.jpg', '/images/hd-venues/tang-4-hd-8.jpg', ...makeHdList('tang-4', 12)]
+    gallery: ['/images/hd-venues/tang-4-hd-7.jpg', '/images/hd-venues/tang-4-hd-8.jpg', ...makeHdList('tang-4', 18)]
   },
   'phong-vip': {
     name: 'Không Gian Phòng VIP',
@@ -94,7 +94,7 @@ const DEFAULT_VENUES_DATA = {
       'Thích hợp tiệc gia đình, họp mặt & đối tác VIP'
     ],
     heroImage: '/images/hd-venues/phong-vip-hd-1.jpg',
-    gallery: makeHdList('phong-vip', 12)
+    gallery: makeHdList('phong-vip', 68)
   }
 };
 

@@ -44,7 +44,7 @@ async function main() {
       maxGuests: 750,
       displayOrder: 1,
       status: 'PUBLISHED',
-      images: makeHdImages('tang-2', 12),
+      images: makeHdImages('tang-2', 31),
       pricings: [
         {
           guestRangeMin: 350,
@@ -69,7 +69,7 @@ async function main() {
       maxGuests: 650,
       displayOrder: 2,
       status: 'PUBLISHED',
-      images: makeHdImages('tang-3', 12),
+      images: makeHdImages('tang-3', 30),
       pricings: [
         {
           guestRangeMin: 300,
@@ -94,7 +94,7 @@ async function main() {
       maxGuests: 300,
       displayOrder: 3,
       status: 'PUBLISHED',
-      images: makeHdImages('quay-bar', 12),
+      images: makeHdImages('quay-bar', 26),
       pricings: [
         {
           guestRangeMin: 100,
@@ -112,7 +112,7 @@ async function main() {
       maxGuests: 100,
       displayOrder: 4,
       status: 'PUBLISHED',
-      images: makeHdImages('tang-4', 12),
+      images: makeHdImages('tang-4', 18),
       pricings: [
         {
           guestRangeMin: 50,
@@ -130,7 +130,7 @@ async function main() {
       maxGuests: 50,
       displayOrder: 5,
       status: 'PUBLISHED',
-      images: makeHdImages('phong-vip', 12),
+      images: makeHdImages('phong-vip', 68),
       pricings: [
         {
           guestRangeMin: 10,
