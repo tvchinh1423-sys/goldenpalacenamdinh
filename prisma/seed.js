@@ -94,7 +94,7 @@ async function main() {
       maxGuests: 300,
       displayOrder: 3,
       status: 'PUBLISHED',
-      images: makeHdImages('tang-4', 12),
+      images: makeHdImages('quay-bar', 12),
       pricings: [
         {
           guestRangeMin: 100,
@@ -112,7 +112,7 @@ async function main() {
       maxGuests: 100,
       displayOrder: 4,
       status: 'PUBLISHED',
-      images: makeHdImages('quay-bar', 12),
+      images: makeHdImages('tang-4', 12),
       pricings: [
         {
           guestRangeMin: 50,

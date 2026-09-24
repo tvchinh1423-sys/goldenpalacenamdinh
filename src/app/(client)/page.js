@@ -41,7 +41,7 @@ export default async function Home() {
     {
       title: 'Tiệc Sinh Nhật & Kỷ Niệm',
       desc: 'Không gian ấm cúng tại Quầy Bar hoặc Phòng VIP, decor theo chủ đề trọn vẹn niềm vui.',
-      image: getVenueImage('Bar', '/images/hd-venues/quay-bar-hd-7.jpg'),
+      image: getVenueImage('Bar', '/images/hd-venues/tang-4-hd-7.jpg'),
       link: '/dich-vu/sinh-nhat-ky-niem'
     },
     {

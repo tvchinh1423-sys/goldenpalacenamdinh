@@ -65,8 +65,8 @@ const DEFAULT_VENUES_DATA = {
       'Cổng chào đón & Bàn trang trí tiền mừng chỉn chu',
       'Hoa lụa 2 bên sân khấu & Phông lưu niệm lãng mạn'
     ],
-    heroImage: '/images/hd-venues/tang-4-hd-7.jpg',
-    gallery: makeHdList('tang-4', 12)
+    heroImage: '/images/hd-venues/quay-bar-hd-7.jpg',
+    gallery: makeHdList('quay-bar', 12)
   },
   'quay-bar': {
     name: 'Quầy Bar Tầng 1',
@@ -79,8 +79,8 @@ const DEFAULT_VENUES_DATA = {
       'Hệ thống âm thanh Lounge & ánh sáng ấm áp',
       'Thích hợp cho tiệc sinh nhật, tiệc cocktail & kỷ niệm'
     ],
-    heroImage: '/images/hd-venues/quay-bar-hd-7.jpg',
-    gallery: ['/images/hd-venues/quay-bar-hd-7.jpg', '/images/hd-venues/quay-bar-hd-8.jpg', ...makeHdList('quay-bar', 10)]
+    heroImage: '/images/hd-venues/tang-4-hd-7.jpg',
+    gallery: ['/images/hd-venues/tang-4-hd-7.jpg', '/images/hd-venues/tang-4-hd-8.jpg', ...makeHdList('tang-4', 10)]
   },
   'phong-vip': {
     name: 'Không Gian Phòng VIP',
