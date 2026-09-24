@@ -69,7 +69,7 @@ async function main() {
       maxGuests: 650,
       displayOrder: 2,
       status: 'PUBLISHED',
-      images: makeHdImages('tang-3', 12),
+      images: makeHdImages('tang-3', 10),
       pricings: [
         {
           guestRangeMin: 300,

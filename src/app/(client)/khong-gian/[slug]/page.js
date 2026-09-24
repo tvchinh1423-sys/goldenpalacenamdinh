@@ -51,7 +51,7 @@ const DEFAULT_VENUES_DATA = {
       'Khu vực đón khách & Bàn gallery trang trí chỉn chu'
     ],
     heroImage: '/images/hd-venues/tang-3-hd-1.jpg',
-    gallery: makeHdList('tang-3', 12)
+    gallery: makeHdList('tang-3', 10)
   },
   'tang-4': {
     name: 'Hội trường Tầng 4',
