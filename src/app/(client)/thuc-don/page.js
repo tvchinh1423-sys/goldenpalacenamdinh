@@ -1053,15 +1053,15 @@ function MenuContent() {
 
           {/* FLOATING DRAFT MENU BAR WHEN DISHES ARE SELECTED */}
           {selectedDishes.length > 0 && (
-            <div className="fixed bottom-4 left-3 right-3 sm:left-1/2 sm:-translate-x-1/2 z-40 bg-[#1c1917] border-2 border-[#e3a638] text-white px-4 sm:px-6 py-3 sm:py-4 rounded-2xl shadow-2xl flex items-center justify-between gap-3 sm:gap-6 max-w-xl">
+            <div className="fixed bottom-3 left-2.5 right-2.5 sm:left-1/2 sm:-translate-x-1/2 z-40 bg-[#1c1917] border-2 border-[#e3a638] text-white px-3.5 sm:px-6 py-2.5 sm:py-3.5 rounded-2xl shadow-2xl flex items-center justify-between gap-2.5 sm:gap-6 max-w-xl">
               <div className="flex-grow min-w-0">
-                <span className="text-[10px] uppercase tracking-widest text-[#e3a638] font-bold block truncate">Bản Nháp Thực Đơn</span>
-                <span className="text-xs sm:text-sm font-semibold truncate block">Đã chọn <strong className="text-[#e3a638] font-bold text-sm sm:text-base">{selectedDishes.length}</strong> món</span>
+                <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[#e3a638] font-bold block truncate">Bản Nháp Thực Đơn</span>
+                <span className="text-xs sm:text-sm font-semibold truncate block">Đã chọn <strong className="text-[#e3a638] font-bold text-xs sm:text-base">{selectedDishes.length}</strong> món</span>
               </div>
               
               <button
                 onClick={() => setShowDraftModal(true)}
-                className="px-3.5 sm:px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-[11px] sm:text-xs font-semibold uppercase tracking-wider rounded-lg shadow-lg hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap shrink-0"
+                className="px-3.5 sm:px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-[11px] sm:text-xs font-semibold uppercase tracking-wider rounded-xl shadow-lg hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap shrink-0 border border-amber-300/40"
               >
                 Xem Bản Nháp & Gửi Zalo
               </button>
