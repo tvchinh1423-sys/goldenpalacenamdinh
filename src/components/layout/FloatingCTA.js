@@ -128,6 +128,20 @@ export default function FloatingCTA() {
             </span>
           </a>
 
+          {/* 6.5 Zalo Chat */}
+          <a 
+            href="/api/zalo" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="group/item relative flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-tr from-[#0068FF] to-[#00A1FF] text-white shadow-lg hover:scale-108 transition-all duration-300 border border-white/20"
+            title="Chat Zalo Tư Vấn"
+          >
+            <span className="font-extrabold text-[10px] uppercase tracking-wider font-montserrat">Zalo</span>
+            <span className="absolute right-14 bg-black/90 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover/item:opacity-100 transition-all duration-200 pointer-events-none shadow-xl border border-[#0068FF]/50 backdrop-blur-sm font-medium">
+              💬 Chat <strong className="text-[#00A1FF]">Zalo Trực Tiếp</strong>
+            </span>
+          </a>
+
           {/* 7. Chỉ đường Maps */}
           <a 
             href="https://www.google.com/maps/search/?api=1&query=98+Đông+A,+KĐT+Hòa+Vượng,+Nam+Định" 

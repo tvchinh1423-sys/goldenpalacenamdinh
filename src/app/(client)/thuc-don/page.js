@@ -589,7 +589,7 @@ function MenuContent() {
       `\n\nNhờ chuyên viên Golden Palace kiểm tra thời giá và báo giá chi tiết giúp em!`;
     navigator.clipboard.writeText(text);
     alert('✅ Đã sao chép bản nháp thực đơn! Bạn có thể dán (Paste) để gửi trực tiếp qua Zalo cho chuyên viên.');
-    window.open('https://zalo.me/02286595959', '_blank');
+    window.open('/api/zalo', '_blank');
   };
 
   return (
