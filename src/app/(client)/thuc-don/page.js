@@ -624,30 +624,45 @@ function MenuContent() {
 
       {/* TAB 1: SET MENU TIỆC CƯỚI & HỘI NGHỊ (LUXURY INTERACTIVE MENU BOOKLET WITH PAGE FLIP) */}
       {activeTab === 'SET_TIEC' && (
-        <section className="max-w-7xl mx-auto px-3.5 sm:px-6 space-y-6">
+        <section className="max-w-4xl mx-auto px-2.5 sm:px-6 space-y-4 sm:space-y-6 w-full overflow-hidden">
           
-          <div className="text-center mb-2 px-2">
+          <div className="text-center mb-1 px-1">
             <h2 className="text-xl sm:text-3xl font-playfair font-bold text-gray-900 leading-tight">
               Sổ Thực Đơn 18 Set Menu Tiệc Cưới & Hội Nghị
             </h2>
-            <p className="text-gray-600 text-[11px] sm:text-xs font-light mt-1">
-              Bấm nút mũi tên vàng bên phải ➔ (hoặc vuốt ngang màn hình) để lật sang trang menu tiếp theo
+            <p className="text-gray-600 text-[11px] sm:text-xs font-light mt-0.5">
+              Bấm nút <strong>Trang tiếp ➔</strong> hoặc vuốt màn hình để lật xem từng trang menu
             </p>
           </div>
 
           {/* PAGE JUMP & NAVIGATION BAR TOP */}
-          <div className="flex items-center justify-between bg-white px-2.5 sm:px-5 py-2 rounded-2xl border border-[#e3a638]/30 shadow-md gap-2 w-full max-w-2xl mx-auto">
-            <button 
-              onClick={handlePrevPage}
-              disabled={setMenuIndex === 0}
-              className="flex items-center gap-1 text-[10px] sm:text-xs font-bold uppercase px-2.5 py-1.5 rounded-xl bg-amber-50 text-[#a66a3a] border border-[#e3a638]/40 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e3a638] hover:text-white transition-all cursor-pointer whitespace-nowrap shrink-0"
-            >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              <span>Trang trước</span>
-            </button>
+          <div className="bg-white px-2 sm:px-4 py-2 rounded-2xl border border-[#e3a638]/30 shadow-md flex flex-col gap-2 w-full">
+            <div className="flex items-center justify-between gap-2">
+              <button 
+                onClick={handlePrevPage}
+                disabled={setMenuIndex === 0}
+                className="flex items-center gap-1 text-[11px] sm:text-xs font-bold uppercase px-3 py-2 rounded-xl bg-amber-50 text-[#a66a3a] border border-[#e3a638]/40 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#e3a638] hover:text-white transition-all cursor-pointer whitespace-nowrap shrink-0"
+              >
+                <span className="material-symbols-outlined text-sm">arrow_back</span>
+                <span className="hidden xs:inline">Trang</span> trước
+              </button>
+
+              <span className="text-xs sm:text-sm font-bold text-[#a66a3a] font-playfair tracking-wide text-center">
+                Trang {setMenuIndex + 1} / 18
+              </span>
+
+              <button 
+                onClick={handleNextPage}
+                disabled={setMenuIndex === SET_MENUS_18.length - 1}
+                className="flex items-center gap-1 text-[11px] sm:text-xs font-bold uppercase px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white shadow-md disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90 transition-all cursor-pointer whitespace-nowrap shrink-0 animate-pulse"
+              >
+                <span>Trang tiếp</span>
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </button>
+            </div>
 
             {/* Pagination Badges */}
-            <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto min-w-0 flex-1 justify-center py-0.5 no-scrollbar">
+            <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto min-w-0 w-full justify-start sm:justify-center py-1 no-scrollbar border-t border-gray-100 pt-2">
               {SET_MENUS_18.map((m, idx) => (
                 <button
                   key={idx}
@@ -668,106 +683,95 @@ function MenuContent() {
                 </button>
               ))}
             </div>
-
-            <button 
-              onClick={handleNextPage}
-              disabled={setMenuIndex === SET_MENUS_18.length - 1}
-              className="flex items-center gap-1 text-[10px] sm:text-xs font-bold uppercase px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white shadow-md disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90 transition-all cursor-pointer whitespace-nowrap shrink-0"
-            >
-              <span>Trang tiếp</span>
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </button>
           </div>
 
-          {/* 3D BOOKLET CONTAINER WITH FLOATING SIDE ARROW BUTTONS */}
-          <div className="relative max-w-2xl mx-auto w-full my-4">
-            
-            {/* FLOATING LEFT FLIP ARROW BUTTON */}
-            {setMenuIndex > 0 && (
-              <button 
-                onClick={handlePrevPage}
-                title="Lật về trang trước"
-                className="absolute -left-2 sm:-left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-gray-900 to-stone-800 text-[#e3a638] shadow-2xl border-2 border-[#e3a638] hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer group"
-              >
-                <span className="material-symbols-outlined text-xl sm:text-2xl group-hover:-translate-x-0.5 transition-transform">arrow_back_ios_new</span>
-              </button>
-            )}
-
-            {/* FLOATING RIGHT FLIP ARROW BUTTON (PROMINENT & ANIMATED) */}
-            {setMenuIndex < SET_MENUS_18.length - 1 && (
-              <button 
-                onClick={handleNextPage}
-                title="Lật sang trang tiếp theo"
-                className="absolute -right-2 sm:-right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-[#e3a638] via-amber-500 to-[#a66a3a] text-white shadow-2xl border-2 border-white hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer group animate-pulse"
-              >
-                <span className="material-symbols-outlined text-xl sm:text-2xl group-hover:translate-x-0.5 transition-transform">arrow_forward_ios</span>
-              </button>
-            )}
-
-            {/* LUXURY MENU BOOKLET CARD */}
+          {/* LUXURY MENU BOOKLET CARD (100% CONTAINER FIT) */}
+          <div className="w-full">
             <div 
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              className="bg-gradient-to-b from-[#2a2419] via-[#1c1917] to-[#12100e] p-2.5 sm:p-4 rounded-3xl shadow-2xl border-2 sm:border-4 border-[#e3a638] relative overflow-hidden book-perspective cursor-grab active:cursor-grabbing"
+              className="bg-gradient-to-b from-[#2a2419] via-[#1c1917] to-[#12100e] p-2 sm:p-4 rounded-2xl sm:rounded-3xl shadow-2xl border-2 sm:border-4 border-[#e3a638] relative overflow-hidden book-perspective w-full"
             >
               {(() => {
                 const menu = SET_MENUS_18[setMenuIndex];
                 return (
-                  <div className={`bg-[#fffdfa] rounded-2xl border border-amber-200/80 shadow-inner overflow-hidden flex flex-col justify-between transition-all duration-300 transform ${isFlipping ? 'page-flip-anim' : ''} relative`}>
+                  <div className={`bg-[#fffdfa] rounded-xl sm:rounded-2xl border border-amber-200/80 shadow-inner overflow-hidden flex flex-col justify-between transition-all duration-300 transform ${isFlipping ? 'page-flip-anim' : ''} relative w-full`}>
                     
                     {/* BOOKLET PAGE CORNER FOLD EFFECT */}
-                    <div className="absolute bottom-0 right-0 w-8 h-8 bg-gradient-to-tl from-amber-300 via-amber-100 to-white shadow-lg rounded-tl-lg pointer-events-none border-t border-l border-amber-400/60 z-20" />
+                    <div className="absolute bottom-0 right-0 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-tl from-amber-300 via-amber-100 to-white shadow-lg rounded-tl-lg pointer-events-none border-t border-l border-amber-400/60 z-20" />
 
                     {/* Card Header (Gold / Black Luxury Booklet Title) */}
-                    <div className="bg-gradient-to-r from-gray-900 via-amber-950 to-gray-900 text-white p-4 sm:p-6 border-b-2 border-[#e3a638]/60 relative">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
-                        <h3 className="text-xl sm:text-2xl font-playfair font-bold text-[#e3a638]">{menu.title}</h3>
-                        <span className="self-start sm:self-auto bg-[#e3a638]/20 border border-[#e3a638] text-[#e3a638] text-[9px] sm:text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shrink-0 flex items-center gap-1">
+                    <div className="bg-gradient-to-r from-gray-900 via-amber-950 to-gray-900 text-white p-3.5 sm:p-6 border-b-2 border-[#e3a638]/60 relative">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <h3 className="text-lg sm:text-2xl font-playfair font-bold text-[#e3a638] leading-tight">{menu.title}</h3>
+                        <span className="bg-[#e3a638]/20 border border-[#e3a638] text-[#e3a638] text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 flex items-center gap-1">
                           <span className="material-symbols-outlined text-xs">auto_stories</span>
-                          <span>Trang {setMenuIndex + 1} / 18</span>
+                          <span>Trang {setMenuIndex + 1}/18</span>
                         </span>
                       </div>
-                      <p className="text-base sm:text-lg font-bold text-amber-200 font-playfair">{menu.price}</p>
+                      <p className="text-sm sm:text-lg font-bold text-amber-200 font-playfair">{menu.price}</p>
                     </div>
 
                     {/* Dishes List (Page Content) */}
-                    <div className="p-4 sm:p-6 space-y-2.5 sm:space-y-3 bg-[#fffdfa]">
+                    <div className="p-3 sm:p-6 space-y-1.5 sm:space-y-2.5 bg-[#fffdfa] text-xs">
                       {menu.dishes.map((dish, dIdx) => (
-                        <div key={dIdx} className="flex justify-between items-center text-xs sm:text-sm py-1.5 sm:py-2 border-b border-amber-100 last:border-0 gap-2">
-                          <span className="font-medium text-gray-800 leading-snug">{dIdx + 1}. {dish.name}</span>
-                          <span className="text-[9px] sm:text-[10px] font-semibold text-[#a66a3a] bg-amber-100/70 border border-amber-300/40 px-2.5 py-0.5 rounded-full shrink-0 ml-1 whitespace-nowrap">{dish.type}</span>
+                        <div key={dIdx} className="flex justify-between items-center text-[11px] sm:text-sm py-1 border-b border-amber-100 last:border-0 gap-1.5">
+                          <span className="font-medium text-gray-800 leading-snug min-w-0 flex-1">{dIdx + 1}. {dish.name}</span>
+                          <span className="text-[8px] sm:text-[10px] font-semibold text-[#a66a3a] bg-amber-100/70 border border-amber-300/40 px-2 py-0.5 rounded-full shrink-0 ml-1 whitespace-nowrap">{dish.type}</span>
                         </div>
                       ))}
                     </div>
 
-                    {/* Card Action Footer */}
-                    <div className="p-4 sm:p-5 bg-[#fcf9f2] border-t border-amber-200 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-                      <span className="text-xs text-gray-600 font-light text-center sm:text-left">Mâm 10 khách chuẩn chỉnh</span>
-                      <button 
-                        onClick={() => setIsModalOpen(true)}
-                        className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white hover:opacity-90 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md cursor-pointer whitespace-nowrap text-center"
-                      >
-                        Đặt Thực Đơn {menu.title}
-                      </button>
+                    {/* Card Action & Integrated Page Flip Footer */}
+                    <div className="p-3 sm:p-5 bg-[#fcf9f2] border-t border-amber-200 flex flex-col gap-2.5">
+                      
+                      <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
+                        <span className="text-[11px] sm:text-xs text-gray-600 font-light text-center sm:text-left">Mâm 10 khách chuẩn chỉnh</span>
+                        <button 
+                          onClick={() => setIsModalOpen(true)}
+                          className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white hover:opacity-90 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md cursor-pointer whitespace-nowrap text-center"
+                        >
+                          Đặt Thực Đơn {menu.title}
+                        </button>
+                      </div>
+
+                      {/* INTEGRATED PAGE FLIP BUTTONS INSIDE CARD FOOTER */}
+                      <div className="flex items-center justify-between pt-2 border-t border-amber-200/80 gap-2">
+                        <button
+                          onClick={handlePrevPage}
+                          disabled={setMenuIndex === 0}
+                          className="flex items-center gap-1 text-[11px] sm:text-xs font-bold px-3 py-2 rounded-xl bg-gray-900 text-amber-300 border border-[#e3a638]/40 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black transition-all cursor-pointer whitespace-nowrap shrink-0"
+                        >
+                          <span className="material-symbols-outlined text-xs sm:text-sm">arrow_back_ios_new</span>
+                          <span>Trang trước</span>
+                        </button>
+
+                        <span className="text-[10px] sm:text-[11px] font-medium text-gray-500 text-center truncate">
+                          Vuốt màn hình để lật
+                        </span>
+
+                        <button
+                          onClick={handleNextPage}
+                          disabled={setMenuIndex === SET_MENUS_18.length - 1}
+                          className="flex items-center gap-1 text-[11px] sm:text-xs font-bold px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#e3a638] via-amber-500 to-[#a66a3a] text-white shadow-md border border-white disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90 transition-all cursor-pointer whitespace-nowrap shrink-0 animate-pulse"
+                        >
+                          <span>Trang tiếp</span>
+                          <span className="material-symbols-outlined text-xs sm:text-sm">arrow_forward_ios</span>
+                        </button>
+                      </div>
+
                     </div>
 
                   </div>
                 );
               })()}
             </div>
-
-            {/* USER INSTRUCTION HINT */}
-            <div className="mt-3 text-center text-[11px] sm:text-xs text-amber-900/80 font-medium flex items-center justify-center gap-1.5 bg-amber-100/60 border border-amber-300/50 py-2 px-3 rounded-xl">
-              <span className="material-symbols-outlined text-amber-700 text-sm">swipe</span>
-              <span>Bấm <strong>mũi tên vàng bên phải ➔</strong> hoặc <strong>vuốt màn hình</strong> để lật trang</span>
-            </div>
-
           </div>
 
           {/* GRID PREVIEW OF ALL 18 SET MENUS BELOW */}
-          <div className="pt-4 sm:pt-6">
-            <h3 className="text-center font-playfair font-bold text-lg sm:text-xl text-gray-900 mb-3 sm:mb-5">Danh Mục Tất Cả 18 Trang Set Menu</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+          <div className="pt-2 sm:pt-4">
+            <h3 className="text-center font-playfair font-bold text-base sm:text-xl text-gray-900 mb-3">Danh Mục Tất Cả 18 Trang Set Menu</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
               {SET_MENUS_18.map((m, idx) => (
                 <button
                   key={idx}
@@ -778,7 +782,7 @@ function MenuContent() {
                       setIsFlipping(false);
                     }, 120);
                   }}
-                  className={`p-2.5 sm:p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                  className={`p-2 sm:p-3 rounded-xl border text-center transition-all cursor-pointer ${
                     setMenuIndex === idx 
                       ? 'bg-amber-900 text-amber-300 border-[#e3a638] shadow-md font-bold scale-105' 
                       : 'bg-white text-gray-800 border-gray-200 hover:border-amber-400'
