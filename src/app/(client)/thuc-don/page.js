@@ -586,7 +586,7 @@ function MenuContent() {
   const handleShareZalo = () => {
     const text = `BẢN NHÁP THỰC ĐƠN ĐÃ CHỌN TẠI GOLDEN PALACE (${selectedDishes.length} món):\n` + 
       selectedDishes.map((d, i) => `${i + 1}. ${d}`).join('\n') + 
-      `\n\nNhờ chuyên viên Golden Palace kiểm tra thời giá và báo giá chi tiết giúp em!`;
+      `\n\nNhờ chuyên viên Golden Palace kiểm tra thời giá và báo giá chi tiết giúp mình!`;
     navigator.clipboard.writeText(text);
     alert('✅ Đã sao chép bản nháp thực đơn! Bạn có thể dán (Paste) để gửi trực tiếp qua Zalo cho chuyên viên.');
     window.open('/api/zalo', '_blank');
