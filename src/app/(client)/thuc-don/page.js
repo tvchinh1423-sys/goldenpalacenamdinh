@@ -6,7 +6,7 @@ import BookingConsultationModal from '@/components/layout/BookingConsultationMod
 const MENU_CATEGORIES = [
   { id: 'SET_TIEC', label: 'Set Menu Tiệc Cưới & Hội Nghị', icon: 'restaurant_menu', count: '18 Set cỗ chính thức' },
   { id: 'CHUYEN_MON', label: 'Menu Chuyên Món Đặc Sản', icon: 'workspace_premium', count: 'Cá, Ba Ba, Dúi, Vịt Trời, Lợn Mán, Bê' },
-  { id: 'TRE_EM', label: 'Menu Trẻ Em & Học Sinh', icon: 'child_care', count: '5 Combo ưu đãi 10%' },
+  { id: 'TRE_EM', label: 'Menu Trẻ Em & Học Sinh', icon: 'child_care', count: '7 Combo ưu đãi 10%' },
   { id: 'ALACARTE', label: 'Menu Chọn Món A la carte', icon: 'menu_book', count: 'Tích chọn tạo bản nháp' },
   { id: 'DO_UONG', label: 'Menu Đồ Uống & Phí Mang Vào', icon: 'wine_bar', count: 'Bảng giá chính thức' },
 ];
@@ -405,6 +405,18 @@ const KIDS_MENUS = [
     note: 'Dành cho học sinh cấp 1 & 2',
     price: '190.000 VNĐ / suất',
     items: ['Ngô chiên bơ', 'Khoai tây chiên phô mai', 'Pizza Hải sản cỡ vừa', 'Gà chiên lắc phô mai', 'Mỳ Ý sốt bò bằm Bolognese', 'Bánh ngọt tráng miệng', 'Nước ép trái cây / Nước ngọt lon']
+  },
+  {
+    code: 'COMBO 6',
+    note: 'Dành cho học sinh cấp 2 & 3',
+    price: '200.000 VNĐ / suất',
+    items: ['Khoai tây chiên lắc phô mai', 'Bánh bí chiên', 'Má đào nướng thảo mộc', 'Gà rang muối', 'Ếch chiên bơ', 'Xúc xích sốt phô mai + bánh mì', 'Cơm rang thập cẩm', 'Xôi chim chiên giòn', 'Đồ uống: Coca hoặc Nước cam lon']
+  },
+  {
+    code: 'COMBO 7',
+    note: 'Dành cho học sinh cấp 2 & 3',
+    price: '220.000 VNĐ / suất',
+    items: ['Ngô chiên', 'Bánh bí chiên', 'Sườn nướng', 'Mực chiên bơ', 'Bò chiên kiểu Thái', 'Lẩu riêu cua bắp bò hoặc Lẩu Thái', 'Tráng miệng: Sữa chua', 'Đồ uống: Coca hoặc Nước cam lon']
   }
 ];
 
