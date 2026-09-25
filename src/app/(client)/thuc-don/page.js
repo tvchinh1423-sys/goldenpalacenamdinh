@@ -482,7 +482,7 @@ const ALACARTE_3_SECTIONS = [
       {
         subTitle: 'Hoa Quả Tươi & Món Ngọt',
         dishes: [
-          'Bưởi da xanh', 'Nho Mỹ nhập khẩu', 'Nho xanh nhập khẩu', 'Cam Canh ngọt', 'Chuối ngự Nam Định', 'Hoa quả tươi theo mùa', 'Sữa chua nhà làm', 'Kem Caramel', 'Bánh tuyết Mochi'
+          'Bưởi da xanh', 'Nho Mỹ nhập khẩu', 'Nho xanh nhập khẩu', 'Cam Canh ngọt', 'Chuối ngự Nam Định', 'Hoa quả tươi theo mùa', 'Sữa chua', 'Kem Caramel', 'Bánh tuyết Mochi'
         ]
       }
     ]
