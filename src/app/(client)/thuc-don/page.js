@@ -628,7 +628,7 @@ function MenuContent() {
           
           <div className="text-center mb-1 px-1">
             <h2 className="text-xl sm:text-3xl font-playfair font-bold text-gray-900 leading-tight">
-              Sổ Thực Đơn 18 Set Menu Tiệc Cưới & Hội Nghị
+              Menu Tiệc Cưới & Hội Nghị
             </h2>
             <p className="text-gray-600 text-[11px] sm:text-xs font-light mt-0.5">
               Bấm nút <strong>Trang tiếp ➔</strong> hoặc vuốt màn hình để lật xem từng trang menu
