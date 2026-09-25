@@ -5,7 +5,7 @@ import BookingConsultationModal from '@/components/layout/BookingConsultationMod
 
 const MENU_CATEGORIES = [
   { id: 'SET_TIEC', label: 'Set Menu Tiệc Cưới & Hội Nghị', icon: 'restaurant_menu', count: '18 Set cỗ chính thức' },
-  { id: 'CHUYEN_MON', label: 'Menu Chuyên Món Đặc Sản', icon: 'workspace_premium', count: 'Cá, Ba Ba, Dúi, Vịt Trời, Lợn Mán, Bê' },
+  { id: 'CHUYEN_MON', label: 'Menu Chuyên Món Đặc Sắc', icon: 'workspace_premium', count: 'Cá, Ba Ba, Dúi, Vịt Trời, Lợn Mán, Bê' },
   { id: 'TRE_EM', label: 'Menu Trẻ Em & Học Sinh', icon: 'child_care', count: '7 Combo ưu đãi 10%' },
   { id: 'ALACARTE', label: 'Menu Chọn Món A la carte', icon: 'menu_book', count: 'Tích chọn tạo bản nháp' },
   { id: 'DO_UONG', label: 'Menu Đồ Uống & Phí Mang Vào', icon: 'wine_bar', count: 'Bảng giá chính thức' },
@@ -816,7 +816,7 @@ function MenuContent() {
           
           <div className="text-center mb-4">
             <h2 className="text-2xl sm:text-3xl font-playfair font-bold text-gray-900">
-              Danh Mục Menu Chuyên Món Đặc Sản
+              Menu Chuyên Món Đặc Sắc
             </h2>
             
             {/* MANDATORY NOTICE REQUESTED BY USER */}
