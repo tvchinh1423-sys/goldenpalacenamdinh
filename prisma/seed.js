@@ -142,7 +142,9 @@ async function main() {
   ];
 
   for (const v of venuesData) {
-    const { pricings, ...vData } = v;
+    // Tách riêng images ra, TUYỆT ĐỐI KHÔNG cập nhật lại trường images nếu venue đã tồn tại
+    // để bảo toàn 100% thứ tự ảnh mà admin/người dùng đã sắp xếp và lọc trong giao diện
+    const { pricings, images, ...vData } = v;
     let targetVenue = await prisma.venue.findFirst({ where: { name: vData.name } });
     if (targetVenue) {
       targetVenue = await prisma.venue.update({
@@ -151,7 +153,7 @@ async function main() {
       });
       await prisma.venuePricing.deleteMany({ where: { venueId: targetVenue.id } });
     } else {
-      targetVenue = await prisma.venue.create({ data: vData });
+      targetVenue = await prisma.venue.create({ data: { ...vData, images } });
     }
 
     for (const p of pricings) {
