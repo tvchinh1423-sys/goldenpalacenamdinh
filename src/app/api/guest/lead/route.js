@@ -27,6 +27,8 @@ function parseAddonNumericPrice(addon, guestCount) {
     if (Number(guestCount) >= 400) return 0;
     return 700000;
   }
+  if (addon.name.includes('Tưới cây hạnh phúc') || raw.includes('500.000')) return 500000;
+  if (addon.name.includes('Múa lân sung hỷ')) return 0;
   if (raw.includes('800.000')) return 800000;
   if (raw.includes('1.000.000')) return 1000000;
   if (raw.includes('900.000')) return 900000;

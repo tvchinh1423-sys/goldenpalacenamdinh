@@ -75,6 +75,17 @@ const VENUE_INCLUDED_ITEMS = {
       'Màn hình LED / Máy chiếu trình chiếu (1 Màn)',
       'Hệ thống Âm thanh, Ánh sáng Lounge hiện đại (1 Bộ)'
     ]
+  },
+  'Phòng VIP': {
+    name: 'Hạng mục Dịch vụ Cơ bản Phòng VIP',
+    description: 'Bao gồm các hạng mục trang thiết bị phục vụ tiệc riêng tư tại Phòng VIP Tầng 1 (Sức chứa 10 - 50 khách)',
+    items: [
+      'Bàn ghế đón tiếp & trang trí tiệc riêng tư sang trọng',
+      'Hoa lụa trang trí bàn tiệc cao cấp',
+      'Máy chiếu trình chiếu chất lượng cao (nếu yêu cầu)',
+      'Không gian máy lạnh 2 chiều riêng tư, đẳng cấp',
+      'Đội ngũ nhân viên phục vụ tận bàn chu đáo'
+    ]
   }
 };
 
@@ -143,6 +154,24 @@ export default function Step3Services() {
           isFree: false
         };
       }
+    }
+
+    if (addon.name.includes('Tưới cây hạnh phúc')) {
+      return {
+        mainPrice: '500.000 VNĐ / lần',
+        note: '1 Lần thực hiện nghi thức',
+        numericPrice: 500000,
+        isFree: false
+      };
+    }
+
+    if (addon.name.includes('Múa lân sung hỷ')) {
+      return {
+        mainPrice: 'Báo giá: Liên hệ',
+        note: '1 Lần biểu diễn chúc hỷ',
+        numericPrice: 0,
+        isContact: true
+      };
     }
 
     if (addon.name.includes('Trang Trí') || raw.includes('Liên hệ')) {

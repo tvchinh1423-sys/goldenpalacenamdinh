@@ -71,7 +71,7 @@ const DEFAULT_VENUES_DATA = {
   'quay-bar': {
     name: 'Quầy Bar Tầng 1',
     subTitle: 'Không Gian Sành Điệu & Hiện Đại',
-    capacity: '50 - 100 khách',
+    capacity: '40 - 100 khách',
     description: 'Quầy Bar Tầng 1 mang phong cách kiến trúc hiện đại, trẻ trung với hệ thống đèn trang trí và quầy pha chế sang trọng. Đây là địa điểm lý tưởng cho các buổi tiệc sinh nhật, tiệc kỷ niệm, tiệc cocktail hoặc các buổi gặp mặt giao lưu thân mật.',
     features: [
       'Phong cách kiến trúc hiện đại, quầy pha chế sang trọng',

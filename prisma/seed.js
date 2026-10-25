@@ -22,9 +22,7 @@ async function main() {
 
   console.log(`✅ Admin sẵn sàng: ${admin.email}`);
 
-  // 2. Clear old venues & pricings
-  await prisma.venuePricing.deleteMany({});
-  await prisma.venue.deleteMany({});
+  // 2. Prepare Venues & Pricings
 
   // Helper to generate HD image paths array
   const makeHdImages = (prefix, count = 12) => {
@@ -107,15 +105,15 @@ async function main() {
     },
     {
       name: 'Quầy Bar Tầng 1',
-      description: 'Không gian quầy Bar phong cách hiện đại sang trọng, thích hợp cho tiệc cocktail, sinh nhật, kỷ niệm từ 50 - 100 khách.',
-      minGuests: 50,
+      description: 'Không gian quầy Bar phong cách hiện đại sang trọng, thích hợp cho tiệc cocktail, sinh nhật, kỷ niệm từ 40 - 100 khách.',
+      minGuests: 40,
       maxGuests: 100,
       displayOrder: 4,
       status: 'PUBLISHED',
       images: makeHdImages('quay-bar', 18),
       pricings: [
         {
-          guestRangeMin: 50,
+          guestRangeMin: 40,
           guestRangeMax: 100,
           price: 2000000,
           effectiveFrom: new Date('2026-01-01'),
@@ -145,23 +143,29 @@ async function main() {
 
   for (const v of venuesData) {
     const { pricings, ...vData } = v;
-    const createdVenue = await prisma.venue.create({
-      data: vData
-    });
+    let targetVenue = await prisma.venue.findFirst({ where: { name: vData.name } });
+    if (targetVenue) {
+      targetVenue = await prisma.venue.update({
+        where: { id: targetVenue.id },
+        data: vData
+      });
+      await prisma.venuePricing.deleteMany({ where: { venueId: targetVenue.id } });
+    } else {
+      targetVenue = await prisma.venue.create({ data: vData });
+    }
 
     for (const p of pricings) {
       await prisma.venuePricing.create({
         data: {
           ...p,
-          venueId: createdVenue.id
+          venueId: targetVenue.id
         }
       });
     }
-    console.log(`🏰 Seeded venue with 12 Crisp HD photos: ${createdVenue.name}`);
+    console.log(`🏰 Seeded/Updated venue: ${targetVenue.name}`);
   }
 
-  // 4. Seed Add-on Services (Including Thêm Trang Trí: Liên hệ)
-  await prisma.addOnService.deleteMany({});
+  // 4. Seed Add-on Services (Including Thêm Trang Trí, Tưới cây hạnh phúc, Múa lân sung hỷ)
   const addOnsData = [
     { name: 'Thêm Trang Trí Theo Yêu Cầu', description: 'Liên hệ tư vấn concept & báo giá riêng', displayOrder: 1, status: 'PUBLISHED' },
     { name: 'Nhạc công Keyboard', description: '800.000 VNĐ / người', displayOrder: 2, status: 'PUBLISHED' },
@@ -175,15 +179,25 @@ async function main() {
     { name: 'Flycam trao nhẫn cưới', description: '1.000.000 VNĐ / lần', displayOrder: 10, status: 'PUBLISHED' },
     { name: 'Bướm dẫn đường cô dâu', description: '3.000.000 VNĐ / con', displayOrder: 11, status: 'PUBLISHED' },
     { name: 'Rót gạo / Tranh cát', description: '800.000 VNĐ / Hộp', displayOrder: 12, status: 'PUBLISHED' },
-    { name: 'Photobooth Gói 1 (1.5 giờ, 200 ảnh nhỏ/100 ảnh to)', description: '3.400.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 13, status: 'PUBLISHED' },
-    { name: 'Photobooth Gói 2 (2 giờ, Không giới hạn ảnh)', description: '4.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 14, status: 'PUBLISHED' },
-    { name: 'Photobooth Gói 3 (3 giờ, Không giới hạn ảnh)', description: '5.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 15, status: 'PUBLISHED' }
+    { name: 'Tưới cây hạnh phúc', description: '500.000 VNĐ / lần', displayOrder: 13, status: 'PUBLISHED' },
+    { name: 'Múa lân sung hỷ', description: 'Liên hệ / lần', displayOrder: 14, status: 'PUBLISHED' },
+    { name: 'Photobooth Gói 1 (1.5 giờ, 200 ảnh nhỏ/100 ảnh to)', description: '3.400.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 15, status: 'PUBLISHED' },
+    { name: 'Photobooth Gói 2 (2 giờ, Không giới hạn ảnh)', description: '4.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 16, status: 'PUBLISHED' },
+    { name: 'Photobooth Gói 3 (3 giờ, Không giới hạn ảnh)', description: '5.000.000 VNĐ / máy (Gồm 1 nhân viên, file mềm, phụ kiện checkin, sổ lưu giữ)', displayOrder: 17, status: 'PUBLISHED' }
   ];
 
   for (const item of addOnsData) {
-    await prisma.addOnService.create({ data: item });
+    const existing = await prisma.addOnService.findFirst({ where: { name: item.name } });
+    if (existing) {
+      await prisma.addOnService.update({
+        where: { id: existing.id },
+        data: { description: item.description, displayOrder: item.displayOrder, status: item.status }
+      });
+    } else {
+      await prisma.addOnService.create({ data: item });
+    }
   }
-  console.log('✨ Seeded Add-on Services (including Thêm Trang Trí)!');
+  console.log('✨ Seeded Add-on Services (including Tưới cây hạnh phúc & Múa lân sung hỷ)!');
 }
 
 main()

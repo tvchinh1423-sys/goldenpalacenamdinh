@@ -7,6 +7,10 @@ function getVenueFeeInfo(venueName, guestCount) {
   const name = venueName || '';
   const count = Number(guestCount) || 100;
 
+  if (name.includes('VIP')) {
+    return { eligible: true, fee: 1000000, label: '1.000.000 VNĐ (Phí dịch vụ phòng VIP)' };
+  }
+
   if (name.includes('Tầng 2')) {
     if (count < 250) return { eligible: false, fee: 0, reason: 'Tầng 2 chỉ áp dụng cho tiệc từ 250 khách trở lên' };
     if (count >= 350) return { eligible: true, fee: 10000000, label: '10.000.000 VNĐ (Từ 350 khách trở lên)' };
@@ -21,6 +25,70 @@ function getVenueFeeInfo(venueName, guestCount) {
 
   // Tầng 4 & Quầy Bar
   return { eligible: true, fee: 2000000, label: '2.000.000 VNĐ (Phí dịch vụ tiêu chuẩn)' };
+}
+
+// THÔNG SỐ VÀ QUY ĐỊNH CHUẨN HOÁ CỦA CÁC HỘI TRƯỜNG & KHÔNG GIAN (THEO QUY ĐỊNH GOLDEN PALACE)
+const VENUE_MASTER_SPECS = {
+  'Hội trường Tầng 2': {
+    name: 'HỘI TRƯỜNG TẦNG 2',
+    capacity: '350 - 750 khách (35 - 75 mâm)',
+    capacityRaw: '350 - 750',
+    purpose: 'Tiệc',
+    location: 'Tầng 2',
+    services: 'Âm thanh, ánh sáng, màn led',
+    servicesDetail: 'Màn hình LED 30m² P2.5 + Giàn đèn bướm/pha lê biểu diễn',
+    decorPackage: 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'
+  },
+  'Hội trường Tầng 3': {
+    name: 'HỘI TRƯỜNG TẦNG 3',
+    capacity: '300 - 650 khách (30 - 65 mâm)',
+    capacityRaw: '300 - 650',
+    purpose: 'Tiệc',
+    location: 'Tầng 3',
+    services: 'Âm thanh, ánh sáng, màn led',
+    servicesDetail: 'Màn hình LED 30m² P2.5 + Giàn đèn bướm/pha lê biểu diễn',
+    decorPackage: 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'
+  },
+  'Hội trường Tầng 4': {
+    name: 'HỘI TRƯỜNG TẦNG 4',
+    capacity: '100 - 300 khách (10 - 30 mâm)',
+    capacityRaw: '100 - 300',
+    purpose: 'Tiệc',
+    location: 'Tầng 4',
+    services: 'Âm thanh, ánh sáng, màn led',
+    servicesDetail: 'Màn hình LED 10m² + Đèn LED tiệc cưới hiện đại',
+    decorPackage: 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'
+  },
+  'Quầy Bar Tầng 1': {
+    name: 'QUẦY BAR',
+    capacity: '40 - 100 khách (4 - 10 mâm)',
+    capacityRaw: '40 - 100',
+    purpose: 'Tiệc, Khách lẻ',
+    location: 'Tầng 1',
+    services: 'Âm thanh, ánh sáng, màn led',
+    servicesDetail: 'Âm thanh, ánh sáng Lounge, màn LED / Máy chiếu hiện đại',
+    decorPackage: 'Phát sinh ngoài không phụ phí'
+  },
+  'Phòng VIP': {
+    name: 'PHÒNG VIP',
+    capacity: '10 - 50 khách (1 - 5 mâm)',
+    capacityRaw: '10 - 50',
+    purpose: 'Tiệc, Khách lẻ',
+    location: 'Tầng 1',
+    services: 'Không sử dụng loa đài',
+    servicesDetail: 'Máy chiếu nếu yêu cầu',
+    decorPackage: 'Phát sinh ngoài không phụ phí'
+  }
+};
+
+function getVenueSpec(venueName) {
+  if (!venueName) return null;
+  if (venueName.includes('Tầng 2')) return VENUE_MASTER_SPECS['Hội trường Tầng 2'];
+  if (venueName.includes('Tầng 3')) return VENUE_MASTER_SPECS['Hội trường Tầng 3'];
+  if (venueName.includes('Tầng 4')) return VENUE_MASTER_SPECS['Hội trường Tầng 4'];
+  if (venueName.includes('Bar')) return VENUE_MASTER_SPECS['Quầy Bar Tầng 1'];
+  if (venueName.includes('VIP')) return VENUE_MASTER_SPECS['Phòng VIP'];
+  return null;
 }
 
 export default function Step2Venues() {
@@ -41,8 +109,11 @@ export default function Step2Venues() {
         const res = await fetch(`/api/guest/venues?guests=${guestCount}`);
         let data = await res.json();
 
-        // For wedding parties, filter out VIP private dining rooms
-        data = data.filter(v => !v.name.includes('Phòng VIP'));
+        // Only filter out VIP private dining rooms if party size is greater than 60 guests
+        const count = Number(guestCount) || 100;
+        if (count > 60) {
+          data = data.filter(v => !v.name.includes('Phòng VIP'));
+        }
         setVenues(data);
 
         // Pre-select first 2 available venues for comparison if empty
@@ -228,7 +299,7 @@ export default function Step2Venues() {
               })}
             </div>
 
-            {/* BẢNG SO SÁNH 2 HỘI TRƯỜNG */}
+            {/* BẢNG SO SÁNH 2 HỘI TRƯỜNG (CẬP NHẬT THEO THÔNG SỐ CHUẨN) */}
             {compareObjects.length >= 2 && (
               <div className="bg-white rounded-3xl border border-[#e3a638]/40 shadow-2xl p-6 sm:p-10 space-y-6">
                 <div className="text-center max-w-2xl mx-auto">
@@ -242,7 +313,7 @@ export default function Step2Venues() {
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs text-left border-collapse min-w-[600px]">
+                  <table className="w-full text-xs text-left border-collapse min-w-[650px]">
                     <thead>
                       <tr className="border-b-2 border-[#e3a638]/30 bg-[#fcf9f2]">
                         <th className="p-4 font-bold text-gray-800 uppercase tracking-wider w-1/3">Tiêu chí so sánh</th>
@@ -255,34 +326,70 @@ export default function Step2Venues() {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       <tr>
-                        <td className="p-4 font-semibold text-gray-700 bg-gray-50/50">Sức chứa tối đa</td>
-                        {compareObjects.map(v => (
-                          <td key={v.id} className="p-4 text-center font-bold text-gray-900 border-l border-gray-100">
-                            {v.minGuests} - {v.maxGuests} khách ({Math.floor(v.maxGuests/10)} mâm)
-                          </td>
-                        ))}
+                        <td className="p-4 font-semibold text-gray-700 bg-gray-50/50">Sức chứa (Khách)</td>
+                        {compareObjects.map(v => {
+                          const spec = getVenueSpec(v.name);
+                          return (
+                            <td key={v.id} className="p-4 text-center font-bold text-gray-900 border-l border-gray-100">
+                              {spec?.capacity || `${v.minGuests} - ${v.maxGuests} khách`}
+                            </td>
+                          );
+                        })}
                       </tr>
 
                       <tr>
-                        <td className="p-4 font-semibold text-gray-700 bg-gray-50/50">Màn hình LED & Thiết bị</td>
-                        {compareObjects.map(v => (
-                          <td key={v.id} className="p-4 text-center text-gray-700 border-l border-gray-100">
-                            {v.name.includes('Tầng 2') || v.name.includes('Tầng 3') 
-                              ? 'Màn hình LED 30m² P2.5 + Giàn đèn bướm/pha lê biểu diễn' 
-                              : 'Màn hình LED 10m² + Đèn LED tiệc cưới hiện đại'}
-                          </td>
-                        ))}
+                        <td className="p-4 font-semibold text-gray-700 bg-gray-50/50">Mục đích</td>
+                        {compareObjects.map(v => {
+                          const spec = getVenueSpec(v.name);
+                          return (
+                            <td key={v.id} className="p-4 text-center font-medium text-gray-800 border-l border-gray-100">
+                              {spec?.purpose || 'Tiệc'}
+                            </td>
+                          );
+                        })}
                       </tr>
 
                       <tr>
-                        <td className="p-4 font-semibold text-gray-700 bg-gray-50/50">Kiến trúc trần & Lối đi</td>
-                        {compareObjects.map(v => (
-                          <td key={v.id} className="p-4 text-center text-gray-700 border-l border-gray-100">
-                            {v.name.includes('Tầng 2') || v.name.includes('Tầng 3') 
-                              ? 'Trần cao 7m không cột chắn, 10 cột hoa đường dẫn thảm đỏ' 
-                              : 'Trần ấm cúng 4m, 6 cột hoa trang trí lối đi'}
-                          </td>
-                        ))}
+                        <td className="p-4 font-semibold text-gray-700 bg-gray-50/50">Vị trí</td>
+                        {compareObjects.map(v => {
+                          const spec = getVenueSpec(v.name);
+                          return (
+                            <td key={v.id} className="p-4 text-center font-medium text-gray-800 border-l border-gray-100">
+                              <span className="inline-block px-3 py-1 bg-amber-50 text-[#a66a3a] font-bold rounded-lg border border-amber-200">
+                                {spec?.location || 'Tầng 1'}
+                              </span>
+                            </td>
+                          );
+                        })}
+                      </tr>
+
+                      <tr>
+                        <td className="p-4 font-semibold text-gray-700 bg-gray-50/50">Dịch vụ (Tính phí nếu sử dụng)</td>
+                        {compareObjects.map(v => {
+                          const spec = getVenueSpec(v.name);
+                          return (
+                            <td key={v.id} className="p-4 text-center text-gray-700 border-l border-gray-100">
+                              <div className="font-bold text-gray-900">{spec?.services || 'Âm thanh, ánh sáng, màn led'}</div>
+                              {spec?.servicesDetail && spec.servicesDetail !== spec.services && (
+                                <div className="text-[11px] text-gray-500 font-light mt-1 italic">
+                                  ({spec.servicesDetail})
+                                </div>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+
+                      <tr>
+                        <td className="p-4 font-semibold text-gray-700 bg-gray-50/50">Gói trang trí</td>
+                        {compareObjects.map(v => {
+                          const spec = getVenueSpec(v.name);
+                          return (
+                            <td key={v.id} className="p-4 text-center text-gray-700 border-l border-gray-100 leading-relaxed font-medium">
+                              {spec?.decorPackage || 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'}
+                            </td>
+                          );
+                        })}
                       </tr>
 
                       <tr>
@@ -325,6 +432,139 @@ export default function Step2Venues() {
                 </div>
               </div>
             )}
+
+            {/* BẢNG TỔNG HỢP QUY ĐỊNH HỘI TRƯỜNG & KHÔNG GIAN (THEO QUY CHUẨN GOLDEN PALACE) */}
+            <div className="bg-white rounded-3xl border border-[#c59a3f]/40 shadow-2xl p-6 sm:p-10 space-y-6">
+              <div className="text-center max-w-3xl mx-auto">
+                <span className="text-[#a66a3a] uppercase tracking-[0.2em] text-xs font-bold block mb-1">
+                  Quy định & Bảng giá
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-playfair font-bold text-gray-900">
+                  Bảng Thông Tin Quy Định Hội Trường & Không Gian
+                </h3>
+                <p className="text-gray-500 text-xs font-light mt-1">
+                  Đối chiếu sức chứa, vị trí, dịch vụ tính phí và quy định gói trang trí cho từng không gian tại Golden Palace
+                </p>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border-2 border-[#b8862d]/60 shadow-md">
+                <table className="w-full text-xs text-left border-collapse min-w-[720px]">
+                  <thead>
+                    <tr className="bg-[#c59a3f] text-[#2c1d0c] font-bold text-center border-b-2 border-[#b8862d]">
+                      <th className="p-3.5 sm:p-4 uppercase tracking-wider border-r border-[#b8862d]/50 w-[18%]">TÊN GỌI</th>
+                      <th className="p-3.5 sm:p-4 uppercase tracking-wider border-r border-[#b8862d]/50 w-[15%]">SỨC CHỨA<br/><span className="text-[11px] font-medium">( Khách )</span></th>
+                      <th className="p-3.5 sm:p-4 uppercase tracking-wider border-r border-[#b8862d]/50 w-[15%]">MỤC ĐÍCH</th>
+                      <th className="p-3.5 sm:p-4 uppercase tracking-wider border-r border-[#b8862d]/50 w-[12%]">VỊ TRÍ</th>
+                      <th className="p-3.5 sm:p-4 uppercase tracking-wider border-r border-[#b8862d]/50 w-[22%]">DỊCH VỤ<br/><span className="text-[11px] font-medium">( Tính phí nếu sử dụng )</span></th>
+                      <th className="p-3.5 sm:p-4 uppercase tracking-wider w-[18%]">GÓI TRANG TRÍ</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#b8862d]/30 text-gray-800">
+                    {/* Row 1: PHÒNG VIP */}
+                    <tr className="hover:bg-amber-50/40 transition-colors">
+                      <td className="p-3.5 sm:p-4 text-center font-bold text-[#a66a3a] border-r border-[#b8862d]/30 font-playfair text-sm">
+                        PHÒNG VIP
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        10 - 50
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tiệc, Khách lẻ
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tầng 1
+                      </td>
+                      <td className="p-3.5 sm:p-4 border-r border-[#b8862d]/30 text-center sm:text-left pl-4">
+                        <strong className="block text-gray-900 font-bold">Không sử dụng loa đài</strong>
+                        <span className="text-gray-600 block mt-0.5">Máy chiếu nếu yêu cầu</span>
+                      </td>
+                      <td rowSpan={2} className="p-3.5 sm:p-4 text-center text-gray-700 bg-amber-50/20 align-middle leading-relaxed font-medium">
+                        Phát sinh ngoài không phụ phí
+                      </td>
+                    </tr>
+
+                    {/* Row 2: QUẦY BAR */}
+                    <tr className="hover:bg-amber-50/40 transition-colors">
+                      <td className="p-3.5 sm:p-4 text-center font-bold text-[#a66a3a] border-r border-[#b8862d]/30 font-playfair text-sm">
+                        QUẦY BAR
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        40 - 100
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tiệc, Khách lẻ
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tầng 1
+                      </td>
+                      <td className="p-3.5 sm:p-4 border-r border-[#b8862d]/30 text-center sm:text-left pl-4 font-medium text-gray-800">
+                        Âm thanh, ánh sáng, màn led
+                      </td>
+                    </tr>
+
+                    {/* Row 3: HỘI TRƯỜNG TẦNG 2 */}
+                    <tr className="hover:bg-amber-50/40 transition-colors">
+                      <td className="p-3.5 sm:p-4 text-center font-bold text-[#a66a3a] border-r border-[#b8862d]/30 font-playfair text-sm">
+                        HỘI TRƯỜNG TẦNG 2
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        350 - 750
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tiệc
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tầng 2
+                      </td>
+                      <td className="p-3.5 sm:p-4 border-r border-[#b8862d]/30 text-center sm:text-left pl-4 font-medium text-gray-800">
+                        Âm thanh, ánh sáng, màn led
+                      </td>
+                      <td rowSpan={3} className="p-3.5 sm:p-4 text-center text-gray-700 bg-amber-50/20 align-middle leading-relaxed font-medium">
+                        Sử dụng gói cố định,<br/>Phát sinh ngoài có phụ phí tuỳ mức độ
+                      </td>
+                    </tr>
+
+                    {/* Row 4: HỘI TRƯỜNG TẦNG 3 */}
+                    <tr className="hover:bg-amber-50/40 transition-colors">
+                      <td className="p-3.5 sm:p-4 text-center font-bold text-[#a66a3a] border-r border-[#b8862d]/30 font-playfair text-sm">
+                        HỘI TRƯỜNG TẦNG 3
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        300 - 650
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tiệc
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tầng 3
+                      </td>
+                      <td className="p-3.5 sm:p-4 border-r border-[#b8862d]/30 text-center sm:text-left pl-4 font-medium text-gray-800">
+                        Âm thanh, ánh sáng, màn led
+                      </td>
+                    </tr>
+
+                    {/* Row 5: HỘI TRƯỜNG TẦNG 4 */}
+                    <tr className="hover:bg-amber-50/40 transition-colors">
+                      <td className="p-3.5 sm:p-4 text-center font-bold text-[#a66a3a] border-r border-[#b8862d]/30 font-playfair text-sm">
+                        HỘI TRƯỜNG TẦNG 4
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        100 - 300
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tiệc
+                      </td>
+                      <td className="p-3.5 sm:p-4 text-center font-medium border-r border-[#b8862d]/30">
+                        Tầng 4
+                      </td>
+                      <td className="p-3.5 sm:p-4 border-r border-[#b8862d]/30 text-center sm:text-left pl-4 font-medium text-gray-800">
+                        Âm thanh, ánh sáng, màn led
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </>
         )}
       </main>

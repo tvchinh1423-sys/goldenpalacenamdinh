@@ -27,6 +27,12 @@ function parseAddonPrice(addon, guestCount) {
     if (Number(guestCount) >= 400) return { price: 0, text: '0 VNĐ (Tặng miễn phí)' };
     return { price: 700000, text: '700.000 VNĐ' };
   }
+  if (addon.name.includes('Tưới cây hạnh phúc') || raw.includes('500.000')) {
+    return { price: 500000, text: '500.000 VNĐ' };
+  }
+  if (addon.name.includes('Múa lân sung hỷ')) {
+    return { price: 0, text: 'Báo giá: Liên hệ' };
+  }
   if (raw.includes('800.000')) return { price: 800000, text: '800.000 VNĐ' };
   if (raw.includes('1.000.000')) return { price: 1000000, text: '1.000.000 VNĐ' };
   if (raw.includes('900.000')) return { price: 900000, text: '900.000 VNĐ' };
