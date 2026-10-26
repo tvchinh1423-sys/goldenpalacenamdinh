@@ -27,67 +27,69 @@ function getVenueFeeInfo(venueName, guestCount) {
   return { eligible: true, fee: 2000000, label: '2.000.000 VNĐ (Phí dịch vụ tiêu chuẩn)' };
 }
 
-// THÔNG SỐ VÀ QUY ĐỊNH CHUẨN HOÁ CỦA CÁC HỘI TRƯỜNG & KHÔNG GIAN (THEO QUY ĐỊNH GOLDEN PALACE)
-const VENUE_MASTER_SPECS = {
-  'Hội trường Tầng 2': {
-    name: 'HỘI TRƯỜNG TẦNG 2',
-    capacity: '350 - 750 khách (35 - 75 mâm)',
-    capacityRaw: '350 - 750',
-    purpose: 'Tiệc',
-    location: 'Tầng 2',
-    services: 'Âm thanh, ánh sáng, màn led',
-    servicesDetail: 'Màn hình LED 30m² P2.5 + Giàn đèn bướm/pha lê biểu diễn',
-    decorPackage: 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'
-  },
-  'Hội trường Tầng 3': {
-    name: 'HỘI TRƯỜNG TẦNG 3',
-    capacity: '300 - 650 khách (30 - 65 mâm)',
-    capacityRaw: '300 - 650',
-    purpose: 'Tiệc',
-    location: 'Tầng 3',
-    services: 'Âm thanh, ánh sáng, màn led',
-    servicesDetail: 'Màn hình LED 30m² P2.5 + Giàn đèn bướm/pha lê biểu diễn',
-    decorPackage: 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'
-  },
-  'Hội trường Tầng 4': {
-    name: 'HỘI TRƯỜNG TẦNG 4',
-    capacity: '100 - 300 khách (10 - 30 mâm)',
-    capacityRaw: '100 - 300',
-    purpose: 'Tiệc',
-    location: 'Tầng 4',
-    services: 'Âm thanh, ánh sáng, màn led',
-    servicesDetail: 'Màn hình LED 10m² + Đèn LED tiệc cưới hiện đại',
-    decorPackage: 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'
-  },
-  'Quầy Bar Tầng 1': {
-    name: 'QUẦY BAR',
-    capacity: '40 - 100 khách (4 - 10 mâm)',
-    capacityRaw: '40 - 100',
-    purpose: 'Tiệc, Khách lẻ',
-    location: 'Tầng 1',
-    services: 'Âm thanh, ánh sáng, màn led',
-    servicesDetail: 'Âm thanh, ánh sáng Lounge, màn LED / Máy chiếu hiện đại',
-    decorPackage: 'Phát sinh ngoài không phụ phí'
-  },
-  'Phòng VIP': {
-    name: 'PHÒNG VIP',
-    capacity: '10 - 50 khách (1 - 5 mâm)',
-    capacityRaw: '10 - 50',
-    purpose: 'Tiệc, Khách lẻ',
-    location: 'Tầng 1',
-    services: 'Không sử dụng loa đài',
-    servicesDetail: 'Máy chiếu nếu yêu cầu',
-    decorPackage: 'Phát sinh ngoài không phụ phí'
-  }
+const SPEC_TANG_2 = {
+  name: 'HỘI TRƯỜNG TẦNG 2',
+  capacity: '350 - 750 khách (35 - 75 mâm)',
+  capacityRaw: '350 - 750',
+  purpose: 'Tiệc',
+  location: 'Tầng 2',
+  services: 'Âm thanh, ánh sáng, màn led',
+  servicesDetail: 'Màn hình LED 30m² P2.5 + Giàn đèn bướm/pha lê biểu diễn',
+  decorPackage: 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'
+};
+
+const SPEC_TANG_3 = {
+  name: 'HỘI TRƯỜNG TẦNG 3',
+  capacity: '300 - 650 khách (30 - 65 mâm)',
+  capacityRaw: '300 - 650',
+  purpose: 'Tiệc',
+  location: 'Tầng 3',
+  services: 'Âm thanh, ánh sáng, màn led',
+  servicesDetail: 'Màn hình LED 30m² P2.5 + Giàn đèn bướm/pha lê biểu diễn',
+  decorPackage: 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'
+};
+
+const SPEC_TANG_4 = {
+  name: 'HỘI TRƯỜNG TẦNG 4',
+  capacity: '100 - 300 khách (10 - 30 mâm)',
+  capacityRaw: '100 - 300',
+  purpose: 'Tiệc',
+  location: 'Tầng 4',
+  services: 'Âm thanh, ánh sáng, màn led',
+  servicesDetail: 'Màn hình LED 10m² + Đèn LED tiệc cưới hiện đại',
+  decorPackage: 'Sử dụng gói cố định, Phát sinh ngoài có phụ phí tuỳ mức độ'
+};
+
+const SPEC_BAR = {
+  name: 'QUẦY BAR',
+  capacity: '40 - 100 khách (4 - 10 mâm)',
+  capacityRaw: '40 - 100',
+  purpose: 'Tiệc, Khách lẻ',
+  location: 'Tầng 1',
+  services: 'Âm thanh, ánh sáng, màn led',
+  servicesDetail: 'Âm thanh, ánh sáng Lounge, màn LED / Máy chiếu hiện đại',
+  decorPackage: 'Phát sinh ngoài không phụ phí'
+};
+
+const SPEC_VIP = {
+  name: 'PHÒNG VIP',
+  capacity: '10 - 50 khách (1 - 5 mâm)',
+  capacityRaw: '10 - 50',
+  purpose: 'Tiệc, Khách lẻ',
+  location: 'Tầng 1',
+  services: 'Không sử dụng loa đài',
+  servicesDetail: 'Máy chiếu nếu yêu cầu',
+  decorPackage: 'Phát sinh ngoài không phụ phí'
 };
 
 function getVenueSpec(venueName) {
   if (!venueName) return null;
-  if (venueName.includes('Tầng 2')) return VENUE_MASTER_SPECS['Hội trường Tầng 2'];
-  if (venueName.includes('Tầng 3')) return VENUE_MASTER_SPECS['Hội trường Tầng 3'];
-  if (venueName.includes('Tầng 4')) return VENUE_MASTER_SPECS['Hội trường Tầng 4'];
-  if (venueName.includes('Bar')) return VENUE_MASTER_SPECS['Quầy Bar Tầng 1'];
-  if (venueName.includes('VIP')) return VENUE_MASTER_SPECS['Phòng VIP'];
+  const n = String(venueName);
+  if (n.includes('Tầng 3')) return SPEC_TANG_3;
+  if (n.includes('Tầng 4')) return SPEC_TANG_4;
+  if (n.includes('Tầng 2')) return SPEC_TANG_2;
+  if (n.includes('Bar')) return SPEC_BAR;
+  if (n.includes('VIP')) return SPEC_VIP;
   return null;
 }
 
