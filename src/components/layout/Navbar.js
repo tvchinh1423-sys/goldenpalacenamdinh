@@ -40,28 +40,18 @@ export default function Navbar() {
       </div>
 
       {/* Main Header Navbar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4 relative">
         
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
-          <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-9 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
-          <span className="text-[#a66a3a] font-playfair text-base sm:text-xl tracking-widest uppercase font-bold whitespace-nowrap">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0">
+          <img src="/logo-icon.png" alt="Golden Palace Emblem" className="h-8 sm:h-10 md:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105 shrink-0" />
+          <span className="text-[#a66a3a] font-playfair text-sm sm:text-lg md:text-xl tracking-wider sm:tracking-widest uppercase font-bold truncate">
             Golden Palace
           </span>
         </Link>
 
-        {/* Center Pill Button for Mobile - Like Trống Đồng Palace */}
-        <div className="flex md:hidden items-center justify-center shrink-0">
-          <Link 
-            href="/du-toan-chi-phi" 
-            className="px-3.5 py-1.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-[11px] font-bold uppercase tracking-wider rounded-full shadow-md hover:opacity-90 transition-all whitespace-nowrap border border-amber-300/40"
-          >
-            Dự Tính Chi Phí
-          </Link>
-        </div>
-
-        {/* Desktop Links (Thêm whitespace-nowrap để chữ KHÔNG BAO GIỜ bị xuống dòng) */}
-        <div className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-7 text-xs lg:text-sm tracking-wider uppercase font-medium text-gray-700">
+        {/* Desktop Links (Hiển thị từ màn hình lg >= 1024px để không bao giờ bị tràn layout) */}
+        <div className="hidden lg:flex items-center gap-5 xl:gap-7 text-xs xl:text-sm tracking-wider uppercase font-medium text-gray-700">
           <Link href="/" className="hover:text-[#a66a3a] transition-colors py-2 whitespace-nowrap">
             Trang chủ
           </Link>
@@ -191,8 +181,8 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Desktop CTA Pill - Chỉ giữ duy nhất 1 Nút DỰ TOÁN CHI PHÍ (bỏ nút Cá Nhân Hóa lặp lại) */}
-        <div className="hidden md:flex items-center shrink-0">
+        {/* Desktop CTA Pill (Màn hình lớn >= 1024px) */}
+        <div className="hidden lg:flex items-center shrink-0">
           <Link 
             href="/du-toan-chi-phi" 
             className="px-5 py-2.5 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white hover:opacity-90 font-montserrat text-xs tracking-widest uppercase transition-all font-semibold rounded-full shadow-md whitespace-nowrap"
@@ -201,20 +191,40 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Hamburger Button */}
-        <button 
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-gray-800 hover:bg-gray-100 cursor-pointer shrink-0"
-          aria-label="Toggle Navigation Menu"
-        >
-          <span className="material-symbols-outlined text-2xl">{mobileMenuOpen ? 'close' : 'menu'}</span>
-        </button>
+        {/* Mobile & Tablet Action Cluster (Nút Dự Tính Chi Phí + Nút 3 Gạch Menu luôn luôn cố định cùng nhau bên phải) */}
+        <div className="flex lg:hidden items-center gap-1.5 sm:gap-2.5 shrink-0 ml-auto z-30">
+          <Link 
+            href="/du-toan-chi-phi" 
+            className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white text-[10px] sm:text-[11px] font-bold uppercase tracking-wider rounded-full shadow-md hover:opacity-90 transition-all whitespace-nowrap border border-amber-300/40"
+          >
+            Dự Tính Chi Phí
+          </Link>
+
+          <button 
+            type="button"
+            onClick={() => setMobileMenuOpen(prev => !prev)}
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-gray-300/80 bg-white shadow-xs flex items-center justify-center text-gray-800 hover:bg-amber-50/50 hover:text-[#a66a3a] active:scale-95 transition-all cursor-pointer shrink-0 touch-manipulation focus:outline-none"
+            aria-label="Toggle Navigation Menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            <span className="material-symbols-outlined text-2xl select-none leading-none">
+              {mobileMenuOpen ? 'close' : 'menu'}
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Mobile Side Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-x-0 top-full bg-white border-b border-gray-200 shadow-2xl animate-fade-in max-h-[85vh] overflow-y-auto font-montserrat">
-          <div className="p-5 space-y-4">
+        <>
+          {/* Lớp nền mờ để chạm ra ngoài tự đóng menu */}
+          <div 
+            className="lg:hidden fixed inset-0 top-16 sm:top-20 bg-black/40 backdrop-blur-xs z-40 transition-opacity"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          <div className="lg:hidden fixed inset-x-0 top-16 sm:top-20 bg-white border-b border-gray-200 shadow-2xl animate-fade-in max-h-[85vh] overflow-y-auto font-montserrat z-50">
+            <div className="p-4 sm:p-5 space-y-4">
             
             {/* Primary Action Button inside Drawer */}
             <div className="grid grid-cols-2 gap-2">
@@ -320,6 +330,7 @@ export default function Navbar() {
 
           </div>
         </div>
+      </>
       )}
 
     </nav>
