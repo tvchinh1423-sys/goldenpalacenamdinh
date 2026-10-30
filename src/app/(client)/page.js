@@ -81,7 +81,7 @@ export default async function Home() {
             <Link href="/du-toan-chi-phi" className="px-8 py-4 bg-gradient-to-r from-[#e3a638] to-[#a66a3a] text-white font-semibold rounded-none hover:shadow-[0_0_20px_rgba(227,166,56,0.4)] transition-all uppercase tracking-wider font-montserrat text-sm">
               Dự toán chi phí sự kiện
             </Link>
-            <Link href="/khong-gian/tang-2" className="px-8 py-4 border border-[#e3a638] text-[#e3a638] font-semibold rounded-none hover:bg-[#e3a638]/10 transition-all uppercase tracking-wider font-montserrat text-sm bg-black/40 backdrop-blur-md">
+            <Link href="/khong-gian" className="px-8 py-4 border border-[#e3a638] text-[#e3a638] font-semibold rounded-none hover:bg-[#e3a638]/10 transition-all uppercase tracking-wider font-montserrat text-sm bg-black/40 backdrop-blur-md">
               Khám phá không gian
             </Link>
           </div>

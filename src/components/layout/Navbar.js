@@ -72,12 +72,19 @@ export default function Navbar() {
             onMouseEnter={() => setKhongGianOpen(true)}
             onMouseLeave={() => setKhongGianOpen(false)}
           >
-            <button className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer whitespace-nowrap">
+            <Link 
+              href="/khong-gian"
+              className="flex items-center gap-1 hover:text-[#a66a3a] transition-colors uppercase cursor-pointer whitespace-nowrap"
+            >
               <span>Không gian</span>
               <span className="material-symbols-outlined text-base">expand_more</span>
-            </button>
+            </Link>
 
             <div className={`absolute left-0 top-full w-64 bg-white border border-[#e3a638]/20 shadow-2xl rounded-xl py-3 flex flex-col transition-all duration-200 ${khongGianOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+              <Link href="/khong-gian" className="px-5 py-2.5 font-bold text-[#a66a3a] hover:bg-[#e3a638]/10 transition-colors text-xs border-b border-gray-100 flex items-center justify-between">
+                <span>✦ Tổng quan 5 không gian</span>
+                <span className="material-symbols-outlined text-xs">arrow_forward</span>
+              </Link>
               <Link href="/khong-gian/tang-2" className="px-5 py-2.5 hover:bg-[#e3a638]/10 hover:text-[#a66a3a] transition-colors text-xs font-medium">
                 Hội trường Tầng 2
               </Link>
@@ -248,6 +255,9 @@ export default function Navbar() {
                 </button>
                 {mobileKhongGian && (
                   <div className="pl-6 pb-3 space-y-2 text-xs font-normal normal-case text-gray-600">
+                    <Link href="/khong-gian" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 font-bold text-[#a66a3a] border-b border-gray-100 mb-1">
+                      ✦ Xem tổng quan 5 không gian
+                    </Link>
                     <Link href="/khong-gian/tang-2" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Hội trường Tầng 2 (350 - 750 khách)</Link>
                     <Link href="/khong-gian/tang-3" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Hội trường Tầng 3 (300 - 650 khách)</Link>
                     <Link href="/khong-gian/tang-4" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-[#a66a3a]">Hội trường Tầng 4 (100 - 300 khách)</Link>
