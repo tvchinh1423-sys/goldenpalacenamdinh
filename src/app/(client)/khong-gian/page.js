@@ -10,7 +10,7 @@ export const metadata = {
   openGraph: {
     title: 'Hệ Thống 5 Không Gian Sảnh Tiệc & Sự Kiện | Golden Palace Nam Định',
     description: 'Trần cao 7m không cột chắn, màn hình LED P2.5 30m², giàn đèn bướm pha lê hoàng gia. Khám phá 5 không gian tiệc đẳng cấp tại 98 Đông A, Nam Định.',
-    images: ['/images/hd-venues/tang-2-hd-1.jpg'],
+    images: ['/images/hd-venues/tang-2-hd-15.jpg'],
   }
 };
 
@@ -25,7 +25,7 @@ const DEFAULT_VENUES = [
     capacityGuests: '350 - 750 Khách',
     capacityTables: '35 - 75 Mâm',
     ledHighlight: 'LED P2.5 30m² + Đèn Pha Lê',
-    heroImage: '/images/hd-venues/tang-2-hd-1.jpg',
+    heroImage: '/images/hd-venues/tang-2-hd-15.jpg',
     photoCount: 31,
     description: 'Sảnh tiệc đại tràng sang trọng bậc nhất Nam Định với kiến trúc trần cao 7m hoàn toàn không có cột chắn tầm nhìn. Được trang bị màn hình LED P2.5 30m² sắc nét cùng giàn đèn bướm nghệ thuật rực rỡ, Tầng 2 là sự lựa chọn số 1 cho những đám cưới hoàng gia và đại hội nghị doanh nghiệp quy mô lớn.',
     features: [
@@ -46,7 +46,7 @@ const DEFAULT_VENUES = [
     capacityGuests: '300 - 650 Khách',
     capacityTables: '30 - 65 Mâm',
     ledHighlight: 'LED 30m² + Giàn Đèn Bướm',
-    heroImage: '/images/hd-venues/tang-3-hd-1.jpg',
+    heroImage: '/images/hd-venues/tang-3-hd-14.jpg',
     photoCount: 30,
     description: 'Sở hữu lối thiết kế tân cổ điển tinh tế với tông màu Rose Gold & Champagne ấm áp. Hội trường Tầng 3 trang bị màn hình LED 30m², hệ thống âm thanh ánh sáng biểu diễn chuyên nghiệp và đường dẫn hoa lụa thanh lịch, mang lại không khí thiêng liêng tuyệt hảo cho ngày hạnh phúc.',
     features: [
@@ -67,7 +67,7 @@ const DEFAULT_VENUES = [
     capacityGuests: '100 - 300 Khách',
     capacityTables: '10 - 30 Mâm',
     ledHighlight: 'Màn Hình LED 10m²',
-    heroImage: '/images/hd-venues/tang-4-hd-7.jpg',
+    heroImage: '/images/hd-venues/tang-4-hd-10.jpg',
     photoCount: 18,
     description: 'Lựa chọn lý tưởng cho các buổi tiệc cưới ấm cúng, tiệc báo hỷ thân mật hoặc hội nghị doanh nghiệp vừa và nhỏ. Không gian được trang bị màn hình LED 10m², hệ thống âm thanh ánh sáng chuẩn cùng hoa lụa trang trí sân khấu vô cùng trang nhã và tiết kiệm chi phí tối ưu.',
     features: [
@@ -88,7 +88,7 @@ const DEFAULT_VENUES = [
     capacityGuests: '40 - 100 Khách',
     capacityTables: 'Tiệc đứng & Bàn tiệc',
     ledHighlight: 'Quầy Pha Chế + Sound Lounge',
-    heroImage: '/images/hd-venues/quay-bar-hd-7.jpg',
+    heroImage: '/images/hd-venues/quay-bar-hd-20.jpg',
     photoCount: 26,
     description: 'Mang phong cách kiến trúc Lounge hiện đại, trẻ trung với hệ thống đèn trang trí và quầy pha chế sang trọng. Đây là địa điểm lý tưởng cho các buổi tiệc sinh nhật, tiệc kỷ niệm, tiệc cocktail hoặc các buổi gặp mặt giao lưu thân mật tràn ngập cảm xúc.',
     features: [
@@ -109,7 +109,7 @@ const DEFAULT_VENUES = [
     capacityGuests: '10 - 50 Khách',
     capacityTables: '1 - 5 Mâm VIP',
     ledHighlight: 'Nội Thất Gỗ & Phục Vụ 5 Sao',
-    heroImage: '/images/hd-venues/phong-vip-hd-1.jpg',
+    heroImage: '/images/hd-venues/phong-vip-hd-38.jpg',
     photoCount: 68,
     description: 'Được thiết kế độc bản với nội thất gỗ và mạ vàng hoàng gia, mang lại sự riêng tư tối đa và trải nghiệm ẩm thực đỉnh cao cho các buổi tiệc gia đình, tiệc đính hôn nhỏ hoặc tiếp đón đối tác kinh doanh cấp cao.',
     features: [
@@ -126,7 +126,9 @@ export default async function KhongGianOverviewPage() {
   let dbVenues = [];
   try {
     dbVenues = await prisma.venue.findMany({
-      where: { status: 'ACTIVE' },
+      where: {
+        status: { in: ['ACTIVE', 'PUBLISHED'] }
+      },
       orderBy: { displayOrder: 'asc' }
     });
   } catch (error) {
@@ -150,7 +152,8 @@ export default async function KhongGianOverviewPage() {
         if (Array.isArray(parsedImages) && parsedImages.length > 0 && parsedImages[0]) {
           return {
             ...venue,
-            heroImage: parsedImages[0] || venue.heroImage
+            heroImage: parsedImages[0] || venue.heroImage,
+            photoCount: parsedImages.length
           };
         }
       } catch (err) {}
